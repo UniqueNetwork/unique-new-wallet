@@ -1,0 +1,9 @@
+FROM node:lts
+
+EXPOSE 3000
+WORKDIR /
+COPY . .
+RUN yarn install
+ENV NODE_ENV = development
+
+CMD ["yarn", "start"]

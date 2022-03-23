@@ -1,0 +1,109 @@
+{
+  "name": "unique-minter",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@apollo/client": "^3.5.5",
+    "@phala/typedefs": "^0.2.30",
+    "@polkadot/api": "^7.8.1",
+    "@polkadot/extension-dapp": "^0.42.7",
+    "@polkadot/keyring": "^8.4.1",
+    "@polkadot/networks": "^8.4.1",
+    "@polkadot/rpc-provider": "^7.8.1",
+    "@polkadot/ui-keyring": "^1.1.1",
+    "@polkadot/util": "^8.4.1",
+    "@polkadot/util-crypto": "^8.4.1",
+    "@polkadot/x-fetch": "^8.4.1",
+    "@polkadot/x-global": "^8.4.1",
+    "@polkadot/x-ws": "^8.4.1",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@unique-nft/types": "^0.3.0",
+    "@unique-nft/ui-kit": "^0.0.8",
+    "axios": "^0.24.0",
+    "eslint": "^8.11.0",
+    "graphql": "^16.0.1",
+    "protobufjs": "^6.11.2",
+    "rc-table": "^7.21.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-infinite-scroller": "^1.2.4",
+    "react-qr-reader": "^3.0.0-beta-1",
+    "react-router-dom": "^6.0.2",
+    "react-scripts": "5.0.0",
+    "socket.io-client": "^4.4.1",
+    "web-vitals": "^1.0.1",
+    "web3": "^1.7.0"
+  },
+  "devDependencies": {
+    "@polkadot/dev": "^0.65.35",
+    "@polkadot/extension-inject": "^0.42.7",
+    "@polkadot/types": "^7.8.1",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.12",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-infinite-scroller": "^1.2.2",
+    "@types/react-modal": "^3.13.1",
+    "@types/styled-components": "^5.1.20",
+    "assert": "^2.0.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
+    "postcss": "^8.0.0",
+    "prettier": "^2.6.0",
+    "process": "^0.11.10",
+    "react-app-rewired": "^2.2.1",
+    "sass": "^1.45.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "styled-components": "5.2.1",
+    "stylelint": "^14.3.0",
+    "stylelint-config-recommended": "^6.0.0",
+    "stylelint-config-standard-scss": "^3.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0",
+    "typescript": "^4.5.2",
+    "url": "^0.11.0"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired --max_old_space_size=4096 build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "eslint": "eslint src --fix",
+    "stylelint": "stylelint '**/*.tsx'"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not ie <= 99",
+      "not android <= 4.4.4",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "resolutions": {
+    "styled-components": "^5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
