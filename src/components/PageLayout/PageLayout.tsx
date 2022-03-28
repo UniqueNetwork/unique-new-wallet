@@ -30,7 +30,6 @@ export const PageLayout: FC = () => {
         {!isLoading && accounts.length === 0 && (
           <Welcome fetchAccounts={fetchAccounts} />
         )}
-        <Welcome fetchAccounts={fetchAccounts} />
         {!isLoading && accounts.length !== 0 && <Outlet />}
       </Layout>
     </LayoutStyled>
