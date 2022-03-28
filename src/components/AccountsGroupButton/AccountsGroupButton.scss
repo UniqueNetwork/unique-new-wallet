@@ -1,0 +1,24 @@
+.btn-container {
+  display: flex;
+  align-items: center;
+
+  .create-account-btn {
+    margin-right: 16px;
+  }
+  .account-group-btn-medium-font {
+    font-weight: var(--font-medium);
+  }
+}
+
+@media (max-width: 600px) {
+  .btn-container {
+    display: block;
+    .create-account-btn {
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+    button {
+      width: 100%;
+    }
+  }
+}
