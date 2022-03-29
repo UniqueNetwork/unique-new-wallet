@@ -2,13 +2,19 @@ import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Layout } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
-import { Header } from '.';
-import { useFooter } from '../hooks/useFooter';
+import { Header } from '../';
+import { useFooter } from '../../hooks/useFooter';
+import Welcome from '../Welcome';
+import { useAccounts } from '../../hooks/useAccounts';
+import Loading from '../Loading';
+
+import './PageLayout.scss';
 
 export type TMenuItems = 'Minter';
 
 export const PageLayout: FC = () => {
   const footer = useFooter();
+  const { accounts, fetchAccounts, isLoading } = useAccounts();
 
   return (
     <LayoutStyled>
@@ -16,11 +22,25 @@ export const PageLayout: FC = () => {
         footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
         header={<Header activeItem={'Minter'} />}
       >
-        <Outlet />
+        {isLoading && (
+          <LoadingStyled>
+            <Loading />
+          </LoadingStyled>
+        )}
+        {!isLoading && accounts.length === 0 && (
+          <Welcome fetchAccounts={fetchAccounts} />
+        )}
+        {!isLoading && accounts.length !== 0 && <Outlet />}
       </Layout>
     </LayoutStyled>
   );
 };
+
+const LoadingStyled = styled.div`
+  position: relative;
+  flex: 1;
+  display: flex;
+`;
 
 const LayoutStyled = styled.div`
   .unique-layout__content {

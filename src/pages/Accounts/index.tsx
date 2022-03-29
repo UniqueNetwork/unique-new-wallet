@@ -8,35 +8,37 @@ import DefaultAvatar from '../../static/icons/default-avatar.svg';
 import ArrowUpRight from '../../static/icons/arrow-up-right.svg';
 import config from '../../config';
 import { Icon } from '../../components/Icon/Icon';
-import { CreateAccountModal } from './Modals/CreateAccount';
-import { ImportViaSeedAccountModal } from './Modals/ImportViaSeed';
-import { DropdownMenu, DropdownMenuItem } from '../../components/DropdownMenu/DropdownMenu';
-import { ImportViaJSONAccountModal } from './Modals/ImportViaJson';
-import { ImportViaQRCodeAccountModal } from './Modals/ImportViaQRCode';
 import { TransferFundsModal } from './Modals/SendFunds';
 import { Table } from '../../components/Table';
 import { formatKusamaBalance } from '../../utils/textUtils';
 import { PagePaper } from '../../components/PagePaper/PagePaper';
+import { AccountsGroupButton } from '../../components/AccountsGroupButton';
 
 const tokenSymbol = 'KSM';
 
 type AccountsColumnsProps = {
-  onShowSendFundsModal(address: string): () => void
+  onShowSendFundsModal(address: string): () => void;
 };
 
-const getAccountsColumns = ({ onShowSendFundsModal }: AccountsColumnsProps): TableColumnProps[] => ([
+const getAccountsColumns = ({
+  onShowSendFundsModal
+}: AccountsColumnsProps): TableColumnProps[] => [
   {
     title: 'Account',
     width: '33%',
     field: 'accountInfo',
     render(accountInfo) {
-      return <AccountCellWrapper>
-        <Avatar size={24} src={DefaultAvatar} />
-        <AccountInfoWrapper>
-          <Text>{accountInfo.name}</Text>
-          <Text size={'s'} color={'grey-500'}>{accountInfo.address}</Text>
-        </AccountInfoWrapper>
-      </AccountCellWrapper>;
+      return (
+        <AccountCellWrapper>
+          <Avatar size={24} src={DefaultAvatar} />
+          <AccountInfoWrapper>
+            <Text>{accountInfo.name}</Text>
+            <Text size={'s'} color={'grey-500'}>
+              {accountInfo.address}
+            </Text>
+          </AccountInfoWrapper>
+        </AccountCellWrapper>
+      );
     }
   },
   {
@@ -45,9 +47,11 @@ const getAccountsColumns = ({ onShowSendFundsModal }: AccountsColumnsProps): Tab
     field: 'balance',
     render(balance) {
       const { KSM } = balance || {};
-      return <BalancesWrapper>
-        <Text>{`${formatKusamaBalance(KSM || 0)} ${tokenSymbol}`}</Text>
-      </BalancesWrapper>;
+      return (
+        <BalancesWrapper>
+          <Text>{`${formatKusamaBalance(KSM || 0)} ${tokenSymbol}`}</Text>
+        </BalancesWrapper>
+      );
     }
   },
   {
@@ -55,105 +59,103 @@ const getAccountsColumns = ({ onShowSendFundsModal }: AccountsColumnsProps): Tab
     width: '33%',
     field: 'address',
     render(address) {
-      return <LinksWrapper>
-        <LinkStyled target={'_blank'} rel={'noreferrer'} href={`${config.scanUrl}account/${address}`}>
-          <Text color={'primary-500'}>UniqueScan</Text>
-          <Icon size={16} path={ArrowUpRight} color={'none'} />
-        </LinkStyled>
-      </LinksWrapper>;
+      return (
+        <LinksWrapper>
+          <LinkStyled
+            target={'_blank'}
+            rel={'noreferrer'}
+            href={`${config.scanUrl}account/${address}`}
+          >
+            <Text color={'primary-500'}>UniqueScan</Text>
+            <Icon size={16} path={ArrowUpRight} color={'none'} />
+          </LinkStyled>
+        </LinksWrapper>
+      );
     }
   },
   {
     title: 'Actions',
     width: '33%',
-    field: 'address',
+    field: 'actions',
     render(address) {
-      return <ActionsWrapper>
-        <Button title={'Send'} onClick={onShowSendFundsModal(address)} />
-      </ActionsWrapper>;
+      return (
+        <ActionsWrapper>
+          <Button title={'Send'} onClick={onShowSendFundsModal(address)} />
+        </ActionsWrapper>
+      );
     }
   }
-]);
-
-enum AccountModal {
-  create,
-  importViaSeed,
-  importViaJSON,
-  importViaQRCode,
-  sendFunds
-}
+];
 
 export const AccountsPage = () => {
   const { accounts, fetchAccounts } = useAccounts();
   const [searchString, setSearchString] = useState<string>('');
-  const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [selectedAddress, setSelectedAddress] = useState<string>();
 
-  const onCreateAccountClick = useCallback(() => {
-    setCurrentModal(AccountModal.create);
-  }, []);
-
-  const onImportViaSeedClick = useCallback(() => {
-    setCurrentModal(AccountModal.importViaSeed);
-  }, []);
-
-  const onImportViaJSONClick = useCallback(() => {
-    setCurrentModal(AccountModal.importViaJSON);
-  }, []);
-
-  const onImportViaQRClick = useCallback(() => {
-    setCurrentModal(AccountModal.importViaQRCode);
-  }, []);
-
-  const onSendFundsClick = useCallback((address: string) => () => {
-    setCurrentModal(AccountModal.sendFunds);
-    setSelectedAddress(address);
-  }, []);
-
-  const onSearchStringChange = useCallback(
-    (value: string) => {
-      setSearchString(value);
+  const onSendFundsClick = useCallback(
+    (address: string) => () => {
+      setIsOpenModal(true);
+      setSelectedAddress(address);
     },
     []
   );
 
+  const onSearchStringChange = useCallback((value: string) => {
+    setSearchString(value);
+  }, []);
+
   const filteredAccounts = useMemo(() => {
     if (!searchString) {
-      return accounts.map((item) => ({ ...item, accountInfo: { address: item.address, name: item.meta.name } }));
+      return accounts.map((item) => ({
+        ...item,
+        accountInfo: { address: item.address, name: item.meta.name }
+      }));
     }
-    return accounts.filter((account) => account.address.includes(searchString) || account.meta.name?.includes(searchString))
-      .map((item) => ({ ...item, accountInfo: { address: item.address, name: item.meta.name } }));
+    return accounts
+      .filter(
+        (account) =>
+          account.address.includes(searchString) ||
+          account.meta.name?.includes(searchString)
+      )
+      .map((item) => ({
+        ...item,
+        accountInfo: { address: item.address, name: item.meta.name }
+      }));
   }, [accounts, searchString]);
 
   const onChangeAccountsFinish = useCallback(() => {
-    setCurrentModal(undefined);
+    setIsOpenModal(false);
     fetchAccounts();
   }, []);
 
-  return (<PagePaper>
-    <AccountPageWrapper>
-      <Row>
-        <Button title={'Create substrate account'} onClick={onCreateAccountClick} />
-        <DropdownMenu title={'Add account via'} role={'primary'}>
-          <DropdownMenuItem onClick={onImportViaSeedClick}>Seed phrase</DropdownMenuItem>
-          <DropdownMenuItem onClick={onImportViaJSONClick}>Backup JSON file</DropdownMenuItem>
-          <DropdownMenuItem onClick={onImportViaQRClick}>QR-code</DropdownMenuItem>
-        </DropdownMenu>
-        <SearchInputWrapper>
-          <SearchInputStyled placeholder={'Account'} iconLeft={{ name: 'magnify', size: 18 }} onChange={onSearchStringChange}/>
-        </SearchInputWrapper>
-      </Row>
-      <Table
-        columns={getAccountsColumns({ onShowSendFundsModal: onSendFundsClick })}
-        data={filteredAccounts}
-      />
-      <CreateAccountModal isVisible={currentModal === AccountModal.create} onFinish={onChangeAccountsFinish} />
-      <ImportViaSeedAccountModal isVisible={currentModal === AccountModal.importViaSeed} onFinish={onChangeAccountsFinish} />
-      <ImportViaJSONAccountModal isVisible={currentModal === AccountModal.importViaJSON} onFinish={onChangeAccountsFinish} />
-      <ImportViaQRCodeAccountModal isVisible={currentModal === AccountModal.importViaQRCode} onFinish={onChangeAccountsFinish} />
-      <TransferFundsModal isVisible={currentModal === AccountModal.sendFunds} onFinish={onChangeAccountsFinish} senderAddress={selectedAddress} />
-    </AccountPageWrapper>
-  </PagePaper>);
+  return (
+    <PagePaper>
+      <AccountPageWrapper>
+        <Row>
+          <AccountsGroupButton onClick={fetchAccounts} />
+          <SearchInputWrapper>
+            <SearchInputStyled
+              placeholder={'Account'}
+              iconLeft={{ name: 'magnify', size: 18 }}
+              onChange={onSearchStringChange}
+            />
+          </SearchInputWrapper>
+        </Row>
+        <Table
+          columns={getAccountsColumns({
+            onShowSendFundsModal: onSendFundsClick
+          })}
+          data={filteredAccounts}
+        />
+        <TransferFundsModal
+          isVisible={isOpenModal}
+          onFinish={onChangeAccountsFinish}
+          senderAddress={selectedAddress}
+        />
+      </AccountPageWrapper>
+    </PagePaper>
+  );
 };
 
 const AccountPageWrapper = styled.div`
@@ -163,7 +165,7 @@ const AccountPageWrapper = styled.div`
   width: 100%;
   .unique-table-data-row {
     height: fit-content;
-  } 
+  }
 `;
 
 const Row = styled.div`

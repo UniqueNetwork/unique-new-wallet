@@ -5,21 +5,21 @@ export enum CreateAccountModalStages {
 }
 
 export type TAccountProperties = {
-  seed: string
-  address: string
-  name?: string
-  password?: string
-}
+  seed: string;
+  address: string;
+  name?: string;
+  password?: string;
+};
 
 export type TCreateAccountModalProps = {
-  isVisible: boolean
-  onFinish(): void
+  isVisible: boolean;
+  onFinish(): void;
 };
 
 export type TCreateAccountBodyModalProps = {
-  accountProperties?: TAccountProperties
-  onFinish(account: TAccountProperties): void
-  onGoBack(): void
+  accountProperties?: TAccountProperties;
+  onFinish(account: TAccountProperties): void;
+  onGoBack(): void;
 };
 
 export type Scanned = {
@@ -27,10 +27,10 @@ export type Scanned = {
   isAddress: boolean;
   genesisHash: string;
   name?: string;
-}
+};
 
 export type TTransferFunds = {
-  sender: string
-  recipient: string
-  amount: string
-}
+  sender: string;
+  recipient: string;
+  amount: string;
+};

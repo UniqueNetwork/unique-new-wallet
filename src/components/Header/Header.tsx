@@ -5,8 +5,8 @@ import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atl
 
 import { useScreenWidthFromThreshold } from '../../hooks/useScreenWidthFromThreshold';
 import menu from '../../static/icons/menu.svg';
-import { TMenuItems } from '../PageLayout';
 import { WalletManager } from './WalletManager/WalletManager';
+import { TMenuItems } from '../PageLayout';
 
 interface HeaderProps {
   activeItem: TMenuItems;

@@ -91,13 +91,6 @@ module.exports = {
     'react/jsx-indent-props': [2, 2],
     'react/prop-types': [0], // this is a completely broken rule
     'react/jsx-key': 'warn',
-    'object-curly-newline': [
-      'warn',
-      {
-        ImportDeclaration: { multiline: true },
-        ObjectPattern: { multiline: true }
-      }
-    ],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     'react/jsx-closing-bracket-location': [1, 'line-aligned'],
