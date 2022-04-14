@@ -123,7 +123,6 @@ const MobileMenu = styled.div`
 const TextStyled = styled(Text)<{ $active?: boolean }>`
   && {
     display: flex;
-    min-width: 100%;
     border-radius: 4px;
     padding: 8px 16px;
     background-color: ${(props) =>

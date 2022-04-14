@@ -1,0 +1,10 @@
+.unique-alert {
+  padding: 10px 15px;
+  border-radius: 4px;
+  &.type {
+    &-warning {
+      background: #fff4e0;
+      color: #f9a400;
+    }
+  }
+}

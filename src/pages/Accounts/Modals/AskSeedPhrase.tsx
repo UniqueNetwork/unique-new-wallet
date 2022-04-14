@@ -1,8 +1,22 @@
-import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useState
+} from 'react';
 import { TCreateAccountBodyModalProps } from './types';
 import { addressFromSeed } from '../../../utils/seedUtils';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
-import { Avatar, Button, Checkbox, Heading, Link, Select, Text } from '@unique-nft/ui-kit';
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  Heading,
+  Link,
+  Select,
+  Text
+} from '@unique-nft/ui-kit';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import { defaultPairType, derivePath } from './CreateAccount';
 import styled from 'styled-components/macro';
@@ -11,34 +25,40 @@ import { Tooltip } from '../../../components/Tooltip/Tooltip';
 import { Icon } from '../../../components/Icon/Icon';
 import Question from '../../../static/icons/question.svg';
 
-const seedGenerators = [
-  { id: 'Mnemonic', title: 'Mnemonic' }
-];
+const seedGenerators = [{ id: 'Mnemonic', title: 'Mnemonic' }];
 
-export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
+export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({
+  onFinish
+}) => {
   const [seed, setSeed] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [confirmSeedSaved, setConfirmSeedSaved] = useState<boolean>(false);
   const [seedGenerator, setSeedGenerator] = useState('Mnemonic');
 
-  const changeSeed = useCallback((value: string) => {
-    setSeed(value);
-    const newAddress = addressFromSeed(value, derivePath, defaultPairType);
-    setAddress(newAddress);
-  }, [setSeed]);
+  const changeSeed = useCallback(
+    (value: string) => {
+      setSeed(value);
+      const newAddress = addressFromSeed(value, derivePath, defaultPairType);
+      setAddress(newAddress);
+    },
+    [setSeed]
+  );
 
   const generateSeed = useCallback(() => {
     const seed = mnemonicGenerate();
     changeSeed(seed);
   }, [setSeed]);
 
-  const onSeedGeneratorChange = useCallback((value: string) => {
-    setSeedGenerator(value);
+  const onSeedGeneratorChange = useCallback((value) => {
+    setSeedGenerator(value.id);
   }, []);
 
-  const onSeedChange = useCallback(({ target }: ChangeEvent<HTMLTextAreaElement>) => {
-    changeSeed(target.value);
-  }, []);
+  const onSeedChange = useCallback(
+    ({ target }: ChangeEvent<HTMLTextAreaElement>) => {
+      changeSeed(target.value);
+    },
+    []
+  );
 
   useEffect(() => {
     generateSeed();
@@ -48,48 +68,59 @@ export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({ onFinish 
     onFinish({ seed, address });
   }, [seed, address]);
 
-  return (<>
-    <AddressWrapper>
-      <Avatar size={24} src={DefaultAvatar} />
-      <Text>{address}</Text>
-    </AddressWrapper>
-    <Heading size={'4'} >The secret seed value for this account</Heading>
-    <SeedGeneratorSelectWrapper>
-      <Select options={seedGenerators} value={seedGenerator} onChange={onSeedGeneratorChange} />
-      <Tooltip title={<>Find out more on <Link href='https://' title={'Polkadot Wiki'}>Polkadot Wiki</Link></>} >
-        <Icon path={Question} />
-      </Tooltip>
-    </SeedGeneratorSelectWrapper>
-    <InputSeedWrapper>
-      <SeedInput
-        onChange={onSeedChange}
-        value={seed}
-      />
-      <Button onClick={generateSeed} title='Regenerate seed' />
-    </InputSeedWrapper>
-    <TextStyled
-      color='additional-warning-500'
-      size='s'
-    >
-      Ensure that you keep this seed in a safe place. Anyone with access to it can re-create the account and gain full access to it.
-    </TextStyled>
-    <ConfirmWrapperRow>
-      <Checkbox label={'I have saved my mnemnic seed safely'}
-        checked={confirmSeedSaved}
-        onChange={setConfirmSeedSaved}
-        size={'m'}
-      />
-    </ConfirmWrapperRow>
-    <ButtonWrapper>
-      <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
-      <Button
-        disabled={!address || !confirmSeedSaved}
-        onClick={onNextClick}
-        role='primary'
-        title='Next'
-      />
-    </ButtonWrapper>
-  </>);
+  return (
+    <>
+      <AddressWrapper>
+        <Avatar size={24} src={DefaultAvatar} />
+        <Text>{address}</Text>
+      </AddressWrapper>
+      <Heading size={'4'}>The secret seed value for this account</Heading>
+      <SeedGeneratorSelectWrapper>
+        <Select
+          options={seedGenerators}
+          value={seedGenerator}
+          onChange={onSeedGeneratorChange}
+        />
+        <Tooltip
+          title={
+            <>
+              Find out more on{' '}
+              <Link href='https://' title={'Polkadot Wiki'}>
+                Polkadot Wiki
+              </Link>
+            </>
+          }
+        >
+          <Icon path={Question} />
+        </Tooltip>
+      </SeedGeneratorSelectWrapper>
+      <InputSeedWrapper>
+        <SeedInput onChange={onSeedChange} value={seed} />
+        <Button onClick={generateSeed} title='Regenerate seed' />
+      </InputSeedWrapper>
+      <TextStyled color='additional-warning-500' size='s'>
+        Ensure that you keep this seed in a safe place. Anyone with access to it
+        can re-create the account and gain full access to it.
+      </TextStyled>
+      <ConfirmWrapperRow>
+        <Checkbox
+          label={'I have saved my mnemnic seed safely'}
+          checked={confirmSeedSaved}
+          onChange={setConfirmSeedSaved}
+          size={'m'}
+        />
+      </ConfirmWrapperRow>
+      <ButtonWrapper>
+        <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
+        <Button
+          disabled={!address || !confirmSeedSaved}
+          onClick={onNextClick}
+          role='primary'
+          title='Next'
+        />
+      </ButtonWrapper>
+    </>
+  );
 };
 
 const AddressWrapper = styled.div`

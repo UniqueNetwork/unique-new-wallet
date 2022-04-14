@@ -1,28 +1,48 @@
-import React, { Dispatch, ReactElement, SetStateAction, useCallback, useState } from 'react';
+import React, {
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useCallback,
+  useState
+} from 'react';
 import styled from 'styled-components/macro';
 import { Button, Select, Tabs } from '@unique-nft/ui-kit';
-import { IconProps } from '@unique-nft/ui-kit/dist/cjs/types';
+import {
+  IconProps,
+  SelectOptionProps
+} from '@unique-nft/ui-kit/dist/cjs/types';
 
 import { FilterState } from './types';
 
-export type FilterChangeHandler<T> = Dispatch<SetStateAction<T | null>> | ((value: T | null) => void);
+export type FilterChangeHandler<T> =
+  | Dispatch<SetStateAction<T | null>>
+  | ((value: T | null) => void);
 
 type FiltersProps<T> = {
-  defaultSortingValue: string
-  sortingValue: string
+  defaultSortingValue: SelectOptionProps;
+  sortingValue: string;
   sortingOptions: {
-    id: string | number
-    title: string | number
-    iconRight?: IconProps
-  }[]
-  onFilterChange: FilterChangeHandler<T>
-  onSortingChange(value: string): void
-  filterComponent?: (props: { onFilterChange: FilterChangeHandler<T> }) => ReactElement | null
-}
+    id: string;
+    title: string;
+    iconRight?: IconProps;
+  }[];
+  onFilterChange: FilterChangeHandler<T>;
+  onSortingChange(value: SelectOptionProps): void;
+  filterComponent?: (props: {
+    onFilterChange: FilterChangeHandler<T>;
+  }) => ReactElement | null;
+};
 
 const tabs = ['Filter', 'Sort'];
 
-export function MobileFilters<T = FilterState>({ filterComponent, defaultSortingValue, sortingValue, sortingOptions, onFilterChange, onSortingChange }: FiltersProps<T>) {
+export function MobileFilters<T = FilterState>({
+  filterComponent,
+  defaultSortingValue,
+  sortingValue,
+  sortingOptions,
+  onFilterChange,
+  onSortingChange
+}: FiltersProps<T>) {
   const [isVisible, setIsVisible] = useState(false);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
@@ -40,35 +60,48 @@ export function MobileFilters<T = FilterState>({ filterComponent, defaultSorting
     onSortingChange(defaultSortingValue);
   }, [setIsVisible]);
 
-  return <>
-    <MobileFilterActionsWrapper>
-      {!isVisible && <Button role={'primary'} onClick={onVisibleButtonClick} title={'Filter and sort'} />}
-      {isVisible && <>
-        <Button onClick={onShowButtonClick} title={'Show'} />
-        <Button role={'danger'} onClick={onResetButtonClick} title={'Reset'} />
-      </>
-      }
-    </MobileFilterActionsWrapper>
-    {isVisible && <MobileFilterModal>
-      <Tabs
-        activeIndex={activeTabIndex}
-        labels={tabs}
-        onClick={setActiveTabIndex}
-      />
-      <Tabs
-        activeIndex={activeTabIndex}
-      >
-        {(filterComponent && filterComponent({ onFilterChange })) || <></>}
-        <SortStyled>
-          <Select
-            onChange={onSortingChange}
-            options={sortingOptions}
-            value={sortingValue}
+  return (
+    <>
+      <MobileFilterActionsWrapper>
+        {!isVisible && (
+          <Button
+            role={'primary'}
+            onClick={onVisibleButtonClick}
+            title={'Filter and sort'}
           />
-        </SortStyled>
-      </Tabs>
-    </MobileFilterModal>}
-  </>;
+        )}
+        {isVisible && (
+          <>
+            <Button onClick={onShowButtonClick} title={'Show'} />
+            <Button
+              role={'danger'}
+              onClick={onResetButtonClick}
+              title={'Reset'}
+            />
+          </>
+        )}
+      </MobileFilterActionsWrapper>
+      {isVisible && (
+        <MobileFilterModal>
+          <Tabs
+            activeIndex={activeTabIndex}
+            labels={tabs}
+            onClick={setActiveTabIndex}
+          />
+          <Tabs activeIndex={activeTabIndex}>
+            {(filterComponent && filterComponent({ onFilterChange })) || <></>}
+            <SortStyled>
+              <Select
+                onChange={onSortingChange}
+                options={sortingOptions}
+                value={sortingValue}
+              />
+            </SortStyled>
+          </Tabs>
+        </MobileFilterModal>
+      )}
+    </>
+  );
 }
 
 const MobileFilterActionsWrapper = styled.div`

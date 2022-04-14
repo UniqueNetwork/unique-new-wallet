@@ -30,7 +30,11 @@ export const PageLayout: FC = () => {
         {!isLoading && accounts.length === 0 && (
           <Welcome fetchAccounts={fetchAccounts} />
         )}
-        {!isLoading && accounts.length !== 0 && <Outlet />}
+        {!isLoading && accounts.length !== 0 && (
+          <div className={'container'}>
+            <Outlet />
+          </div>
+        )}
       </Layout>
     </LayoutStyled>
   );

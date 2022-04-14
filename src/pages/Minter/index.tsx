@@ -57,15 +57,17 @@ const sortingOptions: TOption[] = [
 
 const pageSize = 6;
 
-const defaultSortingValue = 'desc(CreationDate)';
+const defaultSortingValue = {
+  id: 'desc(CreationDate)'
+};
 
 export const MinterPage = () => {
   const [filterState, setFilterState] = useState<FilterState | null>();
-  const [sortingValue, setSortingValue] = useState<string>(defaultSortingValue);
-  const [searchValue, setSearchValue] = useState<string | number>();
+  const [sortingValue, setSortingValue] = useState(defaultSortingValue);
+  const [searchValue, setSearchValue] = useState<string>();
   const { offers, offersCount, isFetching, fetchMore, fetch } = useOffers({
     pageSize,
-    sort: [sortingValue]
+    sort: [sortingValue.id]
   });
 
   const hasMore = offers && offers.length < offersCount;
@@ -80,23 +82,23 @@ export const MinterPage = () => {
       fetchMore({
         page: Math.ceil(offers.length / pageSize) + 1,
         pageSize,
-        sort: [sortingValue],
+        sort: [sortingValue.id],
         ...filterState
       });
     }
   }, [fetchMore, offers, pageSize, isFetching]);
 
   const onSortingChange = useCallback(
-    (val: string) => {
-      setSortingValue(val);
-      fetch({ sort: [val], pageSize, page: 1, ...filterState });
+    (val) => {
+      setSortingValue(val.id);
+      fetch({ sort: [val.id], pageSize, page: 1, ...filterState });
     },
     [fetch]
   );
 
   const handleSearch = () => {
     fetch({
-      sort: [sortingValue],
+      sort: [sortingValue.id],
       pageSize,
       page: 1,
       searchText: searchValue?.toString(),
@@ -110,7 +112,7 @@ export const MinterPage = () => {
       fetch({
         pageSize,
         page: 1,
-        sort: [sortingValue],
+        sort: [sortingValue.id],
         ...(filterState || {}),
         ...filter
       });
@@ -129,7 +131,7 @@ export const MinterPage = () => {
             <SearchWrapper>
               <InputText
                 iconLeft={{ name: 'magnify', size: 16 }}
-                onChange={(val) => setSearchValue(val)}
+                onChange={(val: string) => setSearchValue(val)}
                 placeholder='Collection / token'
                 value={searchValue?.toString()}
               />
@@ -143,7 +145,7 @@ export const MinterPage = () => {
               <Select
                 onChange={onSortingChange}
                 options={sortingOptions}
-                value={sortingValue}
+                value={sortingValue.id}
               />
             </SortSelectWrapper>
           </SearchAndSortingWrapper>
@@ -166,7 +168,7 @@ export const MinterPage = () => {
       </MinterMainPageStyled>
       <MobileFilters
         defaultSortingValue={defaultSortingValue}
-        sortingValue={sortingValue}
+        sortingValue={sortingValue.id}
         sortingOptions={sortingOptions}
         onFilterChange={onFilterChange}
         onSortingChange={onSortingChange}

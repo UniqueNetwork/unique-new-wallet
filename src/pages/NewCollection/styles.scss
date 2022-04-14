@@ -1,0 +1,33 @@
+.collection-content-page {
+  margin-right: 30px;
+  width: 100%;
+}
+
+.collection-template {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  .unique-input-text,
+  .unique-textarea-text {
+    width: 100%;
+    margin-top: 30px;
+  }
+}
+
+.collection-sidebar {
+  max-width: 600px;
+  width: 100%;
+}
+
+.collection-content {
+  max-width: 70%;
+}
+
+.collection-content-page,
+.collection-sidebar {
+  box-sizing: border-box;
+  background: var(--color-additional-light);
+  padding: calc(var(--gap) * 2);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+  border-radius: calc(var(--gap) / 4);
+}

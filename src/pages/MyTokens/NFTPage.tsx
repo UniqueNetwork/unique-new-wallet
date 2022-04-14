@@ -74,13 +74,16 @@ const sortingOptions: TOption[] = [
 
 const pageSize = 1000;
 
-const defaultSortingValue = 'desc(CreationDate)';
+const defaultSortingValue = {
+  id: 'desc(CreationDate)'
+};
 
 export const NFTPage = () => {
   const [filterState, setFilterState] = useState<MyTokensFilterState | null>(
     null
   );
-  const [sortingValue, setSortingValue] = useState<string>(defaultSortingValue);
+  const [sortingValue, setSortingValue] =
+    useState<{ id: string }>(defaultSortingValue);
   const [searchValue, setSearchValue] = useState<string>();
   const [searchString, setSearchString] = useState<string>();
   const [selectOption, setSelectOption] = useState<TOption>();
@@ -134,14 +137,14 @@ export const NFTPage = () => {
 
   useEffect(() => {
     const option = sortingOptions.find((option) => {
-      return option.id === sortingValue;
+      return option.id === sortingValue.id;
     });
 
     setSelectOption(option);
   }, [sortingValue, setSelectOption]);
 
-  const onSortingChange = useCallback((val: string) => {
-    setSortingValue(val);
+  const onSortingChange = useCallback((val) => {
+    setSortingValue(val.id);
   }, []);
 
   const onChangeSearchValue = useCallback((value: string) => {
@@ -248,7 +251,7 @@ export const NFTPage = () => {
               <Select
                 onChange={onSortingChange}
                 options={sortingOptions}
-                value={sortingValue}
+                value={sortingValue.id}
               />
             </SortSelectWrapper>
           </SearchAndSortingWrapper>
@@ -265,7 +268,7 @@ export const NFTPage = () => {
         </MainContent>
         <MobileFilters<MyTokensFilterState>
           defaultSortingValue={defaultSortingValue}
-          sortingValue={sortingValue}
+          sortingValue={sortingValue.id}
           sortingOptions={sortingOptions}
           onFilterChange={setFilterState}
           onSortingChange={onSortingChange}
