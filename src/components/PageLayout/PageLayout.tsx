@@ -3,9 +3,8 @@ import { Outlet } from 'react-router-dom';
 import { Layout } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { Header } from '../';
-import { useFooter } from '../../hooks/useFooter';
 import Welcome from '../Welcome';
-import { useAccounts } from '../../hooks/useAccounts';
+import { useAccounts, useFooter } from '@app/hooks';
 import Loading from '../Loading';
 
 import './PageLayout.scss';
