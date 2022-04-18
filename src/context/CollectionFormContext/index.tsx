@@ -21,7 +21,7 @@ export const defaultAttributesWithTokenIpfs: ArtificialAttributeItemType[] = [
   }
 ];
 
-function CollectionForm ({ children }: Props): React.ReactElement<Props> | null {
+export function CollectionForm ({ children }: Props): React.ReactElement<Props> | null {
   const [attributes, setAttributes] = useState<ArtificialAttributeItemType[]>(defaultAttributesWithTokenIpfs);
   const [avatarImg, setAvatarImg] = useState<File | null>(null);
   const [description, setDescription] = useState<string>('');
@@ -73,5 +73,3 @@ function CollectionForm ({ children }: Props): React.ReactElement<Props> | null 
 }
 
 export * from './CollectionFormContext';
-
-export default React.memo(CollectionForm);

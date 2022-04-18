@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Accounts, Faq } from '@app/pages';
+import { Accounts, CreateCollection, Faq } from '@app/pages';
+import { CollectionForm } from '@app/context';
 
 export interface RouteItem {
   children?: RouteItem[];
@@ -95,7 +96,11 @@ export const routes: RouteConfig = {
       path: '/accounts',
     },
     {
-      component: <div>Create collection</div>,
+      component: (
+        <CollectionForm>
+          <CreateCollection />
+        </CollectionForm>
+      ),
       name: 'Create collection',
       path: '/create-collection',
       children: [

@@ -1,4 +1,5 @@
 export * from './Accounts';
+export * from './CreateCollection';
 export * from './errors';
 export * from './FAQ';
 export * from './Minter';
