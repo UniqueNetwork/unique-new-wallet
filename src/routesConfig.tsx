@@ -38,24 +38,24 @@ export const routes: RouteConfig = {
           component: <div>Nfts</div>,
           index: true,
           name: 'NFTs',
-          path: '/nft',
+          path: 'nft',
           children: [
             {
               component: <div>NftId</div>,
               name: '',
-              path: '/:collectionId/:nftId',
+              path: ':collectionId/:nftId',
             },
             {
               component: <div>Create a NFT</div>,
               name: 'Create a NFT',
-              path: '/create-nft',
+              path: 'create-nft',
             }
           ]
         },
         {
           component: <div>Coins</div>,
           name: 'Coins',
-          path: '/coins',
+          path: 'coins',
         }
       ]
     },
@@ -67,17 +67,17 @@ export const routes: RouteConfig = {
         {
           component: <div>Collection id</div>,
           name: '',
-          path: '/:collectionId',
+          path: ':collectionId',
           children: [
             {
               component: <div>NFTs</div>,
               name: 'NFTs',
-              path: '/nft',
+              path: 'nft',
             },
             {
               component: <div>Settings</div>,
               name: 'Settings',
-              path: '/settings',
+              path: 'settings',
             },
           ]
         },
@@ -107,12 +107,12 @@ export const routes: RouteConfig = {
         {
           component: <div>Main information</div>,
           name: 'Main information',
-          path: '/main-information',
+          path: 'main-information',
         },
         {
           component: <div>Nft attributes</div>,
           name: 'Nft attributes',
-          path: '/nft-attributes',
+          path: 'nft-attributes',
         },
       ]
     }

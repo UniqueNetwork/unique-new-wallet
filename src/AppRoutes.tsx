@@ -15,12 +15,20 @@ export const AppRoutes = () => (
             key={`${menuRoute.name}${menuRoute.path}`}
             path={menuRoute.path}
           >
-            { menuRoute.children?.map((menuChild: MenuRoute) => (
+            { menuRoute.children?.map((menuChild1: MenuRoute) => (
               <Route
-                element={menuChild.component}
-                key={`${menuChild.name}${menuChild.path}`}
-                path={`${menuRoute.path}${menuChild.path}`}
-              />
+                element={menuChild1.component}
+                key={`${menuChild1.name}${menuChild1.path}`}
+                path={`${menuRoute.path}${menuChild1.path}`}
+              >
+                {menuChild1?.children?.map((menuChild2: RouteItem) => (
+                  <Route
+                    element={menuChild2.component}
+                    key={`${menuChild2.name}${menuChild2.path}`}
+                    path={`${menuChild2.path}${menuChild2.path}${menuChild2.path}`}
+                  />
+                ))}
+              </Route>
             ))}
           </Route>
         ))}
