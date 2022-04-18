@@ -9,3 +9,14 @@ export enum MinterType {
   delist = 'Cancel sell',
   delistAuction = 'Cancel auction'
 }
+
+export type ArtificialFieldType = 'string' | 'enum' | 'repeated';
+export type ArtificialFieldRuleType = 'optional' | 'required';
+
+export type ArtificialAttributeItemType = {
+  id: number,
+  fieldType: ArtificialFieldType;
+  name: string;
+  rule: ArtificialFieldRuleType;
+  values: string[];
+}

@@ -38,6 +38,18 @@ export const routes: RouteConfig = {
           index: true,
           name: 'NFTs',
           path: '/nft',
+          children: [
+            {
+              component: <div>NftId</div>,
+              name: '',
+              path: '/:collectionId/:nftId',
+            },
+            {
+              component: <div>Create a NFT</div>,
+              name: 'Create a NFT',
+              path: '/create-nft',
+            }
+          ]
         },
         {
           component: <div>Coins</div>,
@@ -50,6 +62,25 @@ export const routes: RouteConfig = {
       component: <div>My collections</div>,
       name: 'My collections',
       path: '/my-collections',
+      children: [
+        {
+          component: <div>Collection id</div>,
+          name: '',
+          path: '/:collectionId',
+          children: [
+            {
+              component: <div>NFTs</div>,
+              name: 'NFTs',
+              path: '/nft',
+            },
+            {
+              component: <div>Settings</div>,
+              name: 'Settings',
+              path: '/settings',
+            },
+          ]
+        },
+      ]
     },
     {
       component: <Faq />,
@@ -78,47 +109,6 @@ export const routes: RouteConfig = {
           name: 'Nft attributes',
           path: '/nft-attributes',
         },
-      ]
-    },
-    {
-      component: <div>Create a NFT</div>,
-      name: 'Create a NFT',
-      path: '/create-nft',
-    },
-    {
-      component: <div>Collection</div>,
-      name: 'Collection',
-      path: '/collection',
-      children: [
-        {
-          component: <div>Collection id</div>,
-          name: '',
-          path: '/:collectionId',
-          children: [
-            {
-              component: <div>NFTs</div>,
-              name: 'NFTs',
-              path: '/nft',
-            },
-            {
-              component: <div>Settings</div>,
-              name: 'Settings',
-              path: '/settings',
-            },
-          ]
-        },
-      ]
-    },
-    {
-      component: <div>NFT</div>,
-      name: 'NFT',
-      path: '/nft',
-      children: [
-        {
-          component: <div>NftId</div>,
-          name: '',
-          path: '/:nftId',
-        }
       ]
     }
   ]
