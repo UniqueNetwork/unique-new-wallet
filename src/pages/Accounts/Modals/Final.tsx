@@ -4,9 +4,8 @@ import { Avatar, Button, Text } from '@unique-nft/ui-kit';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import styled from 'styled-components/macro';
 import { defaultPairType, derivePath } from './CreateAccount';
-import { AdditionalWarning100 } from '../../../styles/colors';
-import { Tooltip } from '../../../components/Tooltip/Tooltip';
-import { Icon } from '../../../components/Icon/Icon';
+import { AdditionalWarning100 } from '@app/styles/colors';
+import { Icon, Tooltip } from '@app/components';
 import Question from '../../../static/icons/question.svg';
 
 export const FinalModal: FC<TCreateAccountBodyModalProps> = ({ accountProperties, onFinish, onGoBack }) => {

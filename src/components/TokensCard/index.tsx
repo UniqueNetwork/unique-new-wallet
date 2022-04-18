@@ -3,10 +3,10 @@ import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { Picture } from '..';
-import { useApi } from '../../hooks/useApi';
+import { useApi } from '@app/hooks';
 import Loading from '../Loading';
-import { NFTToken } from '../../api/chainApi/unique/types';
-import { formatKusamaBalance } from '../../utils/textUtils';
+import { NFTToken } from '@app/api/chainApi/unique/types';
+import { formatKusamaBalance } from '@app/utils/textUtils';
 import config from '../../config';
 
 export type TTokensCard = {

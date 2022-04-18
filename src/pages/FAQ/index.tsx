@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { Heading } from '@unique-nft/ui-kit';
-import { PagePaper } from '../../components/PagePaper/PagePaper';
 
-const Faq = (): React.ReactElement<void> => {
+import { Heading } from '@unique-nft/ui-kit';
+import { PagePaper } from '@app/components';
+
+export const Faq = (): React.ReactElement<void> => {
   return (
     <PagePaper>
       <MainWrapper>

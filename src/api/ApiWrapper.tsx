@@ -1,27 +1,24 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { GqlClient } from './graphQL/gqlClient';
+import RpcClient from './chainApi/rpcClient';
 import { useParams } from 'react-router-dom';
-import { IGqlClient } from './graphQL/gqlClient';
-import { IRpcClient } from './chainApi/types';
 import { ApiContextProps, ApiProvider, ChainData } from './ApiContext';
 import config from '../config';
 import { defaultChainKey } from '../utils/configParser';
-import { gqlClient as gql, rpcClient as rpc } from '.';
 import { getSettings } from './restApi/settings/settings';
 import { ApolloProvider } from '@apollo/client';
-import AuctionSocketProvider from './restApi/auction/AuctionSocketProvider';
+
+const gqlClient = new GqlClient('');
+const rpcClient = new RpcClient();
 
 interface ChainProviderProps {
   children: React.ReactNode;
-  gqlClient?: IGqlClient;
-  rpcClient?: IRpcClient;
 }
 
 const { chains, defaultChain } = config;
 
-const ApiWrapper = ({
+export const ApiWrapper = ({
   children,
-  gqlClient = gql,
-  rpcClient = rpc
 }: ChainProviderProps) => {
   const [chainData, setChainData] = useState<ChainData>();
   const [isRpcClientInitialized, setRpcClientInitialized] =
@@ -69,15 +66,11 @@ const ApiWrapper = ({
       rawRpcApi: rpcClient.rawUniqRpcApi,
       rpcClient
     };
-  }, [isRpcClientInitialized, chainId, chainData]);
+  }, [isRpcClientInitialized, chainData, chainId]);
 
   return (
     <ApiProvider value={value}>
-      <AuctionSocketProvider url={config.uniqueApiUrl}>
-        <ApolloProvider client={gqlClient.client}>{children}</ApolloProvider>
-      </AuctionSocketProvider>
+      <ApolloProvider client={gqlClient.client}>{children}</ApolloProvider>
     </ApiProvider>
   );
 };
-
-export default ApiWrapper;

@@ -3,16 +3,15 @@ import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { Picture } from '..';
-import { useApi } from '../../hooks/useApi';
+import { useAccounts, useApi } from '@app/hooks';
 import Loading from '../Loading';
-import { NFTToken } from '../../api/chainApi/unique/types';
-import { formatKusamaBalance } from '../../utils/textUtils';
-import { Offer } from '../../api/restApi/offers/types';
-import { Icon } from '../Icon/Icon';
+import { NFTToken } from '@app/api/chainApi/unique/types';
+import { formatKusamaBalance } from '@app/utils/textUtils';
+import { Offer } from '@app/api/restApi/offers/types';
+import { Icon } from '@app/components';
 import Kusama from '../../static/icons/logo-kusama.svg';
-import { compareEncodedAddresses } from '../../api/chainApi/utils/addressUtils';
-import { useAccounts } from '../../hooks/useAccounts';
-import { timeDifference } from '../../utils/timestampUtils';
+import { compareEncodedAddresses } from '@app/api/chainApi/utils/addressUtils';
+import { timeDifference } from '@app/utils/timestampUtils';
 import config from '../../config';
 
 export type TTokensCard = {

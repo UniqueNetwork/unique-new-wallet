@@ -22,7 +22,7 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "paths": {
-      "@app/*": ["./*"],
+      "@app/*": ["./*"]
     }
   },
   "include": [

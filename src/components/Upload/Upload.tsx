@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import { Text } from '@unique-nft/ui-kit';
 
 import UploadIcon from '../../static/icons/upload.svg';
-import { Icon } from '../Icon/Icon';
+import { Icon } from '@app/components';
 
 interface UploadProps {
   onChange(file: File): void;

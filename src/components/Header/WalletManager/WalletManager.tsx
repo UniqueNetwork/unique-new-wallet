@@ -4,15 +4,15 @@ import { Button, Text } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '../../../hooks/useAccounts';
 import { DropdownSelect, DropdownSelectProps } from './AccountSelect/DropdownSelect';
-import { Account } from '../../../account/AccountContext';
+import { Account } from '@app/account';
 import Loading from '../../Loading';
-import { formatKusamaBalance, shortcutText } from '../../../utils/textUtils';
+import { formatKusamaBalance, shortcutText } from '@app/utils/textUtils';
 import { Avatar } from '../../Avatar/Avatar';
-import { Icon } from '../../Icon/Icon';
+import { Icon } from '@app/components';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import Gear from '../../../static/icons/gear.svg';
 import { BalanceOption } from './types';
-import { useApi } from '../../../hooks/useApi';
+import { useApi } from '@app/hooks';
 import useDeviceSize, { DeviceSize } from '../../../hooks/useDeviceSize';
 
 const tokenSymbol = 'KSM';

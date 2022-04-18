@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components/macro';
 import { Text } from '@unique-nft/ui-kit';
 
-import { Icon } from './Icon/Icon';
+import { Icon } from '@app/components';
 import NoItemsIcon from '../static/icons/no-items.svg';
 
 const NoItems: FC = () => {
