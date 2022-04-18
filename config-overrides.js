@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const path = require("path");
+const path = require('path');
 
 // https://github.com/polkadot-js/ui/issues/592
 // Required to load avatar static images
