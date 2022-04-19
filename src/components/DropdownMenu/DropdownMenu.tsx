@@ -3,7 +3,7 @@ import { DropdownMenuItemProps, DropdownMenuProps } from './types';
 import styled from 'styled-components/macro';
 import { Button } from '@unique-nft/ui-kit';
 import CaretDown from '../../static/icons/caret-down.svg';
-import { Icon } from '../Icon/Icon';
+import { Icon } from '@app/components';
 
 export const DropdownMenu: FC<DropdownMenuProps> = ({ children, ...props }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

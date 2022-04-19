@@ -1,8 +1,8 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
 
-import { Grey500 } from '../../styles/colors';
-import { Icon } from '../Icon/Icon';
+import { Grey500 } from '@app/styles/colors';
+import { Icon } from '@app/components';
 import Eye from '../../static/icons/eye.svg';
 import EyeClosed from '../../static/icons/eye-closed.svg';
 

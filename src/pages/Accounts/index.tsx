@@ -3,16 +3,13 @@ import { Button, Text, InputText, Avatar } from '@unique-nft/ui-kit';
 import { TableColumnProps } from '@unique-nft/ui-kit/dist/cjs/types';
 import styled from 'styled-components/macro';
 
-import { useAccounts } from '../../hooks/useAccounts';
+import { useAccounts } from '@app/hooks';
 import DefaultAvatar from '../../static/icons/default-avatar.svg';
 import ArrowUpRight from '../../static/icons/arrow-up-right.svg';
 import config from '../../config';
-import { Icon } from '../../components/Icon/Icon';
 import { TransferFundsModal } from './Modals/SendFunds';
-import { Table } from '../../components/Table';
-import { formatKusamaBalance } from '../../utils/textUtils';
-import { PagePaper } from '../../components/PagePaper/PagePaper';
-import { AccountsGroupButton } from '../../components/AccountsGroupButton';
+import { formatKusamaBalance } from '@app/utils/textUtils';
+import { AccountsGroupButton, Icon, PagePaper, Table } from '@app/components';
 
 const tokenSymbol = 'KSM';
 
@@ -87,7 +84,7 @@ const getAccountsColumns = ({
   }
 ];
 
-export const AccountsPage = () => {
+export const Accounts = () => {
   const { accounts, fetchAccounts } = useAccounts();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);

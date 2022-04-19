@@ -1,18 +1,17 @@
-import { Text } from '@unique-nft/ui-kit';
-import { FC, useCallback, useState } from 'react';
+import { VFC, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
+import { useScreenWidthFromThreshold } from '@app/hooks';
+import menu from '@app/static/icons/menu.svg';
+import { MenuRoute, routes } from '@app/routesConfig';
 
-import { useScreenWidthFromThreshold } from '../../hooks/useScreenWidthFromThreshold';
-import menu from '../../static/icons/menu.svg';
 import { WalletManager } from './WalletManager/WalletManager';
-import { TMenuItems } from '../PageLayout';
+import MenuLink from './MenuLink';
+import MobileMenuLink from "@app/components/Header/MobileMenuLink";
 
-interface HeaderProps {
-  activeItem: TMenuItems;
-}
+const { base, menuRoutes } = routes;
 
-export const Header: FC<HeaderProps> = ({ activeItem }) => {
+export const Header: VFC = () => {
   const { lessThanThreshold: showMobileMenu } =
     useScreenWidthFromThreshold(1279);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
@@ -24,43 +23,35 @@ export const Header: FC<HeaderProps> = ({ activeItem }) => {
   return (
     <HeaderStyled>
       <LeftSideColumn>
-        {showMobileMenu && <MenuIcon onClick={mobileMenuToggle} src={menu} />}
-        <Link to={'/'}>
+        {showMobileMenu && (
+          <MenuIcon onClick={mobileMenuToggle} src={menu} />
+        )}
+        <Link to={base}>
           <LogoIcon src={'/logos/logo.svg'} />
         </Link>
+
         {!showMobileMenu && (
           <nav>
-            <Link to='/'>
-              <Text
-                color={
-                  activeItem === 'Minter' ? 'additional-dark' : 'primary-500'
-                }
-                size='m'
-                weight='medium'
-              >
-                Minter
-              </Text>
-            </Link>
+            { menuRoutes.map((menuRoute: MenuRoute) => (
+              <MenuLink key={menuRoute.name} name={menuRoute.name} path={menuRoute.path} />
+            ))}
           </nav>
         )}
       </LeftSideColumn>
       <RightSide>
         <WalletManager />
       </RightSide>
+
       {showMobileMenu && mobileMenuIsOpen && (
         <MobileMenu>
-          <LinkWrapper onClick={mobileMenuToggle}>
-            <Link to='/'>
-              <TextStyled
-                $active={activeItem === 'Minter'}
-                color='additional-dark'
-                size='m'
-                weight='medium'
-              >
-                Minter
-              </TextStyled>
-            </Link>
-          </LinkWrapper>
+          { menuRoutes.map((menuRoute: MenuRoute) => (
+            <MobileMenuLink
+              key={menuRoute.name}
+              mobileMenuToggle={mobileMenuToggle}
+              name={menuRoute.name}
+              path={menuRoute.path}
+            />
+          ))}
         </MobileMenu>
       )}
     </HeaderStyled>
@@ -98,13 +89,7 @@ const RightSide = styled.div`
   align-items: center;
 `;
 
-const LinkWrapper = styled.div`
-  display: contents;
 
-  a {
-    margin-right: 0;
-  }
-`;
 
 const MobileMenu = styled.div`
   position: absolute;
@@ -120,23 +105,4 @@ const MobileMenu = styled.div`
   z-index: 9;
 `;
 
-const TextStyled = styled(Text)<{ $active?: boolean }>`
-  && {
-    display: flex;
-    border-radius: 4px;
-    padding: 8px 16px;
-    background-color: ${(props) =>
-      props.$active ? 'var(--color-primary-500)' : 'transparent'};
-    color: ${(props) =>
-      props.$active
-        ? 'var(--color-additional-light)'
-        : 'var(--color-additional-dark)'};
 
-    &:hover {
-      color: ${(props) =>
-        props.$active
-          ? 'var(--color-additional-light)'
-          : 'var(--color-primary-500)'};
-    }
-  }
-`;

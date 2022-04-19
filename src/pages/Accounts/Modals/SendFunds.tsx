@@ -10,14 +10,13 @@ import {
 import styled from 'styled-components/macro';
 
 import { TTransferFunds } from './types';
-import { useAccounts } from '../../../hooks/useAccounts';
+import { useAccounts } from '@app/hooks';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
-import { AdditionalWarning100 } from '../../../styles/colors';
-import { SelectInput } from '../../../components/SelectInput/SelectInput';
-import { Account } from '../../../account/AccountContext';
-import DefaultMinterStages from '../../Token/Modals/StagesModal';
-import { useTransferFundsStages } from '../../../hooks/accountStages/useTransferFundsStages';
-import { formatKusamaBalance } from '../../../utils/textUtils';
+import { AdditionalWarning100 } from '@app/styles/colors';
+import { SelectInput } from '@app/components/SelectInput/SelectInput';
+import { Account } from '@app/account';
+import { useTransferFundsStages } from '@app/hooks/accountStages/useTransferFundsStages';
+import { formatKusamaBalance } from '@app/utils/textUtils';
 
 const tokenSymbol = 'KSM';
 
@@ -40,36 +39,18 @@ export const TransferFundsModal: FC<TransferFundsModalProps> = ({
     (_sender: string, _recipient: string, _amount: string) => {
       setRecipient(_recipient);
       setAmount(_amount);
-      setStatus('transfer-stage');
     },
     [setStatus, setRecipient, setAmount]
   );
 
-  const onFinishStages = useCallback(() => {
-    setStatus('ask');
-  }, [onFinish]);
-  if (status === 'ask') {
-    return (
-      <AskTransferFundsModal
-        isVisible={isVisible}
-        onFinish={onTransfer}
-        senderAddress={senderAddress || ''}
-        onClose={onFinish}
-      />
-    );
-  }
-  if (status === 'transfer-stage') {
-    return (
-      <TransferFundsStagesModal
-        isVisible={isVisible}
-        sender={senderAddress || ''}
-        recipient={recipient}
-        amount={amount}
-        onFinish={onFinishStages}
-      />
-    );
-  }
-  return null;
+  return (
+    <AskTransferFundsModal
+      isVisible={isVisible}
+      onFinish={onTransfer}
+      senderAddress={senderAddress || ''}
+      onClose={onFinish}
+    />
+  );
 };
 
 type AskSendFundsModalProps = {
@@ -177,31 +158,6 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
           title='Confirm'
         />
       </ButtonWrapper>
-    </Modal>
-  );
-};
-
-type TransferFundsStagesModalProps = {
-  isVisible: boolean;
-  onFinish: () => void;
-};
-
-const TransferFundsStagesModal: FC<
-  TransferFundsStagesModalProps & TTransferFunds
-> = ({ isVisible, onFinish, sender, amount, recipient }) => {
-  const { stages, status, initiate } = useTransferFundsStages(sender);
-  useEffect(() => {
-    initiate({ sender, recipient, amount });
-  }, [sender, recipient, amount]);
-  return (
-    <Modal isVisible={isVisible} isClosable={false}>
-      <div>
-        <DefaultMinterStages
-          stages={stages}
-          status={status}
-          onFinish={onFinish}
-        />
-      </div>
     </Modal>
   );
 };

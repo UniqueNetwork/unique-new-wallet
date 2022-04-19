@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 
 // https://github.com/polkadot-js/ui/issues/592
 // Required to load avatar static images
@@ -14,7 +15,11 @@ module.exports = function override(config) {
         "url": require.resolve("url"),
     })
     config.resolve.fallback = fallback;
-    config.resolve.alias = {...config.resolve.alias, process: 'process/'};
+    config.resolve.alias = {
+        ...config.resolve.alias,
+        process: 'process/',
+        '@app': path.resolve(__dirname, './src/'),
+    };
     config.ignoreWarnings = [/Failed to parse source map/];
     config.plugins = (config.plugins || []).concat([
         new webpack.ProvidePlugin({

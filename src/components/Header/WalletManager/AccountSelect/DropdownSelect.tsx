@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Icon } from '../../../Icon/Icon';
-import TriangleDown from '../../../../static/icons/triangle-down.svg';
+import { Icon } from '@app/components';
+import TriangleDown from '@app/static/icons/triangle-down.svg';
 
 export interface DropdownSelectProps<T> {
   className?: string

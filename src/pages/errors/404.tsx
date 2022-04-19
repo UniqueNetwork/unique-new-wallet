@@ -1,5 +1,5 @@
 import { Heading } from '@unique-nft/ui-kit';
-import { PagePaper } from '../../components/PagePaper/PagePaper';
+import { PagePaper } from '@app/components';
 
 export const Error404 = () => {
   return (
