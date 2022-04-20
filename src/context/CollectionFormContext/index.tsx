@@ -3,7 +3,8 @@
 
 import React, { useMemo, useState } from 'react';
 
-import { ArtificialAttributeItemType } from '@app/types';
+import { ArtificialAttributeItemType, AttributeItemType, ProtobufAttributeType } from '@app/types';
+import { convertArtificialAttributesToProtobuf, fillProtobufJson, str2vec } from '@app/utils';
 
 import CollectionFormContext from './CollectionFormContext';
 
@@ -25,8 +26,8 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
   const [attributes, setAttributes] = useState<ArtificialAttributeItemType[]>(defaultAttributesWithTokenIpfs);
   const [avatarImg, setAvatarImg] = useState<File | null>(null);
   const [description, setDescription] = useState<string>('');
-  const [coverImg, setCoverImg] = useState<File | null>(null);
-  const [imgAddress, setImgAddress] = useState<string>();
+  const [coverImgFile, setCoverImgFile] = useState<File | null>(null);
+  const [coverImgAddress, setCoverImgAddress] = useState<string>();
   const [name, setName] = useState<string>('');
   const [ownerCanTransfer, setOwnerCanTransfer] = useState<boolean>(false);
   const [ownerCanDestroy, setOwnerCanDestroy] = useState<boolean>(true);
@@ -36,21 +37,52 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
   const [tokenImg, setTokenImg] = useState<File | null>(null);
   const [mintFest, setMintFest] = useState<boolean>(false);
 
+  const mainInformationDefaultValues = {
+    name,
+    description,
+    tokenPrefix,
+    coverImgAddress
+  };
+
+  const converted: AttributeItemType[] = convertArtificialAttributesToProtobuf(attributes);
+  const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
+
+  const nftAttributesDefaultValues = {
+    constOnChainSchema: JSON.stringify(protobufJson),
+    limits: {
+      ownerCanDestroy,
+      ownerCanTransfer,
+      tokenLimit
+    },
+  };
+
+  const collectionFull = {
+    ...nftAttributesDefaultValues,
+    description: str2vec(description),
+    mode: { nft: null },
+    name: str2vec(name),
+    schemaVersion: 'Unique',
+    tokenPrefix: str2vec(tokenPrefix),
+    variableOnChainSchema: JSON.stringify({
+      collectionCover: coverImgAddress
+    })
+  };
+
   const value = useMemo(() => ({
     attributes,
     avatarImg,
-    coverImg,
+    coverImgFile,
     description,
-    imgAddress,
+    coverImgAddress,
     mintFest,
     name,
     ownerCanDestroy,
     ownerCanTransfer,
     setAttributes,
     setAvatarImg,
-    setCoverImg,
+    setCoverImgFile,
     setDescription,
-    setImgAddress,
+    setCoverImgAddress,
     setMintFest,
     setName,
     setOwnerCanDestroy,
@@ -63,7 +95,7 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
     tokenLimit,
     tokenPrefix,
     variableSchema
-  }), [attributes, avatarImg, coverImg, description, imgAddress, mintFest, name, ownerCanDestroy, ownerCanTransfer, tokenImg, tokenLimit, tokenPrefix, variableSchema]);
+  }), [attributes, avatarImg, coverImgFile, description, coverImgAddress, mintFest, name, ownerCanDestroy, ownerCanTransfer, tokenImg, tokenLimit, tokenPrefix, variableSchema]);
 
   return (
     <CollectionFormContext.Provider value={value}>
