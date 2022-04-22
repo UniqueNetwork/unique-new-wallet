@@ -63,3 +63,10 @@ export type ProtobufAttributeType = {
     }
   }
 }
+
+export type MainInformationInitialValues = {
+  name: string;
+  description?: string;
+  tokenPrefix: string;
+  coverImgAddress?: string;
+}

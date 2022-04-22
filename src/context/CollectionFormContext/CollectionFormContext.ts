@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import type { ArtificialAttributeItemType } from '@app/types';
+import { FormikProps } from 'formik';
+import type { ArtificialAttributeItemType, MainInformationInitialValues } from '@app/types';
 
-export type AttributesCallBackType = (prevAttributes: ArtificialAttributeItemType[]) => ArtificialAttributeItemType[]
+export type AttributesCallBackType = (prevAttributes: ArtificialAttributeItemType[]) => ArtificialAttributeItemType[];
 
 export interface CollectionFormProps {
   attributes: ArtificialAttributeItemType[];
@@ -13,6 +14,7 @@ export interface CollectionFormProps {
   coverImgAddress?: string;
   description: string;
   imgAddress?: string;
+  mainInformationForm: FormikProps<MainInformationInitialValues>;
   mintFest: boolean;
   name: string;
   ownerCanDestroy: boolean;

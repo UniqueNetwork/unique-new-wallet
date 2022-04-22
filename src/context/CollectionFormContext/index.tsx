@@ -2,11 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useMemo, useState } from 'react';
-
-import { ArtificialAttributeItemType, AttributeItemType, ProtobufAttributeType } from '@app/types';
+import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import {
+  ArtificialAttributeItemType,
+  AttributeItemType,
+  MainInformationInitialValues,
+  ProtobufAttributeType
+} from '@app/types';
 import { convertArtificialAttributesToProtobuf, fillProtobufJson, str2vec } from '@app/utils';
 
 import CollectionFormContext from './CollectionFormContext';
+
 
 interface Props {
   children: React.ReactNode;
@@ -23,6 +30,7 @@ export const defaultAttributesWithTokenIpfs: ArtificialAttributeItemType[] = [
 ];
 
 export function CollectionForm ({ children }: Props): React.ReactElement<Props> | null {
+  const navigate = useNavigate();
   const [attributes, setAttributes] = useState<ArtificialAttributeItemType[]>(defaultAttributesWithTokenIpfs);
   const [avatarImg, setAvatarImg] = useState<File | null>(null);
   const [description, setDescription] = useState<string>('');
@@ -37,7 +45,7 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
   const [tokenImg, setTokenImg] = useState<File | null>(null);
   const [mintFest, setMintFest] = useState<boolean>(false);
 
-  const mainInformationDefaultValues = {
+  const mainInformationDefaultValues: MainInformationInitialValues = {
     name,
     description,
     tokenPrefix,
@@ -68,12 +76,31 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
     })
   };
 
+  const mainInformationForm = useFormik({
+    initialValues: mainInformationDefaultValues,
+    validate: (values) => {
+      const errors: Partial<MainInformationInitialValues> = {};
+      if (values.name.length === 0) {
+        errors.name = 'Field required';
+      }
+      if (values.tokenPrefix.length === 0) {
+        errors.tokenPrefix = 'Field required';
+      }
+      return errors;
+    },
+    validateOnBlur: true,
+    onSubmit: () => {
+      navigate('/create-collection/nft-attributes');
+    }
+  });
+
   const value = useMemo(() => ({
     attributes,
     avatarImg,
     coverImgFile,
     coverImgAddress,
     description,
+    mainInformationForm,
     mintFest,
     name,
     ownerCanDestroy,
@@ -95,7 +122,7 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
     tokenLimit,
     tokenPrefix,
     variableSchema
-  }), [attributes, avatarImg, coverImgFile, description, coverImgAddress, mintFest, name, ownerCanDestroy, ownerCanTransfer, tokenImg, tokenLimit, tokenPrefix, variableSchema]);
+  }), [attributes, avatarImg, coverImgFile, coverImgAddress, description, mainInformationForm, mintFest, name, ownerCanDestroy, ownerCanTransfer, tokenImg, tokenLimit, tokenPrefix, variableSchema]);
 
   return (
     <CollectionFormContext.Provider value={value}>

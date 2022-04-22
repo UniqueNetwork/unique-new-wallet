@@ -1,4 +1,3 @@
-export * from './classNames';
 export * from './configParser';
 export * from './getAttributes';
 export * from './helpers';

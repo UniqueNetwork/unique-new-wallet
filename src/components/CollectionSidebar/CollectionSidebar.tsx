@@ -1,19 +1,23 @@
 import { Heading } from '@unique-nft/ui-kit';
-import { SidebarPreview } from '../SidebarPreview';
-import srcImg from '../../../../static/icons/empty-image.svg';
+import styled from 'styled-components';
+import classNames from 'classnames';
+import { SidebarPreview } from '@app/components';
+import { MainInformationInitialValues } from '@app/types';
+
+import srcImg from '@app/static/icons/empty-image.svg';
 import './styles.scss';
-import { MainInformationValues } from '../../NewCollection';
 
 const attributes = ['Name', 'Gender', 'Traits'];
 
 type Props = {
-  mainInformationValue: MainInformationValues;
+  className?: string;
+  mainInformationValue: MainInformationInitialValues;
 };
 
-export const CollectionSidebar = ({ mainInformationValue }: Props) => {
-  const { name, description, symbol } = mainInformationValue;
+const CollectionSidebarComponent = ({ className, mainInformationValue }: Props) => {
+  const { name, description, tokenPrefix } = mainInformationValue;
   return (
-    <>
+    <div className={classNames('collection-sidebar', className)}>
       <div>
         <Heading size={'3'}>Collection preview</Heading>
         <SidebarPreview
@@ -26,8 +30,8 @@ export const CollectionSidebar = ({ mainInformationValue }: Props) => {
         <Heading size={'3'}>NFT preview</Heading>
         <SidebarPreview
           srcImg={srcImg}
-          description={'Сollection name'}
-          title={symbol || 'Symbol'}
+          description={'Collection name'}
+          title={tokenPrefix || 'tokenPrefix'}
         >
           <div className='attributes'>
             <div className='title'>Attribute names</div>
@@ -39,6 +43,14 @@ export const CollectionSidebar = ({ mainInformationValue }: Props) => {
           </div>
         </SidebarPreview>
       </div>
-    </>
+    </div>
   );
 };
+
+export const CollectionSidebar = styled(CollectionSidebarComponent)`
+  margin-top: 40px;
+
+  .attributes {
+    margin-top: 15px;
+  }
+`;

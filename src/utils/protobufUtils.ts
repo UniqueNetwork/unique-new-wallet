@@ -16,7 +16,7 @@ export const convertArtificialAttributesToProtobuf = (attributes: ArtificialAttr
 
     return { ...attr } as AttributeItemType;
   });
-}
+};
 
 export const fillProtobufJson = (attrs: AttributeItemType[]): ProtobufAttributeType => {
   const protobufJson: ProtobufAttributeType = {

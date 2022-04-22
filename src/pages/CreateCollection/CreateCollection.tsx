@@ -1,21 +1,29 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import classNames from 'classnames';
-import { Outlet } from 'react-router-dom';
+import styled from 'styled-components';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 interface CreateCollectionProps {
   className?: string;
 }
 
-export const CreateCollection: FC<CreateCollectionProps> = (props) => {
+const CreateCollectionComponent: FC<CreateCollectionProps> = (props) => {
   const { className } = props;
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === '/create-collection') {
+      navigate('main-information');
+    }
+  }, []);
 
   return (
     <div className={classNames('create-collection', className)}>
-      Create collection
-
       <Outlet />
     </div>
   );
 };
 
-export default CreateCollection;
+export const CreateCollection = styled(CreateCollectionComponent)`
+`;

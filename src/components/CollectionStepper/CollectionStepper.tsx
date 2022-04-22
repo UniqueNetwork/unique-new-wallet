@@ -11,7 +11,7 @@ export const CollectionStepper = ({
   activeStep
 }: Pick<TBaseStepperProps, 'activeStep'>) => {
   return (
-    <div className={'collection-stepper'}>
+    <div className='collection-stepper'>
       <Stepper steps={steps} activeStep={activeStep} />
     </div>
   );

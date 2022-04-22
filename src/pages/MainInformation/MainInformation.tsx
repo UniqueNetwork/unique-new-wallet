@@ -1,4 +1,4 @@
-import { CollectionStepper } from '../../components/CollectionStepper';
+import { VFC, useContext } from 'react';
 import {
   Heading,
   InputText,
@@ -7,21 +7,22 @@ import {
   Text,
   Upload
 } from '@unique-nft/ui-kit';
-import uploadImg from '../../../../static/icons/upload.svg';
+import { CollectionFormContext } from '@app/context';
+import styled from 'styled-components';
+import uploadImg from '@app/static/icons/upload.svg';
 
-import './MainInformation.scss';
-import { Alert } from '../../components/Alert';
-import { FormikProps } from 'formik';
-import { MainInformationValues } from '../../NewCollection';
+import { Alert, CollectionStepper } from '@app/components';
 
-type Props = {
-  formik: FormikProps<MainInformationValues>;
-};
+export interface MainInformationComponentProps {
+  className?: string;
+}
 
-const MainInformation = ({ formik }: Props) => {
-  const { handleSubmit, setFieldValue, values, errors, touched } = formik;
+const MainInformationComponent: VFC<MainInformationComponentProps> = ({ className }) => {
+  const { mainInformationForm } = useContext(CollectionFormContext);
+  const { handleSubmit, setFieldValue, values, errors, touched } = mainInformationForm;
+
   return (
-    <>
+    <div className={className}>
       <CollectionStepper activeStep={1} />
       <Heading size={'2'}>Main information</Heading>
       <Text>
@@ -54,9 +55,9 @@ const MainInformation = ({ formik }: Props) => {
               if (value.length > 256) {
                 return;
               }
-              formik.setFieldValue('description', value);
+              mainInformationForm.setFieldValue('description', value);
             }}
-            value={formik.values.description}
+            value={mainInformationForm.values.description}
           />
           <InputText
             label={'Symbol*'}
@@ -66,11 +67,11 @@ const MainInformation = ({ formik }: Props) => {
               if (value.length > 4) {
                 return;
               }
-              formik.setFieldValue('symbol', value);
+              mainInformationForm.setFieldValue('tokenPrefix', value);
             }}
-            value={formik.values.symbol}
-            error={touched.symbol && Boolean(formik.errors.symbol)}
-            statusText={touched.symbol ? formik.errors.symbol : undefined}
+            value={mainInformationForm.values.tokenPrefix}
+            error={touched.tokenPrefix && Boolean(mainInformationForm.errors.tokenPrefix)}
+            statusText={touched.tokenPrefix ? mainInformationForm.errors.tokenPrefix : undefined}
           />
           <div className={'unique-input-text'}>
             <label>Upload image</label>
@@ -80,7 +81,7 @@ const MainInformation = ({ formik }: Props) => {
             <Upload
               upload={uploadImg}
               onChange={(_, file) => {
-                formik.setFieldValue('file', file);
+                mainInformationForm.setFieldValue('file', file);
               }}
             />
           </div>
@@ -109,8 +110,15 @@ const MainInformation = ({ formik }: Props) => {
           </div>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 
-export default MainInformation;
+export const MainInformation = styled(MainInformationComponent)`
+  display: flex;
+  margin-top: 25px;
+
+  .exit {
+    margin-right: 15px;
+  }
+`;
