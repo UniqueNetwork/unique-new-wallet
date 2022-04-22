@@ -19,6 +19,7 @@ export type MainInformationValues = typeof MAIN_INFORMATION_DEFAULT_VALUES;
 
 export const NewCollection = () => {
   const navigate = useNavigate();
+
   const mainInformationForm = useFormik({
     initialValues: MAIN_INFORMATION_DEFAULT_VALUES,
     validate: (values) => {
