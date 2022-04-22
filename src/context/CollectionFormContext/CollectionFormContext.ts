@@ -9,7 +9,8 @@ export type AttributesCallBackType = (prevAttributes: ArtificialAttributeItemTyp
 export interface CollectionFormProps {
   attributes: ArtificialAttributeItemType[];
   avatarImg: File | null;
-  coverImg: File | null;
+  coverImgFile: File | null;
+  coverImgAddress?: string;
   description: string;
   imgAddress?: string;
   mintFest: boolean;
@@ -18,9 +19,9 @@ export interface CollectionFormProps {
   ownerCanTransfer: boolean;
   setAttributes: (attributes: ArtificialAttributeItemType[] | AttributesCallBackType) => void;
   setAvatarImg: (avatarImg: File | null) => void;
-  setCoverImg: (coverImg: File | null) => void;
+  setCoverImgFile: (coverImg: File | null) => void;
+  setCoverImgAddress: (address: string | undefined) => void;
   setDescription: (description: string) => void;
-  setImgAddress: (imgAddress?: string) => void;
   setMintFest: (mintFest: boolean) => void;
   setName: (name: string) => void;
   setOwnerCanDestroy: (ownerCanDestroy: boolean) => void;
