@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react';
 import { TCreateAccountBodyModalProps } from './types';
-import { addressFromSeed } from '../../../utils/seedUtils';
+import { addressFromSeed } from '@app/utils';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import {
   Avatar,
@@ -26,7 +26,7 @@ import Question from '../../../static/icons/question.svg';
 
 const seedGenerators = [{ id: 'Mnemonic', title: 'Mnemonic' }];
 
-export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({
+export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({
   onFinish
 }) => {
   const [seed, setSeed] = useState<string>('');

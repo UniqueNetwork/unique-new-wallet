@@ -10,7 +10,7 @@ import {
   MainInformationInitialValues,
   ProtobufAttributeType
 } from '@app/types';
-import { convertArtificialAttributesToProtobuf, fillProtobufJson, str2vec } from '@app/utils';
+import { convertArtificialAttributesToProtobuf, fillProtobufJson, str2vec } from '@app/api';
 
 import CollectionFormContext from './CollectionFormContext';
 

@@ -4,9 +4,9 @@ import keyring from '@polkadot/ui-keyring';
 import styled from 'styled-components/macro';
 
 import { TCreateAccountModalProps } from './types';
-import { PasswordInput } from '../../../components/PasswordInput/PasswordInput';
-import { QRReader, ScannedResult } from '../../../components/QRReader/QRReader';
-import { useAccounts } from '../../../hooks/useAccounts';
+import { PasswordInput } from '@app/components/PasswordInput/PasswordInput';
+import { QRReader, ScannedResult } from '@app/components/QRReader/QRReader';
+import { useAccounts } from '@app/hooks';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
 export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({ isVisible, onFinish }) => {

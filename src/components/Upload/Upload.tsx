@@ -2,13 +2,14 @@ import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Text } from '@unique-nft/ui-kit';
 
-import UploadIcon from '../../static/icons/upload.svg';
 import { Icon } from '@app/components';
+import UploadIcon from '../../static/icons/upload.svg';
 
 interface UploadProps {
   onChange(file: File): void;
 }
 
+// todo - use from ui-kit
 export const Upload: FC<UploadProps> = ({ onChange }) => {
   const [fileName, setFileName] = useState<string>();
   const onInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {

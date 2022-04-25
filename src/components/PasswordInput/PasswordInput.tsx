@@ -12,6 +12,7 @@ interface PasswordInputProps {
   onChange(value: string): void
 }
 
+// todo - use from ui-kit
 export const PasswordInput: FC<PasswordInputProps> = ({ placeholder, value, onChange }) => {
   const [isVisibleValue, setIsVisibleValue] = useState<boolean>(false);
 

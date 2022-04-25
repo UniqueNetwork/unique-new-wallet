@@ -1,6 +1,8 @@
-import { AttributesDecoded, NFTCollection } from '../unique/types';
-import { deserializeNft, ProtobufAttributeType } from './protobufUtils';
+import { ProtobufAttributeType } from '@app/types';
 import { addressToEvm } from '@polkadot/util-crypto';
+
+import { AttributesDecoded, NFTCollection } from '../unique/types';
+import { deserializeNft } from '@app/api';
 
 export const collectionName16Decoder = (name: number[]) => {
   const collectionNameArr = name.map((item: number) => item);

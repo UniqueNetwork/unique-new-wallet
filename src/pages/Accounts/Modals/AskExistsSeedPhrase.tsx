@@ -1,13 +1,15 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
-import { TCreateAccountBodyModalProps } from './types';
-import { addressFromSeed } from '../../../utils/seedUtils';
-import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
-import { defaultPairType, derivePath } from './CreateAccount';
 import styled from 'styled-components/macro';
-import { AdditionalWarning100 } from '../../../styles/colors';
+import { TCreateAccountBodyModalProps } from './types';
+import { addressFromSeed } from '@app/utils';
+import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
 
-export const AskExistsSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
+import { defaultPairType, derivePath } from './CreateAccount';
+
+import { AdditionalWarning100 } from '@app/styles/colors';
+import DefaultAvatar from '../../../static/icons/default-avatar.svg';
+
+export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
   const [seed, setSeed] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [confirmSeedSaved, setConfirmSeedSaved] = useState<boolean>(false);

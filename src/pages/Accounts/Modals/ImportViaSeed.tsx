@@ -3,11 +3,10 @@ import { Heading, Modal } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { TCreateAccountModalProps, CreateAccountModalStages, TAccountProperties, TCreateAccountBodyModalProps } from './types';
-import { useAccounts } from '../../../hooks/useAccounts';
-import { AskCredentialsModal } from './AskCredentials';
+import { useAccounts } from '@app/hooks';
+import { AskCredentialsModal, AskExistsSeedPhrase } from '@app/pages';
 import { FinalModal } from './Final';
 import { defaultPairType, derivePath } from './CreateAccount';
-import { AskExistsSeedPhraseModal } from './AskExistsSeedPhrase';
 
 export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({ isVisible, onFinish }) => {
   const [stage, setStage] = useState<CreateAccountModalStages>(CreateAccountModalStages.AskSeed);
@@ -17,7 +16,7 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({ isVisi
   const ModalBodyComponent = useMemo<FC<TCreateAccountBodyModalProps> | null>(() => {
     switch (stage) {
       case CreateAccountModalStages.AskSeed:
-        return AskExistsSeedPhraseModal;
+        return AskExistsSeedPhrase;
       case CreateAccountModalStages.AskCredentials:
         return AskCredentialsModal;
       case CreateAccountModalStages.Final:

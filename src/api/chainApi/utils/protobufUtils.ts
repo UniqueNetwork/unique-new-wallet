@@ -1,49 +1,11 @@
 import { Root, Type } from 'protobufjs';
+import { ArtificialAttributeItemType, AttributeItemType, EnumElemType, NFTMetaType, ProtobufAttributeType } from '@app/types';
 
 export type FieldType = 'string' | 'enum'
 
 export type FieldRuleType = 'optional' | 'required' | 'repeated'
 
-export type AttributeItemType = {
-  id?: number
-  fieldType: FieldType
-  name: string
-  rule: FieldRuleType
-  values: string[]
-}
-
-type EnumElemType = { options: { [key: string]: string }; values: { [key: string]: number } }
-type NFTMetaType = {
-  fields: {
-    [key: string]: {
-      id: number
-      rule: FieldRuleType
-      type: string
-    }
-  }
-}
-
-export type ProtobufAttributeType = {
-  nested: {
-    onChainMetaData: {
-      nested: {
-        [key: string]: {
-          fields?: {
-            [key: string]: {
-              id: number
-              rule: FieldRuleType
-              type: string
-            }
-          }
-          options?: { [key: string]: string }
-          values?: { [key: string]: number }
-        }
-      }
-    }
-  }
-}
-
-function defineMessage(protobufJson: ProtobufAttributeType) {
+function defineMessage (protobufJson: ProtobufAttributeType) {
   // const protobufJson = fillProtobufJson(JSON.parse('[{"fieldType":"enum","id":1,"name":"gender","rule":"required","values":["Female","Male"]},{"fieldType":"string","id":2,"name":"imageHash","rule":"optional","values":[]},{"fieldType":"string","id":3,"name":"name","rule":"required","values":[]},{"fieldType":"enum","id":4,"name":"traits","rule":"repeated","values":["Asian Eyes","Black Lipstick","Nose Ring","Purple Lipstick","Red Lipstick","Smile","Sunglasses","Teeth Smile","Teeth Smile","Teeth Smile","Teeth Smile"]}]'));
 
   return Root.fromJSON(protobufJson);
@@ -239,4 +201,22 @@ export const fillProtobufJson = (attrs: AttributeItemType[]): ProtobufAttributeT
   }
 
   return protobufJson;
+};
+
+export function str2vec (str: number[] | string): number[] {
+  if (typeof str !== 'string') {
+    return str;
+  }
+
+  return Array.from(str).map((x) => x.charCodeAt(0));
+}
+
+export const convertArtificialAttributesToProtobuf = (attributes: ArtificialAttributeItemType[]): AttributeItemType[] => {
+  return attributes.map((attr: ArtificialAttributeItemType): AttributeItemType => {
+    if (attr.fieldType === 'repeated') {
+      return { ...attr, fieldType: 'enum', rule: 'repeated' };
+    }
+
+    return { ...attr } as AttributeItemType;
+  });
 };
