@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { Accounts, CreateCollection, Faq, MainInformation, MyTokens, NotFound, Welcome } from '@app/pages';
 import { CollectionForm } from '@app/context';
-import { PagePaper } from '@app/components';
 
 export interface RouteItem {
   children?: RouteItem[];
