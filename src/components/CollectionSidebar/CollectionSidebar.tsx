@@ -2,23 +2,25 @@ import { Heading } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { SidebarPreview } from '@app/components';
-import { MainInformationInitialValues } from '@app/types';
 
 import srcImg from '@app/static/icons/empty-image.svg';
-import './styles.scss';
+import { useContext } from 'react';
+import { CollectionFormContext } from '@app/context';
 
 const attributes = ['Name', 'Gender', 'Traits'];
 
 type Props = {
   className?: string;
-  mainInformationValue: MainInformationInitialValues;
 };
 
-const CollectionSidebarComponent = ({ className, mainInformationValue }: Props) => {
-  const { name, description, tokenPrefix } = mainInformationValue;
+const CollectionSidebarComponent = ({ className }: Props) => {
+  const { mainInformationForm } = useContext(CollectionFormContext);
+  const { values } = mainInformationForm;
+  const { name, description, tokenPrefix } = values;
+
   return (
     <div className={classNames('collection-sidebar', className)}>
-      <div>
+      <div className='collection-preview'>
         <Heading size={'3'}>Collection preview</Heading>
         <SidebarPreview
           srcImg={srcImg}
@@ -26,7 +28,7 @@ const CollectionSidebarComponent = ({ className, mainInformationValue }: Props) 
           title={name || 'Name'}
         />
       </div>
-      <div className={'nft-preview-sidebar'}>
+      <div className='nft-preview'>
         <Heading size={'3'}>NFT preview</Heading>
         <SidebarPreview
           srcImg={srcImg}
@@ -36,7 +38,7 @@ const CollectionSidebarComponent = ({ className, mainInformationValue }: Props) 
           <div className='attributes'>
             <div className='title'>Attribute names</div>
             {attributes && (
-              <span className={'attributes-content'}>
+              <span className='attributes-content'>
                 {attributes.join(', ')}
               </span>
             )}
@@ -48,9 +50,11 @@ const CollectionSidebarComponent = ({ className, mainInformationValue }: Props) 
 };
 
 export const CollectionSidebar = styled(CollectionSidebarComponent)`
-  margin-top: 40px;
+  .nft-preview-sidebar {
+    margin-top: 40px;
 
-  .attributes {
-    margin-top: 15px;
+    .attributes {
+      margin-top: 15px;
+    }
   }
 `;

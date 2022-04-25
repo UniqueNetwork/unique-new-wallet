@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Accounts, CreateCollection, Faq, MainInformation } from '@app/pages';
+import { Accounts, CreateCollection, Faq, MainInformation, NotFound } from '@app/pages';
 import { CollectionForm } from '@app/context';
 
 export interface RouteItem {
@@ -89,6 +89,11 @@ export const routes: RouteConfig = {
     },
   ],
   otherRoutes: [
+    {
+      component: <NotFound />,
+      name: 'Accounts',
+      path: '*',
+    },
     {
       component: <Accounts />,
       name: 'Accounts',

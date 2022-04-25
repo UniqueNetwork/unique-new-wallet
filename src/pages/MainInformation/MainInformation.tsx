@@ -1,4 +1,5 @@
-import { VFC, useContext } from 'react';
+import {VFC, useContext, useCallback} from 'react';
+import classNames from 'classnames';
 import {
   Heading,
   InputText,
@@ -19,10 +20,36 @@ export interface MainInformationComponentProps {
 
 const MainInformationComponent: VFC<MainInformationComponentProps> = ({ className }) => {
   const { mainInformationForm } = useContext(CollectionFormContext);
+
   const { handleSubmit, setFieldValue, values, errors, touched } = mainInformationForm;
 
+  const setName = useCallback((value: string) => {
+    if (value.length > 64) {
+      return;
+    }
+    setFieldValue('name', value);
+  }, [setFieldValue]);
+
+  const setDescription = useCallback((value: string) => {
+    if (value.length > 256) {
+      return;
+    }
+    setFieldValue('description', value);
+  }, [setFieldValue]);
+
+  const setTokenPrefix = useCallback((value: string) => {
+    if (value.length > 4) {
+      return;
+    }
+    setFieldValue('tokenPrefix', value);
+  }, [setFieldValue]);
+
+  const setFile = useCallback((_: string, file: Blob) => {
+    setFieldValue('file', file);
+  }, [setFieldValue]);
+
   return (
-    <div className={className}>
+    <div className={classNames('main-information', className)}>
       <CollectionStepper activeStep={1} />
       <Heading size={'2'}>Main information</Heading>
       <Text>
@@ -33,79 +60,53 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
       <div>
         <form onSubmit={handleSubmit}>
           <InputText
-            label={'Name*'}
-            additionalText={'Max 64 symbols'}
-            name={'name'}
-            onChange={(value) => {
-              if (value.length > 64) {
-                return;
-              }
-              setFieldValue('name', value);
-            }}
+            label='Name*'
+            additionalText='Max 64 symbols'
+            name='name'
+            onChange={setName}
             value={values.name}
             error={touched.name && Boolean(errors.name)}
             statusText={touched.name ? errors.name : undefined}
           />
           <Textarea
-            label={'Description'}
-            additionalText={'Max 256 symbols'}
-            name={'description'}
+            label='Description'
+            additionalText='Max 256 symbols'
+            name='description'
             rows={4}
-            onChange={(value) => {
-              if (value.length > 256) {
-                return;
-              }
-              mainInformationForm.setFieldValue('description', value);
-            }}
+            onChange={setDescription}
             value={mainInformationForm.values.description}
           />
           <InputText
-            label={'Symbol*'}
+            label='Symbol*'
             additionalText={'Token name as displayed in Wallet (max 4 symbols)'}
-            name={'symbol'}
-            onChange={(value) => {
-              if (value.length > 4) {
-                return;
-              }
-              mainInformationForm.setFieldValue('tokenPrefix', value);
-            }}
+            name='symbol'
+            onChange={setTokenPrefix}
             value={mainInformationForm.values.tokenPrefix}
             error={touched.tokenPrefix && Boolean(mainInformationForm.errors.tokenPrefix)}
             statusText={touched.tokenPrefix ? mainInformationForm.errors.tokenPrefix : undefined}
           />
-          <div className={'unique-input-text'}>
+          <div className='unique-input-text'>
             <label>Upload image</label>
-            <div className={'additional-text'}>
+            <div className='additional-text'>
               Choose JPG, PNG, GIF (max 10 Mb)
             </div>
             <Upload
               upload={uploadImg}
-              onChange={(_, file) => {
-                mainInformationForm.setFieldValue('file', file);
-              }}
+              onChange={setFile}
             />
           </div>
-          <Alert type={'warning'} className={'alert-wrapper'}>
+          <Alert type='warning' className='alert-wrapper'>
             A fee of ~ 2.073447 QTZ can be applied to the transaction
           </Alert>
-          <div className={'main-information-button'}>
+          <div className='main-information-button'>
             <Button
-              title={'Exit'}
-              iconLeft={{
-                color: 'var(--color-primary-400)',
-                name: 'arrow-left',
-                size: 12
-              }}
-              className={'exit'}
-            />
-            <Button
-              title={'Next step'}
-              type={'submit'}
               iconRight={{
                 color: 'var(--color-primary-400)',
                 name: 'arrow-right',
                 size: 12
               }}
+              title='Next step'
+              type='submit'
             />
           </div>
         </form>
@@ -115,10 +116,15 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
 };
 
 export const MainInformation = styled(MainInformationComponent)`
-  display: flex;
-  margin-top: 25px;
+  .main-information-button {
+    display: flex;
+    margin-top: 25px;
+    .exit {
+      margin-right: 15px;
+    }
+  }
 
-  .exit {
-    margin-right: 15px;
+  .alert-wrapper {
+    margin-top: 40px;
   }
 `;
