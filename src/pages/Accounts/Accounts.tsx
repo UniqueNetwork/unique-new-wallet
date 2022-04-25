@@ -18,8 +18,8 @@ type AccountsColumnsProps = {
 };
 
 const getAccountsColumns = ({
-  onShowSendFundsModal
-}: AccountsColumnsProps): TableColumnProps[] => [
+                              onShowSendFundsModal
+                            }: AccountsColumnsProps): TableColumnProps[] => [
   {
     title: 'Account',
     width: '33%',
@@ -130,7 +130,7 @@ export const Accounts = () => {
     <PagePaper>
       <AccountPageWrapper>
         <Row>
-          <AccountsGroupButton onClick={fetchAccounts} />
+          <AccountsGroupButton />
           <SearchInputWrapper>
             <SearchInputStyled
               placeholder={'Account'}

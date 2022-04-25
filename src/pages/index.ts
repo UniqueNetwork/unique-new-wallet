@@ -6,5 +6,6 @@ export * from './MainInformation';
 export * from './Minter';
 export * from './MyTokens';
 export * from './MyCollections';
+export * from './Welcome';
 
 

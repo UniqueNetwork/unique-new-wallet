@@ -1,15 +1,8 @@
 import { Button } from '@unique-nft/ui-kit';
 import { DropdownMenu, DropdownMenuItem } from '../DropdownMenu/DropdownMenu';
 import React, { useCallback, useState } from 'react';
-import { CreateAccountModal } from '../../pages/Accounts/Modals/CreateAccount';
-import { ImportViaSeedAccountModal } from '../../pages/Accounts/Modals/ImportViaSeed';
-import { ImportViaJSONAccountModal } from '../../pages/Accounts/Modals/ImportViaJson';
-import { ImportViaQRCodeAccountModal } from '../../pages/Accounts/Modals/ImportViaQRCode';
+import { CreateAccountModal, ImportViaSeedAccountModal, ImportViaJSONAccountModal, ImportViaQRCodeAccountModal } from '@app/pages';
 import './AccountsGroupButton.scss';
-
-type AccountsGroupButtonProps = {
-  onClick: () => Promise<void>;
-};
 
 enum AccountModal {
   create,
@@ -19,7 +12,7 @@ enum AccountModal {
   sendFunds
 }
 
-export const AccountsGroupButton = ({ onClick }: AccountsGroupButtonProps) => {
+export const AccountsGroupButton = () => {
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
 
   const onCreateAccountClick = useCallback(() => {
@@ -40,7 +33,6 @@ export const AccountsGroupButton = ({ onClick }: AccountsGroupButtonProps) => {
 
   const onChangeAccountsFinish = useCallback(() => {
     setCurrentModal(undefined);
-    onClick();
   }, []);
 
   return (

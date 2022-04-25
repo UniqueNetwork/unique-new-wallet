@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Accounts, CreateCollection, Faq, MainInformation, NotFound } from '@app/pages';
+import { Accounts, CreateCollection, Faq, MainInformation, NotFound, Welcome } from '@app/pages';
 import { CollectionForm } from '@app/context';
+import {PagePaper} from "@app/components";
 
 export interface RouteItem {
   children?: RouteItem[];
@@ -89,6 +90,15 @@ export const routes: RouteConfig = {
     },
   ],
   otherRoutes: [
+    {
+      component: (
+        <PagePaper>
+          <Welcome />
+        </PagePaper>
+      ),
+      name: 'Welcome',
+      path: '/',
+    },
     {
       component: <NotFound />,
       name: 'Accounts',

@@ -19,7 +19,7 @@ const CreateCollectionComponent: FC<CreateCollectionProps> = (props) => {
     if (location.pathname === '/create-collection') {
       navigate('main-information');
     }
-  }, []);
+  }, [location.pathname, navigate]);
 
   return (
     <div className={classNames('create-collection', className)}>

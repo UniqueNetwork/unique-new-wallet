@@ -2,18 +2,17 @@ import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Layout } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
-import { routes } from '@app/routesConfig';
 import { useAccounts, useFooter } from '@app/hooks';
 
 import { Header } from '../';
-import Welcome from '../Welcome';
+import { Welcome } from '@app/pages';
 import Loading from '../Loading';
 
 import './PageLayout.scss';
 
 export const PageLayout: FC = () => {
   const footer = useFooter();
-  const { accounts, fetchAccounts, isLoading } = useAccounts();
+  const { accounts, isLoading } = useAccounts();
 
   return (
     <LayoutStyled>
@@ -31,7 +30,7 @@ export const PageLayout: FC = () => {
           </LoadingStyled>
         )}
         {!isLoading && accounts.length === 0 && (
-          <Welcome fetchAccounts={fetchAccounts} />
+          <Welcome />
         )}
         {!isLoading && accounts.length !== 0 && (
           <div className={'container'}>
