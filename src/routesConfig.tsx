@@ -1,17 +1,18 @@
 import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Accounts, CreateCollection, Faq } from '@app/pages';
+import { Accounts, CreateCollection, Faq, MainInformation, NotFound, Welcome } from '@app/pages';
 import { CollectionForm } from '@app/context';
+import {PagePaper} from "@app/components";
 
 export interface RouteItem {
   children?: RouteItem[];
   component: ReactNode;
+  index?: boolean;
   name: string;
   path: string;
 }
 
 export interface MenuRoute extends RouteItem {
-  index?: boolean;
   children?: MenuRoute[];
 }
 
@@ -36,7 +37,6 @@ export const routes: RouteConfig = {
       children: [
         {
           component: <div>Nfts</div>,
-          index: true,
           name: 'NFTs',
           path: 'nft',
           children: [
@@ -91,6 +91,20 @@ export const routes: RouteConfig = {
   ],
   otherRoutes: [
     {
+      component: (
+        <PagePaper>
+          <Welcome />
+        </PagePaper>
+      ),
+      name: 'Welcome',
+      path: '/',
+    },
+    {
+      component: <NotFound />,
+      name: 'Accounts',
+      path: '*',
+    },
+    {
       component: <Accounts />,
       name: 'Accounts',
       path: '/accounts',
@@ -105,7 +119,7 @@ export const routes: RouteConfig = {
       path: '/create-collection',
       children: [
         {
-          component: <div>Main information</div>,
+          component: <MainInformation />,
           name: 'Main information',
           path: 'main-information',
         },
