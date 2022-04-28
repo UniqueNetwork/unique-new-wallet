@@ -3,13 +3,16 @@ import styled from 'styled-components/macro';
 import { Text } from '@unique-nft/ui-kit';
 
 import { Icon } from '@app/components';
+
 import NoItemsIcon from '../static/icons/no-items.svg';
 
 const NoItems: FC = () => {
   return (
     <NoItemsWrapper>
       <Icon path={NoItemsIcon} />
-      <Text size={'l'} color={'grey-500'}>No items found</Text>
+      <Text size={'l'} color={'grey-500'}>
+        No items found
+      </Text>
     </NoItemsWrapper>
   );
 };

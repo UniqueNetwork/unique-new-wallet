@@ -1,5 +1,5 @@
-export const useFee = (): {fee: number} => {
-    const fee = 0.1;
+export const useFee = (): { fee: number } => {
+  const fee = 0.1;
 
-return { fee };
+  return { fee };
 };

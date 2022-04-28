@@ -1,13 +1,19 @@
 import { ApiPromise } from '@polkadot/api';
+
+import { getTokenImage } from '@app/api';
+
+import '@unique-nft/types/augment-api-query';
+
 import { ICollectionController } from '../types';
 import { NFTCollection, NFTToken } from './types';
 import { collectionName8Decoder, getOnChainSchema, hex2a } from '../utils/decoder';
-import { getTokenImage } from '../utils/imageUtils';
 import config from '../../../config';
 
 const { IPFSGateway } = config;
 
-class UniqueCollectionController implements ICollectionController<NFTCollection, NFTToken> {
+export class UniqueCollectionController
+  implements ICollectionController<NFTCollection, NFTToken>
+{
   private api: ApiPromise;
   private featuredCollectionIds: number[];
 
@@ -21,16 +27,18 @@ class UniqueCollectionController implements ICollectionController<NFTCollection,
       return null;
     }
 
-    const collection =
-      // @ts-ignore
-      await this.api.rpc.unique.collectionById(collectionId.toString());
+    const collection = await this.api.rpc.unique.collectionById(collectionId.toString());
 
     const collectionInfo = collection.toJSON() as unknown as NFTCollection;
     let coverImageUrl = '';
 
-    if (collectionInfo?.variableOnChainSchema && hex2a(collectionInfo?.variableOnChainSchema)) {
+    if (
+      collectionInfo?.variableOnChainSchema &&
+      hex2a(collectionInfo?.variableOnChainSchema)
+    ) {
       const collectionSchema = getOnChainSchema(collectionInfo);
-      const image = JSON.parse(collectionSchema?.attributesVar)?.collectionCover as string;
+      const image = JSON.parse(collectionSchema?.attributesVar)
+        ?.collectionCover as string;
 
       coverImageUrl = `${IPFSGateway}/${image}`;
     } else {
@@ -41,14 +49,17 @@ class UniqueCollectionController implements ICollectionController<NFTCollection,
 
     return {
       ...collectionInfo,
-      collectionName: collectionInfo?.name && collectionName8Decoder(collectionInfo?.name),
+      collectionName:
+        collectionInfo?.name && collectionName8Decoder(collectionInfo?.name),
       coverImageUrl,
-      id: collectionId
+      id: collectionId,
     };
   }
 
   public getCollections(): Promise<NFTCollection[]> {
-    throw new Error('There to many collections available, please use featured collections instead');
+    throw new Error(
+      'There to many collections available, please use featured collections instead',
+    );
     // if (!this.api) {
     //   return [];
     // }
@@ -82,9 +93,17 @@ class UniqueCollectionController implements ICollectionController<NFTCollection,
 
     const collections: Array<NFTCollection> = [];
     for (let i = 0; i < this.featuredCollectionIds.length; i++) {
-      const collectionInf = await this.getCollection(this.featuredCollectionIds[i]) as unknown as NFTCollection;
+      const collectionInf = (await this.getCollection(
+        this.featuredCollectionIds[i],
+      )) as unknown as NFTCollection;
 
-      if (collectionInf && collectionInf.owner && collectionInf.owner.toString() !== '5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM' && !collections.find((collection) => collection.id === this.featuredCollectionIds[i])) {
+      if (
+        collectionInf &&
+        collectionInf.owner &&
+        collectionInf.owner.toString() !==
+          '5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM' &&
+        !collections.find((collection) => collection.id === this.featuredCollectionIds[i])
+      ) {
         collections.push({ ...collectionInf, id: this.featuredCollectionIds[i] });
       }
     }
@@ -92,13 +111,17 @@ class UniqueCollectionController implements ICollectionController<NFTCollection,
     return collections;
   }
 
-  public async getTokensOfCollection(collectionId: number, ownerId: string): Promise<NFTToken[]> {
+  public async getTokensOfCollection(
+    collectionId: number,
+    ownerId: string,
+  ): Promise<NFTToken[]> {
     if (!this.api || !collectionId || !ownerId) {
       return [];
     }
 
-    // @ts-ignore
-    return await this.api.query.unique.accountTokens(collectionId, { Substrate: ownerId });
+    return (await this.api.query.unique.accountTokens(collectionId, {
+      Substrate: ownerId,
+    })) as unknown as NFTToken[];
   }
 }
 

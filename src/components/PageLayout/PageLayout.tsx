@@ -1,37 +1,30 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Layout } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
+
 import { useAccounts, useFooter } from '@app/hooks';
+import { Welcome } from '@app/pages';
 
 import { Header } from '../';
-import { Welcome } from '@app/pages';
 import Loading from '../Loading';
 
-import './PageLayout.scss';
-
-export const PageLayout: FC = () => {
+export const PageLayoutComponent: FC = () => {
   const footer = useFooter();
   const { accounts, isLoading } = useAccounts();
 
   return (
     <LayoutStyled>
       <Layout
-        footer={(
-          <div dangerouslySetInnerHTML={{ __html: footer }} />
-        )}
-        header={(
-          <Header />
-        )}
+        footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
+        header={<Header />}
       >
         {isLoading && (
           <LoadingStyled>
             <Loading />
           </LoadingStyled>
         )}
-        {!isLoading && accounts.length === 0 && (
-          <Welcome />
-        )}
+        {!isLoading && accounts.length === 0 && <Welcome />}
         {!isLoading && accounts.length !== 0 && (
           <div className={'container'}>
             <Outlet />
@@ -41,6 +34,21 @@ export const PageLayout: FC = () => {
     </LayoutStyled>
   );
 };
+
+export const PageLayout = styled(PageLayoutComponent)`
+  footer {
+    .footer__text {
+      max-width: 100%;
+    }
+  }
+
+  .container {
+    width: 100%;
+    max-width: var(--container-width);
+    padding: 0 var(--gap);
+    margin: 0 auto;
+  }
+`;
 
 const LoadingStyled = styled.div`
   position: relative;

@@ -1,8 +1,17 @@
 import { ReactNode } from 'react';
-import { Outlet } from 'react-router-dom';
-import { Accounts, CreateCollection, Faq, MainInformation, NotFound, Welcome } from '@app/pages';
+
+import {
+  Accounts,
+  Coins,
+  CreateCollection,
+  Faq,
+  MainInformation,
+  MyTokens,
+  NFTs,
+  NotFound,
+  Welcome,
+} from '@app/pages';
 import { CollectionForm } from '@app/context';
-import {PagePaper} from "@app/components";
 
 export interface RouteItem {
   children?: RouteItem[];
@@ -29,14 +38,11 @@ export const routes: RouteConfig = {
       name: 'My tokens',
       path: '/my-tokens',
       component: (
-        <div>
-          My tokens
-          <Outlet />
-        </div>
+        <MyTokens activeTab={0} basePath="/my-tokens" tabUrls={['nft', 'coins']} />
       ),
       children: [
         {
-          component: <div>Nfts</div>,
+          component: <NFTs />,
           name: 'NFTs',
           path: 'nft',
           children: [
@@ -49,15 +55,15 @@ export const routes: RouteConfig = {
               component: <div>Create a NFT</div>,
               name: 'Create a NFT',
               path: 'create-nft',
-            }
-          ]
+            },
+          ],
         },
         {
           component: <div>Coins</div>,
           name: 'Coins',
           path: 'coins',
-        }
-      ]
+        },
+      ],
     },
     {
       component: <div>My collections</div>,
@@ -79,9 +85,9 @@ export const routes: RouteConfig = {
               name: 'Settings',
               path: 'settings',
             },
-          ]
+          ],
         },
-      ]
+      ],
     },
     {
       component: <Faq />,
@@ -91,11 +97,7 @@ export const routes: RouteConfig = {
   ],
   otherRoutes: [
     {
-      component: (
-        <PagePaper>
-          <Welcome />
-        </PagePaper>
-      ),
+      component: <Welcome />,
       name: 'Welcome',
       path: '/',
     },
@@ -128,7 +130,7 @@ export const routes: RouteConfig = {
           name: 'Nft attributes',
           path: 'nft-attributes',
         },
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 };

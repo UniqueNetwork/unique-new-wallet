@@ -1,47 +1,16 @@
 import { Root, Type } from 'protobufjs';
 
-export type FieldType = 'string' | 'enum'
+import {
+  ArtificialAttributeItemType,
+  AttributeItemType,
+  EnumElemType,
+  NFTMetaType,
+  ProtobufAttributeType,
+} from '@app/types';
 
-export type FieldRuleType = 'optional' | 'required' | 'repeated'
+export type FieldType = 'string' | 'enum';
 
-export type AttributeItemType = {
-  id?: number
-  fieldType: FieldType
-  name: string
-  rule: FieldRuleType
-  values: string[]
-}
-
-type EnumElemType = { options: { [key: string]: string }; values: { [key: string]: number } }
-type NFTMetaType = {
-  fields: {
-    [key: string]: {
-      id: number
-      rule: FieldRuleType
-      type: string
-    }
-  }
-}
-
-export type ProtobufAttributeType = {
-  nested: {
-    onChainMetaData: {
-      nested: {
-        [key: string]: {
-          fields?: {
-            [key: string]: {
-              id: number
-              rule: FieldRuleType
-              type: string
-            }
-          }
-          options?: { [key: string]: string }
-          values?: { [key: string]: number }
-        }
-      }
-    }
-  }
-}
+export type FieldRuleType = 'optional' | 'required' | 'repeated';
 
 function defineMessage(protobufJson: ProtobufAttributeType) {
   // const protobufJson = fillProtobufJson(JSON.parse('[{"fieldType":"enum","id":1,"name":"gender","rule":"required","values":["Female","Male"]},{"fieldType":"string","id":2,"name":"imageHash","rule":"optional","values":[]},{"fieldType":"string","id":3,"name":"name","rule":"required","values":[]},{"fieldType":"enum","id":4,"name":"traits","rule":"repeated","values":["Asian Eyes","Black Lipstick","Nose Ring","Purple Lipstick","Red Lipstick","Smile","Sunglasses","Teeth Smile","Teeth Smile","Teeth Smile","Teeth Smile"]}]'));
@@ -51,7 +20,7 @@ function defineMessage(protobufJson: ProtobufAttributeType) {
 
 export function serializeNft(
   onChainSchema: ProtobufAttributeType,
-  payload: { [key: string]: number | number[] | string }
+  payload: { [key: string]: number | number[] | string },
 ): Uint8Array {
   try {
     const root = defineMessage(onChainSchema);
@@ -76,11 +45,18 @@ export function serializeNft(
   return new Uint8Array();
 }
 
-export function convertEnumToString(value: string, key: string, NFTMeta: Type, locale: string) {
+export function convertEnumToString(
+  value: string,
+  key: string,
+  NFTMeta: Type,
+  locale: string,
+) {
   let result = value;
 
   try {
-    const options = NFTMeta?.fields[key]?.resolvedType?.options as { [key: string]: string };
+    const options = NFTMeta?.fields[key]?.resolvedType?.options as {
+      [key: string]: string;
+    };
     const valueJsonComment = options[value];
     const translationObject = JSON.parse(valueJsonComment) as { [key: string]: string };
 
@@ -97,7 +73,7 @@ export function convertEnumToString(value: string, key: string, NFTMeta: Type, l
 export function deserializeNft(
   onChainSchema: ProtobufAttributeType,
   buffer: Uint8Array,
-  locale: string
+  locale: string,
 ): { [key: string]: any } {
   try {
     const root = defineMessage(onChainSchema);
@@ -118,15 +94,16 @@ export function deserializeNft(
       enums: String, // enums as string names
       longs: String, // longs as strings (requires long.js)
       objects: true, // populates empty objects (map fields) even if defaults=false
-      oneofs: true
+      oneofs: true,
     });
     const newObjectItem = { ...objectItem };
 
     for (const key in objectItem) {
       if (
         NFTMeta?.fields[key]?.resolvedType?.options &&
-        Object.keys(NFTMeta?.fields[key]?.resolvedType?.options as { [key: string]: string })
-          .length > 0
+        Object.keys(
+          NFTMeta?.fields[key]?.resolvedType?.options as { [key: string]: string },
+        ).length > 0
       ) {
         if (Array.isArray(objectItem[key])) {
           const item = objectItem[key] as string[];
@@ -136,7 +113,7 @@ export function deserializeNft(
               value,
               key,
               NFTMeta,
-              locale
+              locale,
             );
           });
         } else {
@@ -153,24 +130,28 @@ export function deserializeNft(
   return {};
 }
 
-export const fillAttributes = (protobufJson: ProtobufAttributeType): AttributeItemType[] => {
+export const fillAttributes = (
+  protobufJson: ProtobufAttributeType,
+): AttributeItemType[] => {
   const attrs: AttributeItemType[] = [];
 
   try {
     const protobufStruct: ProtobufAttributeType = protobufJson;
     const fields: {
       [key: string]: {
-        id: number
-        rule: FieldRuleType
-        type: string
-      }
+        id: number;
+        rule: FieldRuleType;
+        type: string;
+      };
     } = protobufStruct?.nested?.onChainMetaData?.nested?.NFTMeta?.fields || {};
 
     if (fields) {
       Object.keys(fields).forEach((fieldKey: string) => {
         const options: { [key: string]: string } =
-          protobufStruct?.nested?.onChainMetaData?.nested[fields[fieldKey].type]?.options || {};
-        const valuesJson = fields[fieldKey].type === 'string' ? [] : Object.values(options);
+          protobufStruct?.nested?.onChainMetaData?.nested[fields[fieldKey].type]
+            ?.options || {};
+        const valuesJson =
+          fields[fieldKey].type === 'string' ? [] : Object.values(options);
         const values: string[] = [];
 
         // for now we only use 'en' translation value
@@ -185,7 +166,7 @@ export const fillAttributes = (protobufJson: ProtobufAttributeType): AttributeIt
           id: fields[fieldKey].id,
           name: fieldKey,
           rule: fields[fieldKey].rule,
-          values
+          values,
         });
       });
     }
@@ -202,11 +183,11 @@ export const fillProtobufJson = (attrs: AttributeItemType[]): ProtobufAttributeT
       onChainMetaData: {
         nested: {
           NFTMeta: {
-            fields: {}
-          }
-        }
-      }
-    }
+            fields: {},
+          },
+        },
+      },
+    },
   };
 
   try {
@@ -215,22 +196,24 @@ export const fillProtobufJson = (attrs: AttributeItemType[]): ProtobufAttributeT
         if (attr.fieldType === 'enum') {
           protobufJson.nested.onChainMetaData.nested[attr.name] = {
             options: {},
-            values: {}
+            values: {},
           };
           attr.values.forEach((value: string, index: number) => {
-            (protobufJson.nested.onChainMetaData.nested[attr.name] as EnumElemType).values[
-              `field${index + 1}`
-            ] = index
-            ; (protobufJson.nested.onChainMetaData.nested[attr.name] as EnumElemType).options[
-                `field${index + 1}`
-            ] = `{"en":"${value}"}`;
+            (
+              protobufJson.nested.onChainMetaData.nested[attr.name] as EnumElemType
+            ).values[`field${index + 1}`] = index;
+            (
+              protobufJson.nested.onChainMetaData.nested[attr.name] as EnumElemType
+            ).options[`field${index + 1}`] = `{"en":"${value}"}`;
           });
         }
 
-        (protobufJson.nested.onChainMetaData.nested.NFTMeta as NFTMetaType).fields[attr.name] = {
+        (protobufJson.nested.onChainMetaData.nested.NFTMeta as NFTMetaType).fields[
+          attr.name
+        ] = {
           id: ind + 1,
           rule: attr.rule,
-          type: attr.fieldType === 'string' ? 'string' : attr.name
+          type: attr.fieldType === 'string' ? 'string' : attr.name,
         };
       });
     }
@@ -239,4 +222,24 @@ export const fillProtobufJson = (attrs: AttributeItemType[]): ProtobufAttributeT
   }
 
   return protobufJson;
+};
+
+export function str2vec(str: number[] | string): number[] {
+  if (typeof str !== 'string') {
+    return str;
+  }
+
+  return Array.from(str).map((x) => x.charCodeAt(0));
+}
+
+export const convertArtificialAttributesToProtobuf = (
+  attributes: ArtificialAttributeItemType[],
+): AttributeItemType[] => {
+  return attributes.map((attr: ArtificialAttributeItemType): AttributeItemType => {
+    if (attr.fieldType === 'repeated') {
+      return { ...attr, fieldType: 'enum', rule: 'repeated' };
+    }
+
+    return { ...attr } as AttributeItemType;
+  });
 };

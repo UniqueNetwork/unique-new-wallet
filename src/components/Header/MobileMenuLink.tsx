@@ -1,7 +1,6 @@
 import { VFC } from 'react';
 import styled from 'styled-components/macro';
-import { Link , useResolvedPath, useMatch } from 'react-router-dom';
-
+import { Link, useResolvedPath, useMatch } from 'react-router-dom';
 import { Text } from '@unique-nft/ui-kit';
 
 interface MenuLinkProps {
@@ -17,12 +16,7 @@ export const MobileMenuLink: VFC<MenuLinkProps> = ({ mobileMenuToggle, name, pat
   return (
     <LinkWrapper key={name} onClick={mobileMenuToggle}>
       <Link to={path}>
-        <TextStyled
-          $active={!!match}
-          color='additional-dark'
-          size='m'
-          weight='medium'
-        >
+        <TextStyled $active={!!match} color="additional-dark" size="m" weight="medium">
           {name}
         </TextStyled>
       </Link>
@@ -44,17 +38,13 @@ const TextStyled = styled(Text)<{ $active?: boolean }>`
     border-radius: 4px;
     padding: 8px 16px;
     background-color: ${(props) =>
-  props.$active ? 'var(--color-primary-500)' : 'transparent'};
+      props.$active ? 'var(--color-primary-500)' : 'transparent'};
     color: ${(props) =>
-  props.$active
-    ? 'var(--color-additional-light)'
-    : 'var(--color-additional-dark)'};
+      props.$active ? 'var(--color-additional-light)' : 'var(--color-additional-dark)'};
 
     &:hover {
       color: ${(props) =>
-  props.$active
-    ? 'var(--color-additional-light)'
-    : 'var(--color-primary-500)'};
+        props.$active ? 'var(--color-additional-light)' : 'var(--color-primary-500)'};
     }
   }
 `;

@@ -1,22 +1,16 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import {
-  web3Accounts,
-  web3Enable,
-  web3FromSource
-} from '@polkadot/extension-dapp';
+import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { BN, stringToHex, u8aToString } from '@polkadot/util';
 import { KeypairType } from '@polkadot/util-crypto/types';
 
-import { sleep } from '../utils/helpers';
+import { sleep } from '@app/utils';
+import { DefaultAccountKey } from '@app/account';
+import { TTransaction } from '@app/api';
+
 import { useApi } from './useApi';
-import AccountContext, {
-  Account,
-  AccountSigner
-} from '../account/AccountContext';
-import { DefaultAccountKey } from '../account/AccountProvider';
+import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
 import { getSuri, PairType } from '../utils/seedUtils';
-import { TTransaction } from '../api/chainApi/types';
 
 export const useAccounts = () => {
   const { rpcClient, rawRpcApi } = useApi();
@@ -30,7 +24,7 @@ export const useAccounts = () => {
     setAccounts,
     setIsLoading,
     setFetchAccountsError,
-    showSignDialog
+    showSignDialog,
   } = useContext(AccountContext);
 
   // TODO: move fetching accounts and balances into context
@@ -51,7 +45,7 @@ export const useAccounts = () => {
     }
     return (await web3Accounts()).map((account) => ({
       ...account,
-      signerType: AccountSigner.extension
+      signerType: AccountSigner.extension,
     })) as Account[];
   }, []);
 
@@ -62,8 +56,8 @@ export const useAccounts = () => {
         ({
           address: account.address,
           meta: account.meta,
-          signerType: AccountSigner.local
-        } as Account)
+          signerType: AccountSigner.local,
+        } as Account),
     );
   }, []);
 
@@ -80,11 +74,11 @@ export const useAccounts = () => {
   const getAccountBalance = useCallback(
     async (account: Account) => {
       const balances = await rpcClient?.rawKusamaRpcApi?.derive.balances?.all(
-        account.address
+        account.address,
       );
       return balances?.availableBalance || new BN(0);
     },
-    [rpcClient]
+    [rpcClient],
   );
 
   const getAccountsBalances = useCallback(
@@ -95,12 +89,12 @@ export const useAccounts = () => {
             ({
               ...account,
               balance: {
-                KSM: await getAccountBalance(account) // TODO: it's possible to subscribe on balances via rpc
-              }
-            } as Account)
-        )
+                KSM: await getAccountBalance(account), // TODO: it's possible to subscribe on balances via rpc
+              },
+            } as Account),
+        ),
       ),
-    [getAccountBalance]
+    [getAccountBalance],
   );
 
   const fetchAccounts = useCallback(async () => {
@@ -110,7 +104,7 @@ export const useAccounts = () => {
     const extensions = await web3Enable('my cool dapp');
     if (extensions.length === 0) {
       setFetchAccountsError(
-        'No extension installed, or the user did not accept the authorization'
+        'No extension installed, or the user did not accept the authorization',
       );
       setIsLoading(false);
       return;
@@ -124,7 +118,7 @@ export const useAccounts = () => {
 
       const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
       const defaultAccount = allAccounts.find(
-        (item) => item.address === defaultAccountAddress
+        (item) => item.address === defaultAccountAddress,
       );
 
       if (defaultAccount) {
@@ -147,7 +141,7 @@ export const useAccounts = () => {
 
   useEffect(() => {
     const updatedSelectedAccount = accounts.find(
-      (account) => account.address === selectedAccount?.address
+      (account) => account.address === selectedAccount?.address,
     );
     if (updatedSelectedAccount) setSelectedAccount(updatedSelectedAccount);
   }, [accounts, setSelectedAccount, selectedAccount]);
@@ -158,22 +152,22 @@ export const useAccounts = () => {
       derivePath: string,
       name: string,
       password: string,
-      pairType: PairType
+      pairType: PairType,
     ) => {
       const options = {
         genesisHash: rawRpcApi?.genesisHash.toString(),
         isHardware: false,
         name: name.trim(),
-        tags: []
+        tags: [],
       };
       keyring.addUri(
         getSuri(seed, derivePath, pairType),
         password,
         options,
-        pairType as KeypairType
+        pairType as KeypairType,
       );
     },
-    [rawRpcApi]
+    [rawRpcApi],
   );
 
   const addAccountViaQR = useCallback(
@@ -188,12 +182,12 @@ export const useAccounts = () => {
 
       const meta = {
         genesisHash: genesisHash || rawRpcApi?.genesisHash.toHex(),
-        name: name?.trim()
+        name: name?.trim(),
       };
       if (isAddress) keyring.addExternal(content, meta);
       else keyring.addUri(content, password, meta, 'sr25519');
     },
-    [rawRpcApi]
+    [rawRpcApi],
   );
 
   const unlockLocalAccount = useCallback(
@@ -203,7 +197,7 @@ export const useAccounts = () => {
       signature.unlock(password);
       return signature;
     },
-    [selectedAccount]
+    [selectedAccount],
   );
 
   const signTx = useCallback(
@@ -219,13 +213,13 @@ export const useAccounts = () => {
       } else {
         const injector = await web3FromSource(_account.meta.source);
         signedTx = await tx.signAsync(_account.address, {
-          signer: injector.signer
+          signer: injector.signer,
         });
       }
       if (!signedTx) throw new Error('Signing failed');
       return signedTx;
     },
-    [showSignDialog, selectedAccount]
+    [showSignDialog, selectedAccount],
   );
 
   const signMessage = useCallback(
@@ -245,14 +239,14 @@ export const useAccounts = () => {
         const { signature } = await injector.signer.signRaw({
           address: _account.address,
           type: 'bytes',
-          data: stringToHex(message)
+          data: stringToHex(message),
         });
         signedMessage = signature;
       }
       if (!signedMessage) throw new Error('Signing failed');
       return signedMessage;
     },
-    [showSignDialog, selectedAccount]
+    [showSignDialog, selectedAccount],
   );
 
   return {
@@ -268,6 +262,6 @@ export const useAccounts = () => {
     signMessage,
     fetchAccounts,
     fetchBalances,
-    changeAccount
+    changeAccount,
   };
 };

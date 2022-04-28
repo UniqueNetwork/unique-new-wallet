@@ -8,7 +8,8 @@ import { ResponseError } from '../base/types';
 
 const endpoint = '/offer';
 
-export const getOffer = (collectionId: number, tokenId: number) => get<Offer>(`${endpoint}/${collectionId}/${tokenId}`, { ...defaultParams });
+export const getOffer = (collectionId: number, tokenId: number) =>
+  get<Offer>(`${endpoint}/${collectionId}/${tokenId}`, { ...defaultParams });
 
 export const useOffer = (collectionId: number, tokenId: number) => {
   const [offer, setOffer] = useState<Offer>();
@@ -17,18 +18,20 @@ export const useOffer = (collectionId: number, tokenId: number) => {
 
   const fetch = useCallback((collectionId: number, tokenId: number) => {
     setIsFetching(true);
-    getOffer(collectionId, tokenId).then((response) => {
-      if (response.status === 200) {
-        setOffer(response.data);
-        setIsFetching(false);
-      }
-    }).catch((err: AxiosError) => {
-      setOffer(undefined);
-      setFetchingError({
-        status: err.response?.status,
-        message: err.message
+    getOffer(collectionId, tokenId)
+      .then((response) => {
+        if (response.status === 200) {
+          setOffer(response.data);
+          setIsFetching(false);
+        }
+      })
+      .catch((err: AxiosError) => {
+        setOffer(undefined);
+        setFetchingError({
+          status: err.response?.status,
+          message: err.message,
+        });
       });
-    });
   }, []);
 
   useEffect(() => {
@@ -39,6 +42,6 @@ export const useOffer = (collectionId: number, tokenId: number) => {
     offer,
     isFetching,
     fetchingError,
-    fetch
+    fetch,
   };
 };

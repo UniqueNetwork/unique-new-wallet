@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/client';
+
 import { GqlClient } from './graphQL/gqlClient';
 import RpcClient from './chainApi/rpcClient';
-import { useParams } from 'react-router-dom';
 import { ApiContextProps, ApiProvider, ChainData } from './ApiContext';
 import config from '../config';
 import { defaultChainKey } from '../utils/configParser';
 import { getSettings } from './restApi/settings/settings';
-import { ApolloProvider } from '@apollo/client';
 
 const gqlClient = new GqlClient('');
 const rpcClient = new RpcClient();
@@ -17,12 +18,9 @@ interface ChainProviderProps {
 
 const { chains, defaultChain } = config;
 
-export const ApiWrapper = ({
-  children,
-}: ChainProviderProps) => {
+export const ApiWrapper = ({ children }: ChainProviderProps) => {
   const [chainData, setChainData] = useState<ChainData>();
-  const [isRpcClientInitialized, setRpcClientInitialized] =
-    useState<boolean>(false);
+  const [isRpcClientInitialized, setRpcClientInitialized] = useState<boolean>(false);
   const { chainId } = useParams<'chainId'>();
 
   useEffect(() => {
@@ -58,13 +56,13 @@ export const ApiWrapper = ({
           isRpcClientInitialized && {
             collection: rpcClient.collectionController,
             nft: rpcClient.nftController,
-            minter: rpcClient.minterController
+            minter: rpcClient.minterController,
           }) ||
         undefined,
       chainData,
       currentChain: chainId ? chains[chainId] : defaultChain,
       rawRpcApi: rpcClient.rawUniqRpcApi,
-      rpcClient
+      rpcClient,
     };
   }, [isRpcClientInitialized, chainData, chainId]);
 

@@ -2,15 +2,15 @@ import { PaginatedResponse, Pagination } from '../base/types';
 
 export type GetOnHoldRequestPayload = {
   owner?: string;
-  collectionId?: number | number[]
+  collectionId?: number | number[];
 } & Pagination;
 
 export type OnHold = {
-  owner: string
-  collectionId: number
-  tokenId: number
-}
+  owner: string;
+  collectionId: number;
+  tokenId: number;
+};
 
-export type OnHoldResponse = PaginatedResponse<OnHold>
+export type OnHoldResponse = PaginatedResponse<OnHold>;
 
-export type UseFetchOnHoldProps = Partial<GetOnHoldRequestPayload>
+export type UseFetchOnHoldProps = Partial<GetOnHoldRequestPayload>;

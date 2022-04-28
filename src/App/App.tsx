@@ -1,7 +1,8 @@
 import { Outlet } from 'react-router-dom';
+
 import { ApiWrapper } from '@app/api';
-import { PageLayout } from '../components';
-import AccountWrapper from '../account/AccountProvider';
+import { PageLayout } from '@app/components';
+import AccountWrapper from '@app/account/AccountProvider';
 
 import './styles.scss';
 

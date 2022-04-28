@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, InputText, Select, Text } from '@unique-nft/ui-kit';
 
-import { TokensList } from '../../components';
-import { Secondary400 } from '../../styles/colors';
-import { useApi } from '../../hooks/useApi';
-import { NFTToken } from '../../api/chainApi/unique/types';
+import { TokensList } from '@app/components';
+import { Secondary400 } from '@app/styles/colors';
+import { useApi } from '@app/hooks';
+import { NFTToken } from '@app/api/chainApi/unique/types';
 import { Filters, MyTokensFilterState } from './Filters/Filters';
 import { useAccounts } from '../../hooks/useAccounts';
 import { useOffers } from '../../api/restApi/offers/offers';

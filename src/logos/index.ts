@@ -115,13 +115,13 @@ export const chainLogos: Record<string, unknown> = [
   ['Trick', chainRococoTrick],
   ['TrustBase PC1', nodeTrustBase],
   ['Uniarts', nodeUniarts],
-  ['Unique', chainUnique]
+  ['Unique', chainUnique],
 ].reduce(
   (logos, [chain, logo]): Record<string, unknown> => ({
     ...logos,
-    [(chain).toLowerCase()]: logo
+    [chain.toLowerCase()]: logo,
   }),
-  {}
+  {},
 );
 
 // Alphabetical overrides based on the actual software node type
@@ -194,13 +194,13 @@ export const nodeLogos: Record<string, unknown> = [
   ['Zenlink Collator', nodeZenlink],
   ['SubDAO Collator', nodeSubDAO],
   ['Uniarts', nodeUniarts],
-  ['Unique Node', nodeUnique]
+  ['Unique Node', nodeUnique],
 ].reduce(
   (logos, [node, logo]): Record<string, unknown> => ({
     ...logos,
-    [(node).toLowerCase().replace(/-/g, ' ')]: logo
+    [node.toLowerCase().replace(/-/g, ' ')]: logo,
   }),
-  {}
+  {},
 );
 
 // Alphabetical overrides when we pass an explicit logo name
@@ -285,12 +285,12 @@ export const namedLogos: Record<string, unknown> = {
   uniarts: nodeUniarts,
   unique: nodeUnique,
   westend: nodePolkadot,
-  zero: nodeZero
+  zero: nodeZero,
 };
 
 // extension logos
 export const extensionLogos: Record<string, unknown> = {
-  'polkadot-js': extensionPolkadotJs
+  'polkadot-js': extensionPolkadotJs,
 };
 
 // external logos, i.e. for explorers
@@ -299,10 +299,10 @@ export const externalLogos: Record<string, unknown> = {
   polkascan: externalPolkascan,
   polkassembly: externalPolkassembly,
   polkastats: externalPolkastats,
-  subscan: externalSubscan
+  subscan: externalSubscan,
 };
 
 // empty logos
 export const emptyLogos: Record<string, unknown> = {
-  empty: emptyLogo
+  empty: emptyLogo,
 };

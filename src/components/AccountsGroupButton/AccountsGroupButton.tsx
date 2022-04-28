@@ -1,7 +1,14 @@
 import { Button } from '@unique-nft/ui-kit';
-import { DropdownMenu, DropdownMenuItem } from '../DropdownMenu/DropdownMenu';
 import React, { useCallback, useState } from 'react';
-import { CreateAccountModal, ImportViaSeedAccountModal, ImportViaJSONAccountModal, ImportViaQRCodeAccountModal } from '@app/pages';
+
+import {
+  CreateAccountModal,
+  ImportViaSeedAccountModal,
+  ImportViaJSONAccountModal,
+  ImportViaQRCodeAccountModal,
+} from '@app/pages';
+
+import { DropdownMenu, DropdownMenuItem } from '../DropdownMenu/DropdownMenu';
 import './AccountsGroupButton.scss';
 
 enum AccountModal {
@@ -9,7 +16,7 @@ enum AccountModal {
   importViaSeed,
   importViaJSON,
   importViaQRCode,
-  sendFunds
+  sendFunds,
 }
 
 export const AccountsGroupButton = () => {
@@ -39,23 +46,19 @@ export const AccountsGroupButton = () => {
     <div className={'btn-container'}>
       <Button
         title={'Create substrate account'}
-        onClick={onCreateAccountClick}
         className={'create-account-btn account-group-btn-medium-font'}
+        onClick={onCreateAccountClick}
       />
       <DropdownMenu
         title={'Add account via'}
         role={'primary'}
         className={'account-group-btn-medium-font'}
       >
-        <DropdownMenuItem onClick={onImportViaSeedClick}>
-          Seed phrase
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onImportViaSeedClick}>Seed phrase</DropdownMenuItem>
         <DropdownMenuItem onClick={onImportViaJSONClick}>
           Backup JSON file
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onImportViaQRClick}>
-          QR-code
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={onImportViaQRClick}>QR-code</DropdownMenuItem>
       </DropdownMenu>
 
       <CreateAccountModal

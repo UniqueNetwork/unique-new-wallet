@@ -11,7 +11,7 @@ export interface TokensVariables {
 export enum TokenType {
   auction = 'Auction', // accepts bids
   minter = 'Minter', // can be purchased directly
-  none = 'None' // not on sale
+  none = 'None', // not on sale
 }
 
 export interface Token {
@@ -41,7 +41,7 @@ export enum TokenStatus {
   myOnSell = 'My NFTs on sell',
   fixedPrice = 'Fixed price',
   timedAuction = 'Timed auction',
-  myBets = 'My bets'
+  myBets = 'My bets',
 }
 
 export interface PriceFilter {

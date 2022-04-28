@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 export enum DeviceSize {
   sm,
   md,
-  lg
+  lg,
 }
 
 const useDeviceSize = (): DeviceSize => {

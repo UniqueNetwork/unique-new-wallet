@@ -47,8 +47,11 @@ const timeDifference = (when: number, sinceWhen: number | null = null) => {
   return `${amount} ${timeType}${amount >= 2 ? 's' : ''}`;
 };
 
-const timestampTableFormat = (timestamp: number) => new Date(timestamp).toLocaleString('en-GB', {
-  hour12: false
-}).replaceAll('/', '-');
+const timestampTableFormat = (timestamp: number) =>
+  new Date(timestamp)
+    .toLocaleString('en-GB', {
+      hour12: false,
+    })
+    .replaceAll('/', '-');
 
 export { timeDifference, timestampTableFormat };

@@ -4,12 +4,13 @@ import { TableColumnProps } from '@unique-nft/ui-kit/dist/cjs/types';
 import styled from 'styled-components/macro';
 
 import { useAccounts } from '@app/hooks';
+import { formatKusamaBalance } from '@app/utils/textUtils';
+import { AccountsGroupButton, Icon, PagePaper, Table } from '@app/components';
+
 import DefaultAvatar from '../../static/icons/default-avatar.svg';
 import ArrowUpRight from '../../static/icons/arrow-up-right.svg';
 import config from '../../config';
 import { TransferFundsModal } from './Modals/SendFunds';
-import { formatKusamaBalance } from '@app/utils/textUtils';
-import { AccountsGroupButton, Icon, PagePaper, Table } from '@app/components';
 
 const tokenSymbol = 'KSM';
 
@@ -18,8 +19,8 @@ type AccountsColumnsProps = {
 };
 
 const getAccountsColumns = ({
-                              onShowSendFundsModal
-                            }: AccountsColumnsProps): TableColumnProps[] => [
+  onShowSendFundsModal,
+}: AccountsColumnsProps): TableColumnProps[] => [
   {
     title: 'Account',
     width: '33%',
@@ -36,7 +37,7 @@ const getAccountsColumns = ({
           </AccountInfoWrapper>
         </AccountCellWrapper>
       );
-    }
+    },
   },
   {
     title: 'Balance',
@@ -49,7 +50,7 @@ const getAccountsColumns = ({
           <Text>{`${formatKusamaBalance(KSM || 0)} ${tokenSymbol}`}</Text>
         </BalancesWrapper>
       );
-    }
+    },
   },
   {
     title: 'Block explorer',
@@ -68,7 +69,7 @@ const getAccountsColumns = ({
           </LinkStyled>
         </LinksWrapper>
       );
-    }
+    },
   },
   {
     title: 'Actions',
@@ -80,8 +81,8 @@ const getAccountsColumns = ({
           <Button title={'Send'} onClick={onShowSendFundsModal(address)} />
         </ActionsWrapper>
       );
-    }
-  }
+    },
+  },
 ];
 
 export const Accounts = () => {
@@ -95,7 +96,7 @@ export const Accounts = () => {
       setIsOpenModal(true);
       setSelectedAddress(address);
     },
-    []
+    [],
   );
 
   const onSearchStringChange = useCallback((value: string) => {
@@ -106,18 +107,18 @@ export const Accounts = () => {
     if (!searchString) {
       return accounts.map((item) => ({
         ...item,
-        accountInfo: { address: item.address, name: item.meta.name }
+        accountInfo: { address: item.address, name: item.meta.name },
       }));
     }
     return accounts
       .filter(
         (account) =>
           account.address.includes(searchString) ||
-          account.meta.name?.includes(searchString)
+          account.meta.name?.includes(searchString),
       )
       .map((item) => ({
         ...item,
-        accountInfo: { address: item.address, name: item.meta.name }
+        accountInfo: { address: item.address, name: item.meta.name },
       }));
   }, [accounts, searchString]);
 
@@ -141,14 +142,14 @@ export const Accounts = () => {
         </Row>
         <Table
           columns={getAccountsColumns({
-            onShowSendFundsModal: onSendFundsClick
+            onShowSendFundsModal: onSendFundsClick,
           })}
           data={filteredAccounts}
         />
         <TransferFundsModal
           isVisible={isOpenModal}
-          onFinish={onChangeAccountsFinish}
           senderAddress={selectedAddress}
+          onFinish={onChangeAccountsFinish}
         />
       </AccountPageWrapper>
     </PagePaper>

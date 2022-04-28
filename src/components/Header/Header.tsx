@@ -1,19 +1,19 @@
 import { VFC, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
+
 import { useScreenWidthFromThreshold } from '@app/hooks';
 import menu from '@app/static/icons/menu.svg';
 import { MenuRoute, routes } from '@app/routesConfig';
+import MobileMenuLink from '@app/components/Header/MobileMenuLink';
 
 import { WalletManager } from './WalletManager/WalletManager';
 import MenuLink from './MenuLink';
-import MobileMenuLink from "@app/components/Header/MobileMenuLink";
 
 const { base, menuRoutes } = routes;
 
 export const Header: VFC = () => {
-  const { lessThanThreshold: showMobileMenu } =
-    useScreenWidthFromThreshold(1279);
+  const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
 
   const mobileMenuToggle = useCallback(() => {
@@ -23,17 +23,19 @@ export const Header: VFC = () => {
   return (
     <HeaderStyled>
       <LeftSideColumn>
-        {showMobileMenu && (
-          <MenuIcon onClick={mobileMenuToggle} src={menu} />
-        )}
+        {showMobileMenu && <MenuIcon src={menu} onClick={mobileMenuToggle} />}
         <Link to={base}>
           <LogoIcon src={'/logos/logo.svg'} />
         </Link>
 
         {!showMobileMenu && (
           <nav>
-            { menuRoutes.map((menuRoute: MenuRoute) => (
-              <MenuLink key={menuRoute.name} name={menuRoute.name} path={menuRoute.path} />
+            {menuRoutes.map((menuRoute: MenuRoute) => (
+              <MenuLink
+                key={menuRoute.name}
+                name={menuRoute.name}
+                path={menuRoute.path}
+              />
             ))}
           </nav>
         )}
@@ -44,7 +46,7 @@ export const Header: VFC = () => {
 
       {showMobileMenu && mobileMenuIsOpen && (
         <MobileMenu>
-          { menuRoutes.map((menuRoute: MenuRoute) => (
+          {menuRoutes.map((menuRoute: MenuRoute) => (
             <MobileMenuLink
               key={menuRoute.name}
               mobileMenuToggle={mobileMenuToggle}
@@ -89,8 +91,6 @@ const RightSide = styled.div`
   align-items: center;
 `;
 
-
-
 const MobileMenu = styled.div`
   position: absolute;
   top: 81px;
@@ -104,5 +104,3 @@ const MobileMenu = styled.div`
   padding: 16px;
   z-index: 9;
 `;
-
-

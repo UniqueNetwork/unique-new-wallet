@@ -1,7 +1,7 @@
 export enum CreateAccountModalStages {
   AskSeed,
   AskCredentials,
-  Final
+  Final,
 }
 
 export type TAccountProperties = {

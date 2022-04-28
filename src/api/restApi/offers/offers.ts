@@ -3,12 +3,18 @@ import { AxiosError } from 'axios';
 
 import { get } from '../base';
 import { defaultParams } from '../base/axios';
-import { GetOffersRequestPayload, Offer, OffersResponse, UseFetchOffersProps } from './types';
+import {
+  GetOffersRequestPayload,
+  Offer,
+  OffersResponse,
+  UseFetchOffersProps,
+} from './types';
 import { ResponseError } from '../base/types';
 
 const endpoint = '/Offers';
 
-export const getOffers = (payload: GetOffersRequestPayload) => get<OffersResponse>(endpoint, { ...defaultParams, params: payload });
+export const getOffers = (payload: GetOffersRequestPayload) =>
+  get<OffersResponse>(endpoint, { ...defaultParams, params: payload });
 
 export const useOffers = ({ page = 1, pageSize = 10, ...props }: UseFetchOffersProps) => {
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -18,34 +24,41 @@ export const useOffers = ({ page = 1, pageSize = 10, ...props }: UseFetchOffersP
 
   const fetch = useCallback((payload: GetOffersRequestPayload) => {
     setIsFetching(true);
-    getOffers(payload).then((response) => {
-      if (response.status === 200) {
-        setOffers(response.data.items);
-        setOffersCount(response.data.itemsCount);
-        setIsFetching(false);
-      }
-    }).catch((err: AxiosError) => {
-      setFetchingError({
-        status: err.response?.status,
-        message: err.message
-      });
-    });
-  }, []);
-
-  const fetchMore = useCallback((payload: GetOffersRequestPayload) => {
-    setIsFetching(true);
-    getOffers(payload).then((response) => {
-      if (response.status === 200) {
-        setOffers([...offers, ...response.data.items]);
-        setIsFetching(false);
-      }
-    }).catch((err: AxiosError) => {
+    getOffers(payload)
+      .then((response) => {
+        if (response.status === 200) {
+          setOffers(response.data.items);
+          setOffersCount(response.data.itemsCount);
+          setIsFetching(false);
+        }
+      })
+      .catch((err: AxiosError) => {
         setFetchingError({
           status: err.response?.status,
-          message: err.message
+          message: err.message,
         });
       });
-    }, [offers]);
+  }, []);
+
+  const fetchMore = useCallback(
+    (payload: GetOffersRequestPayload) => {
+      setIsFetching(true);
+      getOffers(payload)
+        .then((response) => {
+          if (response.status === 200) {
+            setOffers([...offers, ...response.data.items]);
+            setIsFetching(false);
+          }
+        })
+        .catch((err: AxiosError) => {
+          setFetchingError({
+            status: err.response?.status,
+            message: err.message,
+          });
+        });
+    },
+    [offers],
+  );
 
   return {
     offers,
@@ -53,6 +66,6 @@ export const useOffers = ({ page = 1, pageSize = 10, ...props }: UseFetchOffersP
     isFetching,
     fetchingError,
     fetch,
-    fetchMore
+    fetchMore,
   };
 };

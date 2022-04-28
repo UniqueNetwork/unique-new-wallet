@@ -1,1 +1,1 @@
-export { SidebarPreview } from './SidebarPreview';
+export * from './SidebarPreview';

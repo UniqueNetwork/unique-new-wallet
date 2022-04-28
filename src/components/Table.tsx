@@ -8,10 +8,10 @@ import MobileTable from './MobileTable/MobileTable';
 import Loading from './Loading';
 
 interface TableProps {
-  columns: TableColumnProps[]
-  data?: any[]
-  loading?: boolean
-  onSort?(sorting: SortQuery): void
+  columns: TableColumnProps[];
+  data?: any[];
+  loading?: boolean;
+  onSort?(sorting: SortQuery): void;
 }
 
 export const Table: FC<TableProps> = ({ columns, data, loading, onSort }) => {
@@ -19,28 +19,20 @@ export const Table: FC<TableProps> = ({ columns, data, loading, onSort }) => {
 
   return (
     <TableWrapper>
-      {deviceSize > DeviceSize.sm && (<>
-        <UITable
-          columns={columns}
-          data={data || []}
-          onSort={onSort}
-        />
-        {loading && <TableLoading />}
-      </>)}
+      {deviceSize > DeviceSize.sm && (
+        <>
+          <UITable columns={columns} data={data || []} onSort={onSort} />
+          {loading && <TableLoading />}
+        </>
+      )}
       {deviceSize <= DeviceSize.sm && (
-        <MobileTable
-          columns={columns}
-          data={!loading ? data : []}
-          loading={loading}
-        />
+        <MobileTable columns={columns} data={!loading ? data : []} loading={loading} />
       )}
     </TableWrapper>
   );
 };
 
-const TableWrapper = styled.div`
- 
-`;
+const TableWrapper = styled.div``;
 
 const TableLoading = styled(Loading)`
   position: absolute;

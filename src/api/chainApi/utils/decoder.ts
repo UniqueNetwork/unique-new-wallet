@@ -1,6 +1,9 @@
-import { AttributesDecoded, NFTCollection } from '../unique/types';
-import { deserializeNft, ProtobufAttributeType } from './protobufUtils';
 import { addressToEvm } from '@polkadot/util-crypto';
+
+import { ProtobufAttributeType } from '@app/types';
+import { deserializeNft } from '@app/api';
+
+import { AttributesDecoded, NFTCollection } from '../unique/types';
 
 export const collectionName16Decoder = (name: number[]) => {
   const collectionNameArr = name.map((item: number) => item);
@@ -25,7 +28,13 @@ export const hex2a = (hexx: string) => {
   return str;
 };
 
-export const decodeStruct = ({ attr, data }: { attr?: any; data?: string }): AttributesDecoded => {
+export const decodeStruct = ({
+  attr,
+  data,
+}: {
+  attr?: any;
+  data?: string;
+}): AttributesDecoded => {
   if (attr && data) {
     try {
       const schema = JSON.parse(attr) as ProtobufAttributeType;
@@ -41,25 +50,28 @@ export const decodeStruct = ({ attr, data }: { attr?: any; data?: string }): Att
   return {};
 };
 
-export const getOnChainSchema = (collection: NFTCollection): {
-  attributesConst: string
-  attributesVar: string
+export const getOnChainSchema = (
+  collection: NFTCollection,
+): {
+  attributesConst: string;
+  attributesVar: string;
 } => {
   if (collection) {
     return {
       attributesConst: hex2a(collection.constOnChainSchema),
-      attributesVar: hex2a(collection.variableOnChainSchema)
+      attributesVar: hex2a(collection.variableOnChainSchema),
     };
   }
 
   return {
     attributesConst: '',
-    attributesVar: ''
+    attributesVar: '',
   };
 };
 
 // decimals: 15 - opal, 18 - eth
-export const subToEthLowercase = (eth: string): string => { // TODO: why args called eth!?
+export const subToEthLowercase = (eth: string): string => {
+  // TODO: why args called eth!?
   const bytes = addressToEvm(eth);
 
   return '0x' + Buffer.from(bytes).toString('hex');

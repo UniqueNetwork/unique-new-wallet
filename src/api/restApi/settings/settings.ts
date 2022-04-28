@@ -32,6 +32,6 @@ export const useSettings = () => {
   return {
     settings,
     isFetching,
-    fetchingError
+    fetchingError,
   };
 };

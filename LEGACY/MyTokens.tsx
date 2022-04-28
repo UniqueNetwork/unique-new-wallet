@@ -1,14 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import { Tabs } from '@unique-nft/ui-kit';
+import styled from 'styled-components';
+
 import { NFTPage } from './NFTPage';
 import { CoinsPage } from './CoinsPage';
 
-export const MyTokensPage = () => {
+export const MyTokensComponent = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
   const handleClick = useCallback((tabIndex: number) => {
-      setActiveTab(tabIndex);
-    }, [setActiveTab]);
+    setActiveTab(tabIndex);
+  }, [setActiveTab]);
 
   return (<>
     <Tabs
@@ -23,3 +25,5 @@ export const MyTokensPage = () => {
     </Tabs>
   </>);
 };
+
+export const MyTokens = styled(MyTokensComponent)``;

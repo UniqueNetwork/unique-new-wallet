@@ -1,17 +1,15 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import { KeyringPair } from '@polkadot/keyring/types';
 
 import { Account, AccountProvider } from './AccountContext';
 import { SignModal } from '../components/SignModal/SignModal';
-import { KeyringPair } from '@polkadot/keyring/types';
 
 export const DefaultAccountKey = 'unique_minter_account_address';
 
 const AccountWrapper: FC = ({ children }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [fetchAccountsError, setFetchAccountsError] = useState<
-    string | undefined
-  >();
+  const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
 
   const changeAccount = useCallback((account: Account) => {
@@ -20,8 +18,7 @@ const AccountWrapper: FC = ({ children }) => {
   }, []);
 
   const [isSignModalVisible, setIsSignModalVisible] = useState<boolean>(false);
-  const onSignCallback =
-    useRef<(signature?: KeyringPair) => void | undefined>();
+  const onSignCallback = useRef<(signature?: KeyringPair) => void | undefined>();
   const showSignDialog = useCallback(() => {
     setIsSignModalVisible(true);
     return new Promise<KeyringPair>((resolve, reject) => {
@@ -53,9 +50,9 @@ const AccountWrapper: FC = ({ children }) => {
       setFetchAccountsError,
       setAccounts,
       setIsLoading,
-      showSignDialog
+      showSignDialog,
     }),
-    [isLoading, accounts, selectedAccount, fetchAccountsError, changeAccount]
+    [isLoading, accounts, selectedAccount, fetchAccountsError, changeAccount],
   );
 
   return (

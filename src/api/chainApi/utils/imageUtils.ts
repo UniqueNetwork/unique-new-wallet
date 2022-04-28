@@ -12,10 +12,12 @@ const getTokenImageUrl = (urlString: string, tokenId: number): string => {
 // uses for token image path
 const fetchTokenImage = async (
   collectionInfo: Pick<NFTCollection, 'offchainSchema'>,
-  tokenId: number
+  tokenId: number,
 ): Promise<string> => {
   try {
-    const collectionMetadata = JSON.parse(hex2a(collectionInfo.offchainSchema)) as MetadataType;
+    const collectionMetadata = JSON.parse(
+      hex2a(collectionInfo.offchainSchema),
+    ) as MetadataType;
 
     if (collectionMetadata.metadata) {
       const dataUrl = getTokenImageUrl(collectionMetadata.metadata, tokenId);
@@ -31,7 +33,10 @@ const fetchTokenImage = async (
   return '';
 };
 
-export const getTokenImage = async (collection: NFTCollection, tokenId: number): Promise<string> => {
+export const getTokenImage = async (
+  collection: NFTCollection,
+  tokenId: number,
+): Promise<string> => {
   if (collection.schemaVersion === 'ImageURL') {
     return getTokenImageUrl(hex2a(collection.offchainSchema), tokenId);
   } else {

@@ -3,14 +3,11 @@ import React, {
   ReactElement,
   SetStateAction,
   useCallback,
-  useState
+  useState,
 } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Select, Tabs } from '@unique-nft/ui-kit';
-import {
-  IconProps,
-  SelectOptionProps
-} from '@unique-nft/ui-kit/dist/cjs/types';
+import { IconProps, SelectOptionProps } from '@unique-nft/ui-kit/dist/cjs/types';
 
 import { FilterState } from './types';
 
@@ -41,7 +38,7 @@ export function MobileFilters<T = FilterState>({
   sortingValue,
   sortingOptions,
   onFilterChange,
-  onSortingChange
+  onSortingChange,
 }: FiltersProps<T>) {
   const [isVisible, setIsVisible] = useState(false);
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -66,35 +63,27 @@ export function MobileFilters<T = FilterState>({
         {!isVisible && (
           <Button
             role={'primary'}
-            onClick={onVisibleButtonClick}
             title={'Filter and sort'}
+            onClick={onVisibleButtonClick}
           />
         )}
         {isVisible && (
           <>
-            <Button onClick={onShowButtonClick} title={'Show'} />
-            <Button
-              role={'danger'}
-              onClick={onResetButtonClick}
-              title={'Reset'}
-            />
+            <Button title={'Show'} onClick={onShowButtonClick} />
+            <Button role={'danger'} title={'Reset'} onClick={onResetButtonClick} />
           </>
         )}
       </MobileFilterActionsWrapper>
       {isVisible && (
         <MobileFilterModal>
-          <Tabs
-            activeIndex={activeTabIndex}
-            labels={tabs}
-            onClick={setActiveTabIndex}
-          />
+          <Tabs activeIndex={activeTabIndex} labels={tabs} onClick={setActiveTabIndex} />
           <Tabs activeIndex={activeTabIndex}>
             {(filterComponent && filterComponent({ onFilterChange })) || <></>}
             <SortStyled>
               <Select
-                onChange={onSortingChange}
                 options={sortingOptions}
                 value={sortingValue}
+                onChange={onSortingChange}
               />
             </SortStyled>
           </Tabs>

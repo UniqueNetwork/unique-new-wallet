@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import { useAccounts } from './useAccounts';
 import useStages from './useStages';
 import { TTransaction } from '../api/chainApi/types';
@@ -8,7 +9,7 @@ export type AccountStage<T> = InternalStage<T>;
 
 const useAccountStages = <T>(
   stages: InternalStage<T>[],
-  accountAddress: string
+  accountAddress: string,
 ): useStagesReturn<T> => {
   const { accounts, signTx } = useAccounts();
 
@@ -18,15 +19,13 @@ const useAccountStages = <T>(
 
   const sign = useCallback(
     async (tx: TTransaction) => {
-      const account = accounts.find(
-        (account) => account.address === accountAddress
-      );
+      const account = accounts.find((account) => account.address === accountAddress);
 
       if (!account) throw new Error('Unavailable account address');
 
       return await signTx(tx, account);
     },
-    [signTx, accountAddress]
+    [signTx, accountAddress],
   );
 
   return useStages<T>(stages, action, sign);

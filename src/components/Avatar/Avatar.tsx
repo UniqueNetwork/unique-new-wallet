@@ -10,7 +10,7 @@ export interface IAvatarProps {
 export const Avatar: FC<IAvatarProps> = ({
   size = 38,
   src,
-  type = 'square'
+  type = 'square',
 }: IAvatarProps) => <AvatarStyled $type={type} src={src} width={size} />;
 
 const AvatarStyled = styled.img<{ $type: 'circle' | 'square' }>`

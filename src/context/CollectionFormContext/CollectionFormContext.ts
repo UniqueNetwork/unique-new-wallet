@@ -3,9 +3,15 @@
 
 import React from 'react';
 import { FormikProps } from 'formik';
-import type { ArtificialAttributeItemType, MainInformationInitialValues } from '@app/types';
 
-export type AttributesCallBackType = (prevAttributes: ArtificialAttributeItemType[]) => ArtificialAttributeItemType[];
+import type {
+  ArtificialAttributeItemType,
+  MainInformationInitialValues,
+} from '@app/types';
+
+export type AttributesCallBackType = (
+  prevAttributes: ArtificialAttributeItemType[],
+) => ArtificialAttributeItemType[];
 
 export interface CollectionFormProps {
   attributes: ArtificialAttributeItemType[];
@@ -19,7 +25,9 @@ export interface CollectionFormProps {
   name: string;
   ownerCanDestroy: boolean;
   ownerCanTransfer: boolean;
-  setAttributes: (attributes: ArtificialAttributeItemType[] | AttributesCallBackType) => void;
+  setAttributes: (
+    attributes: ArtificialAttributeItemType[] | AttributesCallBackType,
+  ) => void;
   setAvatarImg: (avatarImg: File | null) => void;
   setCoverImgFile: (coverImg: File | null) => void;
   setCoverImgAddress: (address: string | undefined) => void;
@@ -38,6 +46,7 @@ export interface CollectionFormProps {
   variableSchema: string;
 }
 
-export const CollectionFormContext: React.Context<CollectionFormProps> = React.createContext({} as unknown as CollectionFormProps);
+export const CollectionFormContext: React.Context<CollectionFormProps> =
+  React.createContext({} as unknown as CollectionFormProps);
 
 export default CollectionFormContext;

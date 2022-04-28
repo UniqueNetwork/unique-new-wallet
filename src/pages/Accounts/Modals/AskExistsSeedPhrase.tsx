@@ -1,22 +1,27 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
-import { TCreateAccountBodyModalProps } from './types';
-import { addressFromSeed } from '../../../utils/seedUtils';
-import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
-import { defaultPairType, derivePath } from './CreateAccount';
 import styled from 'styled-components/macro';
-import { AdditionalWarning100 } from '../../../styles/colors';
+import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
 
-export const AskExistsSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
+import { addressFromSeed } from '@app/utils';
+import { AdditionalWarning100 } from '@app/styles/colors';
+
+import { TCreateAccountBodyModalProps } from './types';
+import { defaultPairType, derivePath } from './CreateAccount';
+import DefaultAvatar from '../../../static/icons/default-avatar.svg';
+
+export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
   const [seed, setSeed] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [confirmSeedSaved, setConfirmSeedSaved] = useState<boolean>(false);
 
-  const changeSeed = useCallback((value: string) => {
-    setSeed(value);
-    const newAddress = addressFromSeed(value, derivePath, defaultPairType);
-    setAddress(newAddress);
-  }, [setSeed]);
+  const changeSeed = useCallback(
+    (value: string) => {
+      setSeed(value);
+      const newAddress = addressFromSeed(value, derivePath, defaultPairType);
+      setAddress(newAddress);
+    },
+    [setSeed],
+  );
 
   const onSeedChange = useCallback(({ target }: ChangeEvent<HTMLTextAreaElement>) => {
     changeSeed(target.value);
@@ -26,41 +31,38 @@ export const AskExistsSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({ onF
     onFinish({ seed, address });
   }, [seed, address]);
 
-  return (<>
-    <AddressWrapper>
-      <Avatar size={24} src={DefaultAvatar} />
-      <Text>{address}</Text>
-    </AddressWrapper>
-    <InputSeedWrapper>
-      <SeedInput
-        onChange={onSeedChange}
-        value={seed}
-      />
-    </InputSeedWrapper>
-    <TextStyled
-      color='additional-warning-500'
-      size='s'
-    >
-      Ensure that you keep this seed in a safe place. Anyone with access to it can re-create the account and gain full access to it.
-    </TextStyled>
-    <ConfirmWrapperRow>
-      <Checkbox label={'I have saved my mnemnic seed safely'}
-        checked={confirmSeedSaved}
-        onChange={setConfirmSeedSaved}
-        size={'m'}
-      />
-    </ConfirmWrapperRow>
-    <ButtonWrapper>
-
-      <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
-      <Button
-        disabled={!address || !confirmSeedSaved}
-        onClick={onNextClick}
-        role='primary'
-        title='Next'
-      />
-    </ButtonWrapper>
-  </>);
+  return (
+    <>
+      <AddressWrapper>
+        <Avatar size={24} src={DefaultAvatar} />
+        <Text>{address}</Text>
+      </AddressWrapper>
+      <InputSeedWrapper>
+        <SeedInput value={seed} onChange={onSeedChange} />
+      </InputSeedWrapper>
+      <TextStyled color="additional-warning-500" size="s">
+        Ensure that you keep this seed in a safe place. Anyone with access to it can
+        re-create the account and gain full access to it.
+      </TextStyled>
+      <ConfirmWrapperRow>
+        <Checkbox
+          label={'I have saved my mnemnic seed safely'}
+          checked={confirmSeedSaved}
+          size={'m'}
+          onChange={setConfirmSeedSaved}
+        />
+      </ConfirmWrapperRow>
+      <ButtonWrapper>
+        <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
+        <Button
+          disabled={!address || !confirmSeedSaved}
+          role="primary"
+          title="Next"
+          onClick={onNextClick}
+        />
+      </ButtonWrapper>
+    </>
+  );
 };
 
 const AddressWrapper = styled.div`

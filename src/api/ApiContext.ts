@@ -1,11 +1,12 @@
 import { ApiPromise } from '@polkadot/api';
 import { Context, Consumer, Provider, createContext } from 'react';
+
 import {
   Chain,
   ICollectionController,
   IMinterController,
   INFTController,
-  IRpcClient
+  IRpcClient,
 } from './chainApi/types';
 
 export type ChainData = {
@@ -31,7 +32,7 @@ export type ApiContextProps = {
 };
 
 const ApiContext: Context<ApiContextProps> = createContext(
-  {} as unknown as ApiContextProps
+  {} as unknown as ApiContextProps,
 );
 const ApiConsumer: Consumer<ApiContextProps> = ApiContext.Consumer;
 const ApiProvider: Provider<ApiContextProps> = ApiContext.Provider;

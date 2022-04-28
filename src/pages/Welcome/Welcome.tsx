@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import classNames from 'classnames';
+
 import { AccountsGroupButton } from '@app/components';
 
 type Props = {
@@ -9,12 +10,12 @@ type Props = {
 const WelcomeComponent = ({ className }: Props) => {
   return (
     <div className={classNames('unique-card welcome', className)}>
-      <h1 className='header-text'>Welcome to Unique network</h1>
-      <div className='description'>
-        <p className='text'>
+      <h1 className="header-text">Welcome to Unique network</h1>
+      <div className="description">
+        <p className="text">
           You need to connect a substrate account to use all the features.
         </p>
-        <p className='text'>Please select one of the options:</p>
+        <p className="text">Please select one of the options:</p>
       </div>
       <AccountsGroupButton />
     </div>

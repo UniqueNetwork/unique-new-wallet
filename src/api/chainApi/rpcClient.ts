@@ -9,7 +9,7 @@ import {
   IRpcClientOptions,
   ICollectionController,
   IMinterController,
-  IRpcConfig
+  IRpcConfig,
 } from './types';
 import { typesBundle } from './unique/bundledTypesDefinitions';
 import rpcMethods from './unique/rpcMethods';
@@ -40,7 +40,7 @@ export class RpcClient implements IRpcClient {
     this.options = options || {};
     this.config = config || {};
     this.rawKusamaRpcApi = await this.initKusamaApi(
-      config.blockchain.kusama.wsEndpoint || ''
+      config.blockchain.kusama.wsEndpoint || '',
     );
     await this.setApi();
   }
@@ -58,8 +58,8 @@ export class RpcClient implements IRpcClient {
       typesBundle,
       typesChain: {
         ...typesChain,
-        'Crust Maxwell': CrustMaxwell
-      }
+        'Crust Maxwell': CrustMaxwell,
+      },
     });
 
     kusamaApi.on('connected', () => {
@@ -119,31 +119,27 @@ export class RpcClient implements IRpcClient {
     const _api = new ApiPromise({
       provider,
       rpc: {
-        unique: rpcMethods
+        unique: rpcMethods,
       },
       // @ts-ignore
-      typesBundle
+      typesBundle,
     });
     this.rawUniqRpcApi = _api;
     this.nftController = new UniqueNFTController(_api, {
-      collectionsIds: this.config?.blockchain.unique.collectionIds || []
+      collectionsIds: this.config?.blockchain.unique.collectionIds || [],
     });
     this.collectionController = new UniqueCollectionController(
       _api,
-      this.config?.blockchain.unique.collectionIds || []
+      this.config?.blockchain.unique.collectionIds || [],
     );
     if (!this.rawKusamaRpcApi) throw new Error('Kusama API is not initialized');
-    this.minterController = new MinterKusamaController(
-      _api,
-      this.rawKusamaRpcApi,
-      {
-        contractAddress: this.config?.blockchain.unique.contractAddress,
-        escrowAddress: this.config?.blockchain.escrowAddress,
-        uniqueSubstrateApiRpc: this.config?.blockchain.unique.wsEndpoint,
-        auctionAddress: this.config?.auction.address,
-        nftController: this.nftController
-      }
-    );
+    this.minterController = new MinterKusamaController(_api, this.rawKusamaRpcApi, {
+      contractAddress: this.config?.blockchain.unique.contractAddress,
+      escrowAddress: this.config?.blockchain.escrowAddress,
+      uniqueSubstrateApiRpc: this.config?.blockchain.unique.wsEndpoint,
+      auctionAddress: this.config?.auction.address,
+      nftController: this.nftController,
+    });
 
     return new Promise<void>((resolve, reject) => {
       _api.on('connected', () => this.setIsApiConnected(true));
@@ -156,8 +152,7 @@ export class RpcClient implements IRpcClient {
       _api.on('ready', async () => {
         this.setIsApiConnected(true);
         await this.getChainData();
-        if (this.options.onChainReady)
-          this.options.onChainReady(this.chainData);
+        if (this.options.onChainReady) this.options.onChainReady(this.chainData);
         this.setIsApiInitialized(true);
         resolve();
       });
@@ -166,23 +161,21 @@ export class RpcClient implements IRpcClient {
 
   private async getChainData() {
     if (!this.rawUniqRpcApi)
-      throw new Error(
-        "Attempted to get chain data while api isn't initialized"
-      );
+      throw new Error("Attempted to get chain data while api isn't initialized");
     const [chainProperties, systemChain, systemName] = await Promise.all([
       this.rawUniqRpcApi.rpc.system.properties(),
       this.rawUniqRpcApi.rpc.system.chain(),
-      this.rawUniqRpcApi.rpc.system.name()
+      this.rawUniqRpcApi.rpc.system.name(),
     ]);
 
     this.chainData = {
       properties: {
         tokenSymbol: chainProperties.tokenSymbol
           .unwrapOr([formatBalance.getDefaults().unit])[0]
-          .toString()
+          .toString(),
       },
       systemChain: (systemChain || '<unknown>').toString(),
-      systemName: systemName.toString()
+      systemName: systemName.toString(),
     };
   }
 

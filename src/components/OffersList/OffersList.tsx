@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components/macro';
+
 import { Offer } from '../../api/restApi/offers/types';
 import { OfferCard } from '../OfferCard/OfferCard';
 
@@ -12,10 +13,7 @@ export const OffersList: FC<TTokensList> = ({ offers }) => {
     <OffersListStyled>
       {offers?.map &&
         offers.map((offer: Offer) => (
-          <OfferCard
-            key={`token-${offer.collectionId}-${offer.tokenId}`}
-            offer={offer}
-          />
+          <OfferCard key={`token-${offer.collectionId}-${offer.tokenId}`} offer={offer} />
         ))}
     </OffersListStyled>
   );

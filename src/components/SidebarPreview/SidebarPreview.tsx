@@ -15,16 +15,16 @@ const SidebarPreviewComponent = ({
   srcImg,
   title,
   description,
-  children
+  children,
 }: CollectionPreview) => {
   return (
     <div className={classNames('collection-preview', className)}>
-      <div className='preview-avatar'>
-        <img src={srcImg} alt='preview-image' />
+      <div className="preview-avatar">
+        <img src={srcImg} alt="preview-image" />
       </div>
-      <div className='preview-content'>
-        <div className='title'>{title}</div>
-        <div className='description'>{description}</div>
+      <div className="preview-content">
+        <div className="title">{title}</div>
+        <div className="description">{description}</div>
         {children}
       </div>
     </div>

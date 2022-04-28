@@ -19,8 +19,8 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@unique-nft/types": "^0.3.0",
-    "@unique-nft/ui-kit": "^0.0.11-rc1",
+    "@unique-nft/types": "^0.4.0",
+    "@unique-nft/ui-kit": "^0.0.14",
     "axios": "^0.24.0",
     "eslint": "^8.11.0",
     "formik": "^2.2.9",
@@ -70,7 +70,7 @@
     "stylelint-config-standard-scss": "^3.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.10.0",
-    "typescript": "^4.5.2",
+    "typescript": "^4.6.3",
     "url": "^0.11.0"
   },
   "scripts": {

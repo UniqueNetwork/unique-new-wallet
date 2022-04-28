@@ -9,13 +9,14 @@ export const AppRoutes = () => (
   <Router>
     <Routes>
       <Route element={<App />} path={routes.base}>
-        { menuRoutes.map((menuRoute: MenuRoute) => (
-          <Route element={menuRoute.component}
+        {menuRoutes.map((menuRoute: MenuRoute) => (
+          <Route
+            element={menuRoute.component}
             index={menuRoute.index}
             key={`${menuRoute.name}${menuRoute.path}`}
             path={menuRoute.path}
           >
-            { menuRoute.children?.map((menuChild1: MenuRoute) => (
+            {menuRoute.children?.map((menuChild1: MenuRoute) => (
               <Route
                 element={menuChild1.component}
                 index={menuChild1.index}
@@ -34,7 +35,7 @@ export const AppRoutes = () => (
             ))}
           </Route>
         ))}
-        { otherRoutes.map((otherRoute: RouteItem) => (
+        {otherRoutes.map((otherRoute: RouteItem) => (
           <Route
             element={otherRoute.component}
             index={otherRoute.index}

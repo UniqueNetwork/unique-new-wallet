@@ -2,11 +2,11 @@ import React, { Dispatch, FC, SetStateAction, useCallback } from 'react';
 import styled from 'styled-components/macro';
 
 import PricesFilter from '../../../components/Filters/PricesFilter';
-import { PriceRange } from '../../../components/Filters/types';
+import { PriceRange } from '@app/components/Filters/types';
 import CollectionsFilter from '../../../components/Filters/CollectionsFilter';
 import { MyTokensStatuses } from './types';
 import StatusFilter from './StatusFilter';
-import { FilterChangeHandler } from '../../../components/Filters/MobileFilter';
+import { FilterChangeHandler } from '@app/components/Filters/MobileFilter';
 
 export type MyTokensFilterState = Partial<MyTokensStatuses> & Partial<PriceRange> & { collectionIds?: number[] }
 

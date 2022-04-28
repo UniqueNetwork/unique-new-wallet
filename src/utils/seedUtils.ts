@@ -8,12 +8,18 @@ export const getSuri = (seed: string, derivePath: string, pairType: PairType): s
   return pairType === 'ed25519-ledger'
     ? u8aToHex(hdLedger(seed, derivePath).secretKey.slice(0, 32))
     : pairType === 'ethereum'
-      ? `${seed}/${derivePath}`
-      : `${seed}${derivePath}`;
+    ? `${seed}/${derivePath}`
+    : `${seed}${derivePath}`;
 };
 
-export const addressFromSeed = (seed: string, derivePath: string, pairType: PairType): string => {
-  return keyring
-    .createFromUri(getSuri(seed, derivePath, pairType), {}, pairType === 'ed25519-ledger' ? 'ed25519' : pairType)
-    .address;
+export const addressFromSeed = (
+  seed: string,
+  derivePath: string,
+  pairType: PairType,
+): string => {
+  return keyring.createFromUri(
+    getSuri(seed, derivePath, pairType),
+    {},
+    pairType === 'ed25519-ledger' ? 'ed25519' : pairType,
+  ).address;
 };

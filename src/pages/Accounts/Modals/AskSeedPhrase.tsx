@@ -1,12 +1,4 @@
-import React, {
-  ChangeEvent,
-  FC,
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
-import { TCreateAccountBodyModalProps } from './types';
-import { addressFromSeed } from '../../../utils/seedUtils';
+import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import {
   Avatar,
@@ -15,20 +7,22 @@ import {
   Heading,
   Link,
   Select,
-  Text
+  Text,
 } from '@unique-nft/ui-kit';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
-import { defaultPairType, derivePath } from './CreateAccount';
 import styled from 'styled-components/macro';
+
+import { addressFromSeed } from '@app/utils';
 import { AdditionalWarning100 } from '@app/styles/colors';
 import { Icon, Tooltip } from '@app/components';
+
+import { defaultPairType, derivePath } from './CreateAccount';
+import DefaultAvatar from '../../../static/icons/default-avatar.svg';
+import { TCreateAccountBodyModalProps } from './types';
 import Question from '../../../static/icons/question.svg';
 
 const seedGenerators = [{ id: 'Mnemonic', title: 'Mnemonic' }];
 
-export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({
-  onFinish
-}) => {
+export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
   const [seed, setSeed] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [confirmSeedSaved, setConfirmSeedSaved] = useState<boolean>(false);
@@ -40,7 +34,7 @@ export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({
       const newAddress = addressFromSeed(value, derivePath, defaultPairType);
       setAddress(newAddress);
     },
-    [setSeed]
+    [setSeed],
   );
 
   const generateSeed = useCallback(() => {
@@ -52,12 +46,9 @@ export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({
     setSeedGenerator(value.id);
   }, []);
 
-  const onSeedChange = useCallback(
-    ({ target }: ChangeEvent<HTMLTextAreaElement>) => {
-      changeSeed(target.value);
-    },
-    []
-  );
+  const onSeedChange = useCallback(({ target }: ChangeEvent<HTMLTextAreaElement>) => {
+    changeSeed(target.value);
+  }, []);
 
   useEffect(() => {
     generateSeed();
@@ -84,7 +75,7 @@ export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({
           title={
             <>
               Find out more on{' '}
-              <Link href='https://' title={'Polkadot Wiki'}>
+              <Link href="https://" title={'Polkadot Wiki'}>
                 Polkadot Wiki
               </Link>
             </>
@@ -94,28 +85,28 @@ export const AskSeedPhraseModal: FC<TCreateAccountBodyModalProps> = ({
         </Tooltip>
       </SeedGeneratorSelectWrapper>
       <InputSeedWrapper>
-        <SeedInput onChange={onSeedChange} value={seed} />
-        <Button onClick={generateSeed} title='Regenerate seed' />
+        <SeedInput value={seed} onChange={onSeedChange} />
+        <Button title="Regenerate seed" onClick={generateSeed} />
       </InputSeedWrapper>
-      <TextStyled color='additional-warning-500' size='s'>
-        Ensure that you keep this seed in a safe place. Anyone with access to it
-        can re-create the account and gain full access to it.
+      <TextStyled color="additional-warning-500" size="s">
+        Ensure that you keep this seed in a safe place. Anyone with access to it can
+        re-create the account and gain full access to it.
       </TextStyled>
       <ConfirmWrapperRow>
         <Checkbox
           label={'I have saved my mnemnic seed safely'}
           checked={confirmSeedSaved}
-          onChange={setConfirmSeedSaved}
           size={'m'}
+          onChange={setConfirmSeedSaved}
         />
       </ConfirmWrapperRow>
       <ButtonWrapper>
         <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
         <Button
           disabled={!address || !confirmSeedSaved}
+          role="primary"
+          title="Next"
           onClick={onNextClick}
-          role='primary'
-          title='Next'
         />
       </ButtonWrapper>
     </>

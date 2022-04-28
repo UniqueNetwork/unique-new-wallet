@@ -2,25 +2,30 @@ import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Text } from '@unique-nft/ui-kit';
 
-import UploadIcon from '../../static/icons/upload.svg';
 import { Icon } from '@app/components';
+
+import UploadIcon from '../../static/icons/upload.svg';
 
 interface UploadProps {
   onChange(file: File): void;
 }
 
+// todo - use from ui-kit
 export const Upload: FC<UploadProps> = ({ onChange }) => {
   const [fileName, setFileName] = useState<string>();
-  const onInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target?.files && event.target?.files.length) {
-      onChange(event.target.files[0]);
-      setFileName(event.target.files[0].name);
-    }
-  }, [onChange]);
+  const onInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target?.files && event.target?.files.length) {
+        onChange(event.target.files[0]);
+        setFileName(event.target.files[0].name);
+      }
+    },
+    [onChange],
+  );
 
   return (
     <UploadWrapper>
-      <input type={'file'} onChange={onInputChange} accept={'.json'} />
+      <input type={'file'} accept={'.json'} onChange={onInputChange} />
       <Icon path={UploadIcon} size={48} />
       {fileName && <Text color={'primary-500'}>{fileName}</Text>}
     </UploadWrapper>
@@ -29,7 +34,7 @@ export const Upload: FC<UploadProps> = ({ onChange }) => {
 
 const UploadWrapper = styled.div`
   position: relative;
-  background: #FFFFFF;
+  background: #ffffff;
   padding: 52px 0;
   border: 1px dashed var(--color-primary-500);
   box-sizing: border-box;
