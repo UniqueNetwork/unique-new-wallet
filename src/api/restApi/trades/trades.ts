@@ -8,7 +8,8 @@ import { GetTradesRequestPayload, Trade, UseFetchTradesProps } from './types';
 
 const endpoint = '/Trades';
 
-export const getTrades = ({ seller, ...payload }: GetTradesRequestPayload) => get(`${endpoint}${seller ? '/' + seller : ''}`, { ...defaultParams, params: payload });
+export const getTrades = ({ seller, ...payload }: GetTradesRequestPayload) =>
+  get(`${endpoint}${seller ? '/' + seller : ''}`, { ...defaultParams, params: payload });
 
 export const useTrades = ({ page = 1, pageSize = 10, ...props }: UseFetchTradesProps) => {
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -18,18 +19,20 @@ export const useTrades = ({ page = 1, pageSize = 10, ...props }: UseFetchTradesP
 
   const fetch = useCallback((payload: GetTradesRequestPayload) => {
     setIsFetching(true);
-    getTrades(payload).then((response) => {
-      if (response.status === 200) {
-        setTrades(response.data.items);
-        setTradesCount(response.data.itemsCount);
-        setIsFetching(false);
-      }
-    }).catch((err: AxiosError) => {
-      setFetchingError({
-        status: err.response?.status,
-        message: err.message
+    getTrades(payload)
+      .then((response) => {
+        if (response.status === 200) {
+          setTrades(response.data.items);
+          setTradesCount(response.data.itemsCount);
+          setIsFetching(false);
+        }
+      })
+      .catch((err: AxiosError) => {
+        setFetchingError({
+          status: err.response?.status,
+          message: err.message,
+        });
       });
-    });
   }, []);
 
   useEffect(() => {
@@ -41,6 +44,6 @@ export const useTrades = ({ page = 1, pageSize = 10, ...props }: UseFetchTradesP
     tradesCount,
     isFetching,
     fetchingError,
-    fetchMore: fetch
+    fetchMore: fetch,
   };
 };

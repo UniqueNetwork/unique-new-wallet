@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import { useApi } from './useApi';
 import { NFTCollection } from '../api/chainApi/unique/types';
 
@@ -17,6 +18,6 @@ export const useCollections = () => {
 
   return {
     collections,
-    isFetching
+    isFetching,
   };
 };

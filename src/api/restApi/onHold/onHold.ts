@@ -3,12 +3,21 @@ import { AxiosError } from 'axios';
 
 import { get } from '../base';
 import { serializeToQuery } from '../base/helper';
-import { GetOnHoldRequestPayload, OnHold, OnHoldResponse, UseFetchOnHoldProps } from './types';
+import {
+  GetOnHoldRequestPayload,
+  OnHold,
+  OnHoldResponse,
+  UseFetchOnHoldProps,
+} from './types';
 import { QueryParams, ResponseError } from '../base/types';
 
 const endpoint = '/OnHold';
 
-export const getOnHold = ({ owner, ...payload }: GetOnHoldRequestPayload) => get<OnHoldResponse>(`${endpoint}${owner ? '/' + owner : ''}` + serializeToQuery(payload as unknown as QueryParams));
+export const getOnHold = ({ owner, ...payload }: GetOnHoldRequestPayload) =>
+  get<OnHoldResponse>(
+    `${endpoint}${owner ? '/' + owner : ''}` +
+      serializeToQuery(payload as unknown as QueryParams),
+  );
 
 export const useOnHold = ({ page = 1, pageSize = 10, ...props }: UseFetchOnHoldProps) => {
   const [onHoldItems, setOnHoldItems] = useState<OnHold[]>([]);
@@ -18,18 +27,20 @@ export const useOnHold = ({ page = 1, pageSize = 10, ...props }: UseFetchOnHoldP
 
   const fetch = useCallback((payload: GetOnHoldRequestPayload) => {
     setIsFetching(true);
-    getOnHold(payload).then((response) => {
-      if (response.status === 200) {
-        setOnHoldItems(response.data.items);
-        setOnHoldCount(response.data.itemsCount);
-        setIsFetching(false);
-      }
-    }).catch((err: AxiosError) => {
-      setFetchingError({
-        status: err.response?.status,
-        message: err.message
+    getOnHold(payload)
+      .then((response) => {
+        if (response.status === 200) {
+          setOnHoldItems(response.data.items);
+          setOnHoldCount(response.data.itemsCount);
+          setIsFetching(false);
+        }
+      })
+      .catch((err: AxiosError) => {
+        setFetchingError({
+          status: err.response?.status,
+          message: err.message,
+        });
       });
-    });
   }, []);
 
   useEffect(() => {
@@ -41,6 +52,6 @@ export const useOnHold = ({ page = 1, pageSize = 10, ...props }: UseFetchOnHoldP
     onHoldCount,
     isFetching,
     fetchingError,
-    fetchMore: fetch
+    fetchMore: fetch,
   };
 };

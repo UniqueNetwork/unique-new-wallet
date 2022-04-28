@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+
 import { AccountData, AccountVariables } from './types';
 
 const accountQuery = gql`
@@ -18,13 +19,13 @@ const accountQuery = gql`
 `;
 
 export const useGraphQlAccount = (accountId: string) => {
-  const { data: account, loading: isAccountFetching } = useQuery<AccountData, AccountVariables>(
-    accountQuery,
-    {
-      notifyOnNetworkStatusChange: true,
-      variables: { accountId }
-    }
-  );
+  const { data: account, loading: isAccountFetching } = useQuery<
+    AccountData,
+    AccountVariables
+  >(accountQuery, {
+    notifyOnNetworkStatusChange: true,
+    variables: { accountId },
+  });
 
   return { account: account?.account_by_pk, isAccountFetching };
 };

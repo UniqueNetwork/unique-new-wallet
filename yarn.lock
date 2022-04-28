@@ -3172,15 +3172,15 @@
     "@typescript-eslint/types" "5.16.0"
     eslint-visitor-keys "^3.0.0"
 
-"@unique-nft/types@^0.3.0":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@unique-nft/types/-/types-0.3.1.tgz#09df78fdfac57934a52f69b2fba76397a0ab6770"
-  integrity sha512-RtrHq8vSzhs02V8Yt2WnbNzTWjcXtPIeqZWcppl8IFl1Wy39sM7jsMHN2B9kIFsMoEZxf3BRCLp3j4JNElTTDQ==
+"@unique-nft/types@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@unique-nft/types/-/types-0.4.0.tgz#329ba744e9627bc18103e6fd8c1b52f62d6565a3"
+  integrity sha512-jV86adraPBUDStOaJWdXGrM++53/yrS6ygnlU/zhA/z9vvUf/qExA7SuddAUbkOQUATdUKZDSocX8YFpyAMzPA==
 
-"@unique-nft/ui-kit@^0.0.11-rc1":
-  version "0.0.11-rc1"
-  resolved "https://registry.yarnpkg.com/@unique-nft/ui-kit/-/ui-kit-0.0.11-rc1.tgz#9cedfdcf16b852ec3b439dbfceadb02f940e9b01"
-  integrity sha512-hZZL4EnpTBa3gJryhNtybq1MJG0Z37kuS7/ZbCLVxs1B2asLIhxwqZN9G1Y9PkPyR7C+NOLdZKde11B2Ao77ig==
+"@unique-nft/ui-kit@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@unique-nft/ui-kit/-/ui-kit-0.0.14.tgz#805687a6ff66aa8b425bd4685cdc49bb0c860f35"
+  integrity sha512-9Y2Ldf7Sj/aJvWUopD+vt1whLHWytcOa8ggcJo5wTEZqNszTLwpqKX5xv+XOXA4J/1O72s5EaFOk+Z+iJlitFg==
   dependencies:
     react "^17.0.2"
 
@@ -12978,10 +12978,15 @@ typescript@^3.9.10, typescript@^3.9.5, typescript@^3.9.7:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
   integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
 
-typescript@^4.5.2, typescript@^4.6.2:
+typescript@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.2.tgz#fe12d2727b708f4eef40f51598b3398baa9611d4"
   integrity sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg==
+
+typescript@^4.6.3:
+  version "4.6.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.3.tgz#eefeafa6afdd31d725584c67a0eaba80f6fc6c6c"
+  integrity sha512-yNIatDa5iaofVozS/uQJEl3JRWLKKGJKh6Yaiv0GLGSuhpFJe7P3SbHZ8/yjAHRQwKRoA6YZqlfjXWmVzoVSMw==
 
 ultron@~1.1.0:
   version "1.1.1"

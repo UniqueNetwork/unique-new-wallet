@@ -4,16 +4,20 @@
 import React, { useMemo, useState } from 'react';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
+
 import {
   ArtificialAttributeItemType,
   AttributeItemType,
   MainInformationInitialValues,
-  ProtobufAttributeType
+  ProtobufAttributeType,
 } from '@app/types';
-import { convertArtificialAttributesToProtobuf, fillProtobufJson, str2vec } from '@app/api';
+import {
+  convertArtificialAttributesToProtobuf,
+  fillProtobufJson,
+  str2vec,
+} from '@app/api';
 
 import CollectionFormContext from './CollectionFormContext';
-
 
 interface Props {
   children: React.ReactNode;
@@ -25,13 +29,15 @@ export const defaultAttributesWithTokenIpfs: ArtificialAttributeItemType[] = [
     id: 0,
     name: 'ipfsJson',
     rule: 'required',
-    values: []
-  }
+    values: [],
+  },
 ];
 
-export function CollectionForm ({ children }: Props): React.ReactElement<Props> | null {
+export function CollectionForm({ children }: Props): React.ReactElement<Props> | null {
   const navigate = useNavigate();
-  const [attributes, setAttributes] = useState<ArtificialAttributeItemType[]>(defaultAttributesWithTokenIpfs);
+  const [attributes, setAttributes] = useState<ArtificialAttributeItemType[]>(
+    defaultAttributesWithTokenIpfs,
+  );
   const [avatarImg, setAvatarImg] = useState<File | null>(null);
   const [description, setDescription] = useState<string>('');
   const [coverImgFile, setCoverImgFile] = useState<File | null>(null);
@@ -49,10 +55,11 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
     name,
     description,
     tokenPrefix,
-    coverImgAddress
+    coverImgAddress,
   };
 
-  const converted: AttributeItemType[] = convertArtificialAttributesToProtobuf(attributes);
+  const converted: AttributeItemType[] =
+    convertArtificialAttributesToProtobuf(attributes);
   const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
 
   const nftAttributesDefaultValues = {
@@ -60,7 +67,7 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
     limits: {
       ownerCanDestroy,
       ownerCanTransfer,
-      tokenLimit
+      tokenLimit,
     },
   };
 
@@ -72,8 +79,8 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
     schemaVersion: 'Unique',
     tokenPrefix: str2vec(tokenPrefix),
     variableOnChainSchema: JSON.stringify({
-      collectionCover: coverImgAddress
-    })
+      collectionCover: coverImgAddress,
+    }),
   };
 
   const mainInformationForm = useFormik({
@@ -91,38 +98,56 @@ export function CollectionForm ({ children }: Props): React.ReactElement<Props> 
     validateOnBlur: true,
     onSubmit: () => {
       navigate('/create-collection/nft-attributes');
-    }
+    },
   });
 
-  const value = useMemo(() => ({
-    attributes,
-    avatarImg,
-    coverImgFile,
-    coverImgAddress,
-    description,
-    mainInformationForm,
-    mintFest,
-    name,
-    ownerCanDestroy,
-    ownerCanTransfer,
-    setAttributes,
-    setAvatarImg,
-    setCoverImgFile,
-    setCoverImgAddress,
-    setDescription,
-    setMintFest,
-    setName,
-    setOwnerCanDestroy,
-    setOwnerCanTransfer,
-    setTokenImg,
-    setTokenLimit,
-    setTokenPrefix,
-    setVariableSchema,
-    tokenImg,
-    tokenLimit,
-    tokenPrefix,
-    variableSchema
-  }), [attributes, avatarImg, coverImgFile, coverImgAddress, description, mainInformationForm, mintFest, name, ownerCanDestroy, ownerCanTransfer, tokenImg, tokenLimit, tokenPrefix, variableSchema]);
+  const value = useMemo(
+    () => ({
+      attributes,
+      avatarImg,
+      coverImgFile,
+      coverImgAddress,
+      description,
+      mainInformationForm,
+      mintFest,
+      name,
+      ownerCanDestroy,
+      ownerCanTransfer,
+      setAttributes,
+      setAvatarImg,
+      setCoverImgFile,
+      setCoverImgAddress,
+      setDescription,
+      setMintFest,
+      setName,
+      setOwnerCanDestroy,
+      setOwnerCanTransfer,
+      setTokenImg,
+      setTokenLimit,
+      setTokenPrefix,
+      setVariableSchema,
+      tokenImg,
+      tokenLimit,
+      tokenPrefix,
+      variableSchema,
+    }),
+    [
+      attributes,
+      avatarImg,
+      coverImgFile,
+      coverImgAddress,
+      description,
+      mainInformationForm,
+      mintFest,
+      name,
+      ownerCanDestroy,
+      ownerCanTransfer,
+      tokenImg,
+      tokenLimit,
+      tokenPrefix,
+      variableSchema,
+    ],
+  );
 
   return (
     <CollectionFormContext.Provider value={value}>

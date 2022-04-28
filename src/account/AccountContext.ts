@@ -5,29 +5,31 @@ import { KeyringPair } from '@polkadot/keyring/types';
 
 export enum AccountSigner {
   extension = 'Extension',
-  local = 'Local'
+  local = 'Local',
 }
 export interface Account extends InjectedAccountWithMeta {
-  signerType: AccountSigner,
+  signerType: AccountSigner;
   balance?: {
-    KSM?: BN
-  }
+    KSM?: BN;
+  };
 }
 
 export type AccountContextProps = {
-  isLoading: boolean
-  accounts: Account[]
-  selectedAccount: Account | undefined
-  fetchAccountsError: string | undefined
-  changeAccount(account: Account): void
-  setSelectedAccount(account: Account): void
-  setFetchAccountsError(error: string | undefined): void
-  setAccounts(accounts: Account[]): void
-  setIsLoading(loading: boolean): void
-  showSignDialog(): Promise<KeyringPair>
-}
+  isLoading: boolean;
+  accounts: Account[];
+  selectedAccount: Account | undefined;
+  fetchAccountsError: string | undefined;
+  changeAccount(account: Account): void;
+  setSelectedAccount(account: Account): void;
+  setFetchAccountsError(error: string | undefined): void;
+  setAccounts(accounts: Account[]): void;
+  setIsLoading(loading: boolean): void;
+  showSignDialog(): Promise<KeyringPair>;
+};
 
-const AccountContext: Context<AccountContextProps> = createContext({} as unknown as AccountContextProps);
+const AccountContext: Context<AccountContextProps> = createContext(
+  {} as unknown as AccountContextProps,
+);
 const AccountConsumer: Consumer<AccountContextProps> = AccountContext.Consumer;
 const AccountProvider: Provider<AccountContextProps> = AccountContext.Provider;
 

@@ -1,31 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
-import { TTransaction } from '../api/chainApi/types';
+
+import { TTransaction } from '@app/api';
+
 import {
   ActionFunction,
   InternalStage,
   SignFunction,
   StageStatus,
-  useStagesReturn
+  useStagesReturn,
 } from '../types/StagesTypes';
 
-const useStages = <T, P = Record<string, never>>(
+export const useStages = <T, P = Record<string, never>>(
   stages: InternalStage<T, P>[],
   actionFunction: ActionFunction<T, P>,
-  signFunction: SignFunction
+  signFunction: SignFunction,
 ): useStagesReturn<T> => {
-  const [internalStages, setInternalStages] =
-    useState<InternalStage<T, P>[]>(stages);
-  const [stagesStatus, setStagesStatus] = useState<StageStatus>(
-    StageStatus.default
-  );
-  const [executionError, setExecutionError] = useState<
-    Error | undefined | null
-  >(null);
+  const [internalStages, setInternalStages] = useState<InternalStage<T, P>[]>(stages);
+  const [stagesStatus, setStagesStatus] = useState<StageStatus>(StageStatus.default);
+  const [executionError, setExecutionError] = useState<Error | undefined | null>(null);
 
   useEffect(() => {
     return () => {
       internalStages?.forEach((internalStage) =>
-        internalStage?.signer?.onError(new Error("Componen't unmounted"))
+        internalStage?.signer?.onError(new Error("Componen't unmounted")),
       );
     };
   }, [internalStages]);
@@ -38,7 +35,7 @@ const useStages = <T, P = Record<string, never>>(
         return copy;
       });
     },
-    [setInternalStages]
+    [setInternalStages],
   );
 
   const getSignFunction = useCallback(
@@ -46,18 +43,18 @@ const useStages = <T, P = Record<string, never>>(
       const sign = async (tx: TTransaction): Promise<TTransaction> => {
         updateStage(index, {
           ...internalStage,
-          status: StageStatus.awaitingSign
+          status: StageStatus.awaitingSign,
         });
         const signedTx = await signFunction(tx);
         updateStage(index, {
           ...internalStage,
-          status: StageStatus.inProgress
+          status: StageStatus.inProgress,
         });
         return signedTx;
       };
       return sign;
     },
-    [updateStage, signFunction]
+    [updateStage, signFunction],
   );
 
   const executeStep = useCallback(
@@ -67,7 +64,7 @@ const useStages = <T, P = Record<string, never>>(
         // if sign is required by action -> promise wouldn't be resolved until transaction is signed
         // transaction sign could be triggered in the component that uses current stage (you can track it by using stage.signer)
         await actionFunction(stage.action, txParams, {
-          sign: getSignFunction(index, stage)
+          sign: getSignFunction(index, stage),
         });
         updateStage(index, { ...stage, status: StageStatus.success });
       } catch (e) {
@@ -76,7 +73,7 @@ const useStages = <T, P = Record<string, never>>(
         throw new Error(`Execute stage "${stage.title}" failed`);
       }
     },
-    [updateStage, actionFunction, getSignFunction]
+    [updateStage, actionFunction, getSignFunction],
   );
 
   const initiate = useCallback(
@@ -93,7 +90,7 @@ const useStages = <T, P = Record<string, never>>(
       }
       setStagesStatus(StageStatus.success);
     },
-    [executeStep, internalStages]
+    [executeStep, internalStages],
   );
 
   return {
@@ -103,12 +100,12 @@ const useStages = <T, P = Record<string, never>>(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { action, ...other } = internalStage;
       return {
-        ...other
+        ...other,
       };
     }),
     error: executionError,
     status: stagesStatus,
-    initiate
+    initiate,
   };
 };
 

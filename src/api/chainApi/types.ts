@@ -1,6 +1,7 @@
-import { ChainData } from '../ApiContext';
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
+
+import { ChainData } from '../ApiContext';
 import { Settings } from '../restApi/settings/types';
 
 export interface IRpc {
@@ -38,10 +39,7 @@ export interface ICollectionController<Collection, Token> {
   getCollection(collectionId: number): Promise<Collection | null>;
   getCollections(): Promise<Collection[]>;
   getFeaturedCollections(): Promise<Collection[]>;
-  getTokensOfCollection(
-    collectionId: number,
-    ownerId: string
-  ): Promise<Token[]>;
+  getTokensOfCollection(collectionId: number, ownerId: string): Promise<Token[]>;
 }
 
 export interface IAccountController<Collection, Token> {
@@ -59,77 +57,74 @@ export type TransactionOptions = {
 
 export interface IMinterController {
   // substrate address
-  addToWhiteList: (
-    account: string,
-    options: TransactionOptions
-  ) => Promise<void>;
+  addToWhiteList: (account: string, options: TransactionOptions) => Promise<void>;
   checkWhiteListed: (account: string) => Promise<boolean>;
   lockNftForSale: (
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   sendNftToSmartContract: (
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   setForFixPriceSale: (
     account: string,
     collectionId: string,
     tokenId: string,
     price: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   cancelSell: (
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   unlockNft: (
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   addDeposit: (
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   buyToken: (
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   transferToken: (
     from: string,
     to: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   transferToAuction: (
     owner: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   transferBidBalance: (
     from: string,
     amount: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
   transferBalance: (
     from: string,
     to: string,
     amount: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) => Promise<void>;
 }
 

@@ -1,18 +1,19 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
+import { KeyringPair } from '@polkadot/keyring/types';
+import keyring from '@polkadot/ui-keyring';
 
-import { TCreateAccountModalProps } from './types';
 import { AdditionalWarning100 } from '@app/styles/colors';
 import { PasswordInput, Upload } from '@app/components';
-import { convertToU8a, keyringFromFile } from '../../../utils/jsonUtils';
-import { KeyringPair } from '@polkadot/keyring/types';
 import { useApi } from '@app/hooks';
-import keyring from '@polkadot/ui-keyring';
+
+import { TCreateAccountModalProps } from './types';
+import { convertToU8a, keyringFromFile } from '../../../utils/jsonUtils';
 
 export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   isVisible,
-  onFinish
+  onFinish,
 }) => {
   const { rawRpcApi } = useApi();
   const [pair, setPair] = useState<KeyringPair | null>(null);
@@ -30,7 +31,7 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
 
       reader.readAsArrayBuffer(file);
     },
-    [setPair, rawRpcApi]
+    [setPair, rawRpcApi],
   );
 
   const onRestoreClick = useCallback(() => {
@@ -46,7 +47,7 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
       <Content>
-        <Heading size='2'>{'Add an account via backup JSON file'}</Heading>
+        <Heading size="2">{'Add an account via backup JSON file'}</Heading>
       </Content>
       <InputWrapper>
         <Text size={'m'}>Upload</Text>
@@ -60,25 +61,20 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
         <Text size={'s'} color={'grey-500'}>
           The password that was previously used to encrypt this account
         </Text>
-        <PasswordInput
-          placeholder={'Password'}
-          onChange={setPassword}
-          value={password}
-        />
+        <PasswordInput placeholder={'Password'} value={password} onChange={setPassword} />
       </InputWrapper>
-      <TextStyled color='additional-warning-500' size='s'>
-        Consider storing your account in a signer such as a browser extension,
-        hardware device, QR-capable phone wallet (non-connected) or desktop
-        application for optimal account security. Future versions of the
-        web-only interface will drop support for non-external accounts, much
-        like the IPFS version.
+      <TextStyled color="additional-warning-500" size="s">
+        Consider storing your account in a signer such as a browser extension, hardware
+        device, QR-capable phone wallet (non-connected) or desktop application for optimal
+        account security. Future versions of the web-only interface will drop support for
+        non-external accounts, much like the IPFS version.
       </TextStyled>
       <ButtonWrapper>
         <Button
           disabled={!password || !pair}
+          role="primary"
+          title="Restore"
           onClick={onRestoreClick}
-          role='primary'
-          title='Restore'
         />
       </ButtonWrapper>
     </Modal>

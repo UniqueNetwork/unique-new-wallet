@@ -3,13 +3,17 @@ import { Avatar, Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
 import keyring from '@polkadot/ui-keyring';
 import styled from 'styled-components/macro';
 
-import { TCreateAccountModalProps } from './types';
 import { PasswordInput } from '@app/components/PasswordInput/PasswordInput';
 import { QRReader, ScannedResult } from '@app/components/QRReader/QRReader';
 import { useAccounts } from '@app/hooks';
+
+import { TCreateAccountModalProps } from './types';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
-export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({ isVisible, onFinish }) => {
+export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({
+  isVisible,
+  onFinish,
+}) => {
   const [address, setAddress] = useState<string>();
   const [scanned, setScanned] = useState<ScannedResult>();
   const [password, setPassword] = useState<string>('');
@@ -18,9 +22,11 @@ export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({ isVi
   const onScan = useCallback((scanned: ScannedResult) => {
     setScanned(scanned);
 
-    setAddress(scanned.isAddress
-      ? scanned.content
-      : keyring.createFromUri(scanned.content, {}, 'sr25519').address);
+    setAddress(
+      scanned.isAddress
+        ? scanned.content
+        : keyring.createFromUri(scanned.content, {}, 'sr25519').address,
+    );
   }, []);
 
   const onSaveClick = useCallback(() => {
@@ -33,42 +39,48 @@ export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({ isVi
       isAddress,
       content,
       genesisHash,
-      password
+      password,
     });
     onFinish();
   }, [scanned, password, onFinish]);
 
-  return (<Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-    <Content>
-      <Heading size='2'>{'Add an account via QR-code'}</Heading>
-    </Content>
-    <InputWrapper>
-      <Text size={'m'}>Provide the account QR from the module/external application for scanning. Once detected as valid, you will be taken to the next step to add the account to your list.</Text>
-      {!address && <QRReader onScan={onScan} />}
-      {address && <AddressWrapper>
-        <Avatar size={24} src={DefaultAvatar} />
-        <Text>{address}</Text>
-      </AddressWrapper>}
-    </InputWrapper>
-    <InputWrapper>
-      <Text size={'m'}>Password</Text>
-      <Text size={'s'} color={'grey-500'}>The password that was previously used to encrypt this account</Text>
-      <PasswordInput placeholder={'Password'}
-        onChange={setPassword}
-        value={password}
-      />
-    </InputWrapper>
+  return (
+    <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
+      <Content>
+        <Heading size="2">{'Add an account via QR-code'}</Heading>
+      </Content>
+      <InputWrapper>
+        <Text size={'m'}>
+          Provide the account QR from the module/external application for scanning. Once
+          detected as valid, you will be taken to the next step to add the account to your
+          list.
+        </Text>
+        {!address && <QRReader onScan={onScan} />}
+        {address && (
+          <AddressWrapper>
+            <Avatar size={24} src={DefaultAvatar} />
+            <Text>{address}</Text>
+          </AddressWrapper>
+        )}
+      </InputWrapper>
+      <InputWrapper>
+        <Text size={'m'}>Password</Text>
+        <Text size={'s'} color={'grey-500'}>
+          The password that was previously used to encrypt this account
+        </Text>
+        <PasswordInput placeholder={'Password'} value={password} onChange={setPassword} />
+      </InputWrapper>
 
-    <ButtonWrapper>
-      <Button
-        disabled={!address || !password}
-        onClick={onSaveClick}
-        role='primary'
-        title='Save'
-      />
-    </ButtonWrapper>
-
-  </Modal>);
+      <ButtonWrapper>
+        <Button
+          disabled={!address || !password}
+          role="primary"
+          title="Save"
+          onClick={onSaveClick}
+        />
+      </ButtonWrapper>
+    </Modal>
+  );
 };
 
 const Content = styled.div`

@@ -2,37 +2,41 @@ import { FC, useMemo, useState } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
-import { Picture } from '..';
 import { useApi } from '@app/hooks';
-import Loading from '../Loading';
 import { NFTToken } from '@app/api/chainApi/unique/types';
 import { formatKusamaBalance } from '@app/utils/textUtils';
+
+import Loading from '../Loading';
+import { Picture } from '..';
 import config from '../../config';
 
 export type TTokensCard = {
-  token?: NFTToken
-  tokenId?: number
-  collectionId?: number
-  price?: string
-  tokenImageUrl?: string
+  token?: NFTToken;
+  tokenId?: number;
+  collectionId?: number;
+  price?: string;
+  tokenImageUrl?: string;
 };
 
-export const TokensCard: FC<TTokensCard> = ({ collectionId, tokenId, price, ...props }) => {
+export const TokensCard: FC<TTokensCard> = ({
+  collectionId,
+  tokenId,
+  price,
+  ...props
+}) => {
   const [token, setToken] = useState<NFTToken | undefined>(props.token);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const { api } = useApi();
 
-  const {
-    collectionName,
-    imagePath,
-    tokenPrefix
-  } = useMemo<Record<string, string | undefined>>(() => {
+  const { collectionName, imagePath, tokenPrefix } = useMemo<
+    Record<string, string | undefined>
+  >(() => {
     if (token) {
       return {
         collectionName: token.collectionName,
         imagePath: token.imageUrl,
-        tokenPrefix: token.prefix
+        tokenPrefix: token.prefix,
       };
     }
 
@@ -52,17 +56,24 @@ export const TokensCard: FC<TTokensCard> = ({ collectionId, tokenId, price, ...p
         <Picture alt={tokenId?.toString() || ''} src={imagePath} />
       </PictureWrapper>
       <Description>
-        <a href={`/token/${collectionId || ''}/${tokenId || ''}`} title={`${tokenPrefix || ''} #${tokenId || ''}`}>
-          <Text size='l' weight='medium'>
+        <a
+          href={`/token/${collectionId || ''}/${tokenId || ''}`}
+          title={`${tokenPrefix || ''} #${tokenId || ''}`}
+        >
+          <Text size="l" weight="medium">
             {`${tokenPrefix || ''} #${tokenId || ''}`}
           </Text>
         </a>
-        <a href={`${config.scanUrl || ''}collections/${collectionId || ''}`} target={'_blank'} rel='noreferrer'>
-          <Text color='primary-600' size='s'>
+        <a
+          href={`${config.scanUrl || ''}collections/${collectionId || ''}`}
+          target={'_blank'}
+          rel="noreferrer"
+        >
+          <Text color="primary-600" size="s">
             {`${collectionName?.substring(0, 15) || ''} [id ${collectionId || ''}]`}
           </Text>
         </a>
-        {price && <Text size='s'>{`Price: ${formatKusamaBalance(price)}`}</Text>}
+        {price && <Text size="s">{`Price: ${formatKusamaBalance(price)}`}</Text>}
       </Description>
 
       {isFetching && <Loading />}
@@ -88,7 +99,7 @@ const PictureWrapper = styled.a`
   margin-bottom: 8px;
 
   &::before {
-    content: "";
+    content: '';
     display: block;
     padding-top: 100%;
   }
@@ -113,7 +124,7 @@ const PictureWrapper = styled.a`
     svg {
       border-radius: 8px;
     }
-    
+
     &:hover {
       transform: translate(0, -5px);
       text-decoration: none;

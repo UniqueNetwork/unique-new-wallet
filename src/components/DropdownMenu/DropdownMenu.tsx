@@ -1,9 +1,11 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { DropdownMenuItemProps, DropdownMenuProps } from './types';
 import styled from 'styled-components/macro';
 import { Button } from '@unique-nft/ui-kit';
-import CaretDown from '../../static/icons/caret-down.svg';
+
 import { Icon } from '@app/components';
+
+import CaretDown from '../../static/icons/caret-down.svg';
+import { DropdownMenuItemProps, DropdownMenuProps } from './types';
 
 export const DropdownMenu: FC<DropdownMenuProps> = ({ children, ...props }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -15,7 +17,10 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ children, ...props }) => {
 
   useEffect(() => {
     const onClickOutside = (event: MouseEvent) => {
-      if (DropdownMenuButtonRef.current && !DropdownMenuButtonRef.current.contains(event.target as Node)) {
+      if (
+        DropdownMenuButtonRef.current &&
+        !DropdownMenuButtonRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -29,21 +34,15 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ children, ...props }) => {
     <DropdownMenuWrapper>
       <DropdownMenuButtonWrapper ref={DropdownMenuButtonRef}>
         <Button onClick={onDropdownClick} {...props} />
-        <Icon path={CaretDown} size={16}/>
+        <Icon path={CaretDown} size={16} />
       </DropdownMenuButtonWrapper>
-      <DropdownMenuDropdown isOpen={isOpen}>
-        {children}
-      </DropdownMenuDropdown>
+      <DropdownMenuDropdown isOpen={isOpen}>{children}</DropdownMenuDropdown>
     </DropdownMenuWrapper>
   );
 };
 
 export const DropdownMenuItem: FC<DropdownMenuItemProps> = ({ children, onClick }) => {
-  return (
-    <DropdownMenuItemWrapper onClick={onClick}>
-      {children}
-    </DropdownMenuItemWrapper>
-  );
+  return <DropdownMenuItemWrapper onClick={onClick}>{children}</DropdownMenuItemWrapper>;
 };
 
 const DropdownMenuWrapper = styled.div`
@@ -55,7 +54,7 @@ const DropdownMenuButtonWrapper = styled.div`
   button.unique-button {
     padding-right: calc(var(--gap) * 3);
   }
-  span[class^=Icon] {
+  span[class^='Icon'] {
     position: absolute;
     margin-top: -8px;
     top: 50%;
@@ -64,7 +63,7 @@ const DropdownMenuButtonWrapper = styled.div`
 `;
 
 const DropdownMenuDropdown = styled.div<{ isOpen: boolean }>`
-  display: ${({ isOpen }) => isOpen ? 'flex' : 'none'};
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   position: absolute;
   width: 100%;
   top: calc(100% + 4px);

@@ -5,14 +5,14 @@ export enum StageStatus {
   inProgress = 'InProgress',
   awaitingSign = 'Awaiting for transaction sign',
   success = 'Success',
-  error = 'Error'
+  error = 'Error',
 }
 
 export type Signer = {
-  status: 'init' | 'awaiting' | 'done' | 'error'
-  tx: TTransaction,
-  onSign: (signedTx: TTransaction) => void,
-  onError: (error: Error) => void
+  status: 'init' | 'awaiting' | 'done' | 'error';
+  tx: TTransaction;
+  onSign: (signedTx: TTransaction) => void;
+  onError: (error: Error) => void;
 };
 export type Stage = {
   title: string;
@@ -22,21 +22,27 @@ export type Stage = {
   error?: Error;
 };
 export type useStagesReturn<T> = {
-  stages: Stage[],
-  initiate: (params: T) => Promise<void>,
-  status: StageStatus, // status for all stages combined, not for current stage
-  error: Error | undefined | null
-}
+  stages: Stage[];
+  initiate: (params: T) => Promise<void>;
+  status: StageStatus; // status for all stages combined, not for current stage
+  error: Error | undefined | null;
+};
 export type TInternalStageActionParams<T, P = Record<string, never>> = {
-  txParams: T,
-  options: TransactionOptions
+  txParams: T;
+  options: TransactionOptions;
 } & P;
-export type TInternalStageAction<T, P = Record<string, never>> = (params: TInternalStageActionParams<T, P>) => Promise<TTransaction | void> | undefined;
+export type TInternalStageAction<T, P = Record<string, never>> = (
+  params: TInternalStageActionParams<T, P>,
+) => Promise<TTransaction | void> | undefined;
 
 export interface InternalStage<T, P = Record<string, never>> extends Stage {
   // if transaction is returned we will initiate sign procedure, otherwise continue with next stage
-  action: TInternalStageAction<T, P>
+  action: TInternalStageAction<T, P>;
 }
 
-export type ActionFunction<T, P = Record<string, never>> = (action: TInternalStageAction<T, P>, txParams: T, options: TransactionOptions) => Promise<TTransaction | void>;
+export type ActionFunction<T, P = Record<string, never>> = (
+  action: TInternalStageAction<T, P>,
+  txParams: T,
+  options: TransactionOptions,
+) => Promise<TTransaction | void>;
 export type SignFunction = (tx: TTransaction) => Promise<TTransaction>;

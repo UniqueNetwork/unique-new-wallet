@@ -7,9 +7,11 @@ export const defaultChainKey = 'block-explorer_chain';
 const findNetworkParamByName = (
   config: Record<string, string | undefined>,
   network: string,
-  name: string
+  name: string,
 ): string => {
-  const envKey = Object.keys(config).find((key) => key.includes(`NET_${network}_${name}`));
+  const envKey = Object.keys(config).find((key) =>
+    key.includes(`NET_${network}_${name}`),
+  );
 
   if (envKey) return config[envKey] || '';
 
@@ -33,7 +35,10 @@ export const getNetworkList = (config: Record<string, string | undefined>): stri
 export const getDefaultChain = (config: Record<string, string | undefined>) => {
   const storedChain = localStorage.getItem(defaultChainKey);
   const networkList = getNetworkList(config);
-  if (!networkList?.length) throw new Error('No chains provided in env, please make sure to provide correct APP_NET_YOUR-CHAIN_* in config');
+  if (!networkList?.length)
+    throw new Error(
+      'No chains provided in env, please make sure to provide correct APP_NET_YOUR-CHAIN_* in config',
+    );
   const defaultChain = networkList[0];
   if (!storedChain) return defaultChain;
   // If config was updated and we have already stored some chain that is no longer supported - skip it
@@ -44,18 +49,20 @@ export const getDefaultChain = (config: Record<string, string | undefined>) => {
 
 export const getNetworkParams = (
   config: Record<string, string | undefined>,
-  network: string
+  network: string,
 ): Chain => {
   const chain: Chain = {
     apiEndpoint: findNetworkParamByName(config, network, 'API'),
     name: findNetworkParamByName(config, network, 'NAME'),
-    network
+    network,
   };
 
   return chain;
 };
 
-export const getChainList = (config: Record<string, string | undefined>): Record<string, Chain> => {
+export const getChainList = (
+  config: Record<string, string | undefined>,
+): Record<string, Chain> => {
   return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
     acc[network] = getNetworkParams(config, network);
 

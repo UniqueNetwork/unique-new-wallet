@@ -2,26 +2,28 @@ import Web3 from 'web3';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
+
+import { sleep } from '@app/utils';
+
 import minterPlaceAbi from './abi/minterPlaceAbi.json';
 import nonFungibleAbi from './abi/nonFungibleAbi.json';
-import { sleep } from '../../../utils/helpers';
 import {
   CrossAccountId,
   IMinterController,
   INFTController,
-  TransactionOptions
+  TransactionOptions,
 } from '../types';
 import {
   compareEncodedAddresses,
   getEthAccount,
   isTokenOwner,
-  normalizeAccountId
+  normalizeAccountId,
 } from '../utils/addressUtils';
 
 export type EvmCollectionAbiMethods = {
   approve: (
     contractAddress: string,
-    tokenId: string
+    tokenId: string,
   ) => {
     encodeABI: () => any;
   };
@@ -41,7 +43,7 @@ export type MinterPlaceAbiMethods = {
     price: string,
     currencyCode: string,
     address: string,
-    tokenId: string
+    tokenId: string,
   ) => {
     encodeABI: () => any;
   };
@@ -52,13 +54,13 @@ export type MinterPlaceAbiMethods = {
     collectionAddress: string,
     tokenId: string,
     buyer: string,
-    receiver: string
+    receiver: string,
   ) => {
     encodeABI: () => any;
   };
   cancelAsk: (
     collectionId: string,
-    tokenId: string
+    tokenId: string,
   ) => {
     encodeABI: () => any;
   };
@@ -67,7 +69,7 @@ export type MinterPlaceAbiMethods = {
   };
   getOrder: (
     collectionId: string,
-    tokenId: string
+    tokenId: string,
   ) => {
     call: () => Promise<TokenAskType>;
   };
@@ -84,7 +86,7 @@ export type MinterPlaceAbiMethods = {
   withdraw: (
     amount: string,
     currencyCode: string,
-    address: string
+    address: string,
   ) => {
     encodeABI: () => any;
   };
@@ -122,7 +124,7 @@ const defaultMinterPlaceControllerConfig: MinterControllerConfig = {
   escrowAddress: '',
   minPrice: 0.000001,
   kusamaDecimals: 12,
-  defaultGasAmount: 2500000
+  defaultGasAmount: 2500000,
 };
 
 class MinterController implements IMinterController {
@@ -142,7 +144,7 @@ class MinterController implements IMinterController {
   constructor(
     uniqApi: ApiPromise,
     kusamaApi: ApiPromise,
-    config: MinterControllerConfig = {}
+    config: MinterControllerConfig = {},
   ) {
     this.uniqApi = uniqApi;
     this.kusamaApi = kusamaApi;
@@ -154,31 +156,25 @@ class MinterController implements IMinterController {
     if (!options.uniqueSubstrateApiRpc)
       throw new Error('Uniq substrate rpc not provided');
     this.uniqueSubstrateApiRpc = options.uniqueSubstrateApiRpc;
-    if (!options.escrowAddress)
-      throw new Error('Escrow address is not provided');
+    if (!options.escrowAddress) throw new Error('Escrow address is not provided');
     this.escrowAddress = options.escrowAddress;
     if (!options.minPrice) throw new Error('Min price not provided');
     this.minPrice = options.minPrice;
-    if (!options.kusamaDecimals)
-      throw new Error('Kusama decimals not provided');
+    if (!options.kusamaDecimals) throw new Error('Kusama decimals not provided');
     this.kusamaDecimals = options.kusamaDecimals; // TODO: could and should be taken from kusamaApi
     this.defaultGasAmount = options.defaultGasAmount || 2500000;
     if (!options.nftController) throw new Error('NFTController not provided');
     this.nftController = options.nftController;
-    if (!options.auctionAddress)
-      throw new Error('Auction address not provided');
+    if (!options.auctionAddress) throw new Error('Auction address not provided');
     this.auctionAddress = options.auctionAddress;
-    const provider = new Web3.providers.WebsocketProvider(
-      this.uniqueSubstrateApiRpc,
-      {
-        reconnect: {
-          auto: true,
-          delay: 5000,
-          maxAttempts: 5,
-          onTimeout: false
-        }
-      }
-    );
+    const provider = new Web3.providers.WebsocketProvider(this.uniqueSubstrateApiRpc, {
+      reconnect: {
+        auto: true,
+        delay: 5000,
+        maxAttempts: 5,
+        onTimeout: false,
+      },
+    });
 
     const web3 = new Web3(provider);
     this.web3Instance = web3;
@@ -193,8 +189,8 @@ class MinterController implements IMinterController {
       minterPlaceAbi.abi,
       this.contractAddress,
       {
-        from: ethAccount
-      }
+        from: ethAccount,
+      },
     );
   }
 
@@ -224,7 +220,7 @@ class MinterController implements IMinterController {
       address >> 24,
       (address >> 16) & 0xff,
       (address >> 8) & 0xff,
-      address & 0xff
+      address & 0xff,
     ]);
 
     return Web3.utils.toChecksumAddress('0x' + buf.toString('hex'));
@@ -238,7 +234,7 @@ class MinterController implements IMinterController {
       // @ts-ignore
       nonFungibleAbi,
       this.collectionIdToAddress(parseInt(collectionId, 10)),
-      { from: this.contractOwner }
+      { from: this.contractOwner },
     );
   }
 
@@ -249,7 +245,7 @@ class MinterController implements IMinterController {
     options: {
       maxAttempts: boolean;
       awaitBetweenAttempts: number;
-    } | null = null
+    } | null = null,
   ): Promise<void> {
     let attempt = 0;
     const maxAttempts = options?.maxAttempts || 100;
@@ -272,9 +268,9 @@ class MinterController implements IMinterController {
       return (
         await this.uniqApi.query.evmContractHelpers.allowlist(
           this.contractAddress,
-          ethAddress
+          ethAddress,
         )
-      ).toJSON() as boolean;
+      ).toJSON();
     } catch (e) {
       console.error('Check for whitelist failed', e);
       throw e;
@@ -283,7 +279,7 @@ class MinterController implements IMinterController {
 
   public async addToWhiteList(
     account: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     const ethAddress = getEthAccount(account);
     const isWhiteListed = await this.checkWhiteListed(ethAddress);
@@ -292,10 +288,7 @@ class MinterController implements IMinterController {
     }
     const minDeposit = this.kusamaApi?.consts.balances?.existentialDeposit;
 
-    const tx = this.kusamaApi.tx.balances.transfer(
-      this.escrowAddress,
-      minDeposit
-    );
+    const tx = this.kusamaApi.tx.balances.transfer(this.escrowAddress, minDeposit);
     const signedTx = await options.sign(tx);
 
     if (!signedTx) throw new Error('Breaking transaction');
@@ -303,7 +296,7 @@ class MinterController implements IMinterController {
     try {
       await signedTx.send();
       await this.repeatCheckForTransactionFinish(
-        async () => await this.checkWhiteListed(account)
+        async () => await this.checkWhiteListed(account),
       );
       return;
     } catch (e) {
@@ -316,11 +309,11 @@ class MinterController implements IMinterController {
   private async checkOnEth(
     account: string,
     collectionId: string,
-    tokenId: string
+    tokenId: string,
   ): Promise<boolean> {
     const token = await this.nftController.getToken(
       Number(collectionId),
-      Number(tokenId)
+      Number(tokenId),
     );
     return isTokenOwner(account, token.owner);
   }
@@ -330,25 +323,21 @@ class MinterController implements IMinterController {
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) {
     // check if already on eth
     const ethAccount = {
-      Ethereum: getEthAccount(account)
+      Ethereum: getEthAccount(account),
     };
 
-    const isOnEth = await this.checkOnEth(
-      ethAccount.Ethereum,
-      collectionId,
-      tokenId
-    );
+    const isOnEth = await this.checkOnEth(ethAccount.Ethereum, collectionId, tokenId);
     if (isOnEth) return;
 
     const tx = this.uniqApi.tx.unique.transfer(
       normalizeAccountId(ethAccount),
       collectionId,
       tokenId,
-      1
+      1,
     );
     const signedTx = await options.sign(tx);
 
@@ -370,18 +359,17 @@ class MinterController implements IMinterController {
   private async checkIfNftApproved(
     tokenOwner: CrossAccountId,
     collectionId: string,
-    tokenId: string
+    tokenId: string,
   ): Promise<boolean> {
     const approvedCount = // prettier-ignore
-      // @ts-ignore
-      (await this.uniqApi.rpc.unique
-        .allowance(
+      (
+        await this.uniqApi.rpc.unique.allowance(
           collectionId,
           normalizeAccountId(tokenOwner),
           normalizeAccountId({ Ethereum: this.contractAddress }),
-          tokenId
+          tokenId,
         )
-        .toJSON()) as number;
+      ).toJSON() as number;
 
     if (approvedCount === 1) {
       return Promise.resolve(true);
@@ -394,22 +382,18 @@ class MinterController implements IMinterController {
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     // TODO: same here
     if (!this.nftController) throw new Error('NFTController is not available');
 
     const token = await this.nftController.getToken(
       Number(collectionId),
-      Number(tokenId)
+      Number(tokenId),
     );
 
     const evmCollectionInstance = this.getEvmCollectionInstance(collectionId);
-    const approved = await this.checkIfNftApproved(
-      token.owner,
-      collectionId,
-      tokenId
-    );
+    const approved = await this.checkIfNftApproved(token.owner, collectionId, tokenId);
 
     const abi = evmCollectionInstance.methods
       .approve(this.contractAddress, tokenId)
@@ -427,7 +411,7 @@ class MinterController implements IMinterController {
       await this.web3Instance.eth.getGasPrice(),
       null,
       null,
-      []
+      [],
     );
     const signedTx = await options.sign(tx);
 
@@ -440,26 +424,16 @@ class MinterController implements IMinterController {
     });
   }
 
-  private async checkAsk(
-    account: string,
-    collectionId: string,
-    tokenId: string
-  ) {
+  private async checkAsk(account: string, collectionId: string, tokenId: string) {
     const ethAddress = getEthAccount(account);
     const matcherContractInstance = this.getMatcherContractInstance(ethAddress);
 
     const { flagActive, ownerAddr, price }: TokenAskType =
       await matcherContractInstance.methods
-        .getOrder(
-          this.collectionIdToAddress(parseInt(collectionId, 10)),
-          tokenId
-        )
+        .getOrder(this.collectionIdToAddress(parseInt(collectionId, 10)), tokenId)
         .call();
 
-    if (
-      ownerAddr.toLowerCase() === ethAddress.toLowerCase() &&
-      flagActive === '1'
-    ) {
+    if (ownerAddr.toLowerCase() === ethAddress.toLowerCase() && flagActive === '1') {
       return Promise.resolve(true);
     }
     return Promise.resolve(false);
@@ -471,7 +445,7 @@ class MinterController implements IMinterController {
     collectionId: string,
     tokenId: string,
     price: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     const ethAddress = getEthAccount(account);
     const evmCollectionInstance = this.getEvmCollectionInstance(collectionId);
@@ -482,7 +456,7 @@ class MinterController implements IMinterController {
         this.fromStringToBnString(price, this.kusamaDecimals),
         '0x0000000000000000000000000000000000000001',
         evmCollectionInstance.options.address,
-        tokenId
+        tokenId,
       )
       .encodeABI();
 
@@ -495,7 +469,7 @@ class MinterController implements IMinterController {
       await this.web3Instance.eth.getGasPrice(),
       null,
       null,
-      []
+      [],
     );
 
     const signedTx = await options.sign(tx);
@@ -526,10 +500,9 @@ class MinterController implements IMinterController {
     const ethAccount = getEthAccount(account);
 
     const matcherContractInstance = this.getMatcherContractInstance(ethAccount);
-    const result =
-      await matcherContractInstance.methods /* as MinterPlaceAbiMethods */
-        .balanceKSM(ethAccount)
-        .call();
+    const result = await matcherContractInstance.methods /* as MinterPlaceAbiMethods */
+      .balanceKSM(ethAccount)
+      .call();
 
     if (result) {
       const deposit = new BN(result);
@@ -564,7 +537,7 @@ class MinterController implements IMinterController {
         '0',
         '.',
         ...Array.from('0'.repeat(Math.abs(decNum))),
-        value.toString()
+        value.toString(),
       ].join('');
     }
 
@@ -572,7 +545,7 @@ class MinterController implements IMinterController {
       balanceStr = [
         value.toString().substr(0, decNum),
         '.',
-        value.toString().substr(decNum, tokenDecimals - decNum)
+        value.toString().substr(decNum, tokenDecimals - decNum),
       ].join('');
     }
 
@@ -580,15 +553,13 @@ class MinterController implements IMinterController {
       balanceStr = [
         '0',
         '.',
-        value.toString().substr(decNum, tokenDecimals - decNum)
+        value.toString().substr(decNum, tokenDecimals - decNum),
       ].join('');
     }
 
     const arr = balanceStr.toString().split('.');
 
-    return `${arr[0]}${
-      arr[1] ? `.${arr[1].substr(0, this.kusamaDecimals)}` : ''
-    }`;
+    return `${arr[0]}${arr[1] ? `.${arr[1].substr(0, this.kusamaDecimals)}` : ''}`;
   }
 
   // TODO: we have 3 outcomes ('already enough funds'/'not enough funds, sign to add'/'not enough funds on account'), will collide with UI since we expect bool from here and nahve no control over stages texts
@@ -596,16 +567,16 @@ class MinterController implements IMinterController {
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     const matcherContractInstance = this.getMatcherContractInstance(
-      getEthAccount(account)
+      getEthAccount(account),
     );
     const userDeposit = await this.getUserDeposit(account);
     if (!userDeposit) throw new Error('No user deposit');
     const token = await this.nftController?.getToken(
       Number(collectionId),
-      Number(tokenId)
+      Number(tokenId),
     );
     if (!token) throw new Error('Token not found');
     const ask = await matcherContractInstance.methods
@@ -619,16 +590,14 @@ class MinterController implements IMinterController {
     }
     // Get required amount to deposit
     const needed = price.sub(userDeposit);
-    const kusamaBalancesAll = await this.kusamaApi?.derive.balances?.all(
-      account
-    );
+    const kusamaBalancesAll = await this.kusamaApi?.derive.balances?.all(account);
     const kusamaAvailableBalance = new BN(kusamaBalancesAll?.availableBalance); // TODO: some complicated stuff to be migrated
 
     if (kusamaAvailableBalance?.lt(needed)) {
       throw new Error(
         `Your KSM balance is too low: ${this.formatKsm(
-          kusamaAvailableBalance
-        )} KSM. You need at least: ${this.formatKsm(needed)} KSM`
+          kusamaAvailableBalance,
+        )} KSM. You need at least: ${this.formatKsm(needed)} KSM`,
       );
     }
     // accountId: encodedKusamaAccount,
@@ -648,18 +617,13 @@ class MinterController implements IMinterController {
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) {
     const ethAccount = getEthAccount(account);
     const evmCollectionInstance = this.getEvmCollectionInstance(collectionId);
     const matcherContractInstance = this.getMatcherContractInstance(ethAccount);
     const abi = matcherContractInstance.methods
-      .buyKSM(
-        evmCollectionInstance.options.address,
-        tokenId,
-        ethAccount,
-        ethAccount
-      )
+      .buyKSM(evmCollectionInstance.options.address, tokenId, ethAccount, ethAccount)
       .encodeABI();
 
     const tx = this.uniqApi.tx.evm.call(
@@ -671,7 +635,7 @@ class MinterController implements IMinterController {
       await this.web3Instance.eth.getGasPrice(),
       null,
       null,
-      []
+      [],
     );
 
     const signedTx = await options.sign(tx);
@@ -681,12 +645,8 @@ class MinterController implements IMinterController {
     await signedTx.send();
     await this.repeatCheckForTransactionFinish(async () => {
       return (
-        (
-          await this.nftController?.getToken(
-            Number(collectionId),
-            Number(tokenId)
-          )
-        )?.owner?.Ethereum === ethAccount
+        (await this.nftController?.getToken(Number(collectionId), Number(tokenId)))?.owner
+          ?.Ethereum === ethAccount
       );
     });
   }
@@ -698,7 +658,7 @@ class MinterController implements IMinterController {
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     const ethAddress = getEthAccount(account);
     const matcherContractInstance = this.getMatcherContractInstance(ethAddress);
@@ -723,7 +683,7 @@ class MinterController implements IMinterController {
       await this.web3Instance.eth.getGasPrice(),
       null,
       null,
-      []
+      [],
     );
     const signedTx = await options.sign(tx);
 
@@ -733,13 +693,9 @@ class MinterController implements IMinterController {
       await signedTx.send();
 
       await this.repeatCheckForTransactionFinish(async () => {
-        const { flagActive }: TokenAskType =
-          await matcherContractInstance.methods
-            .getOrder(
-              this.collectionIdToAddress(parseInt(collectionId, 10)),
-              tokenId
-            )
-            .call();
+        const { flagActive }: TokenAskType = await matcherContractInstance.methods
+          .getOrder(this.collectionIdToAddress(parseInt(collectionId, 10)), tokenId)
+          .call();
 
         return flagActive !== '0';
       });
@@ -754,15 +710,15 @@ class MinterController implements IMinterController {
     account: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) {
     const ethAccount = {
-      Ethereum: getEthAccount(account)
+      Ethereum: getEthAccount(account),
     };
     // check if already on substrar
     const token = await this.nftController?.getToken(
       Number(collectionId),
-      Number(tokenId)
+      Number(tokenId),
     );
     if (!token) throw new Error('Token for unlock not found');
     const { owner } = token;
@@ -774,7 +730,7 @@ class MinterController implements IMinterController {
       normalizeAccountId(account),
       collectionId,
       tokenId,
-      1
+      1,
     );
     const signedTx = await options.sign(tx);
 
@@ -786,7 +742,7 @@ class MinterController implements IMinterController {
       await this.repeatCheckForTransactionFinish(async () => {
         const updatedToken = await this.nftController?.getToken(
           Number(collectionId),
-          Number(tokenId)
+          Number(tokenId),
         );
         const owner = updatedToken.owner;
         if (compareEncodedAddresses(owner.Substrate, account)) return true;
@@ -806,23 +762,18 @@ class MinterController implements IMinterController {
     to: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     const tokenPart = 1;
     const recipient = { Substrate: to, Ethereum: getEthAccount(to) };
     const ethTo = getEthAccount(to);
     const token = await this.nftController?.getToken(
       Number(collectionId),
-      Number(tokenId)
+      Number(tokenId),
     );
     if (!token) throw new Error('Token not found');
     const tokenOwner = token.owner;
-    let tx = this.uniqApi.tx.unique.transfer(
-      recipient,
-      collectionId,
-      tokenId,
-      tokenPart
-    );
+    let tx = this.uniqApi.tx.unique.transfer(recipient, collectionId, tokenId, tokenPart);
     if (!isTokenOwner(from, tokenOwner)) {
       const ethFrom = getEthAccount(from);
       if (tokenOwner?.Ethereum === ethFrom) {
@@ -831,7 +782,7 @@ class MinterController implements IMinterController {
           normalizeAccountId(recipient as CrossAccountId),
           collectionId,
           tokenId,
-          1
+          1,
         );
       }
     }
@@ -848,12 +799,11 @@ class MinterController implements IMinterController {
     await this.repeatCheckForTransactionFinish(async () => {
       const updatedToken = await this.nftController?.getToken(
         Number(collectionId),
-        Number(tokenId)
+        Number(tokenId),
       );
       const owner = updatedToken.owner;
       if (owner.Ethereum && owner.Ethereum === ethTo) return true;
-      if (owner.Substrate && compareEncodedAddresses(owner.Substrate, to))
-        return true;
+      if (owner.Substrate && compareEncodedAddresses(owner.Substrate, to)) return true;
       return false;
     });
   }
@@ -862,15 +812,9 @@ class MinterController implements IMinterController {
     owner: string,
     collectionId: string,
     tokenId: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ) {
-    return this.transferToken(
-      owner,
-      this.auctionAddress,
-      collectionId,
-      tokenId,
-      options
-    );
+    return this.transferToken(owner, this.auctionAddress, collectionId, tokenId, options);
   }
 
   private fromStringToBnString(value: string, decimals: number): string {
@@ -881,9 +825,7 @@ class MinterController implements IMinterController {
     const numStringValue = value.replace(',', '.');
     const [left, right] = numStringValue.split('.');
     const decimalsFromLessZeroString = right?.length || 0;
-    const bigValue = [...(left || []), ...(right || [])]
-      .join('')
-      .replace(/^0+/, '');
+    const bigValue = [...(left || []), ...(right || [])].join('').replace(/^0+/, '');
     return (
       Number(bigValue) * Math.pow(10, decimals - decimalsFromLessZeroString)
     ).toString();
@@ -892,11 +834,11 @@ class MinterController implements IMinterController {
   public async transferBidBalance(
     from: string,
     amount: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     const tx = this.kusamaApi.tx.balances.transferKeepAlive(
       encodeAddress(this.auctionAddress),
-      this.fromStringToBnString(amount, this.kusamaDecimals)
+      this.fromStringToBnString(amount, this.kusamaDecimals),
     );
     const signedTx = await options.sign(tx);
     if (!signedTx) throw new Error('Transaction cancelled');
@@ -913,11 +855,11 @@ class MinterController implements IMinterController {
     from: string,
     to: string,
     amount: string,
-    options: TransactionOptions
+    options: TransactionOptions,
   ): Promise<void> {
     const tx = this.kusamaApi.tx.balances.transferKeepAlive(
       encodeAddress(to),
-      this.fromStringToBnString(amount, this.kusamaDecimals)
+      this.fromStringToBnString(amount, this.kusamaDecimals),
     );
     const signedTx = await options.sign(tx);
     if (!signedTx) throw new Error('Transaction cancelled');

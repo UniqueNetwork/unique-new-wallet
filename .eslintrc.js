@@ -7,8 +7,11 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'react-app',
     'standard',
     'prettier',
+    'plugin:import/typescript',
+    'plugin:prettier/recommended',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking'
@@ -50,6 +53,7 @@ module.exports = {
     ecmaVersion: 12
   },
   plugins: [
+    'import',
     '@typescript-eslint',
     'header',
     'react-hooks',
@@ -64,6 +68,31 @@ module.exports = {
         name: 'react-router',
         message: 'Use react-router-dom package'
       }
+    ],
+    'import/order': [
+      'error',
+      {
+        groups: [
+          'builtin',
+          'external',
+          'internal',
+          ['parent', 'sibling'],
+          'index',
+          'object',
+        ],
+        pathGroups: [{ pattern: '@app/**', group: 'internal', position: 'after' }],
+        pathGroupsExcludedImportTypes: ['@app/**'],
+        'newlines-between': 'always',
+      },
+    ],
+    'react/jsx-sort-props': [
+      'error',
+      {
+        callbacksLast: true,
+        shorthandFirst: true,
+        ignoreCase: false,
+        noSortAlphabetically: true,
+      },
     ],
     // required as 'off' since typescript-eslint has own versions
     indent: 'off',
@@ -86,7 +115,6 @@ module.exports = {
     'react/display-name': 'warn',
     'arrow-parens': ['error', 'always'],
     'default-param-last': [0], // conflicts with TS version (this one doesn't allow TS ?)
-    'jsx-quotes': ['error', 'prefer-single'],
     'react/jsx-indent': ['error', 2],
     'react/jsx-indent-props': [2, 2],
     'react/prop-types': [0], // this is a completely broken rule
@@ -95,13 +123,6 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'react/jsx-closing-bracket-location': [1, 'line-aligned'],
     'react/jsx-fragments': 'error',
-    'react/jsx-max-props-per-line': [
-      2,
-      {
-        maximum: { single: 3, multi: 1 }
-      }
-    ],
-    'react/jsx-no-bind': 1,
     'no-void': 'off',
     // this seems very broken atm, false positives
     '@typescript-eslint/unbound-method': 'off',
@@ -125,7 +146,11 @@ module.exports = {
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx']
     },
-    'import/resolver': require.resolve('eslint-import-resolver-node'),
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+      },
+    },
     react: {
       version: 'detect'
     }

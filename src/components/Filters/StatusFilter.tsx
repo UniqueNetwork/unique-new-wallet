@@ -1,11 +1,12 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Checkbox } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
+
 import { Statuses } from './types';
 import Accordion from '../Accordion/Accordion';
 
 interface StatusFilterProps {
-  onChange(value: Statuses): void
+  onChange(value: Statuses): void;
 }
 
 const StatusFilter: FC<StatusFilterProps> = ({ onChange }) => {
@@ -14,25 +15,37 @@ const StatusFilter: FC<StatusFilterProps> = ({ onChange }) => {
   const [timedAuction, setTimedAuction] = useState<boolean>(false);
   const [myBets, setMyBets] = useState<boolean>(false);
 
-  const onMyNFTsChange = useCallback((value: boolean) => {
-    onChange({ myNFTs: value, fixedPrice, timedAuction, myBets });
-    setMyNFTs(value);
-  }, [fixedPrice, timedAuction, myBets]);
+  const onMyNFTsChange = useCallback(
+    (value: boolean) => {
+      onChange({ myNFTs: value, fixedPrice, timedAuction, myBets });
+      setMyNFTs(value);
+    },
+    [fixedPrice, timedAuction, myBets],
+  );
 
-  const onFixedPriceChange = useCallback((value: boolean) => {
-    onChange({ myNFTs, fixedPrice: value, timedAuction, myBets });
-    setFixedPrice(value);
-  }, [myNFTs, timedAuction, myBets]);
+  const onFixedPriceChange = useCallback(
+    (value: boolean) => {
+      onChange({ myNFTs, fixedPrice: value, timedAuction, myBets });
+      setFixedPrice(value);
+    },
+    [myNFTs, timedAuction, myBets],
+  );
 
-  const onTimedAuctionChange = useCallback((value: boolean) => {
-    onChange({ myNFTs, fixedPrice, timedAuction: value, myBets });
-    setTimedAuction(value);
-  }, [myNFTs, fixedPrice, myBets]);
+  const onTimedAuctionChange = useCallback(
+    (value: boolean) => {
+      onChange({ myNFTs, fixedPrice, timedAuction: value, myBets });
+      setTimedAuction(value);
+    },
+    [myNFTs, fixedPrice, myBets],
+  );
 
-  const onMyBetsChange = useCallback((value: boolean) => {
-    onChange({ myNFTs, fixedPrice, timedAuction, myBets: value });
-    setMyBets(value);
-  }, [myNFTs, fixedPrice, timedAuction, onChange]);
+  const onMyBetsChange = useCallback(
+    (value: boolean) => {
+      onChange({ myNFTs, fixedPrice, timedAuction, myBets: value });
+      setMyBets(value);
+    },
+    [myNFTs, fixedPrice, timedAuction, onChange],
+  );
 
   const onClear = useCallback(() => {
     setMyNFTs(false);
@@ -43,10 +56,11 @@ const StatusFilter: FC<StatusFilterProps> = ({ onChange }) => {
   }, [onChange]);
 
   return (
-    <Accordion title={'Status'}
+    <Accordion
+      title={'Status'}
       isOpen={true}
-      onClear={onClear}
       isClearShow={myNFTs || fixedPrice || timedAuction || myBets}
+      onClear={onClear}
     >
       <StatusFilterWrapper>
         <Checkbox

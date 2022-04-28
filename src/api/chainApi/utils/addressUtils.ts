@@ -10,7 +10,10 @@ import { CrossAccountId } from '../types';
 
 keyring.loadAll({});
 
-export const compareEncodedAddresses = (subAddress1: string, subAddress2: string): boolean => {
+export const compareEncodedAddresses = (
+  subAddress1: string,
+  subAddress2: string,
+): boolean => {
   if (!subAddress1 || !subAddress2) return false;
   return encodeAddress(subAddress1) === encodeAddress(subAddress2);
 };
@@ -21,15 +24,20 @@ export const getEthAccount = (account: string) => {
   return ethAccount.toLowerCase();
 };
 
-export const isTokenOwner = (account: string, tokenOwner: { Substrate?: string, Ethereum?: string }): boolean => {
+export const isTokenOwner = (
+  account: string,
+  tokenOwner: { Substrate?: string; Ethereum?: string },
+): boolean => {
   const ethAccount = getEthAccount(account);
   const normalizeSubstrate = toAddress(tokenOwner.Substrate);
 
-  return normalizeSubstrate === account || tokenOwner.Ethereum?.toLowerCase() === ethAccount;
+  return (
+    normalizeSubstrate === account || tokenOwner.Ethereum?.toLowerCase() === ethAccount
+  );
 };
 
 export function normalizeAccountId(
-  input: string | AccountId | CrossAccountId | IKeyringPair
+  input: string | AccountId | CrossAccountId | IKeyringPair,
 ): CrossAccountId {
   if (typeof input === 'string') {
     if (input.length === 48 || input.length === 47) {
@@ -49,17 +57,17 @@ export function normalizeAccountId(
 
   if ('Ethereum' in input) {
     return {
-      Ethereum: input.Ethereum.toLowerCase()
+      Ethereum: input.Ethereum.toLowerCase(),
     };
   } else if ('ethereum' in input) {
     return {
-      Ethereum: (input as { ethereum: string }).ethereum.toLowerCase()
+      Ethereum: (input as { ethereum: string }).ethereum.toLowerCase(),
     };
   } else if ('Substrate' in input) {
     return input;
   } else if ('substrate' in input) {
     return {
-      Substrate: (input as { substrate: string }).substrate
+      Substrate: (input as { substrate: string }).substrate,
     };
   }
 
@@ -67,14 +75,18 @@ export function normalizeAccountId(
   return { Substrate: input.toString() };
 }
 
-export function toAddress (value?: string | Uint8Array | null, allowIndices = false): string | undefined {
+export function toAddress(
+  value?: string | Uint8Array | null,
+  allowIndices = false,
+): string | undefined {
   if (value) {
     try {
-      const u8a = isHex(value)
-        ? hexToU8a(value)
-        : keyring.decodeAddress(value);
+      const u8a = isHex(value) ? hexToU8a(value) : keyring.decodeAddress(value);
 
-      assert(allowIndices || u8a.length === 32 || u8a.length === 20, 'AccountIndex values not allowed');
+      assert(
+        allowIndices || u8a.length === 32 || u8a.length === 20,
+        'AccountIndex values not allowed',
+      );
 
       if (u8a.length === 20) {
         return ethereumEncode(u8a);

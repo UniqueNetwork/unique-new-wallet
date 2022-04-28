@@ -1,5 +1,16 @@
 import { ReactNode } from 'react';
-import { Accounts, CreateCollection, Faq, MainInformation, MyTokens, NotFound, Welcome } from '@app/pages';
+
+import {
+  Accounts,
+  Coins,
+  CreateCollection,
+  Faq,
+  MainInformation,
+  MyTokens,
+  NFTs,
+  NotFound,
+  Welcome,
+} from '@app/pages';
 import { CollectionForm } from '@app/context';
 
 export interface RouteItem {
@@ -27,11 +38,11 @@ export const routes: RouteConfig = {
       name: 'My tokens',
       path: '/my-tokens',
       component: (
-        <MyTokens />
+        <MyTokens activeTab={0} basePath="/my-tokens" tabUrls={['nft', 'coins']} />
       ),
       children: [
         {
-          component: <div>Nfts</div>,
+          component: <NFTs />,
           name: 'NFTs',
           path: 'nft',
           children: [
@@ -44,15 +55,15 @@ export const routes: RouteConfig = {
               component: <div>Create a NFT</div>,
               name: 'Create a NFT',
               path: 'create-nft',
-            }
-          ]
+            },
+          ],
         },
         {
           component: <div>Coins</div>,
           name: 'Coins',
           path: 'coins',
-        }
-      ]
+        },
+      ],
     },
     {
       component: <div>My collections</div>,
@@ -74,9 +85,9 @@ export const routes: RouteConfig = {
               name: 'Settings',
               path: 'settings',
             },
-          ]
+          ],
         },
-      ]
+      ],
     },
     {
       component: <Faq />,
@@ -86,9 +97,7 @@ export const routes: RouteConfig = {
   ],
   otherRoutes: [
     {
-      component: (
-        <Welcome />
-      ),
+      component: <Welcome />,
       name: 'Welcome',
       path: '/',
     },
@@ -121,7 +130,7 @@ export const routes: RouteConfig = {
           name: 'Nft attributes',
           path: 'nft-attributes',
         },
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 };

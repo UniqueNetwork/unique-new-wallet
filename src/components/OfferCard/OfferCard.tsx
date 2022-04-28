@@ -2,20 +2,21 @@ import React, { FC, useMemo, useState } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
-import { Picture } from '..';
 import { useAccounts, useApi } from '@app/hooks';
-import Loading from '../Loading';
 import { NFTToken } from '@app/api/chainApi/unique/types';
 import { formatKusamaBalance } from '@app/utils/textUtils';
 import { Offer } from '@app/api/restApi/offers/types';
 import { Icon } from '@app/components';
-import Kusama from '../../static/icons/logo-kusama.svg';
 import { compareEncodedAddresses } from '@app/api/chainApi/utils/addressUtils';
 import { timeDifference } from '@app/utils/timestampUtils';
+
+import Kusama from '../../static/icons/logo-kusama.svg';
+import Loading from '../Loading';
+import { Picture } from '..';
 import config from '../../config';
 
 export type TTokensCard = {
-  offer: Offer
+  offer: Offer;
 };
 
 export const OfferCard: FC<TTokensCard> = ({ offer }) => {
@@ -25,39 +26,43 @@ export const OfferCard: FC<TTokensCard> = ({ offer }) => {
   const { api } = useApi();
   const { selectedAccount } = useAccounts();
 
-  const {
-    collectionName,
-    imagePath,
-    tokenPrefix
-  } = useMemo<Record<string, string | undefined>>(() => {
+  const { collectionName, imagePath, tokenPrefix } = useMemo<
+    Record<string, string | undefined>
+  >(() => {
     if (token) {
       return {
         collectionName: token.collectionName,
         imagePath: token.imageUrl,
-        tokenPrefix: token.prefix
+        tokenPrefix: token.prefix,
       };
     }
 
     if (offer) {
       setIsFetching(true);
-      void api?.nft?.getToken(offer.collectionId, offer.tokenId).then((token: NFTToken) => {
-        setIsFetching(false);
-        setToken(token);
-      });
+      void api?.nft
+        ?.getToken(offer.collectionId, offer.tokenId)
+        .then((token: NFTToken) => {
+          setIsFetching(false);
+          setToken(token);
+        });
     }
     return {};
   }, [offer, token, api]);
 
   const isBidder = useMemo(() => {
     if (!selectedAccount) return false;
-    return offer?.auction?.bids.some((bid) => compareEncodedAddresses(bid.bidderAddress, selectedAccount.address));
+    return offer?.auction?.bids.some((bid) =>
+      compareEncodedAddresses(bid.bidderAddress, selectedAccount.address),
+    );
   }, [offer, selectedAccount]);
 
   const topBid = useMemo(() => {
     if (!offer?.auction?.bids?.length) return null;
-    return offer.auction.bids.reduce((top, bid) => {
-      return top.amount > bid.amount ? top : bid;
-    }) || null;
+    return (
+      offer.auction.bids.reduce((top, bid) => {
+        return top.amount > bid.amount ? top : bid;
+      }) || null
+    );
   }, [offer]);
 
   const isTopBidder = useMemo(() => {
@@ -71,29 +76,56 @@ export const OfferCard: FC<TTokensCard> = ({ offer }) => {
         <Picture alt={offer?.tokenId?.toString() || ''} src={imagePath} />
       </PictureWrapper>
       <Description>
-        <a href={`/token/${offer?.collectionId}/${offer?.tokenId}`} title={`${tokenPrefix || ''} #${offer?.tokenId}`}>
-          <Text size='l' weight='medium' color={'secondary-500'}>
+        <a
+          href={`/token/${offer?.collectionId}/${offer?.tokenId}`}
+          title={`${tokenPrefix || ''} #${offer?.tokenId}`}
+        >
+          <Text size="l" weight="medium" color={'secondary-500'}>
             {`${tokenPrefix || ''} #${offer?.tokenId}`}
           </Text>
         </a>
-        <a href={`${config.scanUrl || ''}collections/${offer?.collectionId}`} target={'_blank'} rel='noreferrer'>
-          <Text color='primary-600' size='s'>
-            {`${collectionName?.substring(0, 15) || ''} [id ${offer?.collectionId || ''}]`}
+        <a
+          href={`${config.scanUrl || ''}collections/${offer?.collectionId}`}
+          target={'_blank'}
+          rel="noreferrer"
+        >
+          <Text color="primary-600" size="s">
+            {`${collectionName?.substring(0, 15) || ''} [id ${
+              offer?.collectionId || ''
+            }]`}
           </Text>
         </a>
         <PriceWrapper>
-          <Text size='s'>{`Price: ${formatKusamaBalance(offer?.price || 0)}`}</Text>
+          <Text size="s">{`Price: ${formatKusamaBalance(offer?.price || 0)}`}</Text>
           <Icon path={Kusama} size={16} />
         </PriceWrapper>
-        {!offer?.auction && <Text size={'xs'} color={'grey-500'} >Price</Text>}
-        {offer?.auction && <AuctionInfoWrapper>
-          {isTopBidder && <Text size={'xs'} color={'positive-500'} >Leading bid</Text>}
-          {isBidder && !isTopBidder && <Text size={'xs'} color={'coral-500'} >Outbid</Text>}
-          {!isBidder && !isTopBidder && <Text size={'xs'} color={'grey-500'} >{
-            offer.auction.bids.length > 0 ? 'Last bid' : 'Minimum bid'
-          }</Text>}
-          <Text color={'dark'} size={'xs'}>{`${timeDifference(new Date(offer.auction?.stopAt || '').getTime() / 1000)} left`}</Text>
-        </AuctionInfoWrapper>}
+        {!offer?.auction && (
+          <Text size={'xs'} color={'grey-500'}>
+            Price
+          </Text>
+        )}
+        {offer?.auction && (
+          <AuctionInfoWrapper>
+            {isTopBidder && (
+              <Text size={'xs'} color={'positive-500'}>
+                Leading bid
+              </Text>
+            )}
+            {isBidder && !isTopBidder && (
+              <Text size={'xs'} color={'coral-500'}>
+                Outbid
+              </Text>
+            )}
+            {!isBidder && !isTopBidder && (
+              <Text size={'xs'} color={'grey-500'}>
+                {offer.auction.bids.length > 0 ? 'Last bid' : 'Minimum bid'}
+              </Text>
+            )}
+            <Text color={'dark'} size={'xs'}>{`${timeDifference(
+              new Date(offer.auction?.stopAt || '').getTime() / 1000,
+            )} left`}</Text>
+          </AuctionInfoWrapper>
+        )}
       </Description>
 
       {isFetching && <Loading />}
@@ -119,7 +151,7 @@ const PictureWrapper = styled.a`
   margin-bottom: 8px;
 
   &::before {
-    content: "";
+    content: '';
     display: block;
     padding-top: 100%;
   }
@@ -144,7 +176,7 @@ const PictureWrapper = styled.a`
     svg {
       border-radius: 8px;
     }
-    
+
     &:hover {
       transform: translate(0, -5px);
       text-decoration: none;
@@ -152,7 +184,7 @@ const PictureWrapper = styled.a`
   }
 `;
 
-const PriceWrapper = styled.div` 
+const PriceWrapper = styled.div`
   display: flex;
   align-items: center;
 `;

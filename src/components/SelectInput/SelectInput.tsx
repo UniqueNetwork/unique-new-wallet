@@ -1,54 +1,80 @@
-import React, { ChangeEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components/macro';
 
 interface SelectInputOption {
-  key: string
-  title: string
+  key: string;
+  title: string;
 }
 
 interface SelectInputProps<T = SelectInputOption> {
-  className?: string
-  placeholder?: string
-  options: T[]
-  value?: string | T
-  onChange(value: string | T): void
-  renderOption?(value: T): ReactNode | string
+  className?: string;
+  placeholder?: string;
+  options: T[];
+  value?: string | T;
+  onChange(value: string | T): void;
+  renderOption?(value: T): ReactNode | string;
 }
 
-export function SelectInput<T = SelectInputOption>({ className, placeholder, options, value, onChange, renderOption }: SelectInputProps<T>) {
+export function SelectInput<T = SelectInputOption>({
+  className,
+  placeholder,
+  options,
+  value,
+  onChange,
+  renderOption,
+}: SelectInputProps<T>) {
   const [selectedValue, setSelectedValue] = useState<T>();
   const [inputValue, setInputValue] = useState<string>('');
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
   const InputRef = useRef<HTMLInputElement>(null);
   const DropdownRef = useRef<HTMLDivElement>(null);
 
-  const onInputChange = useCallback(({ target }: ChangeEvent<HTMLInputElement>) => {
-    onChange(target.value);
-  }, [onChange]);
+  const onInputChange = useCallback(
+    ({ target }: ChangeEvent<HTMLInputElement>) => {
+      onChange(target.value);
+    },
+    [onChange],
+  );
 
   const onInputFocus = useCallback(() => {
     setIsDropdownVisible(true);
   }, [setIsDropdownVisible]);
 
-  const onOptionClick = useCallback((option: T) => () => {
-    setIsDropdownVisible(false);
-    onChange(option);
-  }, [onChange]);
+  const onOptionClick = useCallback(
+    (option: T) => () => {
+      setIsDropdownVisible(false);
+      onChange(option);
+    },
+    [onChange],
+  );
 
-  const showOption = useCallback((option: T) => {
-    if (renderOption) return renderOption(option);
-    if (Object.hasOwnProperty.call(option, 'title')) return (option as unknown as { title: string }).title;
-    if (typeof option === 'string' || typeof option === 'number') return option;
+  const showOption = useCallback(
+    (option: T) => {
+      if (renderOption) return renderOption(option);
+      if (Object.hasOwnProperty.call(option, 'title'))
+        return (option as unknown as { title: string }).title;
+      if (typeof option === 'string' || typeof option === 'number') return option;
 
-    return null;
-  }, [renderOption]);
+      return null;
+    },
+    [renderOption],
+  );
 
   useEffect(() => {
     const onClickOutside = (event: MouseEvent) => {
-      if (InputRef.current &&
+      if (
+        InputRef.current &&
         DropdownRef.current &&
         !InputRef.current.contains(event.target as Node) &&
-        !DropdownRef.current.contains(event.target as Node)) {
+        !DropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownVisible(false);
       }
     };
@@ -68,27 +94,30 @@ export function SelectInput<T = SelectInputOption>({ className, placeholder, opt
     setInputValue('');
   }, [value, setSelectedValue, setInputValue]);
 
-  return (<SelectInputWrapper>
-    <InputWrapper className={className}>
-      {!selectedValue && !inputValue && placeholder && !isDropdownVisible && <Placeholder>{placeholder}</Placeholder>}
-      {selectedValue && <div>
-        {showOption(selectedValue)}
-      </div>
-      }
-      <input
-        type={'text'}
-        value={inputValue}
-        onChange={onInputChange}
-        onFocus={onInputFocus}
-        ref={InputRef}
-      />
-    </InputWrapper>
-    <Dropdown isOpen={isDropdownVisible} ref={DropdownRef}>
-      {options.map((item, index) => (
-        <OptionWrapper key={index} onClick={onOptionClick(item)} >{showOption(item)}</OptionWrapper>
-      ))}
-    </Dropdown>
-  </SelectInputWrapper>);
+  return (
+    <SelectInputWrapper>
+      <InputWrapper className={className}>
+        {!selectedValue && !inputValue && placeholder && !isDropdownVisible && (
+          <Placeholder>{placeholder}</Placeholder>
+        )}
+        {selectedValue && <div>{showOption(selectedValue)}</div>}
+        <input
+          type={'text'}
+          value={inputValue}
+          ref={InputRef}
+          onChange={onInputChange}
+          onFocus={onInputFocus}
+        />
+      </InputWrapper>
+      <Dropdown isOpen={isDropdownVisible} ref={DropdownRef}>
+        {options.map((item, index) => (
+          <OptionWrapper key={index} onClick={onOptionClick(item)}>
+            {showOption(item)}
+          </OptionWrapper>
+        ))}
+      </Dropdown>
+    </SelectInputWrapper>
+  );
 }
 
 const SelectInputWrapper = styled.div`
@@ -117,7 +146,7 @@ const InputWrapper = styled.div`
 `;
 
 const Dropdown = styled.div<{ isOpen: boolean }>`
-  display: ${({ isOpen }) => isOpen ? 'flex' : 'none'};
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   position: absolute;
   width: 100%;
   top: calc(100% + 4px);

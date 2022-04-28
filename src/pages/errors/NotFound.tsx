@@ -1,4 +1,5 @@
 import { Heading } from '@unique-nft/ui-kit';
+
 import { PagePaper } from '@app/components';
 
 export const NotFound = () => {

@@ -1,18 +1,26 @@
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/macro';
+
 import { Icon } from '@app/components';
 import TriangleDown from '@app/static/icons/triangle-down.svg';
 
 export interface DropdownSelectProps<T> {
-  className?: string
-  placeholder?: string
-  options: T[]
-  value?: T
-  onChange(value: T): void
-  renderOption?(value: T): ReactNode | string
+  className?: string;
+  placeholder?: string;
+  options: T[];
+  value?: T;
+  onChange(value: T): void;
+  renderOption?(value: T): ReactNode | string;
 }
 
-export function DropdownSelect<T>({ className, placeholder, options, value, onChange, renderOption }: DropdownSelectProps<T>) {
+export function DropdownSelect<T>({
+  className,
+  placeholder,
+  options,
+  value,
+  onChange,
+  renderOption,
+}: DropdownSelectProps<T>) {
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
   const InputRef = useRef<HTMLDivElement>(null);
   const DropdownRef = useRef<HTMLDivElement>(null);
@@ -21,24 +29,34 @@ export function DropdownSelect<T>({ className, placeholder, options, value, onCh
     setIsDropdownVisible(!isDropdownVisible);
   }, [isDropdownVisible, setIsDropdownVisible]);
 
-  const onOptionClick = useCallback((option: T) => () => {
-    setIsDropdownVisible(false);
-    onChange(option);
-  }, [onChange]);
+  const onOptionClick = useCallback(
+    (option: T) => () => {
+      setIsDropdownVisible(false);
+      onChange(option);
+    },
+    [onChange],
+  );
 
-  const showOption = useCallback((option: T) => {
-    if (renderOption) return renderOption(option);
-    if (Object.hasOwnProperty.call(option, 'title')) return (option as unknown as { title: string }).title;
-    if (typeof option === 'string' || typeof option === 'number') return option;
+  const showOption = useCallback(
+    (option: T) => {
+      if (renderOption) return renderOption(option);
+      if (Object.hasOwnProperty.call(option, 'title'))
+        return (option as unknown as { title: string }).title;
+      if (typeof option === 'string' || typeof option === 'number') return option;
 
-    return null;
-  }, [renderOption]);
+      return null;
+    },
+    [renderOption],
+  );
 
   useEffect(() => {
     const onClickOutside = (event: MouseEvent) => {
-      if (DropdownRef.current && InputRef.current &&
+      if (
+        DropdownRef.current &&
+        InputRef.current &&
         !InputRef.current.contains(event.target as Node) &&
-        !DropdownRef.current.contains(event.target as Node)) {
+        !DropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownVisible(false);
       }
     };
@@ -48,18 +66,22 @@ export function DropdownSelect<T>({ className, placeholder, options, value, onCh
     };
   }, []);
 
-  return (<SelectInputWrapper>
-    <InputWrapper className={className} onClick={onClick} ref={InputRef}>
-      {!value && placeholder && <Placeholder>{placeholder}</Placeholder>}
-      {value && showOption(value)}
-      {options.length > 0 && <Icon path={TriangleDown} size={16} />}
-    </InputWrapper>
-    <Dropdown isOpen={isDropdownVisible} ref={DropdownRef}>
-      {options.map((item, index) => (
-        <OptionWrapper key={index} onClick={onOptionClick(item)} >{showOption(item)}</OptionWrapper>
-      ))}
-    </Dropdown>
-  </SelectInputWrapper>);
+  return (
+    <SelectInputWrapper>
+      <InputWrapper className={className} ref={InputRef} onClick={onClick}>
+        {!value && placeholder && <Placeholder>{placeholder}</Placeholder>}
+        {value && showOption(value)}
+        {options.length > 0 && <Icon path={TriangleDown} size={16} />}
+      </InputWrapper>
+      <Dropdown isOpen={isDropdownVisible} ref={DropdownRef}>
+        {options.map((item, index) => (
+          <OptionWrapper key={index} onClick={onOptionClick(item)}>
+            {showOption(item)}
+          </OptionWrapper>
+        ))}
+      </Dropdown>
+    </SelectInputWrapper>
+  );
 }
 
 const SelectInputWrapper = styled.div`
@@ -90,7 +112,7 @@ const InputWrapper = styled.div`
 `;
 
 const Dropdown = styled.div<{ isOpen: boolean }>`
-  display: ${({ isOpen }) => isOpen ? 'flex' : 'none'};
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   position: absolute;
   min-width: 100%;
   top: calc(100% + 4px);

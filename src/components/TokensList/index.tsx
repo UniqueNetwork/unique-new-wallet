@@ -1,8 +1,10 @@
 import { FC } from 'react';
 import styled from 'styled-components/macro';
-import { TokensCard } from '../TokensCard';
+
 import { NFTToken } from '@app/api/chainApi/unique/types';
 import { Offer } from '@app/api/restApi/offers/types';
+
+import { TokensCard } from '../TokensCard';
 
 type TTokensList = {
   tokens: (NFTToken & Partial<Offer>)[];

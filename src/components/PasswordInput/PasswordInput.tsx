@@ -3,22 +3,30 @@ import styled from 'styled-components/macro';
 
 import { Grey500 } from '@app/styles/colors';
 import { Icon } from '@app/components';
+
 import Eye from '../../static/icons/eye.svg';
 import EyeClosed from '../../static/icons/eye-closed.svg';
 
 interface PasswordInputProps {
-  placeholder?: string
-  value: string
-  onChange(value: string): void
+  placeholder?: string;
+  value: string;
+  onChange(value: string): void;
 }
 
 // todo - use from ui-kit
-export const PasswordInput: FC<PasswordInputProps> = ({ placeholder, value, onChange }) => {
+export const PasswordInput: FC<PasswordInputProps> = ({
+  placeholder,
+  value,
+  onChange,
+}) => {
   const [isVisibleValue, setIsVisibleValue] = useState<boolean>(false);
 
-  const onPasswordChange = useCallback(({ target }: ChangeEvent<HTMLInputElement>) => {
-    onChange(target.value);
-  }, [onChange]);
+  const onPasswordChange = useCallback(
+    ({ target }: ChangeEvent<HTMLInputElement>) => {
+      onChange(target.value);
+    },
+    [onChange],
+  );
 
   const onVisibleValueClick = useCallback(() => {
     setIsVisibleValue(!isVisibleValue);
@@ -26,12 +34,17 @@ export const PasswordInput: FC<PasswordInputProps> = ({ placeholder, value, onCh
 
   return (
     <PasswordInputWrapper>
-      <PasswordInputStyled type={isVisibleValue ? 'text' : 'password'}
-        onChange={onPasswordChange}
+      <PasswordInputStyled
+        type={isVisibleValue ? 'text' : 'password'}
         value={value}
         placeholder={placeholder}
+        onChange={onPasswordChange}
       />
-      <Icon path={isVisibleValue ? Eye : EyeClosed} onClick={onVisibleValueClick} size={24} />
+      <Icon
+        path={isVisibleValue ? Eye : EyeClosed}
+        size={24}
+        onClick={onVisibleValueClick}
+      />
     </PasswordInputWrapper>
   );
 };

@@ -16,21 +16,15 @@ export const PageLayoutComponent: FC = () => {
   return (
     <LayoutStyled>
       <Layout
-        footer={(
-          <div dangerouslySetInnerHTML={{ __html: footer }} />
-        )}
-        header={(
-          <Header />
-        )}
+        footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
+        header={<Header />}
       >
         {isLoading && (
           <LoadingStyled>
             <Loading />
           </LoadingStyled>
         )}
-        {!isLoading && accounts.length === 0 && (
-          <Welcome />
-        )}
+        {!isLoading && accounts.length === 0 && <Welcome />}
         {!isLoading && accounts.length !== 0 && (
           <div className={'container'}>
             <Outlet />

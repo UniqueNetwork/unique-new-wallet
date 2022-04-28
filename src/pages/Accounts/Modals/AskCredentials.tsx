@@ -1,11 +1,17 @@
-import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
-import { TCreateAccountBodyModalProps } from './types';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Avatar, Button, InputText, Text } from '@unique-nft/ui-kit';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import styled from 'styled-components/macro';
-import { PasswordInput } from '../../../components/PasswordInput/PasswordInput';
 
-export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({ accountProperties, onFinish, onGoBack }) => {
+import { PasswordInput } from '@app/components';
+
+import { TCreateAccountBodyModalProps } from './types';
+import DefaultAvatar from '../../../static/icons/default-avatar.svg';
+
+export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
+  accountProperties,
+  onFinish,
+  onGoBack,
+}) => {
   const [name, setName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -14,49 +20,50 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({ accountP
     setName(value);
   }, []);
 
-  const validPassword = useMemo(() => password === confirmPassword, [password, confirmPassword]);
+  const validPassword = useMemo(
+    () => password === confirmPassword,
+    [password, confirmPassword],
+  );
 
   const onNextClick = useCallback(() => {
     if (!accountProperties) return;
     onFinish({ ...accountProperties, name, password });
   }, [name, password]);
 
-  return (<>
-    <AddressWrapper>
-      <Avatar size={24} src={DefaultAvatar} />
-      <Text>{accountProperties?.address || ''}</Text>
-    </AddressWrapper>
-    <CredentialsWrapper >
-      <Text size={'m'}>Name</Text>
-      <Text size={'s'} color={'grey-500'}>Give your account a name for easier identification and handling. </Text>
-      <InputText onChange={onAccountNameChange} value={name} />
+  return (
+    <>
+      <AddressWrapper>
+        <Avatar size={24} src={DefaultAvatar} />
+        <Text>{accountProperties?.address || ''}</Text>
+      </AddressWrapper>
+      <CredentialsWrapper>
+        <Text size="m">Name</Text>
+        <Text size="s" color="grey-500">
+          Give your account a name for easier identification and handling.
+        </Text>
+        <InputText value={name} onChange={onAccountNameChange} />
 
-      <Text size={'m'}>Password</Text>
-      <Text size={'s'} color={'grey-500'}>This is necessary to authenticate all committed transactions and encrypt the key pair. Ensure you are using a strong password for proper account protection. </Text>
-      <PasswordInput
-        onChange={setPassword}
-        value={password}
-      />
-      <Text size={'m'}>Repeat password</Text>
-      <PasswordInput
-        onChange={setConfirmPassword}
-        value={confirmPassword}
-      />
-    </CredentialsWrapper>
-    <ButtonWrapper>
-      <StepsTextStyled size={'m'}>Step 2/3</StepsTextStyled>
-      <Button
-        onClick={onGoBack}
-        title='Previous'
-      />
-      <Button
-        disabled={!validPassword || !password || !name}
-        onClick={onNextClick}
-        role='primary'
-        title='Next'
-      />
-    </ButtonWrapper>
-  </>);
+        <Text size="m">Password</Text>
+        <Text size="s" color="grey-500">
+          This is necessary to authenticate all committed transactions and encrypt the key
+          pair. Ensure you are using a strong password for proper account protection.
+        </Text>
+        <PasswordInput value={password} onChange={setPassword} />
+        <Text size={'m'}>Repeat password</Text>
+        <PasswordInput value={confirmPassword} onChange={setConfirmPassword} />
+      </CredentialsWrapper>
+      <ButtonWrapper>
+        <StepsTextStyled size={'m'}>Step 2/3</StepsTextStyled>
+        <Button title="Previous" onClick={onGoBack} />
+        <Button
+          disabled={!validPassword || !password || !name}
+          role="primary"
+          title="Next"
+          onClick={onNextClick}
+        />
+      </ButtonWrapper>
+    </>
+  );
 };
 
 const AddressWrapper = styled.div`

@@ -22,8 +22,9 @@
     "jsx": "react-jsx",
     "baseUrl": "src",
     "paths": {
-      "@app/*": ["./*"]
-    }
+      "@app/*": ["./*"],
+      "@polkadot/types/lookup": ["node_modules/@unique-nft/types/types-lookup"]
+    },
   },
   "include": [
     "src"

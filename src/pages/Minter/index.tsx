@@ -1,8 +1,9 @@
 import styled from 'styled-components/macro';
-import { Filters } from '../../components';
 import { useCallback, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Button, InputText, Select, Text } from '@unique-nft/ui-kit';
+
+import { Filters } from '../../components';
 import { Secondary400 } from '../../styles/colors';
 import { FilterState } from '../../components/Filters/types';
 import { useOffers } from '../../api/restApi/offers/offers';
@@ -26,39 +27,39 @@ const sortingOptions: TOption[] = [
   {
     iconRight: { color: Secondary400, name: 'arrow-up', size: 16 },
     id: 'asc(Price)',
-    title: 'Price'
+    title: 'Price',
   },
   {
     iconRight: { color: Secondary400, name: 'arrow-down', size: 16 },
     id: 'desc(Price)',
-    title: 'Price'
+    title: 'Price',
   },
   {
     iconRight: { color: Secondary400, name: 'arrow-up', size: 16 },
     id: 'asc(TokenId)',
-    title: 'Token ID'
+    title: 'Token ID',
   },
   {
     iconRight: { color: Secondary400, name: 'arrow-down', size: 16 },
     id: 'desc(TokenId)',
-    title: 'Token ID'
+    title: 'Token ID',
   },
   {
     iconRight: { color: Secondary400, name: 'arrow-up', size: 16 },
     id: 'asc(CreationDate)',
-    title: 'Listing date'
+    title: 'Listing date',
   },
   {
     iconRight: { color: Secondary400, name: 'arrow-down', size: 16 },
     id: 'desc(CreationDate)',
-    title: 'Listing date'
-  }
+    title: 'Listing date',
+  },
 ];
 
 const pageSize = 6;
 
 const defaultSortingValue = {
-  id: 'desc(CreationDate)'
+  id: 'desc(CreationDate)',
 };
 
 export const MinterPage = () => {
@@ -67,7 +68,7 @@ export const MinterPage = () => {
   const [searchValue, setSearchValue] = useState<string>();
   const { offers, offersCount, isFetching, fetchMore, fetch } = useOffers({
     pageSize,
-    sort: [sortingValue.id]
+    sort: [sortingValue.id],
   });
 
   const hasMore = offers && offers.length < offersCount;
@@ -83,7 +84,7 @@ export const MinterPage = () => {
         page: Math.ceil(offers.length / pageSize) + 1,
         pageSize,
         sort: [sortingValue.id],
-        ...filterState
+        ...filterState,
       });
     }
   }, [fetchMore, offers, pageSize, isFetching]);
@@ -93,7 +94,7 @@ export const MinterPage = () => {
       setSortingValue(val.id);
       fetch({ sort: [val.id], pageSize, page: 1, ...filterState });
     },
-    [fetch]
+    [fetch],
   );
 
   const handleSearch = () => {
@@ -102,7 +103,7 @@ export const MinterPage = () => {
       pageSize,
       page: 1,
       searchText: searchValue?.toString(),
-      ...filterState
+      ...filterState,
     });
   };
 
@@ -114,10 +115,10 @@ export const MinterPage = () => {
         page: 1,
         sort: [sortingValue.id],
         ...(filterState || {}),
-        ...filter
+        ...filter,
       });
     },
-    [filterState]
+    [filterState],
   );
 
   return (
@@ -131,26 +132,22 @@ export const MinterPage = () => {
             <SearchWrapper>
               <InputText
                 iconLeft={{ name: 'magnify', size: 16 }}
-                onChange={(val: string) => setSearchValue(val)}
-                placeholder='Collection / token'
+                placeholder="Collection / token"
                 value={searchValue?.toString()}
+                onChange={(val: string) => setSearchValue(val)}
               />
-              <Button
-                onClick={() => handleSearch()}
-                role='primary'
-                title='Search'
-              />
+              <Button role="primary" title="Search" onClick={() => handleSearch()} />
             </SearchWrapper>
             <SortSelectWrapper>
               <Select
-                onChange={onSortingChange}
                 options={sortingOptions}
                 value={sortingValue.id}
+                onChange={onSortingChange}
               />
             </SortSelectWrapper>
           </SearchAndSortingWrapper>
           <div>
-            <Text size='m'>{`${offersCount} items`}</Text>
+            <Text size="m">{`${offersCount} items`}</Text>
           </div>
           <InfiniteScroll
             hasMore={hasMore}
@@ -170,9 +167,9 @@ export const MinterPage = () => {
         defaultSortingValue={defaultSortingValue}
         sortingValue={sortingValue.id}
         sortingOptions={sortingOptions}
+        filterComponent={Filters}
         onFilterChange={onFilterChange}
         onSortingChange={onSortingChange}
-        filterComponent={Filters}
       />
     </PagePaper>
   );

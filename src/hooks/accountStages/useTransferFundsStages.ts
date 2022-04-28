@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { useApi } from '../useApi';
 import { TTransferFunds } from '../../pages/Accounts/Modals/types';
 import useAccountStages, { AccountStage } from '../useAccountStages';
@@ -18,21 +19,21 @@ export const useTransferFundsStages = (accountAddress: string) => {
             params.txParams.sender,
             params.txParams?.recipient || '',
             params.txParams?.amount,
-            params.options
-          )
-      }
+            params.options,
+          ),
+      },
     ],
-    [minterApi]
+    [minterApi],
   ) as InternalStage<TTransferFunds>[];
   const { stages, error, status, initiate } = useAccountStages<TTransferFunds>(
     transferStages,
-    accountAddress
+    accountAddress,
   );
 
   return {
     stages,
     error,
     status,
-    initiate
+    initiate,
   };
 };

@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
-import AppRoutes from './AppRoutes';
 
+import AppRoutes from './AppRoutes';
 import { GlobalStyle } from './styles';
 
 import './styles/variables.scss';
@@ -11,5 +11,5 @@ ReactDOM.render(
     <GlobalStyle />
     <AppRoutes />
   </StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );

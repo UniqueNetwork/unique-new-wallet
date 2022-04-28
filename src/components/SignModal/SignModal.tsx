@@ -1,18 +1,19 @@
-import React, { ChangeEvent, FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Avatar, Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { KeyringPair } from '@polkadot/keyring/types';
 
+import { AccountSigner } from '@app/account';
+import { useAccounts } from '@app/hooks';
+import { PasswordInput } from '@app/components';
+
 import DefaultAvatar from '../../static/icons/default-avatar.svg';
-import { AccountSigner } from '../../account/AccountContext';
-import { useAccounts } from '../../hooks/useAccounts';
-import { PasswordInput } from '../PasswordInput/PasswordInput';
 
 export type TSignModalProps = {
-  isVisible: boolean
-  onFinish(signature?: KeyringPair): void
-  onClose(): void
-}
+  isVisible: boolean;
+  onFinish(signature?: KeyringPair): void;
+  onClose(): void;
+};
 
 export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose }) => {
   const [password, setPassword] = useState<string>('');
@@ -36,31 +37,24 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
 
   if (!selectedAccount) return null;
 
-  return (<Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
-    <Content>
-      <Heading size='2'>{'Authorize transaction'}</Heading>
-    </Content>
-    <AddressWrapper>
-      <Avatar size={24} src={DefaultAvatar} />
-      <Text>{selectedAccount.address || ''}</Text>
-    </AddressWrapper>
-    <CredentialsWrapper >
-      <PasswordInput
-        placeholder={'Password'}
-        onChange={setPassword}
-        value={password}
-      />
-      {passwordError && <Text color={'coral-500'} >{passwordError}</Text>}
-    </CredentialsWrapper>
-    <ButtonWrapper>
-      <Button
-        disabled={!password}
-        onClick={onSignClick}
-        role='primary'
-        title='Sign'
-      />
-    </ButtonWrapper>
-  </Modal>);
+  return (
+    <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
+      <Content>
+        <Heading size="2">{'Authorize transaction'}</Heading>
+      </Content>
+      <AddressWrapper>
+        <Avatar size={24} src={DefaultAvatar} />
+        <Text>{selectedAccount.address || ''}</Text>
+      </AddressWrapper>
+      <CredentialsWrapper>
+        <PasswordInput placeholder={'Password'} value={password} onChange={setPassword} />
+        {passwordError && <Text color={'coral-500'}>{passwordError}</Text>}
+      </CredentialsWrapper>
+      <ButtonWrapper>
+        <Button disabled={!password} role="primary" title="Sign" onClick={onSignClick} />
+      </ButtonWrapper>
+    </Modal>
+  );
 };
 
 const Content = styled.div`
