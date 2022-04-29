@@ -1,1 +1,1 @@
-export * from './Coints';
+export * from './Coins';
