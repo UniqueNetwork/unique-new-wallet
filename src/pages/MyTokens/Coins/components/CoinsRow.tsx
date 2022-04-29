@@ -12,7 +12,7 @@ interface CoinsRowComponentProps {
   balanceLocked?: number;
   balanceTransferable?: number;
   className?: string;
-  icon: string;
+  iconName: string;
   name: string;
   symbol: string;
 }
@@ -24,7 +24,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     balanceLocked,
     balanceTransferable,
     className,
-    icon,
+    iconName,
     name,
     symbol,
   } = props;
@@ -48,7 +48,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
   return (
     <div className={classNames('coins-row', className)}>
       <NetworkAddress>
-        <Icon name="kusama" size={24} file={icon} />
+        <Icon name={iconName} size={24} />
         <div>
           <div className="network-name">{name}</div>
           <div className="network-address-copy">

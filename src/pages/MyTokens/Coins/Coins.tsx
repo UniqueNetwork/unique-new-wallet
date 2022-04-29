@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Heading } from '@unique-nft/ui-kit';
 
-import { Kusama, Opal, Quartz, Unique } from '@app/static/icons/icons';
-
 import { CoinsRow } from './components';
 
 interface CoinsComponentProps {
@@ -20,7 +18,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
         balanceFull={0.0089}
         balanceLocked={0.0089}
         balanceTransferable={0}
-        icon={Quartz}
+        iconName="chain-quartz"
         name="Quarts"
         symbol="QTZ"
       />
@@ -29,7 +27,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
         balanceFull={0.0089}
         balanceLocked={0.0089}
         balanceTransferable={0}
-        icon={Kusama}
+        iconName="chain-kusama"
         name="Kusama"
         symbol="KSM"
       />
@@ -38,7 +36,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
         balanceFull={0.0089}
         balanceLocked={0.0089}
         balanceTransferable={0}
-        icon={Unique}
+        iconName="chain-unique"
         name="Unique network"
         symbol="UNQ"
       />
@@ -48,7 +46,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
         balanceFull={0.0089}
         balanceLocked={0.0089}
         balanceTransferable={0}
-        icon={Opal}
+        iconName="chain-opal"
         name="Opal"
         symbol="OPL"
       />
