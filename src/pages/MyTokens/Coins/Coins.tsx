@@ -16,7 +16,7 @@ const hasCoins = true;
 export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   return (
     <div className={classNames('my-tokens--coins', className)}>
-      {hasCoins && (
+      {hasCoins ? (
         <>
           <Heading size="4">Network</Heading>
           <CoinsRow
@@ -57,8 +57,9 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
             symbol="OPL"
           />
         </>
+      ) : (
+        <NotFoundCoins />
       )}
-      {!hasCoins && <NotFoundCoins />}
     </div>
   );
 };
