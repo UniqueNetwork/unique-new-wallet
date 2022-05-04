@@ -59,7 +59,7 @@ export const routes: RouteConfig = {
           ],
         },
         {
-          component: <div>Coins</div>,
+          component: <Coins />,
           name: 'Coins',
           path: 'coins',
         },
