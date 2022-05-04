@@ -3177,10 +3177,10 @@
   resolved "https://registry.yarnpkg.com/@unique-nft/types/-/types-0.4.0.tgz#329ba744e9627bc18103e6fd8c1b52f62d6565a3"
   integrity sha512-jV86adraPBUDStOaJWdXGrM++53/yrS6ygnlU/zhA/z9vvUf/qExA7SuddAUbkOQUATdUKZDSocX8YFpyAMzPA==
 
-"@unique-nft/ui-kit@^0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@unique-nft/ui-kit/-/ui-kit-0.0.14.tgz#805687a6ff66aa8b425bd4685cdc49bb0c860f35"
-  integrity sha512-9Y2Ldf7Sj/aJvWUopD+vt1whLHWytcOa8ggcJo5wTEZqNszTLwpqKX5xv+XOXA4J/1O72s5EaFOk+Z+iJlitFg==
+"@unique-nft/ui-kit@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@unique-nft/ui-kit/-/ui-kit-0.0.15.tgz#456d9699426a3e1ad4c9b3267cc58a02c9a2d6d2"
+  integrity sha512-DR+bol6c4yxs/Eh7/435f17kEW7xCjki5e66C3Ea9F/MY7r4LfR60r54MLgbEQ7Ua6N6FTTGh6dZZWYb9+VZfA==
   dependencies:
     react "^17.0.2"
 

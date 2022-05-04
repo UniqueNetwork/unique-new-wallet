@@ -1,14 +1,14 @@
 import React, { VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Pagination, Text } from '@unique-nft/ui-kit';
-// import { TokenLink } from '@unique-nft/ui-kit';
+import { Pagination, Text, TokenLink } from '@unique-nft/ui-kit';
 
 interface MyCollectionsListComponentProps {
   className?: string;
 }
 
 interface MyCollectionWithCount {
+  coverImageUrl: string;
   id: string;
   name: string;
   tokensCount: number;
@@ -16,7 +16,6 @@ interface MyCollectionWithCount {
 
 const myCollections: MyCollectionWithCount[] = [];
 
-// todo - use TokenLink as a collection card from ui kit
 const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
   className,
 }) => {
@@ -27,14 +26,15 @@ const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
   return (
     <div className={classNames('my-collections-list', className)}>
       {myCollections.map((myCollection) => (
-        <div className="my-collection-card" key={myCollection.id}>
-          <span>
-            {myCollection.name} [{myCollection.id}]
-          </span>
-          <p>
-            Items: <span>{myCollection.tokensCount}</span>
-          </p>
-        </div>
+        <TokenLink
+          image={myCollection.coverImageUrl}
+          key={myCollection.id}
+          link={{
+            href: `/my-collections/${myCollection.id}`,
+            title: `${myCollection.name}] [${myCollection.id}]`,
+          }}
+          title={`${myCollection.name}] [${myCollection.id}]`}
+        />
       ))}
       <div className="my-collections-list--footer">
         <Text size="m">{`${myCollections.length} items`}</Text>
