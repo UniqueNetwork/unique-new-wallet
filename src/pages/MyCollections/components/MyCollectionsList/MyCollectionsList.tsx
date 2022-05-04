@@ -23,6 +23,7 @@ const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
     console.log('page', page);
   };
 
+  // todo - change default token link to custom according the design
   return (
     <div className={classNames('my-collections-list', className)}>
       {myCollections.map((myCollection) => (
