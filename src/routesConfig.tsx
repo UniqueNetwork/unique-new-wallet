@@ -6,6 +6,7 @@ import {
   CreateCollection,
   Faq,
   MainInformation,
+  MyCollections,
   MyTokens,
   NFTs,
   NotFound,
@@ -66,7 +67,7 @@ export const routes: RouteConfig = {
       ],
     },
     {
-      component: <div>My collections</div>,
+      component: <MyCollections />,
       name: 'My collections',
       path: '/my-collections',
       children: [
