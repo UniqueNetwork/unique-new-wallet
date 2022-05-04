@@ -3,29 +3,11 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Button, InputText, Select } from '@unique-nft/ui-kit';
 
+import { iconDown, iconUp, Option } from '@app/utils';
+
 interface NFTFiltersComponentProps {
   className?: string;
 }
-
-interface Option {
-  id: string;
-  [x: string | number | symbol]: unknown;
-}
-
-const sortIcon = {
-  size: 12,
-  color: 'var(--color-additional-dark)',
-};
-
-const iconDown = {
-  ...sortIcon,
-  name: 'arrow-down',
-};
-
-const iconUp = {
-  ...sortIcon,
-  name: 'arrow-up',
-};
 
 const sortOptions: Option[] = [
   {
@@ -53,12 +35,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
       <InputText
         iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
       />
-      <Select
-        defaultValue="nftId-asc"
-        options={sortOptions}
-        value={sort}
-        onChange={onChange}
-      />
+      <Select options={sortOptions} value={sort} onChange={onChange} />
       <Button
         iconLeft={{
           name: 'plus',

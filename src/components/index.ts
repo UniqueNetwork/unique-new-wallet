@@ -5,6 +5,7 @@ export * from './CollectionStepper';
 export * from './Icon';
 export * from './Filters';
 export * from './Header';
+export * from './NotFoundCoins';
 export * from './PageLayout';
 export * from './PagePaper';
 export * from './PasswordInput';
