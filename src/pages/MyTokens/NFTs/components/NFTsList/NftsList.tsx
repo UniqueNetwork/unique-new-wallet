@@ -21,6 +21,7 @@ const NFTsListComponent: VFC<NFTsListComponentProps> = ({ className }) => {
     console.log('page', page);
   };
 
+  // todo - change the tokenLink props according the data structure
   return (
     <div className={classNames('nft-list', className)}>
       {tokens.map((token) => (
