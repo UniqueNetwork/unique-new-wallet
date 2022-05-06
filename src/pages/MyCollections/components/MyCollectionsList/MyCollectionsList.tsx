@@ -2,7 +2,7 @@ import React, { VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { CollectionLink, Pagination, Text } from '@unique-nft/ui-kit';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface MyCollectionsListComponentProps {
   className?: string;
@@ -20,13 +20,8 @@ const myCollections: MyCollectionWithCount[] = [];
 const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
   className,
 }) => {
-  const navigate = useNavigate();
   const onPageChange = (page: number) => {
     console.log('page', page);
-  };
-
-  const onCollectionClick = (collectionId: string) => {
-    navigate(`/my-collection/${collectionId}`);
   };
 
   // todo - change default token link to custom according the design
