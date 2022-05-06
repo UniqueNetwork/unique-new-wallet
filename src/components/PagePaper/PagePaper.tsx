@@ -1,10 +1,9 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const PagePaper = styled.div`
+export const PagePaperStyles = css`
   background: var(--color-additional-light);
   box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
   border-radius: 4px;
-  padding: calc(var(--gap) * 2);
   flex: 1;
 
   @media (max-width: 1024px) {
@@ -13,4 +12,13 @@ export const PagePaper = styled.div`
     border-radius: 0;
     padding: 0;
   }
+`;
+
+export const PagePaper = styled.div`
+  ${PagePaperStyles};
+  padding: calc(var(--gap) * 2);
+`;
+
+export const PagePaperNoPadding = styled.div`
+  ${PagePaperStyles};
 `;

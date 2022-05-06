@@ -4,6 +4,8 @@ import {
   Accounts,
   Coins,
   CreateCollection,
+  CollectionNft,
+  CollectionPage,
   Faq,
   MainInformation,
   MyCollections,
@@ -45,12 +47,12 @@ export const routes: RouteConfig = {
         {
           component: <NFTs />,
           name: 'NFTs',
-          path: 'nft',
+          path: '/nft',
           children: [
             {
               component: <div>NftId</div>,
               name: '',
-              path: ':collectionId/:nftId',
+              path: '/:collectionId/:nftId',
             },
             {
               component: <div>Create a NFT</div>,
@@ -72,12 +74,12 @@ export const routes: RouteConfig = {
       path: '/my-collections',
       children: [
         {
-          component: <div>Collection id</div>,
-          name: '',
-          path: ':collectionId',
+          component: <CollectionPage basePath="/my-collections" />,
+          name: 'Collection page',
+          path: '/:collectionId',
           children: [
             {
-              component: <div>NFTs</div>,
+              component: <CollectionNft />,
               name: 'NFTs',
               path: 'nft',
             },

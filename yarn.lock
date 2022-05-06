@@ -3177,10 +3177,10 @@
   resolved "https://registry.yarnpkg.com/@unique-nft/types/-/types-0.4.0.tgz#329ba744e9627bc18103e6fd8c1b52f62d6565a3"
   integrity sha512-jV86adraPBUDStOaJWdXGrM++53/yrS6ygnlU/zhA/z9vvUf/qExA7SuddAUbkOQUATdUKZDSocX8YFpyAMzPA==
 
-"@unique-nft/ui-kit@^0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@unique-nft/ui-kit/-/ui-kit-0.0.14.tgz#805687a6ff66aa8b425bd4685cdc49bb0c860f35"
-  integrity sha512-9Y2Ldf7Sj/aJvWUopD+vt1whLHWytcOa8ggcJo5wTEZqNszTLwpqKX5xv+XOXA4J/1O72s5EaFOk+Z+iJlitFg==
+"@unique-nft/ui-kit@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@unique-nft/ui-kit/-/ui-kit-0.0.15.tgz#456d9699426a3e1ad4c9b3267cc58a02c9a2d6d2"
+  integrity sha512-DR+bol6c4yxs/Eh7/435f17kEW7xCjki5e66C3Ea9F/MY7r4LfR60r54MLgbEQ7Ua6N6FTTGh6dZZWYb9+VZfA==
   dependencies:
     react "^17.0.2"
 
@@ -9331,6 +9331,11 @@ module-lookup-amd@^7.0.1:
     glob "^7.1.6"
     requirejs "^2.3.5"
     requirejs-config-file "^4.0.0"
+
+moment@^2.29.3:
+  version "2.29.3"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.3.tgz#edd47411c322413999f7a5940d526de183c031f3"
+  integrity sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw==
 
 ms@2.0.0:
   version "2.0.0"

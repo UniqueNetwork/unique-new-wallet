@@ -1,8 +1,9 @@
 import { VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import { Outlet, useLocation } from 'react-router-dom';
 
-import { PagePaper } from '@app/components';
+import { PagePaperNoPadding } from '@app/components';
 
 import { MyCollectionsFilter, MyCollectionsList } from './components';
 
@@ -13,13 +14,20 @@ interface MyCollectionsComponentProps {
 export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
 }) => {
+  const location = useLocation();
+  const isCollectionsListPath = location.pathname === '/my-collections';
+
   return (
-    <PagePaper>
-      <div className={classNames('my-collections', className)}>
-        <MyCollectionsFilter />
-        <MyCollectionsList />
-      </div>
-    </PagePaper>
+    <PagePaperNoPadding>
+      {isCollectionsListPath ? (
+        <div className={classNames('my-collections', className)}>
+          <MyCollectionsFilter />
+          <MyCollectionsList />
+        </div>
+      ) : (
+        <Outlet />
+      )}
+    </PagePaperNoPadding>
   );
 };
 

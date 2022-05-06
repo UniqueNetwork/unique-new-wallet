@@ -1,4 +1,6 @@
 export * from './Accounts';
+export * from './CollectionNft';
+export * from './CollectionPage';
 export * from './CreateCollection';
 export * from './errors';
 export * from './FAQ';

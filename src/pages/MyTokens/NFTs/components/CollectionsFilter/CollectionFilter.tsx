@@ -54,6 +54,7 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
             collectionId={collection.id}
             collectionName={collection.name}
             collectionCover={collection.coverImage}
+            key={collection.id}
             onChangeCollectionsFilter={onChangeCollectionsFilter}
           />
         ))}

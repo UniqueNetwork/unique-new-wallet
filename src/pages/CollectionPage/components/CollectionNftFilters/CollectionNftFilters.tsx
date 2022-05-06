@@ -1,13 +1,25 @@
 import React, { VFC, useState } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, InputText, Select } from '@unique-nft/ui-kit';
+import { Button, InputText, RadioGroup, Select } from '@unique-nft/ui-kit';
 
-import { iconDown, iconUp, Option } from '@app/utils';
+import { iconDown, iconUp, Option, RadioOption } from '@app/utils';
 
-interface NFTFiltersComponentProps {
+interface CollectionNftFiltersComponentProps {
   className?: string;
 }
+
+const radioOptions: RadioOption[] = [
+  {
+    value: 'All',
+  },
+  {
+    value: 'Disowned',
+  },
+  {
+    value: 'Sold',
+  },
+];
 
 const sortOptions: Option[] = [
   {
@@ -22,16 +34,29 @@ const sortOptions: Option[] = [
   },
 ];
 
-const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
+const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = ({
+  className,
+}) => {
   const [sort, setSort] = useState<string>('nftId-asc');
+  const [ownFilter, setOwnFilter] = useState<string>(radioOptions[0].value);
 
   const onChange = (option: Option) => {
     console.log('option', option);
     setSort(option.id);
   };
 
+  const onOwnFilterChange = (option: RadioOption) => {
+    setOwnFilter(option.value);
+  };
+
+  // todo - fix onChange for radio
   return (
-    <div className={classNames('nft-filters', className)}>
+    <div className={classNames('collection-nft-filters', className)}>
+      <RadioGroup
+        align="horizontal"
+        options={radioOptions}
+        // onChange={onOwnFilterChange}
+      />
       <InputText
         iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
         placeholder="Search"
@@ -50,11 +75,12 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
   );
 };
 
-export const NFTFilters = styled(NFTFiltersComponent)`
-  &.nft-filters {
+export const CollectionNftFilters = styled(CollectionNftFiltersComponent)`
+  &.collection-nft-filters {
     display: grid;
-    grid-template-columns: 502px 268px 183px;
+    grid-template-columns: 235px 502px 268px 183px;
     grid-column-gap: calc(var(--gap) * 2);
+    align-items: center;
 
     .unique-input-text,
     .unique-select,
@@ -66,6 +92,12 @@ export const NFTFilters = styled(NFTFiltersComponent)`
   .unique-select {
     .select-value {
       grid-column-gap: 7px;
+    }
+  }
+
+  .unique-radio-group-wrapper {
+    .unique-radio-wrapper {
+      margin-bottom: 0;
     }
   }
 `;
