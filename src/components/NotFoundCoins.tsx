@@ -9,6 +9,7 @@ interface NotFoundCoinsProps {
   className?: string;
 }
 
+// todo - replace icon from ui kit
 const NotFoundCoinsComponent: VFC<NotFoundCoinsProps> = ({ className }) => (
   <div className={classNames('nothing-found', className)}>
     <img alt="nothing-found-icon" src={NotFound} />

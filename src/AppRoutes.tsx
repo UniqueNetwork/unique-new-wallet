@@ -27,8 +27,8 @@ export const AppRoutes = () => (
                   <Route
                     element={menuChild2.component}
                     index={menuChild2.index}
-                    key={`${menuChild2.name}${menuChild2.path}`}
-                    path={`${menuChild2.path}${menuChild2.path}${menuChild2.path}`}
+                    key={`${menuChild1.name}${menuChild1.path}${menuChild2.name}${menuChild2.path}`}
+                    path={`${menuRoute.path}${menuChild1.path}${menuChild2.path}`}
                   />
                 ))}
               </Route>

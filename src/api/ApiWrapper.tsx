@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+
+import { defaultChainKey } from '@app/utils';
 
 import { GqlClient } from './graphQL/gqlClient';
 import RpcClient from './chainApi/rpcClient';
 import { ApiContextProps, ApiProvider, ChainData } from './ApiContext';
 import config from '../config';
-import { defaultChainKey } from '../utils/configParser';
 import { getSettings } from './restApi/settings/settings';
 
 const gqlClient = new GqlClient('');
@@ -17,11 +19,33 @@ interface ChainProviderProps {
 }
 
 const { chains, defaultChain } = config;
+export type ChainProperties = { ss58Format: string };
 
 export const ApiWrapper = ({ children }: ChainProviderProps) => {
   const [chainData, setChainData] = useState<ChainData>();
+  const [chainProperties, setChainProperties] = useState<ChainProperties>();
   const [isRpcClientInitialized, setRpcClientInitialized] = useState<boolean>(false);
   const { chainId } = useParams<'chainId'>();
+
+  const chainAddressFormat = useCallback(
+    (address: string): string | undefined => {
+      try {
+        if (chainProperties?.ss58Format) {
+          return encodeAddress(
+            decodeAddress(address),
+            parseInt(chainProperties?.ss58Format),
+          );
+        }
+      } catch (e) {
+        console.log('chainAddressFormat error', e);
+
+        return address;
+      }
+
+      return '';
+    },
+    [chainProperties],
+  );
 
   useEffect(() => {
     (async () => {
@@ -59,12 +83,13 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
             minter: rpcClient.minterController,
           }) ||
         undefined,
+      chainAddressFormat,
       chainData,
       currentChain: chainId ? chains[chainId] : defaultChain,
       rawRpcApi: rpcClient.rawUniqRpcApi,
       rpcClient,
     };
-  }, [isRpcClientInitialized, chainData, chainId]);
+  }, [isRpcClientInitialized, chainAddressFormat, chainData, chainId]);
 
   return (
     <ApiProvider value={value}>

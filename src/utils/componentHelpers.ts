@@ -1,3 +1,7 @@
+export interface RadioOption {
+  value: string;
+}
+
 export interface Option {
   id: string;
   [x: string | number | symbol]: unknown;

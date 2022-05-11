@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { Button, InputText, Select } from '@unique-nft/ui-kit';
 
 import { iconDown, iconUp, Option } from '@app/utils';
+import { PaddedBlock } from '@app/styles/styledVariables';
+import { Grey300 } from '@app/styles/colors';
 
 interface MyCollectionsFilterComponentProps {
   className?: string;
@@ -74,9 +76,12 @@ export const LeftColumn = styled.div`
 
 export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
   &.my-collections-filter {
+    ${PaddedBlock};
     display: flex;
     align-items: center;
     justify-content: space-between;
+    // todo - change to var
+    border-bottom: 1px solid ${Grey300};
 
     .unique-input-text,
     .unique-select {

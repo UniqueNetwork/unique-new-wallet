@@ -1,5 +1,7 @@
 export * from './AccountsGroupButton';
+export * from './AccountLinkComponent';
 export * from './Alert';
+export * from './CollectionScanLink';
 export * from './CollectionSidebar';
 export * from './CollectionStepper';
 export * from './Icon';
