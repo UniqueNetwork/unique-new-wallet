@@ -1,7 +1,7 @@
 import React, { VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import moment from 'moment';
+import { format } from 'date-fns';
 import { Avatar } from '@unique-nft/ui-kit';
 
 import { Grey100, Grey300, Grey500, Secondary500 } from '@app/styles/colors';
@@ -51,7 +51,13 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
         <Row>
           <span>
             Date of creation:{' '}
-            <strong>{moment.utc().format('MMMM, D, YYYY, HH:mm:ss UTC')}</strong>
+            <strong>
+              {format(
+                new Date(new Date().toISOString().slice(0, -1)),
+                'MMMM, d, yyyy, HH:mm:ss',
+              )}{' '}
+              UTC
+            </strong>
           </span>
         </Row>
         <Description>
