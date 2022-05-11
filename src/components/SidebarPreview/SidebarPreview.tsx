@@ -40,19 +40,19 @@ export const SidebarPreview = styled(SidebarPreviewComponent)`
   }
 
   .title {
-    color: #040b1d;
+    color: var(--color-secondary-500);
     font-weight: var(--font-medium);
     font-size: 18px;
     margin-bottom: 5px;
   }
   .description {
-    color: #81858e;
+    color: var(--color-grey-500);
   }
   .preview-avatar {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: #f5f6f7;
+    background: var(--color-blue-grey-100);
     display: flex;
     align-items: center;
     justify-content: center;

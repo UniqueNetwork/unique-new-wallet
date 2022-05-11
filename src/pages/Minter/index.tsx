@@ -4,7 +4,6 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Button, InputText, Select, Text } from '@unique-nft/ui-kit';
 
 import { Filters } from '../../components';
-import { Secondary400 } from '../../styles/colors';
 import { FilterState } from '../../components/Filters/types';
 import { useOffers } from '../../api/restApi/offers/offers';
 import { OffersList } from '../../components/OffersList/OffersList';
@@ -25,32 +24,32 @@ type TOption = {
 
 const sortingOptions: TOption[] = [
   {
-    iconRight: { color: Secondary400, name: 'arrow-up', size: 16 },
+    iconRight: { color: 'var(--color-secondary-400)', name: 'arrow-up', size: 16 },
     id: 'asc(Price)',
     title: 'Price',
   },
   {
-    iconRight: { color: Secondary400, name: 'arrow-down', size: 16 },
+    iconRight: { color: 'var(--color-secondary-400)', name: 'arrow-down', size: 16 },
     id: 'desc(Price)',
     title: 'Price',
   },
   {
-    iconRight: { color: Secondary400, name: 'arrow-up', size: 16 },
+    iconRight: { color: 'var(--color-secondary-400)', name: 'arrow-up', size: 16 },
     id: 'asc(TokenId)',
     title: 'Token ID',
   },
   {
-    iconRight: { color: Secondary400, name: 'arrow-down', size: 16 },
+    iconRight: { color: 'var(--color-secondary-400)', name: 'arrow-down', size: 16 },
     id: 'desc(TokenId)',
     title: 'Token ID',
   },
   {
-    iconRight: { color: Secondary400, name: 'arrow-up', size: 16 },
+    iconRight: { color: 'var(--color-secondary-400)', name: 'arrow-up', size: 16 },
     id: 'asc(CreationDate)',
     title: 'Listing date',
   },
   {
-    iconRight: { color: Secondary400, name: 'arrow-down', size: 16 },
+    iconRight: { color: 'var(--color-secondary-400)', name: 'arrow-down', size: 16 },
     id: 'desc(CreationDate)',
     title: 'Listing date',
   },
@@ -182,7 +181,7 @@ const MinterMainPageStyled = styled.div`
 
 const LeftColumn = styled.div`
   padding-right: 24px;
-  border-right: 1px solid var(--grey-300);
+  border-right: 1px solid var(--color-grey-300);
   @media (max-width: 1024px) {
     display: none;
   }

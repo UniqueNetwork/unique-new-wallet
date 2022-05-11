@@ -2,7 +2,6 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { Avatar, Button, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
-import { AdditionalWarning100 } from '@app/styles/colors';
 import { Icon, Tooltip } from '@app/components';
 
 import { defaultPairType, derivePath } from './CreateAccount';
@@ -97,7 +96,7 @@ const AddressWrapper = styled.div`
   display: flex;
   column-gap: calc(var(--gap) / 2);
   margin: calc(var(--gap) * 2) 0;
-  border: 1px solid var(--grey-300);
+  border: 1px solid var(--color-grey-300);
   border-radius: 4px;
   padding: 20px var(--gap);
 `;
@@ -117,7 +116,7 @@ const TextStyled = styled(Text)`
   padding: 8px 16px;
   margin: var(--gap) 0;
   border-radius: 4px;
-  background-color: ${AdditionalWarning100};
+  background-color: var(--color-additional-warning-100);
   width: 100%;
 `;
 
@@ -139,7 +138,7 @@ const CredentialsWrapper = styled.div`
 `;
 
 const ValueTextStyled = styled.div`
-  border: 1px solid #d2d3d6;
+  border: 1px solid var(--color-grey-300);
   padding: 11px 12px;
   border-radius: 4px;
 `;

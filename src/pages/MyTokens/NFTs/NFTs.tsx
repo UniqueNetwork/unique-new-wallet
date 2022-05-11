@@ -29,7 +29,7 @@ export const NFTs = styled(NFTsComponent)`
   .filters-column {
     padding-top: calc(var(--gap) * 2);
     padding-right: calc((var(--gap) / 2) * 3);
-    border-right: 1px solid var(--grey-300);
+    border-right: 1px solid var(--color-grey-300);
 
     @media (max-width: 1024px) {
       display: none;

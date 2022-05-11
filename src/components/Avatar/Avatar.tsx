@@ -16,5 +16,5 @@ export const Avatar: FC<IAvatarProps> = ({
 const AvatarStyled = styled.img<{ $type: 'circle' | 'square' }>`
   border-radius: ${(props) => (props.$type === 'circle' ? '50%' : '4px')};
   outline: ${(props) =>
-    props.$type === 'circle' ? '1px solid $color-grey-200' : 'none'};
+    props.$type === 'circle' ? '1px solid var(--color-grey-200)' : 'none'};
 `;

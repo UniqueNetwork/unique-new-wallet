@@ -4,7 +4,6 @@ import styled from 'styled-components/macro';
 import { KeyringPair } from '@polkadot/keyring/types';
 import keyring from '@polkadot/ui-keyring';
 
-import { AdditionalWarning100 } from '@app/styles/colors';
 import { PasswordInput, Upload } from '@app/components';
 import { useApi } from '@app/hooks';
 
@@ -101,7 +100,7 @@ const TextStyled = styled(Text)`
   padding: 8px 16px;
   margin: calc(var(--gap) * 1.5) 0;
   border-radius: 4px;
-  background-color: ${AdditionalWarning100};
+  background-color: var(--color-additional-warning-100);
   width: 100%;
 `;
 

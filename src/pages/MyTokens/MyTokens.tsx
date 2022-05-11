@@ -64,7 +64,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 export const MyTokens = styled(MyTokensComponent)`
   .tabs-header {
     align-items: center;
-    border-bottom: 1px solid var(--grey-300);
+    border-bottom: 1px solid var(--color-grey-300);
     display: flex;
     justify-content: space-between;
   }

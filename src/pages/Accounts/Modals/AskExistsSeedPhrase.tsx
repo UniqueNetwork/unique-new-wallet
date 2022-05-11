@@ -3,7 +3,6 @@ import styled from 'styled-components/macro';
 import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
 
 import { addressFromSeed } from '@app/utils';
-import { AdditionalWarning100 } from '@app/styles/colors';
 
 import { TCreateAccountBodyModalProps } from './types';
 import { defaultPairType, derivePath } from './CreateAccount';
@@ -69,13 +68,13 @@ const AddressWrapper = styled.div`
   display: flex;
   column-gap: calc(var(--gap) / 2);
   margin: calc(var(--gap) * 2) 0;
-  border: 1px solid var(--grey-300);
+  border: 1px solid var(--color-grey-300);
   border-radius: 4px;
   padding: 20px var(--gap);
 `;
 
 const InputSeedWrapper = styled.div`
-  border: 1px solid #d2d3d6;
+  border: 1px solid var(--color-grey-300);
   border-radius: 4px;
   padding: var(--gap);
   display: flex;
@@ -97,7 +96,7 @@ const TextStyled = styled(Text)`
   padding: 8px 16px;
   margin: calc(var(--gap) * 1.5) 0;
   border-radius: 4px;
-  background-color: ${AdditionalWarning100};
+  background-color: var(--color-additional-warning-100);
   width: 100%;
 `;
 
