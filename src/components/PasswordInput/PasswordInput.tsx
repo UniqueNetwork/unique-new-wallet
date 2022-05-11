@@ -1,7 +1,6 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
 
-import { Grey500 } from '@app/styles/colors';
 import { Icon } from '@app/components';
 
 import Eye from '../../static/icons/eye.svg';
@@ -50,7 +49,7 @@ export const PasswordInput: FC<PasswordInputProps> = ({
 };
 
 const PasswordInputWrapper = styled.div`
-  border: 1px solid #d2d3d6;
+  border: 1px solid var(--color-grey-300);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -63,6 +62,6 @@ const PasswordInputStyled = styled.input`
   flex-grow: 1;
   outline: 0px none transparent;
   &::placeholder {
-    color: ${Grey500};
+    color: var(--color-grey-500);
   }
 `;

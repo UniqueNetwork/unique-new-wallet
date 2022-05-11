@@ -3,8 +3,8 @@
   border-radius: 4px;
   &.type {
     &-warning {
-      background: #fff4e0;
-      color: #f9a400;
+      background: var(--color-additional-warning-100);
+      color: var(--color-additional-warning-500);
     }
   }
 }

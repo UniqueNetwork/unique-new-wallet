@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import styled from 'styled-components';
 
 import { NotFound } from '@app/static/icons/icons';
-import { BlueGrey500 } from '@app/styles/colors';
 
 interface NotFoundCoinsProps {
   className?: string;
@@ -23,7 +22,7 @@ export const NotFoundCoins = styled(NotFoundCoinsComponent)`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: ${BlueGrey500};
+    color: var(--color-blue-grey-500);
     min-height: 600px;
     grid-row-gap: var(--gap);
   }

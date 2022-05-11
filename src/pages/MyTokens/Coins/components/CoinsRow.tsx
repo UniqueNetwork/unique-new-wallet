@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import classNames from 'classnames';
 import { Button, Icon } from '@unique-nft/ui-kit';
 
-import { Grey500 } from '@app/styles/colors';
 import { Copy } from '@app/static/icons/icons';
 
 interface CoinsRowComponentProps {
@@ -108,7 +107,7 @@ const NetworkAddress = styled.div`
 
   .network-address-copy {
     ${FlexColumn};
-    color: ${Grey500};
+    color: var(--color-grey-500);
     font-size: 14px;
 
     img {
@@ -124,7 +123,7 @@ const NetworkBalances = styled.div`
 
   .balance-transferable,
   .balance-locked {
-    color: ${Grey500};
+    color: var(--color-grey-500);
     line-height: 22px;
   }
 `;
@@ -133,5 +132,5 @@ export const CoinsRow = styled(CoinsRowComponent)`
   display: flex;
   justify-content: space-between;
   padding: var(--gap) 0;
-  border-bottom: 1px solid var(--grey-300);
+  border-bottom: 1px solid var(--color-grey-300);
 `;

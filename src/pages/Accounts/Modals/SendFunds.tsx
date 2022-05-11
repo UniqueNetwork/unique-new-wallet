@@ -3,7 +3,6 @@ import { Avatar, Button, Heading, InputText, Modal, Text } from '@unique-nft/ui-
 import styled from 'styled-components/macro';
 
 import { useAccounts } from '@app/hooks';
-import { AdditionalWarning100 } from '@app/styles/colors';
 import { SelectInput } from '@app/components/SelectInput/SelectInput';
 import { Account } from '@app/account';
 import { useTransferFundsStages } from '@app/hooks/accountStages/useTransferFundsStages';
@@ -160,7 +159,7 @@ const AddressWrapper = styled.div`
   display: flex;
   column-gap: calc(var(--gap) / 2);
   margin-top: calc(var(--gap) * 2);
-  border: 1px solid var(--grey-300);
+  border: 1px solid var(--color-grey-300);
   border-radius: 4px;
   padding: 20px var(--gap);
 `;
@@ -176,7 +175,7 @@ const TextStyled = styled(Text)`
   padding: 8px 16px;
   margin: calc(var(--gap) * 1.5) 0;
   border-radius: 4px;
-  background-color: ${AdditionalWarning100};
+  background-color: var(--color-additional-warning-100);
   width: 100%;
 `;
 

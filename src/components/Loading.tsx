@@ -14,7 +14,7 @@ const Loading: FC<{ className?: string }> = ({ className }) => {
           cy="50"
           fill="none"
           r="35"
-          stroke="#0085cc"
+          stroke="var(--color-primary-600)"
           strokeDasharray="164.93361431346415 56.97787143782138"
           strokeWidth="10"
         >
