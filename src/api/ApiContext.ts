@@ -27,6 +27,7 @@ export type ApiContextProps = {
   rpcClient: IRpcClient;
   rawRpcApi?: ApiPromise;
   api: Api | undefined;
+  chainAddressFormat: (address: string) => string | undefined;
   chainData?: ChainData;
   currentChain: Chain;
 };

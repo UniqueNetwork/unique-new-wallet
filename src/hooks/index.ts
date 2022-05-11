@@ -1,5 +1,6 @@
 export * from './useAccounts';
 export * from './useApi';
+export * from './useChainFormattedOwner';
 export * from './useCollections';
 export * from './useDeviceSize';
 export * from './useFee';

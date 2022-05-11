@@ -21,47 +21,47 @@ const collectionNFTs: NftItemShort[] = [
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9697',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9696',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9695',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9694',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9693',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9692',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9691',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9690',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },
   {
-    id: '9698',
+    id: '9680',
     tokenImage:
       'https://ipfs.unique.network/ipfs/QmZT1XVDVPLYEn7DEyVG9hzd93NRKWD12eRAKuFV9MH7zM',
   },

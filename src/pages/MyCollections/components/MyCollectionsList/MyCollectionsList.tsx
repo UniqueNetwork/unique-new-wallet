@@ -4,6 +4,8 @@ import classNames from 'classnames';
 import { CollectionLink, Pagination, Text } from '@unique-nft/ui-kit';
 import { Link } from 'react-router-dom';
 
+import { LisFooter, PaddedBlock } from '@app/styles/styledVariables';
+
 interface MyCollectionsListComponentProps {
   className?: string;
 }
@@ -15,7 +17,29 @@ interface MyCollectionWithCount {
   tokensCount: number;
 }
 
-const myCollections: MyCollectionWithCount[] = [];
+const myCollections: MyCollectionWithCount[] = [
+  {
+    id: '1',
+    coverImageUrl:
+      'https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e',
+    name: 'Chelobrik',
+    tokensCount: 10000,
+  },
+  {
+    id: '2',
+    coverImageUrl:
+      'https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e',
+    name: 'Chelobrik',
+    tokensCount: 10000,
+  },
+  {
+    id: '3',
+    coverImageUrl:
+      'https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e',
+    name: 'Chelobrik',
+    tokensCount: 10000,
+  },
+];
 
 const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
   className,
@@ -27,34 +51,35 @@ const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
   // todo - change default token link to custom according the design
   return (
     <div className={classNames('my-collections-list', className)}>
-      {myCollections.map((myCollection) => (
-        <Link key={myCollection.id} to={`/my-collection/${myCollection.id}`}>
-          <CollectionLink
-            count={myCollection.tokensCount}
-            id={myCollection.id}
-            image={myCollection.coverImageUrl}
-            title={`${myCollection.name}] [${myCollection.id}]`}
-          />
-        </Link>
-      ))}
-      <div className="my-collections-list--footer">
+      <List>
+        {myCollections.map((myCollection) => (
+          <Link key={myCollection.id} to={`/my-collection/${myCollection.id}`}>
+            <CollectionLink
+              count={myCollection.tokensCount}
+              id={myCollection.id}
+              image={myCollection.coverImageUrl}
+              title={`${myCollection.name} [${myCollection.id}]`}
+            />
+          </Link>
+        ))}
+      </List>
+      <Footer>
         <Text size="m">{`${myCollections.length} items`}</Text>
         <Pagination withIcons size={100} onPageChange={onPageChange} />
-      </div>
+      </Footer>
     </div>
   );
 };
 
-export const MyCollectionsList = styled(MyCollectionsListComponent)`
-  .my-collections-list {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+const Footer = styled.div`
+  ${LisFooter}
+`;
 
-    &--footer {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-      padding-top: calc(var(--gap) * 2);
-    }
-  }
+const List = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+`;
+
+export const MyCollectionsList = styled(MyCollectionsListComponent)`
+  ${PaddedBlock};
 `;
