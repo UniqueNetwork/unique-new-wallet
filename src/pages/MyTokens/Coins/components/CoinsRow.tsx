@@ -31,7 +31,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
   const copyAddress = (account: string) => {
     void navigator.clipboard.writeText(account);
 
-    // todo - add notification from ui kit here
+    // todo - add notification from ui kit here https://cryptousetech.atlassian.net/browse/UI-94
     /* return queueAction({
         account,
         action: 'clipboard',
