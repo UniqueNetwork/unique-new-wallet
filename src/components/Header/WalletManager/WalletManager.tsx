@@ -5,9 +5,8 @@ import { Button, Text } from '@unique-nft/ui-kit';
 import { Account } from '@app/account';
 import { formatKusamaBalance, shortcutText } from '@app/utils/textUtils';
 import { Icon } from '@app/components';
-import { useApi } from '@app/hooks';
+import { useApi, useAccounts } from '@app/hooks';
 
-import { useAccounts } from '../../../hooks/useAccounts';
 import { DropdownSelect, DropdownSelectProps } from './AccountSelect/DropdownSelect';
 import Loading from '../../Loading';
 import { Avatar } from '../../Avatar/Avatar';
@@ -18,6 +17,7 @@ import useDeviceSize, { DeviceSize } from '../../../hooks/useDeviceSize';
 
 const tokenSymbol = 'KSM';
 
+// todo - update the component from ui kit https://cryptousetech.atlassian.net/browse/UI-91
 export const WalletManager: FC = () => {
   const {
     selectedAccount,
