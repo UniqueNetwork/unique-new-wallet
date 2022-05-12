@@ -1,27 +1,24 @@
-import { VFC } from 'react';
+import React, { VFC } from 'react';
 import styled from 'styled-components';
-
-import { ArrowUpRight } from '@app/static/icons/icons';
-import { Primary500 } from '@app/styles/colors';
+import { Icon } from '@unique-nft/ui-kit';
 
 interface CollectionScanLinkProps {
   className?: string;
   collectionId: string;
 }
 
-// todo - replace icon from ui kit
+// todo - get link to scan from the env
 export const CollectionScanLink: VFC<CollectionScanLinkProps> = styled(
   ({ className, collectionId }: CollectionScanLinkProps) => (
     <div className={className}>
       <a href={`https://uniquescan.io/QUARTZ/collections/${collectionId}`}>
-        View collection on Scan <img alt="scan-link" src={ArrowUpRight} />
+        View collection on Scan <Icon name="arrow-up-right" size={80} />
       </a>
     </div>
   ),
 )`
   a {
-    // todo - replace color from css var
-    color: ${Primary500};
+    color: var(--color-primary-500);
     font-size: 14px;
     line-height: 22px;
     display: flex;

@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { format } from 'date-fns';
 import { Avatar } from '@unique-nft/ui-kit';
 
-import { Grey100, Grey300, Grey500, Secondary500 } from '@app/styles/colors';
 import { AccountLinkComponent, CollectionScanLink } from '@app/components';
 import { PaddedBlock } from '@app/styles/styledVariables';
 
@@ -18,7 +17,6 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
   collectionId,
 }) => {
   // todo - fetch from api
-  // todo - modify collection card in UI kit or update styles here
   return (
     <div className={classNames('collection-description', className)}>
       <CollectionVerticalCard>
@@ -72,7 +70,6 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
   );
 };
 
-// todo - change color to css var
 const CollectionVerticalCard = styled.div`
   display: flex;
   flex-direction: column;
@@ -81,38 +78,36 @@ const CollectionVerticalCard = styled.div`
 
   strong {
     font-weight: normal;
-    color: ${Secondary500};
+    color: var(--color-secondary-500);
   }
 `;
 
-// todo - change color to css var
 const Row = styled.div`
   display: flex;
   grid-column-gap: var(--gap);
   align-items: center;
-  color: ${Grey500};
+  color: var(--color-grey-500);
 `;
 
 const Description = styled.div`
   padding: var(--gap) 0;
-  border-top: 1px dashed ${Grey300};
-  border-bottom: 1px dashed ${Grey300};
+  border-top: 1px dashed var(--color-grey-300);
+  border-bottom: 1px dashed var(--color-grey-300);
 `;
 
-// todo - change color to var
 export const Badge = styled.div`
-  background: ${Grey100};
+  background: var(--color-grey-100);
   border-radius: 4px;
   font-family: var(--font-main);
   font-size: 14px;
   line-height: 22px;
-  color: ${Secondary500};
+  color: var(--color-secondary-500);
   padding: calc(var(--gap) / 4) calc(var(--gap) / 2);
   height: 22px;
 `;
 
 export const CollectionDescription = styled(CollectionDescriptionComponent)`
-  border-right: 1px solid ${Grey300};
+  border-right: 1px solid var(--color-grey-300);
 
   .unique-collection-card {
     overflow: hidden;
