@@ -1,17 +1,15 @@
-import { VFC } from 'react';
+import React, { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-
-import { NotFound } from '@app/static/icons/icons';
+import { Icon } from '@unique-nft/ui-kit';
 
 interface NotFoundCoinsProps {
   className?: string;
 }
 
-// todo - replace icon from ui kit
 const NotFoundCoinsComponent: VFC<NotFoundCoinsProps> = ({ className }) => (
   <div className={classNames('nothing-found', className)}>
-    <img alt="nothing-found-icon" src={NotFound} />
+    <Icon name="box" size={80} />
     Nothing found
   </div>
 );
