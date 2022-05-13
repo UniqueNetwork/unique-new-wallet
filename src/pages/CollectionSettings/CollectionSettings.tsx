@@ -6,7 +6,7 @@ import { PagePaper } from '@app/components';
 const CollectionSettings = () => (
   <PagePaper>
     <SettingsContainer>
-      <Heading size={'3'}>Advanced settings</Heading>
+      <Heading size="3">Advanced settings</Heading>
       <Text>
         These settings are intended for users who want to place their collection on the
         marketplace.
@@ -14,12 +14,12 @@ const CollectionSettings = () => (
 
       <SettingsInput
         // TODO: icon tooltip
-        label={'Collection sponsor address'}
-        additionalText={'The designated sponsor should approve the request'}
-        id={'address'}
+        label="Collection sponsor address"
+        additionalText="The designated sponsor should approve the request"
+        id="address"
       />
 
-      <Heading size={'4'}>One-time install options</Heading>
+      <Heading size="4">One-time install options</Heading>
       <Text>
         Please note that once installed, these settings cannot be changed later. If you do
         not change them now, you can change them once on the Settings tab in the
@@ -28,26 +28,26 @@ const CollectionSettings = () => (
 
       <SettingsInput
         // TODO: icon tooltip
-        label={'Token limit'}
-        additionalText={'Unlimited by default'}
-        id={'limit'}
+        label="Token limit"
+        additionalText="Unlimited by default"
+        id="limit"
       />
 
       <Checkbox
         checked={true}
         // TODO: icon tooltip
-        label={'Owner can burn collection'}
+        label="Owner can burn collection"
         onChange={() => {
           console.log('checked');
         }}
       />
 
       <ButtonsWrapper>
-        <Button title={'Save changes'} disabled={true} />
+        <Button title="Save changes" disabled={true} />
         <Button
-          title={'Burn collection'}
+          title="Burn collection"
           iconLeft={{ size: 15, name: 'burn', color: 'var(--color-coral-500)' }}
-          role={'ghost'}
+          role="ghost"
         />
       </ButtonsWrapper>
     </SettingsContainer>
