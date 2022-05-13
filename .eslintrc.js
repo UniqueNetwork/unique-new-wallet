@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     commonjs: true,
     es2021: true,
-    jest: true
+    jest: true,
   },
   extends: [
     'eslint:recommended',
@@ -14,7 +14,7 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   ignorePatterns: [
     '.eslintrc.js',
@@ -24,12 +24,18 @@ module.exports = {
     '.yarn/**',
     '**/build/*',
     '**/coverage/*',
-    '**/node_modules/*'
+    '**/node_modules/*',
   ],
   overrides: [
     {
-      files: ['*.js', '*.cjs', '*.mjs'],
+      files: ['*.js', '*.cjs', '*.mjs', '*.ts', '*.tsx'],
       rules: {
+        'prettier/prettier': [
+          'error',
+          {
+            endOfLine: 'auto',
+          },
+        ],
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',
@@ -38,9 +44,9 @@ module.exports = {
         '@typescript-eslint/no-unsafe-member-access': 'off',
         '@typescript-eslint/no-unsafe-return': 'off',
         '@typescript-eslint/restrict-plus-operands': 'off',
-        '@typescript-eslint/restrict-template-expressions': 'off'
-      }
-    }
+        '@typescript-eslint/restrict-template-expressions': 'off',
+      },
+    },
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -48,9 +54,9 @@ module.exports = {
     warnOnUnsupportedTypeScriptVersion: false,
     project: ['./tsconfig.json'],
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
-    ecmaVersion: 12
+    ecmaVersion: 12,
   },
   plugins: [
     'import',
@@ -58,7 +64,7 @@ module.exports = {
     'header',
     'react-hooks',
     'simple-import-sort',
-    'react'
+    'react',
   ],
   rules: {
     'object-shorthand': ['error', 'always'],
@@ -66,8 +72,8 @@ module.exports = {
       'error',
       {
         name: 'react-router',
-        message: 'Use react-router-dom package'
-      }
+        message: 'Use react-router-dom package',
+      },
     ],
     'import/order': [
       'error',
@@ -137,14 +143,14 @@ module.exports = {
       {
         anonymous: 'never',
         named: 'never',
-        asyncArrow: 'always'
-      }
-    ]
+        asyncArrow: 'always',
+      },
+    ],
   },
   settings: {
     'import/extensions': ['.js', '.ts', '.tsx'],
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx']
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
     'import/resolver': {
       node: {
@@ -152,7 +158,7 @@ module.exports = {
       },
     },
     react: {
-      version: 'detect'
-    }
-  }
+      version: 'detect',
+    },
+  },
 };
