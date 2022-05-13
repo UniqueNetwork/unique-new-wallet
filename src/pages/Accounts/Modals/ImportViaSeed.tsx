@@ -41,6 +41,7 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
     (accountProperties: TAccountProperties) => {
       if (stage === CreateAccountModalStages.Final) {
         if (!accountProperties) return;
+
         addLocalAccount(
           accountProperties.seed,
           derivePath,

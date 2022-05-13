@@ -1,4 +1,13 @@
-import { TransactionOptions, TTransaction } from '../api/chainApi/types';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
+
+export type TTransaction = SubmittableExtrinsic<'promise'>;
+
+export type TransactionOptions = {
+  // this function will be called after transaction is created and awaited before proceeding
+  sign: (tx: TTransaction) => Promise<TTransaction>;
+  // if not provided, signed.send() will be called instead
+  send?: (signedTx: TTransaction) => Promise<any | void>;
+};
 
 export enum StageStatus {
   default = 'Default',

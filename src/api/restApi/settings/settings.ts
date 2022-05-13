@@ -16,9 +16,11 @@ export const useSettings = () => {
 
   useEffect(() => {
     setIsFetching(true);
+
     getSettings()
       .then((response) => {
         setIsFetching(false);
+
         if (response.status === 200) {
           setIsFetching(false);
           setSettings(response.data);

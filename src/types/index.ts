@@ -1,2 +1,3 @@
-export * from './MinterTypes';
-export * from './StagesTypes';
+export * from './minterTypes';
+export * from './restApiTypes';
+export * from './stagesTypes';

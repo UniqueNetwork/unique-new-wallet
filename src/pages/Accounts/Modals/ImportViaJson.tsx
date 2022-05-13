@@ -5,7 +5,6 @@ import { KeyringPair } from '@polkadot/keyring/types';
 import keyring from '@polkadot/ui-keyring';
 
 import { PasswordInput, Upload } from '@app/components';
-import { useApi } from '@app/hooks';
 
 import { TCreateAccountModalProps } from './types';
 import { convertToU8a, keyringFromFile } from '../../../utils/jsonUtils';
@@ -14,24 +13,21 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   isVisible,
   onFinish,
 }) => {
-  const { rawRpcApi } = useApi();
   const [pair, setPair] = useState<KeyringPair | null>(null);
   const [password, setPassword] = useState<string>('');
 
-  const onUploadChange = useCallback(
-    (file: File) => {
-      const reader = new FileReader();
-      reader.onload = ({ target }: ProgressEvent<FileReader>): void => {
-        if (target && target.result && rawRpcApi) {
-          const data = convertToU8a(target.result as ArrayBuffer);
-          setPair(keyringFromFile(data, rawRpcApi.genesisHash.toHex()));
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-    },
-    [setPair, rawRpcApi],
-  );
+  const onUploadChange = useCallback((file: File) => {
+    /*  const reader = new FileReader();
+       reader.onload = ({ target }: ProgressEvent<FileReader>): void => {
+         if (target && target.result) {
+           const data = convertToU8a(target.result as ArrayBuffer);
+           setPair(keyringFromFile(data, rawRpcApi.genesisHash.toHex()));
+         }
+       };
+ 
+       reader.readAsArrayBuffer(file);
+     }, */
+  }, []);
 
   const onRestoreClick = useCallback(() => {
     if (!pair || !password) return;

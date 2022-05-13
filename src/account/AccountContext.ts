@@ -9,9 +9,7 @@ export enum AccountSigner {
 }
 export interface Account extends InjectedAccountWithMeta {
   signerType: AccountSigner;
-  balance?: {
-    KSM?: BN;
-  };
+  balance?: string;
 }
 
 export type AccountContextProps = {

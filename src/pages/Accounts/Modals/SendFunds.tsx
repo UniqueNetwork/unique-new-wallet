@@ -5,11 +5,9 @@ import styled from 'styled-components/macro';
 import { useAccounts } from '@app/hooks';
 import { SelectInput } from '@app/components/SelectInput/SelectInput';
 import { Account } from '@app/account';
-import { useTransferFundsStages } from '@app/hooks/accountStages/useTransferFundsStages';
 import { formatKusamaBalance } from '@app/utils/textUtils';
 
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
-import { TTransferFunds } from './types';
 
 const tokenSymbol = 'KSM';
 
@@ -59,21 +57,20 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   senderAddress,
   onClose,
 }) => {
-  const { accounts } = useAccounts();
+  const accounts: Account[] = useAccounts();
+
   const [recipientAddress, setRecipientAddress] = useState<
     string | Account | undefined
   >();
   const [amount, setAmount] = useState<number>(0);
 
   const senderBalance = useMemo(() => {
-    const account = accounts.find((account) => account.address === senderAddress);
-    return account?.balance?.KSM;
-  }, [accounts, senderAddress]);
+    return '';
+  }, []);
 
   const recipientBalance = useMemo(() => {
-    const account = accounts.find((account) => account.address === recipientAddress);
-    return account?.balance?.KSM;
-  }, [accounts, recipientAddress]);
+    return '';
+  }, []);
 
   const onAmountChange = useCallback(
     (value: string) => {
