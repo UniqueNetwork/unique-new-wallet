@@ -23,6 +23,6 @@ export const CollectionScanLink: VFC<CollectionScanLinkProps> = styled(
     line-height: 22px;
     display: flex;
     align-items: center;
-    grid-column-gap: calc(var(--gap) / 2);
+    grid-column-gap: calc(var(--prop-gap) / 2);
   }
 `;

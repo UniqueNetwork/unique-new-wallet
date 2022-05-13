@@ -159,7 +159,7 @@ export const Accounts = () => {
 const AccountPageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) * 2);
+  row-gap: calc(var(--prop-gap) * 2);
   width: 100%;
   .unique-table-data-row {
     height: fit-content;
@@ -168,7 +168,7 @@ const AccountPageWrapper = styled.div`
 
 const Row = styled.div`
   display: flex;
-  column-gap: var(--gap);
+  column-gap: var(--prop-gap);
   width: 100%;
 `;
 
@@ -203,11 +203,11 @@ const LinksWrapper = styled.div`
 const LinkStyled = styled.a`
   display: flex;
   align-items: center;
-  column-gap: calc(var(--gap) / 2);
+  column-gap: calc(var(--prop-gap) / 2);
 `;
 
 const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
-  column-gap: var(--gap);
+  column-gap: var(--prop-gap);
 `;

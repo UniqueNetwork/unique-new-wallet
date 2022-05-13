@@ -126,7 +126,7 @@ const AccountSelect = styled((props: DropdownSelectProps<Account>) =>
 
 const AccountOptionWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
+  column-gap: calc(var(--prop-gap) / 2);
   cursor: pointer;
 `;
 
@@ -144,7 +144,7 @@ const BalanceOptionWrapper = styled.div`
 const SettingsButtonWrapper = styled.div`
   display: flex;
   align-items: center;
-  padding: 0 var(--gap);
+  padding: 0 var(--prop-gap);
 `;
 
 const WalletManagerWrapper = styled.div`
@@ -157,6 +157,6 @@ const WalletManagerWrapper = styled.div`
 
 const Divider = styled.div`
   width: 1px;
-  margin: calc(var(--gap) / 2) 0;
+  margin: calc(var(--prop-gap) / 2) 0;
   border-left: 1px solid var(--color-blue-grey-200);
 `;

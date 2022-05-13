@@ -20,7 +20,7 @@ const NoItems: FC = () => {
 const NoItemsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) * 1.5);
+  row-gap: calc(var(--prop-gap) * 1.5);
   width: 100%;
   height: 640px;
   align-items: center;

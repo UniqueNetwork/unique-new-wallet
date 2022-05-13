@@ -91,16 +91,16 @@ const Content = styled.div`
 
 const AddressWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
-  margin: calc(var(--gap) * 2) 0;
+  column-gap: calc(var(--prop-gap) / 2);
+  margin: calc(var(--prop-gap) * 2) 0;
 `;
 
 const InputWrapper = styled.div`
-  padding: var(--gap) 0;
+  padding: var(--prop-gap) 0;
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--gap);
-  row-gap: var(--gap);
+  margin-bottom: var(--prop-gap);
+  row-gap: var(--prop-gap);
 `;
 
 const ButtonWrapper = styled.div`

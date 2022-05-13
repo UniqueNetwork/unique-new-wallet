@@ -37,7 +37,7 @@ const TooltipBubble = styled.div<{ placement: TooltipPlacement; isVisible: boole
   visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
   position: absolute;
   background-color: var(--color-secondary-700);
-  padding: calc(var(--gap) / 2) var(--gap);
+  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
   color: var(--color-additional-light);
   min-width: 238px;
   border-radius: 2px;

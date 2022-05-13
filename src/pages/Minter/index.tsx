@@ -188,12 +188,12 @@ const LeftColumn = styled.div`
 `;
 
 const MainContent = styled.div`
-  padding-left: calc(var(--gap) * 2);
+  padding-left: calc(var(--prop-gap) * 2);
   flex: 1;
 
   > div:nth-of-type(2) {
-    margin-top: var(--gap);
-    margin-bottom: calc(var(--gap) * 2);
+    margin-top: var(--prop-gap);
+    margin-bottom: calc(var(--prop-gap) * 2);
   }
 
   @media (max-width: 1024px) {

@@ -99,11 +99,11 @@ const MobileFilterActionsWrapper = styled.div`
   top: calc(100vh - 60px);
   width: 100%;
   left: 0;
-  padding: 10px calc(var(--gap) * 1.5);
+  padding: 10px calc(var(--prop-gap) * 1.5);
   background-color: var(--color-additional-light);
   box-shadow: 0px -8px 12px rgba(0, 0, 0, 0.06);
   z-index: 8;
-  column-gap: calc(var(--gap) / 2);
+  column-gap: calc(var(--prop-gap) / 2);
   @media (max-width: 1024px) {
     display: flex;
   }
@@ -113,7 +113,7 @@ const MobileFilterModal = styled.div`
   display: none;
   position: fixed;
   background-color: var(--color-additional-light);
-  padding: calc(var(--gap) * 1.5);
+  padding: calc(var(--prop-gap) * 1.5);
   height: calc(100vh - 140px);
   top: 80px;
   right: 0;
@@ -129,5 +129,5 @@ const SortStyled = styled.div`
   width: 235px;
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) * 2);
+  row-gap: calc(var(--prop-gap) * 2);
 `;

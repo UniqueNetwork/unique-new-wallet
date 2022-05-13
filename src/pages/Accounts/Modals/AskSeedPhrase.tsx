@@ -114,17 +114,17 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
 
 const AddressWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
-  margin: calc(var(--gap) * 2) 0;
+  column-gap: calc(var(--prop-gap) / 2);
+  margin: calc(var(--prop-gap) * 2) 0;
   border: 1px solid var(--color-grey-300);
   border-radius: 4px;
-  padding: 20px var(--gap);
+  padding: 20px var(--prop-gap);
 `;
 
 const SeedGeneratorSelectWrapper = styled.div`
   display: flex;
-  margin-top: calc(var(--gap) * 1.5);
-  margin-bottom: var(--gap);
+  margin-top: calc(var(--prop-gap) * 1.5);
+  margin-bottom: var(--prop-gap);
   align-items: center;
   column-gap: 10px;
   .unique-select {
@@ -135,9 +135,9 @@ const SeedGeneratorSelectWrapper = styled.div`
 const InputSeedWrapper = styled.div`
   border: 1px solid var(--color-grey-300);
   border-radius: 4px;
-  padding: var(--gap);
+  padding: var(--prop-gap);
   display: flex;
-  margin-bottom: var(--gap);
+  margin-bottom: var(--prop-gap);
 `;
 
 const SeedInput = styled.textarea`
@@ -153,7 +153,7 @@ const TextStyled = styled(Text)`
   box-sizing: border-box;
   display: flex;
   padding: 8px 16px;
-  margin: calc(var(--gap) * 1.5) 0;
+  margin: calc(var(--prop-gap) * 1.5) 0;
   border-radius: 4px;
   background-color: var(--color-additional-warning-100);
   width: 100%;
@@ -161,7 +161,7 @@ const TextStyled = styled(Text)`
 
 const ConfirmWrapperRow = styled.div`
   display: flex;
-  margin-bottom: calc(var(--gap) * 1.5);
+  margin-bottom: calc(var(--prop-gap) * 1.5);
 `;
 
 const StepsTextStyled = styled(Text)`

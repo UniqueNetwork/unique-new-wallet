@@ -45,7 +45,7 @@ export const PageLayout = styled(PageLayoutComponent)`
   .container {
     width: 100%;
     max-width: var(--container-width);
-    padding: 0 var(--gap);
+    padding: 0 var(--prop-gap);
     margin: 0 auto;
   }
 `;
@@ -63,7 +63,7 @@ const LayoutStyled = styled.div`
     box-shadow: none !important;
     display: flex;
     flex-direction: column;
-    row-gap: calc(var(--gap) * 1.5);
+    row-gap: calc(var(--prop-gap) * 1.5);
   }
 
   main {
@@ -103,7 +103,7 @@ const LayoutStyled = styled.div`
       justify-content: space-between;
       width: 100%;
       @media (max-width: 568px) {
-        padding: var(--gap) 0;
+        padding: var(--prop-gap) 0;
         flex-direction: column;
         align-items: flex-start;
       }

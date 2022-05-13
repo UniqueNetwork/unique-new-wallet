@@ -29,12 +29,12 @@ export const Welcome = styled(WelcomeComponent)`
   justify-content: center;
   align-items: center;
   text-align: center;
-  font-family: var(--font-main);
+  font-family: var(--prop-font-family);
 
   .header-text {
-    font-family: var(--font-secondary);
+    font-family: var(--prop-font-family-heading);
     font-size: 36px;
-    font-weight: var(--font-bold);
+    font-weight: var(--prop-font-weight-bold);
     margin: 0;
   }
 
@@ -42,7 +42,7 @@ export const Welcome = styled(WelcomeComponent)`
     padding: 20px;
 
     .text {
-      font-family: var(--font-main);
+      font-family: var(--prop-font-family);
       font-size: 16px;
       margin: 0;
       padding: 4px;

@@ -68,11 +68,11 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
 
 const AddressWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
-  margin-top: calc(var(--gap) * 2);
+  column-gap: calc(var(--prop-gap) / 2);
+  margin-top: calc(var(--prop-gap) * 2);
   border: 1px solid var(--color-grey-300);
   border-radius: 4px;
-  padding: 20px var(--gap);
+  padding: 20px var(--prop-gap);
 `;
 
 const StepsTextStyled = styled(Text)`
@@ -82,17 +82,17 @@ const StepsTextStyled = styled(Text)`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  column-gap: var(--gap);
+  column-gap: var(--prop-gap);
   align-items: center;
 `;
 
 const CredentialsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) / 2);
-  margin-bottom: calc(var(--gap) * 1.5);
+  row-gap: calc(var(--prop-gap) / 2);
+  margin-bottom: calc(var(--prop-gap) * 1.5);
   .unique-text.size-m {
-    margin-top: calc(var(--gap) * 2);
+    margin-top: calc(var(--prop-gap) * 2);
   }
   .unique-input-text {
     width: 100%;

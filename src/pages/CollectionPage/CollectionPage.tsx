@@ -64,7 +64,7 @@ export const CollectionPage = styled(CollectionPageComponent)`
     border-bottom: 1px solid var(--grey-300);
     display: flex;
     justify-content: space-between;
-    padding: 0 calc(var(--gap) * 2);
+    padding: 0 calc(var(--prop-gap) * 2);
   }
 
   .unique-tabs-contents {

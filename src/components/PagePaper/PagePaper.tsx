@@ -16,7 +16,7 @@ export const PagePaperStyles = css`
 
 export const PagePaper = styled.div`
   ${PagePaperStyles};
-  padding: calc(var(--gap) * 2);
+  padding: calc(var(--prop-gap) * 2);
 `;
 
 export const PagePaperNoPadding = styled.div`

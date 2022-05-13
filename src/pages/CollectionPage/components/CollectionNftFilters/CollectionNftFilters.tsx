@@ -79,7 +79,7 @@ export const CollectionNftFilters = styled(CollectionNftFiltersComponent)`
   &.collection-nft-filters {
     display: grid;
     grid-template-columns: 235px 502px 268px 183px;
-    grid-column-gap: calc(var(--gap) * 2);
+    grid-column-gap: calc(var(--prop-gap) * 2);
     align-items: center;
 
     .unique-input-text,
