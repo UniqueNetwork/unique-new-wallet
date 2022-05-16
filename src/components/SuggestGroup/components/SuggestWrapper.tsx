@@ -15,14 +15,14 @@ export const SuggestWrapper = ({
         <GroupNft>
           <Title>NFTs</Title>
           <div>{children(group1)}</div>
-          <Link href={'#'}>View all results</Link>
+          <Link href="#">View all results</Link>
         </GroupNft>
       )}
       {group2.length > 0 && (
         <GroupCollections>
           <Title>Collections</Title>
           <div>{children(group2)}</div>
-          <Link href={'#'}>View all results</Link>
+          <Link href="#">View all results</Link>
         </GroupCollections>
       )}
     </>
