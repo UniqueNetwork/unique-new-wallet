@@ -12,27 +12,31 @@ export const SuggestWrapper = ({
   return (
     <>
       {group1.length > 0 && (
-        <div
-          style={{
-            borderBottom: '1px dashed var(--color-grey-300)',
-            paddingBottom: '10px',
-          }}
-        >
+        <GroupNft>
           <Title>NFTs</Title>
           <div>{children(group1)}</div>
           <Link href={'#'}>View all results</Link>
-        </div>
+        </GroupNft>
       )}
       {group2.length > 0 && (
-        <div style={{ paddingBottom: '10px' }}>
+        <GroupCollections>
           <Title>Collections</Title>
           <div>{children(group2)}</div>
           <Link href={'#'}>View all results</Link>
-        </div>
+        </GroupCollections>
       )}
     </>
   );
 };
+
+const GroupNft = styled.div`
+  border-bottom: 1px dashed var(--color-grey-300);
+  padding-bottom: 10px;
+`;
+
+const GroupCollections = styled.div`
+  padding-bottom: 10px;
+`;
 
 const Title = styled.p`
   padding: 8px;

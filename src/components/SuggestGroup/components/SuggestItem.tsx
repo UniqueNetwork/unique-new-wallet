@@ -15,14 +15,14 @@ export const SuggestItem = ({
         isActive,
       })}
     >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Item>
         <Image group={suggestion.group} src={nft1} alt="image" />
 
         <div>
           {suggestion.title}
           {suggestion.group === 1 ? `#${suggestion.id}` : `[id ${suggestion.id}]`}
         </div>
-      </div>
+      </Item>
     </div>
   );
 };
@@ -32,4 +32,9 @@ const Image = styled.img<{ group: number }>`
   height: 24px;
   border-radius: ${(props) => (props.group === 1 ? '2px' : '50%')};
   margin-right: 10px;
+`;
+
+const Item = styled.div`
+  display: flex;
+  align-items: center;
 `;
