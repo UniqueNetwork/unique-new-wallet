@@ -57,7 +57,7 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   senderAddress,
   onClose,
 }) => {
-  const accounts: Account[] = useAccounts();
+  const { accounts } = useAccounts();
 
   const [recipientAddress, setRecipientAddress] = useState<
     string | Account | undefined
@@ -82,8 +82,13 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   const onSend = useCallback(() => {
     const recipient =
       typeof recipientAddress === 'string' ? recipientAddress : recipientAddress?.address;
+
     onFinish(senderAddress, recipient || '', amount.toString());
-  }, [senderAddress, recipientAddress, amount]);
+  }, [recipientAddress, onFinish, senderAddress, amount]);
+
+  if (!accounts?.length) {
+    return null;
+  }
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>

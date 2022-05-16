@@ -105,13 +105,13 @@ export const Accounts = () => {
 
   const filteredAccounts = useMemo(() => {
     if (!searchString) {
-      return accounts.map((item) => ({
+      return accounts?.map((item) => ({
         ...item,
         accountInfo: { address: item.address, name: item.meta.name },
       }));
     }
     return accounts
-      .filter(
+      ?.filter(
         (account) =>
           account.address.includes(searchString) ||
           account.meta.name?.includes(searchString),
@@ -124,8 +124,9 @@ export const Accounts = () => {
 
   const onChangeAccountsFinish = useCallback(() => {
     setIsOpenModal(false);
-    fetchAccounts();
-  }, []);
+
+    void fetchAccounts();
+  }, [fetchAccounts]);
 
   return (
     <PagePaper>

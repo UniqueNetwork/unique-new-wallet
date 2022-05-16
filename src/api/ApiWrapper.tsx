@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+
+import { Chain } from '@app/types';
 
 import { GqlClient } from './graphQL/gqlClient';
 import { ApiContextProps, ApiProvider } from './ApiContext';
@@ -16,6 +18,7 @@ const { chains, defaultChain } = config;
 
 export const ApiWrapper = ({ children }: ChainProviderProps) => {
   const { chainId } = useParams<'chainId'>();
+  const [currentChain, setCurrentChain] = useState<Chain>();
 
   // update endpoint if chainId is changed
   useEffect(() => {
@@ -27,9 +30,10 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
   // get context value for ApiContext
   const value = useMemo<ApiContextProps>(() => {
     return {
+      currentChain,
       defaultChain,
     };
-  }, []);
+  }, [currentChain]);
 
   return (
     <ApiProvider value={value}>

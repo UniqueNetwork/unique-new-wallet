@@ -24,8 +24,8 @@ export const PageLayoutComponent: FC = () => {
             <Loading />
           </LoadingStyled>
         )}
-        {!isLoading && accounts.length === 0 && <Welcome />}
-        {!isLoading && accounts.length !== 0 && (
+        {!isLoading && accounts?.length === 0 && <Welcome />}
+        {!isLoading && accounts?.length !== 0 && (
           <div className={'container'}>
             <Outlet />
           </div>

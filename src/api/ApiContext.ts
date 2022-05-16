@@ -3,6 +3,7 @@ import { Context, Consumer, Provider, createContext } from 'react';
 import { Chain } from '@app/types';
 
 export type ApiContextProps = {
+  currentChain: Chain | undefined;
   defaultChain: Chain;
 };
 

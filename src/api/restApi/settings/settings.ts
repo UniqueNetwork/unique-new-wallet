@@ -1,11 +1,30 @@
 import { useEffect, useState } from 'react';
 
+import { ResponseError } from '@app/types';
+
 import { get } from '../base';
 import { defaultParams } from '../base/axios';
-import { Settings } from './types';
-import { ResponseError } from '../base/types';
 
 const endpoint = '/api/settings';
+
+export type Settings = {
+  blockchain: {
+    escrowAddress: string;
+    unique: {
+      wsEndpoint: string;
+      collectionIds: number[];
+      contractAddress: string;
+    };
+    kusama: {
+      wsEndpoint: string;
+      minterCommission: string;
+    };
+  };
+  auction: {
+    commission: number;
+    address: string;
+  };
+};
 
 export const getSettings = () => get<Settings>(`${endpoint}`, { ...defaultParams });
 

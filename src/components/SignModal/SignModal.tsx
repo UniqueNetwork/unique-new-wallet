@@ -33,7 +33,7 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
     }
 
     setPassword('');
-  }, [selectedAccount, password]);
+  }, [selectedAccount, unlockLocalAccount, password, onFinish]);
 
   if (!selectedAccount) return null;
 

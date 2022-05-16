@@ -15,7 +15,7 @@ import {
   convertArtificialAttributesToProtobuf,
   fillProtobufJson,
   str2vec,
-} from '@app/api';
+} from '@app/utils';
 
 import CollectionFormContext from './CollectionFormContext';
 

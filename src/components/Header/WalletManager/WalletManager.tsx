@@ -17,7 +17,6 @@ import useDeviceSize, { DeviceSize } from '../../../hooks/useDeviceSize';
 
 const tokenSymbol = 'KSM';
 
-// todo - update the component from ui kit https://cryptousetech.atlassian.net/browse/UI-91
 export const WalletManager: FC = () => {
   const {
     selectedAccount,
@@ -44,12 +43,12 @@ export const WalletManager: FC = () => {
 
   const currentBalance: BalanceOption = useMemo(() => {
     return {
-      value: selectedAccount?.balance?.KSM?.toString() || '0',
+      value: selectedAccount?.balance?.toString() || '0',
       chain: currentChain,
     };
   }, [selectedAccount, currentChain]);
 
-  if (!isLoading && accounts.length === 0) {
+  if (!isLoading && accounts?.length === 0) {
     return <Button title={'Сonnect or create account'} onClick={onCreateAccountClick} />;
   }
 

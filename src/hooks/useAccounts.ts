@@ -33,6 +33,10 @@ export const useAccounts = () => {
   const [accounts, setAccounts] = useState<Account[]>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
 
+  const changeAccount = useCallback((account: Account) => {
+    setSelectedAccount(account);
+  }, []);
+
   const getExtensionAccounts = useCallback(async () => {
     // this call fires up the authorization popup
     let extensions = await web3Enable('unique-minter-wallet');
@@ -177,6 +181,7 @@ export const useAccounts = () => {
       const { name, isAddress, content, password, genesisHash } = scanned;
 
       const meta = {
+        // const { mnemonicGenerate } = require('@polkadot/util-crypto');
         genesisHash, // || rawRpcApi?.genesisHash.toHex(),
         name: name?.trim(),
       };
@@ -247,16 +252,18 @@ export const useAccounts = () => {
 
   return {
     accounts,
-    isLoading,
-    isLoadingBalances,
-    fetchAccountsError,
     addLocalAccount,
     addAccountViaQR,
+    changeAccount,
+    isLoading,
+    isLoadingBalances,
+    fetchAccounts,
+    fetchAccountsError,
+    fetchBalances,
+    selectedAccount,
     unlockLocalAccount,
     // signTx,
     // signMessage,
-    fetchAccounts,
-    fetchBalances,
     // changeAccount,
   };
 };

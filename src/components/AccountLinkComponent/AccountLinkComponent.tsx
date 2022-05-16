@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Text } from '@unique-nft/ui-kit';
 
 import { shortcutText } from '@app/utils';
-import { useApi, useChainFormattedOwner } from '@app/hooks';
+import { useApi } from '@app/hooks';
 
 interface AccountLinkProps {
   value: string;
@@ -19,10 +19,8 @@ export const AccountLinkComponent: VFC<AccountLinkProps> = ({
   const { accountId } = useParams();
 
   const { currentChain } = useApi();
-  const chainOwner = useChainFormattedOwner(value);
-  const address = chainOwner ?? value;
 
-  const shortcut = noShort ? address : shortcutText(address);
+  const shortcut = noShort ? value : shortcutText(value);
 
   if (value === accountId) {
     return <>{shortcut}</>;

@@ -1,8 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components/macro';
 
-import { NFTToken } from '@app/api/chainApi/unique/types';
-import { Offer } from '@app/api/restApi/offers/types';
+import { NFTToken, Offer } from '@app/types';
 
 import { TokensCard } from '../TokensCard';
 
