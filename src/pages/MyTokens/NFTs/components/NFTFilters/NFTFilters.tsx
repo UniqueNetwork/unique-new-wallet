@@ -1,9 +1,11 @@
 import React, { VFC, useState } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, InputText, Select } from '@unique-nft/ui-kit';
+import { Button, Select } from '@unique-nft/ui-kit';
 
 import { iconDown, iconUp, Option } from '@app/utils';
+import { SuggestGroup } from '@app/components/SuggestGroup';
+import { testSuggestValues } from '@app/components/SuggestGroup/SuggestGroup';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -32,10 +34,16 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
 
   return (
     <div className={classNames('nft-filters', className)}>
-      <InputText
-        iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
-        placeholder="Search"
+      <SuggestGroup
+        suggestions={testSuggestValues}
+        getSuggestionValue={(suggestion) => suggestion.title}
+        getActiveSuggestOption={(suggest, activeValue) => suggest.id === activeValue.id}
+        inputProps={{
+          iconLeft: { name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' },
+          placeholder: 'Search',
+        }}
       />
+
       <Select options={sortOptions} value={sort} onChange={onChange} />
       <Button
         iconLeft={{
