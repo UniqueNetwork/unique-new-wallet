@@ -103,11 +103,11 @@ export const NftList = styled(NftListComponent)`
   .nft-list {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-column-gap: calc(var(--gap) * 2);
-    grid-row-gap: calc(var(--gap) * 2);
+    grid-column-gap: calc(var(--prop-gap) * 2);
+    grid-row-gap: calc(var(--prop-gap) * 2);
 
     &--body {
-      padding: calc(var(--gap) * 2);
+      padding: calc(var(--prop-gap) * 2);
       display: grid;
       grid-template-columns: repeat(5, 1fr);
 
@@ -125,7 +125,8 @@ export const NftList = styled(NftListComponent)`
       align-items: center;
       display: flex;
       justify-content: space-between;
-      padding: 0 calc(var(--gap) * 2) calc(var(--gap) * 2) calc(var(--gap) * 2);
+      padding: 0 calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 2)
+        calc(var(--prop-gap) * 2);
     }
   }
 `;

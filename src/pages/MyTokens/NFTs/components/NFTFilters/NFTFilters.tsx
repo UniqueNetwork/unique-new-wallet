@@ -54,7 +54,7 @@ export const NFTFilters = styled(NFTFiltersComponent)`
   &.nft-filters {
     display: grid;
     grid-template-columns: 502px 268px 183px;
-    grid-column-gap: calc(var(--gap) * 2);
+    grid-column-gap: calc(var(--prop-gap) * 2);
 
     .unique-input-text,
     .unique-select,

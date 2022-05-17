@@ -104,7 +104,7 @@ export const CoinsPage: FC = () => {
 const CoinsPageWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) * 2);
+  row-gap: calc(var(--prop-gap) * 2);
   width: 100%;
   .unique-table-data-row {
     height: fit-content;
@@ -113,7 +113,7 @@ const CoinsPageWrapper = styled.div`
 
 const Row = styled.div`
   display: flex;
-  column-gap: var(--gap);
+  column-gap: var(--prop-gap);
   width: 100%;
 `;
 
@@ -134,5 +134,5 @@ const BalancesWrapper = styled.div`
 const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
-  column-gap: var(--gap);
+  column-gap: var(--prop-gap);
 `;

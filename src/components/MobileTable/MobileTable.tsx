@@ -47,15 +47,15 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
 };
 
 const MobileTableWrapper = styled.div`
-  margin: var(--gap) 0;
+  margin: var(--prop-gap) 0;
 `;
 
 const MobileTableRow = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-bottom: 1px dashed var(--border-color);
-  grid-row-gap: var(--gap);
-  padding: var(--gap) 0;
+  grid-row-gap: var(--prop-gap);
+  padding: var(--prop-gap) 0;
   div {
     display: flex;
     flex-direction: column;

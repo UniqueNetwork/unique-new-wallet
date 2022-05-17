@@ -83,7 +83,7 @@ const QRReaderWrapper = styled.div`
     &:after {
       position: absolute;
       content: '';
-      border: 5px solid var(--color-coral);
+      border: 5px solid var(--color-coral-500);
       box-sizing: border-box;
       width: 282px;
       height: 282px;

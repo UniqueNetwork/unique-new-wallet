@@ -94,11 +94,11 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
 
 const AddressWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
-  margin: calc(var(--gap) * 2) 0;
+  column-gap: calc(var(--prop-gap) / 2);
+  margin: calc(var(--prop-gap) * 2) 0;
   border: 1px solid var(--color-grey-300);
   border-radius: 4px;
-  padding: 20px var(--gap);
+  padding: 20px var(--prop-gap);
 `;
 
 const StepsTextStyled = styled(Text)`
@@ -107,14 +107,14 @@ const StepsTextStyled = styled(Text)`
 
 const LabelTextWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 4);
+  column-gap: calc(var(--prop-gap) / 4);
 `;
 
 const TextStyled = styled(Text)`
   box-sizing: border-box;
   display: flex;
   padding: 8px 16px;
-  margin: var(--gap) 0;
+  margin: var(--prop-gap) 0;
   border-radius: 4px;
   background-color: var(--color-additional-warning-100);
   width: 100%;
@@ -124,14 +124,14 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  column-gap: var(--gap);
+  column-gap: var(--prop-gap);
 `;
 
 const CredentialsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) / 2);
-  margin-bottom: calc(var(--gap) * 1.5);
+  row-gap: calc(var(--prop-gap) / 2);
+  margin-bottom: calc(var(--prop-gap) * 1.5);
   .unique-input-text {
     width: 100%;
   }

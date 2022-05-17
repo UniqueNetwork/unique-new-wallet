@@ -204,5 +204,5 @@ const Description = styled.div`
 
 const AuctionInfoWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
+  column-gap: calc(var(--prop-gap) / 2);
 `;

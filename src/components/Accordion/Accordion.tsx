@@ -74,7 +74,7 @@ const AccordionTitle = styled.div<{ isOpen?: boolean }>`
   display: flex;
   cursor: pointer;
   align-items: center;
-  column-gap: calc(var(--gap) / 4);
+  column-gap: calc(var(--prop-gap) / 4);
   svg {
     transform-origin: center;
     transform: ${({ isOpen }) => (isOpen ? 'rotate(0deg);' : 'rotate(-90deg);')};

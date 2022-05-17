@@ -27,8 +27,8 @@ export const NFTs = styled(NFTsComponent)`
   flex: 1;
 
   .filters-column {
-    padding-top: calc(var(--gap) * 2);
-    padding-right: calc((var(--gap) / 2) * 3);
+    padding-top: calc(var(--prop-gap) * 2);
+    padding-right: calc((var(--prop-gap) / 2) * 3);
     border-right: 1px solid var(--color-grey-300);
 
     @media (max-width: 1024px) {

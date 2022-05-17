@@ -157,23 +157,23 @@ const Content = styled.div`
 
 const AddressWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
-  margin-top: calc(var(--gap) * 2);
+  column-gap: calc(var(--prop-gap) / 2);
+  margin-top: calc(var(--prop-gap) * 2);
   border: 1px solid var(--color-grey-300);
   border-radius: 4px;
-  padding: 20px var(--gap);
+  padding: 20px var(--prop-gap);
 `;
 
 const AddressOptionWrapper = styled.div`
   display: flex;
-  column-gap: calc(var(--gap) / 2);
+  column-gap: calc(var(--prop-gap) / 2);
 `;
 
 const TextStyled = styled(Text)`
   box-sizing: border-box;
   display: flex;
   padding: 8px 16px;
-  margin: calc(var(--gap) * 1.5) 0;
+  margin: calc(var(--prop-gap) * 1.5) 0;
   border-radius: 4px;
   background-color: var(--color-additional-warning-100);
   width: 100%;
@@ -182,14 +182,14 @@ const TextStyled = styled(Text)`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  column-gap: var(--gap);
+  column-gap: var(--prop-gap);
 `;
 
 const RecipientSelectWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) / 2);
-  margin-bottom: calc(var(--gap) * 1.5);
+  row-gap: calc(var(--prop-gap) / 2);
+  margin-bottom: calc(var(--prop-gap) * 1.5);
   .unique-input-text {
     width: 100%;
   }

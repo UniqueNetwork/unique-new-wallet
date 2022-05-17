@@ -66,6 +66,6 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
 export const Coins = styled(CoinsComponent)`
   .unique-font-heading.size-4 {
-    margin-top: calc(var(--gap) * 2);
+    margin-top: calc(var(--prop-gap) * 2);
   }
 `;

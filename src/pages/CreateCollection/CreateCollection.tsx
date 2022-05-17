@@ -66,8 +66,8 @@ export const CreateCollection = styled(CreateCollectionComponent)`
   .collection-sidebar {
     box-sizing: border-box;
     background: var(--color-additional-light);
-    padding: calc(var(--gap) * 2);
+    padding: calc(var(--prop-gap) * 2);
     box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
-    border-radius: calc(var(--gap) / 4);
+    border-radius: calc(var(--prop-gap) / 4);
   }
 `;

@@ -80,7 +80,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
 const FlexColumn = css`
   align-items: center;
   display: flex;
-  grid-column-gap: calc(var(--gap) / 2);
+  grid-column-gap: calc(var(--prop-gap) / 2);
 `;
 
 const NetworkActions = styled.div`
@@ -88,14 +88,14 @@ const NetworkActions = styled.div`
 `;
 
 const Bold = css`
-  font-family: var(--font-main);
+  font-family: var(--prop-font-family);
   font-size: 16px;
   font-weight: 500;
 `;
 
 const BoldMargin4 = css`
   ${Bold};
-  margin-bottom: calc(var(--gap) / 4);
+  margin-bottom: calc(var(--prop-gap) / 4);
 `;
 
 const NetworkAddress = styled.div`
@@ -131,6 +131,6 @@ const NetworkBalances = styled.div`
 export const CoinsRow = styled(CoinsRowComponent)`
   display: flex;
   justify-content: space-between;
-  padding: var(--gap) 0;
+  padding: var(--prop-gap) 0;
   border-bottom: 1px solid var(--color-grey-300);
 `;
