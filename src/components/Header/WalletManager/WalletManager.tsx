@@ -5,7 +5,7 @@ import { Button, Text } from '@unique-nft/ui-kit';
 import { Account } from '@app/account';
 import { formatKusamaBalance, shortcutText } from '@app/utils/textUtils';
 import { Icon } from '@app/components';
-import { useApi, useAccounts } from '@app/hooks';
+import { DeviceSize, useApi, useAccounts, useDeviceSize } from '@app/hooks';
 
 import { DropdownSelect, DropdownSelectProps } from './AccountSelect/DropdownSelect';
 import Loading from '../../Loading';
@@ -13,7 +13,6 @@ import { Avatar } from '../../Avatar/Avatar';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import Gear from '../../../static/icons/gear.svg';
 import { BalanceOption } from './types';
-import useDeviceSize, { DeviceSize } from '../../../hooks/useDeviceSize';
 
 const tokenSymbol = 'KSM';
 
@@ -106,7 +105,7 @@ const BalanceOptionCard = (balance: BalanceOption) => {
         balance.value,
       )} ${tokenSymbol}`}</Text>
       <Text size={'s'} color={'grey-500'}>
-        {balance.chain.name}
+        {balance?.chain?.name}
       </Text>
     </BalanceOptionWrapper>
   );
