@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
 
-import { get } from '../base';
+import { Api } from '@app/api/restApi/base';
+
 import { Offer } from './types';
-import { defaultParams } from '../base/axios';
 import { ResponseError } from '../base/types';
 
 const endpoint = '/offer';
 
 export const getOffer = (collectionId: number, tokenId: number) =>
-  get<Offer>(`${endpoint}/${collectionId}/${tokenId}`, { ...defaultParams });
+  Api.get<Offer>(`${endpoint}/${collectionId}/${tokenId}`);
 
 export const useOffer = (collectionId: number, tokenId: number) => {
   const [offer, setOffer] = useState<Offer>();

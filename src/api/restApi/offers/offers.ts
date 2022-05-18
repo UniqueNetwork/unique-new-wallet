@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { AxiosError } from 'axios';
 
-import { get } from '../base';
-import { defaultParams } from '../base/axios';
+import { Api } from '@app/api/restApi/base';
+
 import {
   GetOffersRequestPayload,
   Offer,
@@ -14,7 +14,7 @@ import { ResponseError } from '../base/types';
 const endpoint = '/Offers';
 
 export const getOffers = (payload: GetOffersRequestPayload) =>
-  get<OffersResponse>(endpoint, { ...defaultParams, params: payload });
+  Api.get<OffersResponse>(endpoint, { params: payload });
 
 export const useOffers = ({ page = 1, pageSize = 10, ...props }: UseFetchOffersProps) => {
   const [offers, setOffers] = useState<Offer[]>([]);
