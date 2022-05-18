@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
 
-import { get } from '../base';
-import { defaultParams } from '../base/axios';
+import { Api } from '@app/api/restApi/base';
+
 import { ResponseError } from '../base/types';
 import { GetTradesRequestPayload, Trade, UseFetchTradesProps } from './types';
 
 const endpoint = '/Trades';
 
 export const getTrades = ({ seller, ...payload }: GetTradesRequestPayload) =>
-  get(`${endpoint}${seller ? '/' + seller : ''}`, { ...defaultParams, params: payload });
+  Api.get(`${endpoint}${seller ? '/' + seller : ''}`, {
+    params: payload,
+  });
 
 export const useTrades = ({ page = 1, pageSize = 10, ...props }: UseFetchTradesProps) => {
   const [trades, setTrades] = useState<Trade[]>([]);

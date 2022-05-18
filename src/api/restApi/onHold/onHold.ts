@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
 
-import { get } from '../base';
-import { serializeToQuery } from '../base/helper';
+import { Api } from '@app/api/restApi/base';
+import { serializeToQuery } from '@app/api/restApi/base/helper';
+
 import {
   GetOnHoldRequestPayload,
   OnHold,
@@ -14,9 +15,10 @@ import { QueryParams, ResponseError } from '../base/types';
 const endpoint = '/OnHold';
 
 export const getOnHold = ({ owner, ...payload }: GetOnHoldRequestPayload) =>
-  get<OnHoldResponse>(
-    `${endpoint}${owner ? '/' + owner : ''}` +
-      serializeToQuery(payload as unknown as QueryParams),
+  Api.get<OnHoldResponse>(
+    `${endpoint}${owner ? '/' + owner : ''} ${serializeToQuery(
+      payload as unknown as QueryParams,
+    )}`,
   );
 
 export const useOnHold = ({ page = 1, pageSize = 10, ...props }: UseFetchOnHoldProps) => {
