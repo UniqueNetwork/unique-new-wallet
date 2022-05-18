@@ -41,7 +41,7 @@ export const SidebarPreview = styled(SidebarPreviewComponent)`
 
   .title {
     color: var(--color-secondary-500);
-    font-weight: var(--prop-font-weight-medium);
+    font-weight: 500;
     font-size: 18px;
     margin-bottom: 5px;
   }
