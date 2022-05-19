@@ -1,12 +1,10 @@
 import { Stepper } from '@unique-nft/ui-kit';
-import { TBaseStepperProps } from '@unique-nft/ui-kit/dist/cjs/components/Stepper/Stepper';
+import { StepperProps } from '@unique-nft/ui-kit/dist/cjs/components/Stepper/Stepper';
 import './CollectionStepper.scss';
 
-const steps: TBaseStepperProps['steps'] = ['Main information', 'NFT attributes'];
+const steps: StepperProps['steps'] = ['Main information', 'NFT attributes'];
 
-export const CollectionStepper = ({
-  activeStep,
-}: Pick<TBaseStepperProps, 'activeStep'>) => {
+export const CollectionStepper = ({ activeStep }: Pick<StepperProps, 'activeStep'>) => {
   return (
     <div className="collection-stepper">
       <Stepper steps={steps} activeStep={activeStep} />

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { CollectionFormContext } from '@app/context';
 import uploadImg from '@app/static/icons/upload.svg';
 import { Alert, CollectionStepper } from '@app/components';
+import { MainInformationInitialValues } from '@app/types';
 
 export interface MainInformationComponentProps {
   className?: string;
@@ -47,8 +48,8 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
   );
 
   const setFile = useCallback(
-    (_: string, file: Blob) => {
-      setFieldValue('file', file);
+    (data: MainInformationInitialValues['file']) => {
+      setFieldValue('file', data);
     },
     [setFieldValue],
   );

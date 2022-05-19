@@ -87,11 +87,7 @@ const AccountOptionCard = (account: Account) => {
     <AccountOptionWrapper>
       <Avatar size={24} src={DefaultAvatar} />
       <AccountOptionPropertyWrapper>
-        {account.meta?.name && (
-          <Text size={'m'} weight={'medium'}>
-            {account.meta?.name}
-          </Text>
-        )}
+        {account.meta?.name && <Text size={'m'}>{account.meta?.name}</Text>}
         <Text size={'s'} color={'grey-500'}>
           {shortcutText(account.address)}
         </Text>
@@ -103,9 +99,7 @@ const AccountOptionCard = (account: Account) => {
 const BalanceOptionCard = (balance: BalanceOption) => {
   return (
     <BalanceOptionWrapper>
-      <Text size={'m'} weight={'medium'}>{`${formatKusamaBalance(
-        balance.value,
-      )} ${tokenSymbol}`}</Text>
+      <Text size={'m'}>{`${formatKusamaBalance(balance.value)} ${tokenSymbol}`}</Text>
       <Text size={'s'} color={'grey-500'}>
         {balance.chain.name}
       </Text>
