@@ -16,6 +16,7 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   const [pair, setPair] = useState<KeyringPair | null>(null);
   const [password, setPassword] = useState<string>('');
 
+  // todo - rawRpcApi.genesisHash.toHex() change to value from the API /chain/properties genesisHash
   const onUploadChange = useCallback((file: File) => {
     /*  const reader = new FileReader();
        reader.onload = ({ target }: ProgressEvent<FileReader>): void => {
