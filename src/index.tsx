@@ -11,7 +11,9 @@ import './styles/variables.scss';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: process.env.NODE_ENV === 'production',
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      retry: false,
     },
   },
 });
