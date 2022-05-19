@@ -59,7 +59,7 @@ export const CreateCollection = styled(CreateCollectionComponent)`
   }
 
   .collection-content {
-    max-width: 70%;
+    max-width: 756px;
   }
 
   .collection-content-page,
