@@ -6,8 +6,6 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import AppRoutes from './AppRoutes';
 import { GlobalStyle } from './styles';
 
-import './styles/variables.scss';
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

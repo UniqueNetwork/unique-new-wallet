@@ -44,7 +44,7 @@ export const PageLayout = styled(PageLayoutComponent)`
 
   .container {
     width: 100%;
-    max-width: var(--container-width);
+    max-width: var(--prop-container-width);
     padding: 0 var(--prop-gap);
     margin: 0 auto;
   }

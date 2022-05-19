@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { get } from '../base';
-import { defaultParams } from '../base/axios';
+import { Api } from '@app/api/restApi/base';
+
 import { Settings } from './types';
 import { ResponseError } from '../base/types';
 
 const endpoint = '/api/settings';
 
-export const getSettings = () => get<Settings>(`${endpoint}`, { ...defaultParams });
+export const getSettings = () => Api.get<Settings>(endpoint);
 
 export const useSettings = () => {
   const [settings, setSettings] = useState<Settings | undefined>();

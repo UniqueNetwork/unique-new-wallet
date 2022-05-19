@@ -13,7 +13,7 @@ export const MenuLink: VFC<MenuLinkProps> = ({ name, path }) => {
 
   return (
     <Link key={name} to={path}>
-      <Text color={match ? 'additional-dark' : 'primary-500'} size="m" weight="medium">
+      <Text color={match ? 'additional-dark' : 'primary-500'} size="m">
         {name}
       </Text>
     </Link>

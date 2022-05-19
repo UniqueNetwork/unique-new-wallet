@@ -16,7 +16,7 @@ export const MobileMenuLink: VFC<MenuLinkProps> = ({ mobileMenuToggle, name, pat
   return (
     <LinkWrapper key={name} onClick={mobileMenuToggle}>
       <Link to={path}>
-        <TextStyled $active={!!match} color="additional-dark" size="m" weight="medium">
+        <TextStyled $active={!!match} color="additional-dark" size="m">
           {name}
         </TextStyled>
       </Link>
