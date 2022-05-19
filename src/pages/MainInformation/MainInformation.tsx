@@ -59,9 +59,8 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
       <CollectionStepper activeStep={1} />
       <Heading size={'2'}>Main information</Heading>
       <Text>
-        Заполняйте данные внимательно, потому что после подписания транзакции нельзя
-        вносить изменения. Если допустите ошибку, коллекцию придется сжечь и создать
-        заново.
+        Fill fields carefully, because after signing the transaction, the data cannot be
+        changed. If you make a mistake, the object will have to be burned and recreated.
       </Text>
       <div>
         <form onSubmit={handleSubmit}>
