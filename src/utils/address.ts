@@ -1,7 +1,7 @@
 import { Collection, SchemaVersion } from '@app/api/graphQL';
+import config from '@app/config';
 
-const IPFS_GATEWAY =
-  window.ENV?.REACT_APP_IPFS_GATEWAY || process.env.REACT_APP_IPFS_GATEWAY;
+const { IPFSGateway } = config;
 
 export const getCollectionCoverUri = (collection: Collection): string => {
   const defaultCollectionCoverId = '1';
@@ -9,8 +9,8 @@ export const getCollectionCoverUri = (collection: Collection): string => {
     ['ImageURL', collection.offchain_schema.replace('{id}', defaultCollectionCoverId)],
     [
       'Unique',
-      IPFS_GATEWAY && collection?.variable_on_chain_schema?.collectionCover
-        ? `${IPFS_GATEWAY}/${collection.variable_on_chain_schema.collectionCover}`
+      IPFSGateway && collection?.variable_on_chain_schema?.collectionCover
+        ? `${IPFSGateway}/${collection.variable_on_chain_schema.collectionCover}`
         : null,
     ],
   ]);
