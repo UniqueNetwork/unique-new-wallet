@@ -1,19 +1,24 @@
-import { VFC } from 'react';
+import { useContext, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
+import AccountContext from '@app/account/AccountContext';
 import { CollectionsFilter, NFTsList, TypeFilter } from './components';
+import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 
 export interface NFTsComponentProps {
   className?: string;
 }
 
 const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
+  const { selectedAccount } = useContext(AccountContext);
+  const { collections, collectionsLoading, error } = useGraphQlCollectionsByAccount(selectedAccount?.address);
+
   return (
     <div className={classNames('my-tokens--nft', className)}>
       <div className="filters-column">
         <TypeFilter />
-        <CollectionsFilter />
+        <CollectionsFilter collections={collections} />
       </div>
       <div className="tokens-column">
         <NFTsList />

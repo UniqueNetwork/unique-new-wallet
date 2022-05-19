@@ -6,3 +6,4 @@ export * from './jsonUtils';
 export * from './seedUtils';
 export * from './textUtils';
 export * from './timestampUtils';
+export * from './address';
