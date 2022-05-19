@@ -1,37 +1,10 @@
 :root {
-  --color-additional-light: #fff;
-  --color-additional-warning-100: #fff4e0;
-  --color-additional-warning-500: #f9a400;
+  --card-shadow: rgba(0, 0, 0, 0.08); // missing in uikit
 
-  --color-blue-grey-100: #f5f6f7;
-  --color-blue-grey-500: #7f90a1;
+  --container-width: 1800px; // ???
 
-  --color-coral: #fb838d;
-  --color-coral-500: #ff6335;
+  --prop-font-weight-medium: 500; // missing in uikit
+  --prop-font-weight-bold: 700; // missing in uikit
 
-  --color-grey-100: #ededee;
-  --color-grey-200: #dfe0e2;
-  --color-grey-300: #d2d3d6;
-  --color-grey-500: #81858e;
-
-  --color-primary-500: #009CF0;
-  --color-primary-600: #0087d0;
-
-  --color-secondary-400: #091941;
-  --color-secondary-500: #040b1d;
-
-  --card-shadow: rgba(0, 0, 0, 0.08);
-
-  --font-main: 'Inter', sans-serif;
-  --font-secondary: 'Raleway', sans-serif;
-  --font-medium: 500;
-  --font-bold: 700;
-
-  --gap: 16px;
-  --container-width: 1800px;
-
-  --attribute-title-color: #728498;
-  --attribute-background-color: #f1f5fa;
-
-  --button-color: #1db0ff;
+  --prop-gap: 16px; // temp var
 }

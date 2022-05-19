@@ -83,18 +83,18 @@ const Content = styled.div`
 `;
 
 const InputWrapper = styled.div`
-  padding: var(--gap) 0;
+  padding: var(--prop-gap) 0;
   display: flex;
   flex-direction: column;
-  margin-bottom: var(--gap);
-  row-gap: var(--gap);
+  margin-bottom: var(--prop-gap);
+  row-gap: var(--prop-gap);
 `;
 
 const TextStyled = styled(Text)`
   box-sizing: border-box;
   display: flex;
   padding: 8px 16px;
-  margin: calc(var(--gap) * 1.5) 0;
+  margin: calc(var(--prop-gap) * 1.5) 0;
   border-radius: 4px;
   background-color: var(--color-additional-warning-100);
   width: 100%;

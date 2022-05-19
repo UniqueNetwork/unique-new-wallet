@@ -43,7 +43,7 @@ export const TokensCard: FC<TTokensCard> = ({
     if (tokenId && collectionId) {
       setIsFetching(true);
 
-     /* void restApi?.getToken(collectionId, tokenId).then((token: NFTToken) => {
+      /* void restApi?.getToken(collectionId, tokenId).then((token: NFTToken) => {
         setIsFetching(false);
         setToken(token);
       }); */

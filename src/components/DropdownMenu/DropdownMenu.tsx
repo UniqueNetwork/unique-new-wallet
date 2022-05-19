@@ -52,13 +52,13 @@ const DropdownMenuWrapper = styled.div`
 const DropdownMenuButtonWrapper = styled.div`
   position: relative;
   button.unique-button {
-    padding-right: calc(var(--gap) * 3);
+    padding-right: calc(var(--prop-gap) * 3);
   }
   span[class^='Icon'] {
     position: absolute;
     margin-top: -8px;
     top: 50%;
-    right: calc(var(--gap) * 1.5);
+    right: calc(var(--prop-gap) * 1.5);
   }
 `;
 
@@ -75,7 +75,7 @@ const DropdownMenuDropdown = styled.div<{ isOpen: boolean }>`
 `;
 
 const DropdownMenuItemWrapper = styled.div`
-  padding: var(--gap);
+  padding: var(--prop-gap);
   cursor: pointer;
   &:hover {
     background: var(--color-primary-100);

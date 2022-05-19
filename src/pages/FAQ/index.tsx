@@ -1,165 +1,329 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { Heading } from '@unique-nft/ui-kit';
+import { Accordion, Button, Heading, Icon, Link, Text } from '@unique-nft/ui-kit';
+import { Link as RouterLink } from 'react-router-dom';
 
-import { PagePaper } from '@app/components';
+// TODO: add props rel, target to all Link component usages [WMS-871]
+const faqItems = [
+  {
+    title: 'How can I create a wallet?',
+    content: (
+      <p>
+        Use either the{' '}
+        <Link
+          href="https://polkadot.js.org/extension/"
+          title={'Polkadot.js extension'}
+          role="primary"
+        />{' '}
+        or `Manage accounts` page and follow the instructions.
+        <br />
+        Keep your wallet seed phrase safe! Write it down on a paper or export the JSON key
+        with a password you’ll never forget.
+      </p>
+    ),
+  },
+  {
+    title: 'How can I connect my wallet?',
+    content: (
+      <>
+        <p>
+          Use the{' '}
+          <Link
+            href="https://polkadot.js.org/extension/"
+            title={'Polkadot.js extension'}
+            role="primary"
+          />{' '}
+          or the ‘Manage accounts page’ to set up or restore an account. Restore your
+          wallet through the seed phrase, JSON file+password or QR code. When using Chrome
+          or Firefox desktop with the Polkadot.js browser extension, set your account to
+          `allow use on any chain`.
+        </p>
+        <p>
+          Note that this option is not available to Ledger or TrustWallet users. Support
+          for them will be added at a later date. If an NFT or a token was at any point
+          transferred to one of these hardware wallets they are safe but you won’t be able
+          to transfer them out until the support is added.
+        </p>
+      </>
+    ),
+  },
+  {
+    title: 'How can I mint an NFT?',
+    content: (
+      <>
+        <p>
+          If you wish to mint an NFT, the first step is to create a collection. This
+          stands true even if your collection will contain a single NFT. Please go to the
+          “My collections” page and click the “Create collection” button. From there on
+          you will be able to set the main information about the collection, the
+          collection’s token attributes, and a number of advanced settings.
+        </p>
+        <p>
+          After creating the collection, you can click on the “Create an NFT” button to
+          create a token.
+        </p>
+      </>
+    ),
+  },
+  {
+    title: 'How much does it cost to create a collection?',
+    content: (
+      <p>
+        About 5 QTZ to create and customize the collection. To obtain QTZ visit the MEXC
+        Exchange:{' '}
+        <Link href="https://www.mexc.com/" title="https://www.mexc.com/" role="primary" />
+      </p>
+    ),
+  },
+  {
+    title: 'How many tokens can I create?',
+    content: (
+      <p>
+        You can create an unlimited number of collections and tokens. The current
+        functionality does not allow for collections with a limited number of tokens to be
+        created, but we will add this feature at a later date.
+      </p>
+    ),
+  },
+  {
+    title: 'How can I transfer tokens to the other wallet or exchange?',
+    content: (
+      <>
+        <p>
+          Both fungible and non-fungible tokens can be transferred via the corresponding
+          utility page.
+          <br />
+          For:
+        </p>
+        <ol>
+          <li>
+            Fungible tokens — go to coins section, select a token and click on the “Send”
+            button
+          </li>
+          <li>NFTs — go to your NFT page and click on “Transfer” button</li>
+        </ol>
+      </>
+    ),
+  },
+  {
+    title: 'How can I burn an NFT?',
+    content: (
+      <p>
+        You can burn both a collection and an NFT. By burning a collection, all tokens
+        belonging to it will be deleted. A single NFT belonging to a collection can be
+        deleted as well.
+      </p>
+    ),
+  },
+  {
+    title: 'How can I find my collection in the blockchain?',
+    content: (
+      <p>
+        Use our <Link href="https://uniquescan.io" title="UniqueScan" role="primary" />.
+      </p>
+    ),
+  },
+  {
+    title: 'How can I change an existing collection’s name?',
+    content: (
+      <p>
+        The core collection information cannot be modified once approved/signed. For any
+        changes the collection will need to be burned and re-created.
+      </p>
+    ),
+  },
+];
 
 export const Faq = (): React.ReactElement<void> => {
   return (
-    <PagePaper>
+    <>
+      <Heading size="1">FAQ</Heading>
       <MainWrapper>
-        <Heading size="4">Q: How can I connect my wallet?</Heading>
-        <p>
-          A: You can use either{' '}
-          <a href="https://polkadot.js.org/extension/">
-            https://polkadot.js.org/extension/
-          </a>{' '}
-          or the market `Accounts` page. Restore your wallet through the seed phrase, JSON
-          file+password or QR code.
-        </p>
-        <p>
-          Make sure that using Chrome or Firefox desktop with the Polkadot.js browser
-          extension you’ve set your wallet account setting to `allow use on any chain`.
-        </p>
-        <p>
-          Note that this option is not available to Ledger or TrustWallet users, their
-          support will be added later. Rest assured your NFT is still safe in your wallet!
-        </p>
-        <Heading size="4">
-          Q: I connected the right wallet to the app but it shows that my
-          SubstraPunk|Chelobrick belongs to a different address. Why?
-        </Heading>
-        <p>
-          A: Substrate account addresses (Polkadot, Kusama etc.) may look different on
-          different networks but they have all the same private key underneath. You can
-          see all transformations of any address on{' '}
-          <a href="https://polkadot.subscan.io/tools/ss58_transform">
-            https://polkadot.subscan.io/tools/ss58_transform
-          </a>
-        </p>
-        <Heading size="4">Q: How can I create a wallet?</Heading>
-        <p>
-          A: You can use either{' '}
-          <a href="https://polkadot.js.org/extension/">
-            https://polkadot.js.org/extension/
-          </a>{' '}
-          or the market ‘Accounts’ page and follow the instructions.{' '}
-        </p>
-        <p>
-          Keep your wallet seed phrase safe! Write it down on paper or export the JSON key
-          with a password you would never forget.
-        </p>
-        <Heading size="4">Q: How can I get KSM to my account?</Heading>
-        <p>
-          A: You need to transfer (withdraw) from the other wallet or exchange. To do
-          that:
-        </p>
-        <ol>
-          <li>
-            Copy your address at the marketplace (click on the icon at the top right
-            corner);
-          </li>
-          <li>
-            Go to the{' '}
-            <a href="https://polkadot.subscan.io/tools/ss58_transform">
-              https://polkadot.subscan.io/tools/ss58_transform
-            </a>{' '}
-            and transform your address;
-          </li>
-          <li>Copy your address at Kusama network;</li>
-          <li>Use this Kusama address to send KSM from any wallet or exchange;</li>
-        </ol>
-        <Heading size="4">
-          Q: I see my NTF on the My tokens page twice and one of them is `on hold`
-        </Heading>
-        <p>
-          A: It can happen if the previous version of the market had information about an
-          unfinished listing. In that case:
-        </p>
-        <ol>
-          <li>Go to the page of ‘on hold’ token and complete listing;</li>
-          <li>Then delist this token;</li>
-        </ol>
-        <Heading size="4">
-          Q: I see the error `1010: Invalid Transaction: Inability to pay some fees, e.g.
-          account balance too low`
-        </Heading>
-        <p>A: Just wail for half a minute and try again</p>
-        <Heading size="4">
-          Q: I am trying to buy an NFT, but I am seeing the other owner and the “Withdraw
-          your KSM” button on the Heading is active. Why?
-        </Heading>
-        <p>
-          A: Unfortunately someone has beaten you in buying the same NFT, but you can
-          either withdraw your KSM back to your wallet or leave it in the deposit balance
-          to use in future purchases.
-        </p>
-
-        <Heading size="4">
-          Q: How to transfer KSM to the other wallet or exchange?
-        </Heading>
-        <p>
-          A: KSM that you use and see on the marketplace is on your Kusama (Substrate)
-          account, you don`t have to withdraw it. You can interact with your wallet using
-          any Polkadot/Kusama network tool. To transfer KSM to the other wallet or
-          exchange:
-        </p>
-        <ol>
-          <li>
-            Go to `Accounts` at{' '}
-            <a href="https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama-rpc.polkadot.io#/accounts">
-              https://polkadot.js.org/apps/accounts
-            </a>
-          </li>
-          <li>
-            {' '}
-            Restore your wallet through the seed phrase, JSON file+password or QR
-            code.Make sure that using Chrome or Firefox desktop with the Polkadot.js
-            browser extension you’ve set your wallet account setting to `allow use on any
-            chain`.
-          </li>
-          <li>Send KSM anywhere you want</li>
-        </ol>
-        <Heading size="4">Q: Where can I read the Terms of Service?</Heading>
-        <p>
-          A: You can read our Terms of Service&nbsp;
-          <a download href="/files/Terms.pdf">
-            here.
-          </a>
-        </p>
-
-        <Heading size="4">
-          Q: Whom can I contact if I have questions regarding the marketplace?
-        </Heading>
-        <p>
-          Please contact{' '}
-          <a href="mailto:unqnftsupport@unique.network">unqnftsupport@unique.network</a>{' '}
-          if you have any questions.
-        </p>
+        <WrapperContent>
+          <Plate>
+            {faqItems.map((item, i) => {
+              return (
+                <Accordion key={i} className="faq-item" title={item.title}>
+                  {item.content}
+                </Accordion>
+              );
+            })}
+          </Plate>
+        </WrapperContent>
+        <WrapperSide>
+          <SidePlate>
+            <Heading size="3">Didn&apos;t find the answer? Write&nbsp;to us.</Heading>
+            <Button title="Ask a question" />
+            <SidePlateFooter>
+              <Text>You can also find information in our community</Text>
+              <SocialNav>
+                <RouterLink
+                  to="https://t.me/Uniquechain"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Icon
+                    name="social-telegram"
+                    color="var(--color-primary-500)"
+                    size={32}
+                  />
+                </RouterLink>
+                <RouterLink
+                  to="https://twitter.com/Unique_NFTchain"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Icon
+                    name="social-twitter"
+                    color="var(--color-primary-500)"
+                    size={32}
+                  />
+                </RouterLink>
+                <RouterLink
+                  to="https://discord.gg/jHVdZhsakC"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Icon
+                    name="social-discord"
+                    color="var(--color-primary-500)"
+                    size={32}
+                  />
+                </RouterLink>
+                <RouterLink
+                  to="https://github.com/UniqueNetwork"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Icon name="social-github" color="var(--color-primary-500)" size={32} />
+                </RouterLink>
+                <RouterLink
+                  to="https://app.subsocial.network/@UniqueNetwork_NFT"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Icon
+                    name="social-subsocial"
+                    color="var(--color-primary-500)"
+                    size={32}
+                  />
+                </RouterLink>
+              </SocialNav>
+            </SidePlateFooter>
+          </SidePlate>
+        </WrapperSide>
       </MainWrapper>
-    </PagePaper>
+    </>
   );
 };
 
 const MainWrapper = styled.div`
-  display: block !important;
-  max-width: 1168px;
+  gap: var(--prop-gap);
 
-  p,
-  ol li {
-    font-size: 16px;
-    line-height: 24px;
-    font-family: var(--font-main);
-    font-weight: 400;
-    margin-bottom: 0;
-    letter-spacing: normal;
+  @media screen and (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: 1fr min(380px);
+    gap: calc(var(--prop-gap) * 2);
   }
 
-  ol {
-    padding-left: 17px;
+  @media screen and (min-width: 1280px) {
+    grid-template-columns: 1fr min(580px);
+  }
+`;
+
+const WrapperContent = styled.section``;
+
+const WrapperSide = styled.aside``;
+
+const Plate = styled.div`
+  background-color: var(--color-additional-light);
+
+  @media screen and (min-width: 1024px) {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: calc(var(--prop-border-radius) * 2);
+    padding: calc(var(--prop-gap) * 2);
+  }
+
+  .faq-item {
+    border-bottom: 1px dashed var(--color-blue-grey-300);
+    max-width: 820px;
+    font-size: 1rem;
+    line-height: 1.4;
+
+    &:not(:last-child) {
+      margin-bottom: calc(var(--prop-gap) * 2);
+    }
+
+    .unique-accordion-title {
+      margin-bottom: var(--prop-gap);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .unique-accordion-content {
+      padding: 10px;
+      background-color: var(--color-blue-grey-100);
+    }
+
+    ol,
+    ul,
+    .unique-link {
+      font: inherit;
+    }
+
+    ol,
+    ul {
+      padding-left: 1.5em;
+      list-style-position: inside;
+
+      li {
+        &:not(:first-child) {
+          margin-top: 0.1em;
+        }
+      }
+    }
+
+    p + p {
+      margin-top: 1.125em;
+    }
+  }
+`;
+
+const SidePlate = styled(Plate)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 2.5);
+  text-align: center;
+
+  @media screen and (min-width: 1024px) {
+    padding: calc(var(--prop-gap) * 2);
+  }
+
+  .unique-button {
+    min-width: 50%;
+  }
+`;
+
+const SidePlateFooter = styled.div`
+  display: none;
+
+  @media screen and (min-width: 1024px) {
+    display: block;
+    margin-top: calc(var(--prop-gap) * 2);
+  }
+`;
+
+const SocialNav = styled.nav`
+  display: flex;
+  justify-content: center;
+  margin-top: var(--prop-gap);
+
+  a {
+    &:not(:first-child) {
+      margin-left: var(--prop-gap);
+    }
   }
 `;
 
 export default Faq;
-
-// export default React.memo(Faq);

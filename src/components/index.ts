@@ -15,6 +15,5 @@ export * from './Picture';
 export * from './SidebarPreview';
 export * from './Table';
 export * from './TokensCard';
-export * from './TokensList';
 export * from './Tooltip';
 export * from './Upload';

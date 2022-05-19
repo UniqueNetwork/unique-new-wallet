@@ -65,6 +65,6 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
 
 export const CollectionsFilter = styled(CollectionsFilterComponent)`
   &.collections-filter {
-    padding-top: calc(var(--gap)) 0;
+    padding-top: calc(var(--prop-gap)) 0;
   }
 `;

@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
-import { BN, stringToHex, u8aToString } from '@polkadot/util';
 import { KeypairType } from '@polkadot/util-crypto/types';
 
 import { sleep } from '@app/utils';
-import { DefaultAccountKey } from '@app/account';
+import { DefaultAccountKey } from '@app/account/constants';
 
-import { useApi } from './useApi';
-import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
+import { Account, AccountSigner } from '../account/AccountContext';
 import { getSuri, PairType } from '../utils/seedUtils';
 
 export const useAccounts = () => {
@@ -27,7 +25,6 @@ export const useAccounts = () => {
 
   // TODO: move fetching accounts and balances into context
 
-  const [isLoadingBalances, setIsLoadingBalances] = useState(false);
   const [fetchAccountsError, setFetchAccountsError] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   const [accounts, setAccounts] = useState<Account[]>();
@@ -88,10 +85,6 @@ export const useAccounts = () => {
     console.log('getAccountBalance');
   }, []);
 
-  const getAccountsBalances = useCallback((accounts: Account[]) => {
-    console.log('getAccountsBalances');
-  }, []);
-
   const fetchAccounts = useCallback(async () => {
     // this call fires up the authorization popup
     const extensions = await web3Enable('my cool dapp');
@@ -107,12 +100,11 @@ export const useAccounts = () => {
     }
     const allAccounts = await getAccounts();
 
-    /* if (allAccounts?.length) {
-      const accountsWithBalance = await getAccountsBalances(allAccounts);
+    setAccounts(allAccounts);
 
-      setAccounts(accountsWithBalance);
-
+    if (allAccounts?.length) {
       const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
+
       const defaultAccount = allAccounts.find(
         (item) => item.address === defaultAccountAddress,
       );
@@ -124,25 +116,19 @@ export const useAccounts = () => {
       }
     } else {
       setFetchAccountsError('No accounts in extension');
-    } */
+    }
+
     setIsLoading(false);
-  }, [getAccounts]);
-
-  const fetchBalances = useCallback(async () => {
-    /* setIsLoadingBalances(true);
-
-    const accountsWithBalance = await getAccountsBalances(accounts);
-
-    setIsLoadingBalances(false);
-
-    setAccounts(accountsWithBalance); */
-  }, [getAccountBalance]);
+  }, [changeAccount, getAccounts]);
 
   useEffect(() => {
     const updatedSelectedAccount = accounts?.find(
       (account) => account.address === selectedAccount?.address,
     );
-    if (updatedSelectedAccount) setSelectedAccount(updatedSelectedAccount);
+
+    if (updatedSelectedAccount) {
+      setSelectedAccount(updatedSelectedAccount);
+    }
   }, [accounts, setSelectedAccount, selectedAccount]);
 
   const addLocalAccount = useCallback(
@@ -256,10 +242,8 @@ export const useAccounts = () => {
     addAccountViaQR,
     changeAccount,
     isLoading,
-    isLoadingBalances,
     fetchAccounts,
     fetchAccountsError,
-    fetchBalances,
     selectedAccount,
     unlockLocalAccount,
     // signTx,

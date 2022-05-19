@@ -15,6 +15,7 @@ import {
   Welcome,
 } from '@app/pages';
 import { CollectionForm } from '@app/context';
+import CollectionSettings from '@app/pages/CollectionSettings';
 
 export interface RouteItem {
   children?: RouteItem[];
@@ -84,7 +85,7 @@ export const routes: RouteConfig = {
               path: 'nft',
             },
             {
-              component: <div>Settings</div>,
+              component: <CollectionSettings />,
               name: 'Settings',
               path: 'settings',
             },

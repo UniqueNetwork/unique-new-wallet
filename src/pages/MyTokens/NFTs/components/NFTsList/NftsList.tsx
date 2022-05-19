@@ -49,7 +49,7 @@ export const NFTsList = styled(NFTsListComponent)`
       align-items: center;
       display: flex;
       justify-content: space-between;
-      padding-top: calc(var(--gap) * 2);
+      padding-top: calc(var(--prop-gap) * 2);
     }
   }
 `;

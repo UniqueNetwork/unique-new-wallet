@@ -91,12 +91,12 @@ const SelectInputWrapper = styled.div`
 const InputWrapper = styled.div`
   box-sizing: border-box;
   border-radius: 4px;
-  padding: calc(var(--gap) / 2) var(--gap);
+  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
   position: relative;
   min-height: 36px;
   display: flex;
   align-items: center;
-  column-gap: calc(var(--gap) / 2);
+  column-gap: calc(var(--prop-gap) / 2);
   input {
     position: absolute;
     top: 0;
@@ -107,7 +107,7 @@ const InputWrapper = styled.div`
     background: transparent;
     width: 100%;
     outline: none;
-    padding: var(--gap);
+    padding: var(--prop-gap);
   }
 `;
 
@@ -125,7 +125,7 @@ const Dropdown = styled.div<{ isOpen: boolean }>`
 `;
 
 const OptionWrapper = styled.div`
-  padding: var(--gap);
+  padding: var(--prop-gap);
   cursor: pointer;
   &:hover {
     background: var(--color-primary-100);

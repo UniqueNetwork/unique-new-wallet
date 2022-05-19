@@ -36,7 +36,7 @@ const TypeFilterComponent: VFC<TypeFilterComponentProps> = ({ className }) => {
 export const TypeFilter = styled(TypeFilterComponent)`
   &.type-filter {
     .unique-accordion-content {
-      padding: calc(var(--gap)) 0;
+      padding: calc(var(--prop-gap)) 0;
     }
   }
 `;

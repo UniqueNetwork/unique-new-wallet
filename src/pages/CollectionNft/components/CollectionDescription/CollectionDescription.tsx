@@ -74,7 +74,7 @@ const CollectionVerticalCard = styled.div`
   display: flex;
   flex-direction: column;
   ${PaddedBlock};
-  grid-row-gap: var(--gap);
+  grid-row-gap: var(--prop-gap);
 
   strong {
     font-weight: normal;
@@ -84,13 +84,13 @@ const CollectionVerticalCard = styled.div`
 
 const Row = styled.div`
   display: flex;
-  grid-column-gap: var(--gap);
+  grid-column-gap: var(--prop-gap);
   align-items: center;
   color: var(--color-grey-500);
 `;
 
 const Description = styled.div`
-  padding: var(--gap) 0;
+  padding: var(--prop-gap) 0;
   border-top: 1px dashed var(--color-grey-300);
   border-bottom: 1px dashed var(--color-grey-300);
 `;
@@ -98,11 +98,11 @@ const Description = styled.div`
 export const Badge = styled.div`
   background: var(--color-grey-100);
   border-radius: 4px;
-  font-family: var(--font-main);
+  font-family: var(--prop-font-family);
   font-size: 14px;
   line-height: 22px;
   color: var(--color-secondary-500);
-  padding: calc(var(--gap) / 4) calc(var(--gap) / 2);
+  padding: calc(var(--prop-gap) / 4) calc(var(--prop-gap) / 2);
   height: 22px;
 `;
 

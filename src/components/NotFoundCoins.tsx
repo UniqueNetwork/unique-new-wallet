@@ -22,6 +22,6 @@ export const NotFoundCoins = styled(NotFoundCoinsComponent)`
     justify-content: center;
     color: var(--color-blue-grey-500);
     min-height: 600px;
-    grid-row-gap: var(--gap);
+    grid-row-gap: var(--prop-gap);
   }
 `;

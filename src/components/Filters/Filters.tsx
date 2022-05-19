@@ -54,5 +54,5 @@ const FiltersStyled = styled.div`
   width: 235px;
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--gap) * 2);
+  row-gap: calc(var(--prop-gap) * 2);
 `;
