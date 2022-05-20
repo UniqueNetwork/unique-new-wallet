@@ -2,8 +2,9 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Checkbox, Text } from '@unique-nft/ui-kit';
 
+import { useCollections } from '@app/hooks';
+
 import Accordion from '../Accordion/Accordion';
-import { useCollections } from '../../hooks/useCollections';
 import Loading from '../Loading';
 import { Avatar } from '../Avatar/Avatar';
 
@@ -58,7 +59,7 @@ const CollectionsFilter: FC<CollectionsFilterProps> = ({ value, onChange }) => {
     >
       <CollectionFilterWrapper>
         {isFetching && <Loading />}
-        {collections.map((collection) => (
+        {collections?.map((collection) => (
           <CheckboxWrapper>
             <Checkbox
               checked={selectedCollections.indexOf(collection.id) !== -1}
@@ -72,23 +73,6 @@ const CollectionsFilter: FC<CollectionsFilterProps> = ({ value, onChange }) => {
           </CheckboxWrapper>
         ))}
       </CollectionFilterWrapper>
-      {/* TODO: unsupported on back-end */}
-      {false && selectedCollections.length === 1 && (
-        <AttributesFilterWrapper>
-          {/* TODO: make mapping attributes of the selected collection */}
-          <Accordion title={'Traits'} isOpen={true}>
-            <CollectionFilterWrapper>
-              <Checkbox
-                checked={false}
-                label={'Pirate Eye'}
-                size={'m'}
-                key={'attribute-'}
-                onChange={onAttributeSelect()}
-              />
-            </CollectionFilterWrapper>
-          </Accordion>
-        </AttributesFilterWrapper>
-      )}
     </Accordion>
   );
 };

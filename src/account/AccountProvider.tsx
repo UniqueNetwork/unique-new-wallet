@@ -3,8 +3,7 @@ import { KeyringPair } from '@polkadot/keyring/types';
 
 import { Account, AccountProvider } from './AccountContext';
 import { SignModal } from '../components/SignModal/SignModal';
-
-export const DefaultAccountKey = 'unique_minter_account_address';
+import { DefaultAccountKey } from './constants';
 
 const AccountWrapper: FC = ({ children }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -14,6 +13,7 @@ const AccountWrapper: FC = ({ children }) => {
 
   const changeAccount = useCallback((account: Account) => {
     localStorage.setItem(DefaultAccountKey, account.address);
+
     setSelectedAccount(account);
   }, []);
 
@@ -52,7 +52,14 @@ const AccountWrapper: FC = ({ children }) => {
       setIsLoading,
       showSignDialog,
     }),
-    [isLoading, accounts, selectedAccount, fetchAccountsError, changeAccount],
+    [
+      isLoading,
+      accounts,
+      selectedAccount,
+      fetchAccountsError,
+      changeAccount,
+      showSignDialog,
+    ],
   );
 
   return (

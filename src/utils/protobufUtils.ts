@@ -4,13 +4,11 @@ import {
   ArtificialAttributeItemType,
   AttributeItemType,
   EnumElemType,
+  FieldRuleType,
+  FieldType,
   NFTMetaType,
   ProtobufAttributeType,
 } from '@app/types';
-
-export type FieldType = 'string' | 'enum';
-
-export type FieldRuleType = 'optional' | 'required' | 'repeated';
 
 function defineMessage(protobufJson: ProtobufAttributeType) {
   // const protobufJson = fillProtobufJson(JSON.parse('[{"fieldType":"enum","id":1,"name":"gender","rule":"required","values":["Female","Male"]},{"fieldType":"string","id":2,"name":"imageHash","rule":"optional","values":[]},{"fieldType":"string","id":3,"name":"name","rule":"required","values":[]},{"fieldType":"enum","id":4,"name":"traits","rule":"repeated","values":["Asian Eyes","Black Lipstick","Nose Ring","Purple Lipstick","Red Lipstick","Smile","Sunglasses","Teeth Smile","Teeth Smile","Teeth Smile","Teeth Smile"]}]'));

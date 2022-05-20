@@ -2,8 +2,8 @@ import { FC, useMemo, useState } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
-import { useApi } from '@app/hooks';
-import { NFTToken } from '@app/api/chainApi/unique/types';
+import { useRestApi } from '@app/hooks';
+import { NFTToken } from '@app/types';
 import { formatKusamaBalance } from '@app/utils/textUtils';
 
 import Loading from '../Loading';
@@ -27,7 +27,7 @@ export const TokensCard: FC<TTokensCard> = ({
   const [token, setToken] = useState<NFTToken | undefined>(props.token);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  const { api } = useApi();
+  const restApi = useRestApi();
 
   const { collectionName, imagePath, tokenPrefix } = useMemo<
     Record<string, string | undefined>
@@ -42,13 +42,14 @@ export const TokensCard: FC<TTokensCard> = ({
 
     if (tokenId && collectionId) {
       setIsFetching(true);
-      void api?.nft?.getToken(collectionId, tokenId).then((token: NFTToken) => {
+
+      /* void restApi?.getToken(collectionId, tokenId).then((token: NFTToken) => {
         setIsFetching(false);
         setToken(token);
-      });
+      }); */
     }
     return {};
-  }, [collectionId, tokenId, token, api]);
+  }, [collectionId, tokenId, token, restApi]);
 
   return (
     <TokensCardStyled>
