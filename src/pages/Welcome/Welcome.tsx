@@ -34,7 +34,7 @@ export const Welcome = styled(WelcomeComponent)`
   .header-text {
     font-family: var(--prop-font-family-heading);
     font-size: 36px;
-    font-weight: var(--prop-font-weight-bold);
+    font-weight: 700;
     margin: 0;
   }
 
@@ -52,7 +52,7 @@ export const Welcome = styled(WelcomeComponent)`
 
   .unique-card {
     background: var(--color-additional-light);
-    box-shadow: 0 4px 12px var(--card-shadow);
+    box-shadow: 0 4px 12px var(--prop-shadow);
     border-radius: 4px;
     padding: 32px;
 

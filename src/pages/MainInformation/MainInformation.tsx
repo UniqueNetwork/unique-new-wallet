@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { CollectionFormContext } from '@app/context';
 import uploadImg from '@app/static/icons/upload.svg';
 import { Alert, CollectionStepper } from '@app/components';
+import { MainInformationInitialValues } from '@app/types';
 
 export interface MainInformationComponentProps {
   className?: string;
@@ -47,8 +48,8 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
   );
 
   const setFile = useCallback(
-    (_: string, file: Blob) => {
-      setFieldValue('file', file);
+    (data: MainInformationInitialValues['file']) => {
+      setFieldValue('file', data);
     },
     [setFieldValue],
   );
@@ -58,9 +59,8 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
       <CollectionStepper activeStep={1} />
       <Heading size={'2'}>Main information</Heading>
       <Text>
-        Заполняйте данные внимательно, потому что после подписания транзакции нельзя
-        вносить изменения. Если допустите ошибку, коллекцию придется сжечь и создать
-        заново.
+        Fill fields carefully, because after signing the transaction, the data cannot be
+        changed. If you make a mistake, the object will have to be burned and recreated.
       </Text>
       <div>
         <form onSubmit={handleSubmit}>

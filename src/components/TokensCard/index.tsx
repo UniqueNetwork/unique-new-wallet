@@ -61,9 +61,7 @@ export const TokensCard: FC<TTokensCard> = ({
           href={`/token/${collectionId || ''}/${tokenId || ''}`}
           title={`${tokenPrefix || ''} #${tokenId || ''}`}
         >
-          <Text size="l" weight="medium">
-            {`${tokenPrefix || ''} #${tokenId || ''}`}
-          </Text>
+          <Text size="l">{`${tokenPrefix || ''} #${tokenId || ''}`}</Text>
         </a>
         <a
           href={`${config.scanUrl || ''}collections/${collectionId || ''}`}
