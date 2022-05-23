@@ -6,6 +6,14 @@ import styled from 'styled-components/macro';
 import { PasswordInput } from '@app/components/PasswordInput/PasswordInput';
 import { QRReader, ScannedResult } from '@app/components/QRReader/QRReader';
 import { useAccounts } from '@app/hooks';
+import {
+  AdditionalText,
+  ContentRow,
+  LabelText,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from '@app/pages/Accounts/Modals/commonComponents';
 
 import { TCreateAccountModalProps } from './types';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
@@ -46,64 +54,49 @@ export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-      <Content>
-        <Heading size="2">{'Add an account via QR-code'}</Heading>
-      </Content>
-      <InputWrapper>
-        <Text size={'m'}>
-          Provide the account QR from the module/external application for scanning. Once
-          detected as valid, you will be taken to the next step to add the account to your
-          list.
-        </Text>
-        {!address && <QRReader onScan={onScan} />}
-        {address && (
-          <AddressWrapper>
-            <Avatar size={24} src={DefaultAvatar} />
-            <Text>{address}</Text>
-          </AddressWrapper>
-        )}
-      </InputWrapper>
-      <InputWrapper>
-        <Text size={'m'}>Password</Text>
-        <Text size={'s'} color={'grey-500'}>
-          The password that was previously used to encrypt this account
-        </Text>
-        <PasswordInput placeholder={'Password'} value={password} onChange={setPassword} />
-      </InputWrapper>
-
-      <ButtonWrapper>
+      <ModalHeader>
+        <Heading size="2">Add an account via QR-code</Heading>
+      </ModalHeader>
+      <ModalContent>
+        <ContentRow>
+          <Text size="m">
+            Provide the account QR from the module/external application for scanning. Once
+            detected as valid, you will be taken to the next step to add the account to
+            your list.
+          </Text>
+        </ContentRow>
+        <ContentRow>
+          {address ? (
+            <AddressWrapper>
+              <Avatar size={24} src={DefaultAvatar} />
+              <Text>{address}</Text>
+            </AddressWrapper>
+          ) : (
+            <QRReader onScan={onScan} />
+          )}
+        </ContentRow>
+        <ContentRow>
+          <LabelText size="m">Password</LabelText>
+          <AdditionalText size="s" color="grey-500">
+            The password that was previously used to encrypt this account
+          </AdditionalText>
+          <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
+        </ContentRow>
+      </ModalContent>
+      <ModalFooter>
         <Button
           disabled={!address || !password}
           role="primary"
           title="Save"
           onClick={onSaveClick}
         />
-      </ButtonWrapper>
+      </ModalFooter>
     </Modal>
   );
 };
-
-const Content = styled.div`
-  && h2 {
-    margin-bottom: 0;
-  }
-`;
 
 const AddressWrapper = styled.div`
   display: flex;
   column-gap: calc(var(--prop-gap) / 2);
   margin: calc(var(--prop-gap) * 2) 0;
-`;
-
-const InputWrapper = styled.div`
-  padding: var(--prop-gap) 0;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: var(--prop-gap);
-  row-gap: var(--prop-gap);
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
 `;

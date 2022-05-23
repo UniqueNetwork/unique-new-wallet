@@ -74,24 +74,30 @@ export const QRReader: FC<QRReaderProps> = ({ isEthereum, onScan }) => {
 };
 
 const QRReaderWrapper = styled.div`
-  div {
-    height: 362px;
-    padding-top: 0 !important;
-    video {
-      height: unset !important;
-    }
-    &:after {
-      position: absolute;
-      content: '';
-      border: 5px solid var(--color-coral-500);
-      box-sizing: border-box;
-      width: 282px;
-      height: 282px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 362px;
+  max-height: 362px;
+  margin: 0 auto;
+
+  &:after {
+    box-sizing: border-box;
+    border: 5px solid var(--color-coral-500);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: '';
+
+    @media (min-width: 568px) {
       top: 50%;
       left: 50%;
-      margin-top: -141px;
-      margin-left: -141px;
-      outline: 200px solid rgba(174, 175, 178, 0.5);
+      width: 78%;
+      height: 78%;
+      transform: translate3d(-50%, -50%, 0);
+      outline: 50px solid rgba(174, 175, 178, 0.5);
     }
   }
 `;
