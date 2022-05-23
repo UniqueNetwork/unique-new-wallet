@@ -1,10 +1,12 @@
-import { useContext, VFC } from 'react';
+import { useContext, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
 import AccountContext from '@app/account/AccountContext';
-import { CollectionsFilter, NFTsList, TypeFilter } from './components';
+import { useGraphQlAccountTokens } from '@app/api/graphQL/tokens';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
+
+import { CollectionsFilter, NFTsList, TypeFilter } from './components';
 
 export interface NFTsComponentProps {
   className?: string;
@@ -12,7 +14,15 @@ export interface NFTsComponentProps {
 
 const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
   const { selectedAccount } = useContext(AccountContext);
-  const { collections, collectionsLoading, error } = useGraphQlCollectionsByAccount(selectedAccount?.address);
+  const { collections, collectionsLoading } = useGraphQlCollectionsByAccount(
+     selectedAccount?.address ?? null,
+    !selectedAccount?.address,
+  );
+  const { tokens, tokensCount, tokensLoading, fetchPageData } = useGraphQlAccountTokens(
+    selectedAccount?.address ?? null,
+    { collectionIds: collections?.map((c) => c.collection_id) },
+    { skip: !selectedAccount?.address || collectionsLoading },
+  );
 
   return (
     <div className={classNames('my-tokens--nft', className)}>
@@ -21,7 +31,11 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
         <CollectionsFilter collections={collections} />
       </div>
       <div className="tokens-column">
-        <NFTsList />
+        <NFTsList
+          tokens={tokens}
+          tokensCount={tokensCount}
+          pageChangeHandler={fetchPageData}
+        />
       </div>
     </div>
   );

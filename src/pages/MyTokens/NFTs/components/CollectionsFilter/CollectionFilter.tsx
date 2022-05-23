@@ -42,9 +42,9 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
       <Accordion expanded title="Collections">
         {collections?.map((collection) => (
           <CollectionFilterItem
-            key={collection.id}
+            key={collection.collection_id}
             collectionName={collection.name}
-            collectionId={collection.id?.toString()}
+            collectionId={collection.collection_id?.toString()}
             collectionCover={getCollectionCoverUri(collection)}
             onChangeCollectionsFilter={onChangeCollectionsFilter}
           />

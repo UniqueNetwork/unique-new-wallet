@@ -19,16 +19,20 @@ const ACCOUNT_COLLECTIONS = gql`
   }
 `;
 
-export const useGraphQlCollectionsByAccount = (accountAddress: string | undefined) => {
+export const useGraphQlCollectionsByAccount = (
+  accountAddress: string | null,
+  skip?: boolean,
+) => {
   const {
     data: response,
     loading: userCollectionsLoading,
     error,
-  } = useQuery(ACCOUNT_COLLECTIONS, {
+  } = useQuery<AccountCollectionsResponse>(ACCOUNT_COLLECTIONS, {
+    skip,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
     variables: { owner: accountAddress },
-  }) as unknown as { data: AccountCollectionsResponse; error: string; loading: boolean };
+  });
 
   return {
     collections: response?.collections,

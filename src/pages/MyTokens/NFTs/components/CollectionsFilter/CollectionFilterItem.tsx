@@ -11,13 +11,15 @@ export interface CollectionFilterItemComponentProps {
   onChangeCollectionsFilter: (collectionId: string) => void;
 }
 
-const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (props) => {
+const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
+  props,
+) => {
   const {
     className,
     collectionId,
     collectionName,
     collectionCover,
-    onChangeCollectionsFilter
+    onChangeCollectionsFilter,
   } = props;
 
   const onChange = () => {

@@ -6,7 +6,7 @@ export type VariableOnChainSchema = {
 
 // can be common and extendeble for othe API methods to collections table
 export interface Collection {
-  id: number;
+  collection_id: number;
   name: string;
   owner: string;
   offchain_schema: string;
