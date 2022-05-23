@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 
+import { useApi } from '@app/hooks';
+
 import { chainLogos, emptyLogos, namedLogos, nodeLogos } from '../logos';
-import { useApi } from '../hooks/useApi';
 
 interface Props {
   className?: string;
@@ -24,16 +25,16 @@ function ChainLogo({
   withoutHl,
   size = 32,
 }: Props): React.ReactElement<Props> {
-  const { chainData } = useApi();
+  // const { chainData } = useApi();
 
   const [isEmpty, img] = useMemo((): [boolean, string] => {
     const found = logo
       ? namedLogos[logo]
-      : chainLogos[sanitize(chainData?.systemChain)] ||
-        nodeLogos[sanitize(chainData?.systemName)];
+      : ''; /* chainLogos[sanitize(chainData?.systemChain)] ||
+        nodeLogos[sanitize(chainData?.systemName)]; */
 
     return [!found || logo === 'empty', (found || emptyLogos.empty) as string];
-  }, [logo, chainData?.systemChain, chainData?.systemName]);
+  }, [logo]);
 
   return (
     <img

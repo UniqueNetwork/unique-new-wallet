@@ -5,7 +5,7 @@ import { Button, Text } from '@unique-nft/ui-kit';
 import { Account } from '@app/account';
 import { formatKusamaBalance, shortcutText } from '@app/utils/textUtils';
 import { Icon } from '@app/components';
-import { useApi, useAccounts } from '@app/hooks';
+import { DeviceSize, useApi, useAccounts, useDeviceSize } from '@app/hooks';
 
 import { DropdownSelect, DropdownSelectProps } from './AccountSelect/DropdownSelect';
 import Loading from '../../Loading';
@@ -13,20 +13,12 @@ import { Avatar } from '../../Avatar/Avatar';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import Gear from '../../../static/icons/gear.svg';
 import { BalanceOption } from './types';
-import useDeviceSize, { DeviceSize } from '../../../hooks/useDeviceSize';
 
 const tokenSymbol = 'KSM';
 
-// todo - update the component from ui kit https://cryptousetech.atlassian.net/browse/UI-91
 export const WalletManager: FC = () => {
-  const {
-    selectedAccount,
-    accounts,
-    isLoading,
-    isLoadingBalances,
-    fetchAccounts,
-    changeAccount,
-  } = useAccounts();
+  const { selectedAccount, accounts, isLoading, fetchAccounts, changeAccount } =
+    useAccounts();
   const { currentChain } = useApi();
   const deviceSize = useDeviceSize();
 
@@ -44,12 +36,12 @@ export const WalletManager: FC = () => {
 
   const currentBalance: BalanceOption = useMemo(() => {
     return {
-      value: selectedAccount?.balance?.KSM?.toString() || '0',
+      value: selectedAccount?.balance?.toString() || '0',
       chain: currentChain,
     };
   }, [selectedAccount, currentChain]);
 
-  if (!isLoading && accounts.length === 0) {
+  if (!isLoading && accounts?.length === 0) {
     return <Button title={'Сonnect or create account'} onClick={onCreateAccountClick} />;
   }
 
@@ -69,7 +61,6 @@ export const WalletManager: FC = () => {
         value={currentBalance}
         onChange={onOnChainChange}
       />
-      {isLoadingBalances && <Loading />}
       {deviceSize === DeviceSize.lg && (
         <>
           <Divider />
@@ -101,7 +92,7 @@ const BalanceOptionCard = (balance: BalanceOption) => {
     <BalanceOptionWrapper>
       <Text size={'m'}>{`${formatKusamaBalance(balance.value)} ${tokenSymbol}`}</Text>
       <Text size={'s'} color={'grey-500'}>
-        {balance.chain.name}
+        {balance?.chain?.name}
       </Text>
     </BalanceOptionWrapper>
   );

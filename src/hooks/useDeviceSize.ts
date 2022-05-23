@@ -6,7 +6,7 @@ export enum DeviceSize {
   lg,
 }
 
-const useDeviceSize = (): DeviceSize => {
+export const useDeviceSize = (): DeviceSize => {
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
 
   useEffect(() => {
@@ -32,5 +32,3 @@ const useDeviceSize = (): DeviceSize => {
     return DeviceSize.lg;
   }, [windowWidth]);
 };
-
-export default useDeviceSize;

@@ -1,6 +1,6 @@
 import BN from 'bn.js';
 
-export type SchemaVersionTypes = 'ImageURL' | 'Unique';
+export type SchemaVersionTypes = 'Custom' | 'ImageURL' | 'TokenURI' | 'Unique';
 
 export interface NFTCollection {
   id: number;

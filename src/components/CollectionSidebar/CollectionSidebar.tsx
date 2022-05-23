@@ -20,29 +20,29 @@ const CollectionSidebarComponent = ({ className }: Props) => {
 
   return (
     <div className={classNames('collection-sidebar', className)}>
-      <div className="collection-preview">
+      <Item className="collection-preview">
         <Heading size={'3'}>Collection preview</Heading>
         <SidebarPreview
           srcImg={srcImg}
           description={description || 'Description'}
           title={name || 'Name'}
         />
-      </div>
-      <div className="nft-preview">
+      </Item>
+      <Item className="nft-preview">
         <Heading size={'3'}>NFT preview</Heading>
         <SidebarPreview
           srcImg={srcImg}
           description={'Collection name'}
           title={tokenPrefix || 'tokenPrefix'}
         >
-          <div className="attributes">
-            <div className="title">Attribute names</div>
+          <AttributeName>
+            <div className="attribute-title">Attribute names</div>
             {attributes && (
               <span className="attributes-content">{attributes.join(', ')}</span>
             )}
-          </div>
+          </AttributeName>
         </SidebarPreview>
-      </div>
+      </Item>
     </div>
   );
 };
@@ -54,5 +54,19 @@ export const CollectionSidebar = styled(CollectionSidebarComponent)`
     .attributes {
       margin-top: 15px;
     }
+  }
+`;
+
+const Item = styled.div`
+  & + div {
+    margin-top: 40px;
+  }
+`;
+
+const AttributeName = styled.div`
+  margin-top: 15px;
+
+  .attribute-title {
+    font-size: 16px;
   }
 `;

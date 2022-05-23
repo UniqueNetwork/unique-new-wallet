@@ -1,6 +1,5 @@
 import { Consumer, Context, createContext, Provider } from 'react';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { BN } from '@polkadot/util';
 import { KeyringPair } from '@polkadot/keyring/types';
 
 export enum AccountSigner {
@@ -9,9 +8,7 @@ export enum AccountSigner {
 }
 export interface Account extends InjectedAccountWithMeta {
   signerType: AccountSigner;
-  balance?: {
-    KSM?: BN;
-  };
+  balance?: string;
 }
 
 export type AccountContextProps = {

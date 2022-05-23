@@ -1,3 +1,7 @@
+export type FieldType = 'string' | 'enum';
+
+export type FieldRuleType = 'optional' | 'required' | 'repeated';
+
 export enum MinterType {
   default = 'Not started', // initial state
   purchase = 'Purchase', // fix price
@@ -12,10 +16,6 @@ export enum MinterType {
 
 export type ArtificialFieldType = 'string' | 'enum' | 'repeated';
 export type ArtificialFieldRuleType = 'optional' | 'required';
-
-export type FieldType = 'string' | 'enum';
-
-export type FieldRuleType = 'optional' | 'required' | 'repeated';
 
 export type AttributeItemType = {
   id: number;

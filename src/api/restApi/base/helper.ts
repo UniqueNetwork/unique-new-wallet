@@ -1,4 +1,4 @@
-import { QueryParams } from './types';
+import { QueryParams } from '@app/types';
 
 export const serializeToQuery = (value: QueryParams) => {
   const serializedQueryParams: string[] = Object.keys(value).reduce<string[]>(
