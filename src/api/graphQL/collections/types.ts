@@ -1,4 +1,20 @@
+export type SchemaVersion = 'ImageURL' | 'Unique';
+
+export type VariableOnChainSchema = {
+  collectionCover?: string;
+};
+
+// can be common and extendeble for othe API methods to collections table
 export interface Collection {
+  collection_id: number;
+  name: string;
+  owner: string;
+  offchain_schema: string;
+  schema_version: SchemaVersion;
+  variable_on_chain_schema?: VariableOnChainSchema;
+}
+
+export interface ViewCollection {
   collection_cover: string;
   collection_id: number;
   description: string;
@@ -29,7 +45,7 @@ export interface CollectionsVariables {
 }
 
 export interface CollectionsData {
-  view_collections: Collection[];
+  view_collections: ViewCollection[];
   view_collections_aggregate: {
     aggregate: {
       count: number;

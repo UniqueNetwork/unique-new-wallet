@@ -1,43 +1,46 @@
 import React, { VFC } from 'react';
-import styled from 'styled-components';
 import classNames from 'classnames';
+import styled from 'styled-components';
 import { Text, TokenLink, Pagination } from '@unique-nft/ui-kit';
 
-export interface TokenCardView {
-  collectionName: string;
-  tokenId: string;
-  tokenPrefix: string;
-  url: string;
-}
+import { ViewToken } from '@app/api';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 export interface NFTsListComponentProps {
   className?: string;
+  tokens?: ViewToken[];
+  tokensCount?: number;
+  pageChangeHandler: (page: number) => void;
 }
 
-const tokens: TokenCardView[] = [];
-
-const NFTsListComponent: VFC<NFTsListComponentProps> = ({ className }) => {
+const NFTsListComponent: VFC<NFTsListComponentProps> = ({
+  className,
+  tokens,
+  tokensCount,
+  pageChangeHandler,
+}) => {
   const onPageChange = (page: number) => {
     console.log('page', page);
+    pageChangeHandler(page);
   };
 
   // todo - change the tokenLink props according the data structure
   return (
     <div className={classNames('nft-list', className)}>
-      {tokens.map((token) => (
+      {tokens?.map((t) => (
         <TokenLink
-          image="https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e"
-          key={token.tokenId}
+          image={getTokenIpfsUriByImagePath(t.image_path)}
+          key={t.token_id}
           link={{
             href: '/',
-            title: 'CHEL #8624',
+            title: `${t.token_prefix} [id ${t.token_id}]`,
           }}
-          title="CHEL #8624"
+          title={`${t.token_prefix} #${t.token_id}`}
         />
       ))}
       <div className="nft-list--footer">
-        <Text size="m">{`${tokens.length} items`}</Text>
-        <Pagination withIcons size={100} onPageChange={onPageChange} />
+        <Text size="m">{`${tokensCount} items`}</Text>
+        <Pagination withIcons size={tokensCount ?? 0} onPageChange={onPageChange} />
       </div>
     </div>
   );

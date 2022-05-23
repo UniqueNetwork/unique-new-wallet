@@ -3,36 +3,27 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Accordion } from '@unique-nft/ui-kit';
 
+import { Collection } from '@app/api/graphQL';
+import { getCollectionCoverUri } from '@app/utils';
+
 import { CollectionFilterItem } from './CollectionFilterItem';
 
 export interface CollectionsFilterComponentProps {
   className?: string;
+  collections?: Collection[];
 }
 
 export interface Filter {
   collectionIds: string[];
 }
 
-export interface Collection {
-  id: string;
-  name: string;
-  coverImage: string;
-}
-
-const collections: Collection[] = [
-  {
-    coverImage:
-      'https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e',
-    id: '2',
-    name: 'Chelobrick',
-  },
-];
 const filters: Filter = {
   collectionIds: [],
 };
 
 const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   className,
+  collections,
 }) => {
   const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
 
@@ -49,12 +40,12 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   return (
     <div className={classNames('collections-filter', className)}>
       <Accordion expanded title="Collections">
-        {collections.map((collection) => (
+        {collections?.map((collection) => (
           <CollectionFilterItem
-            collectionId={collection.id}
+            key={collection.collection_id}
             collectionName={collection.name}
-            collectionCover={collection.coverImage}
-            key={collection.id}
+            collectionId={collection.collection_id?.toString()}
+            collectionCover={getCollectionCoverUri(collection)}
             onChangeCollectionsFilter={onChangeCollectionsFilter}
           />
         ))}

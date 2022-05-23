@@ -2,6 +2,11 @@ export type TAttributes = {
   [key: string]: string | string[];
 };
 
+export type ImagePath = {
+  ipfs: string;
+  type: string;
+};
+
 export interface TokensVariables {
   limit: number;
   offset: number;
@@ -14,7 +19,7 @@ export enum TokenType {
   none = 'None', // not on sale
 }
 
-export interface Token {
+export interface ViewToken {
   id: number;
   token_id: number;
   collection_id: number;
@@ -28,7 +33,7 @@ export interface Token {
 }
 
 export interface TokensData {
-  view_tokens: Token[];
+  view_tokens: ViewToken[];
   view_tokens_aggregate: {
     aggregate: {
       count: number;
@@ -58,7 +63,7 @@ export interface TokensFilter {
 export type useGraphQlTokensProps = {
   pageSize: number;
   filter?: TokensFilter;
-  sorting?: { field: keyof Token; direction: 'asc' | 'desc' };
+  sorting?: { field: keyof ViewToken; direction: 'asc' | 'desc' };
 };
 
 export type FetchMoreTokensOptions = {
