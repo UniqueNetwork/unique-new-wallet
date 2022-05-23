@@ -1,4 +1,4 @@
-import { useContext, useState, VFC } from 'react';
+import { useContext, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
@@ -15,7 +15,7 @@ export interface NFTsComponentProps {
 const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
   const { selectedAccount } = useContext(AccountContext);
   const { collections, collectionsLoading } = useGraphQlCollectionsByAccount(
-     selectedAccount?.address ?? null,
+    selectedAccount?.address ?? null,
     !selectedAccount?.address,
   );
   const { tokens, tokensCount, tokensLoading, fetchPageData } = useGraphQlAccountTokens(
