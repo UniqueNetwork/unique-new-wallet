@@ -28,7 +28,6 @@ export const Welcome = styled(WelcomeComponent)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
   font-family: var(--prop-font-family);
 
   .header-text {
@@ -40,6 +39,7 @@ export const Welcome = styled(WelcomeComponent)`
 
   .description {
     padding: 20px;
+    text-align: center;
 
     .text {
       font-family: var(--prop-font-family);
