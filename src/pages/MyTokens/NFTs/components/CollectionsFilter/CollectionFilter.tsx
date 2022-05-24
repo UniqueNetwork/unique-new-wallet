@@ -37,7 +37,7 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   return (
     <div className={classNames('collections-filter', className)}>
       <Accordion expanded title="Collections">
-        {collections?.map((collection: any) => (
+        {collections?.map((collection) => (
           <CollectionFilterItem
             key={collection.collection_id}
             collectionName={collection.collection_name}
