@@ -45,7 +45,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           </AddressWrapper>
         </ContentRow>
         <ContentRow>
-          // TODO: rewrite to component's props [UI-108]
+          {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Partial seed
             <Tooltip
@@ -63,7 +63,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <InputText value={shortSeed} disabled={true} />
         </ContentRow>
         <ContentRow>
-          // TODO: rewrite to component's props [UI-108]
+          {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Keypair type
             <Tooltip
@@ -81,7 +81,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <InputText value={defaultPairType} disabled={true} />
         </ContentRow>
         <ContentRow>
-          // TODO: rewrite to component's props [UI-108]
+          {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Derivation path
             <Tooltip

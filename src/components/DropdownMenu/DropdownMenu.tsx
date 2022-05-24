@@ -69,7 +69,7 @@ const DropdownMenuDropdown = styled.div<{ isOpen: boolean }>`
   top: calc(100% + 4px);
   flex-direction: column;
   background: var(--color-additional-light);
-  box-shadow: 0px 2px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
   border-radius: 4px;
   overflow: hidden;
 `;

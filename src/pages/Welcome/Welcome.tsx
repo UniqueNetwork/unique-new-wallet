@@ -65,7 +65,7 @@ export const Welcome = styled(WelcomeComponent)`
     }
   }
 
-  // TODO: [UI-109] resolve zIndex all popping elements
+  // TODO: [UI-109] resolve zIndex for all popping elements
   .unique-modal-wrapper {
     z-index: 49;
   }

@@ -1,14 +1,13 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Text } from '@unique-nft/ui-kit';
-import { TableColumnProps, TableRow } from '@unique-nft/ui-kit/dist/cjs/types';
+import { Text, TableColumnProps, TableRowProps } from '@unique-nft/ui-kit';
 
 import Loading from '../Loading';
 
 interface MobileTableProps {
   className?: string;
   columns?: TableColumnProps[];
-  data?: TableRow[];
+  data?: TableRowProps[];
   loading?: boolean;
 }
 
@@ -29,11 +28,12 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
                 ) : (
                   <Text color={'grey-500'}>{`${column?.title || ''}`}</Text>
                 )}
-                {column.render && (
-                  <>{column.render(item[column.field as keyof TableRow])}</>
-                )}
-                {!column.render && (
-                  <Text>{item[column.field as keyof TableRow]?.toString() || ''}</Text>
+                {column.render ? (
+                  <>{column.render(item[column.field as keyof TableRowProps])}</>
+                ) : (
+                  <Text>
+                    {item[column.field as keyof TableRowProps]?.toString() || ''}
+                  </Text>
                 )}
               </div>
             ))}
