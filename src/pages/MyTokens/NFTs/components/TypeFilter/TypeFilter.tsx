@@ -9,7 +9,7 @@ export interface TypeFilterComponentProps {
 
 const options = [
   {
-    value: 'All collections',
+    value: 'All NFTs',
   },
   {
     value: 'Created by me',

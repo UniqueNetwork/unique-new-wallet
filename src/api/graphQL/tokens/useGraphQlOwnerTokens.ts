@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { ViewToken } from './types';
 
+type Direction = 'asc' | 'desc';
+type FilterType = 'all' | 'purchased' | 'createdByMe';
+
 type AdditionalFilters = {
   collectionIds?: number[];
+  filterType?: FilterType;
 };
 
 type Pagination = {
@@ -12,15 +16,13 @@ type Pagination = {
   limit: number;
 };
 
-type Direction = 'asc' | 'desc';
-
 type Options = {
   direction?: Direction;
   pagination?: Pagination;
   skip?: boolean;
 };
 
-type AccountTokensResponse = {
+type OwnerTokensResponse = {
   view_tokens: ViewToken[];
   view_tokens_aggregate: {
     aggregate: {
@@ -29,8 +31,8 @@ type AccountTokensResponse = {
   };
 };
 
-const TOKENS_QUERY = gql`
-  query GetGraphQlAccountTokens(
+const OWNER_TOKENS_QUERY = gql`
+  query GetGraphQlOwnerTokens(
     $where: view_tokens_bool_exp
     $offset: Int
     $limit: Int
@@ -56,15 +58,24 @@ const TOKENS_QUERY = gql`
   }
 `;
 
-export const useGraphQlAccountTokens = (
-  accountAddress: string | null,
+const filtersByType = (owner: string | undefined, filterType: FilterType) =>
+  ((
+    {
+      all: { _or: [{ owner: { _eq: owner } }, { collection_owner: { _eq: owner } }] },
+      purchased: { _and: [{ owner: { _eq: owner } }, { is_sold: { _eq: true } }] },
+      createdByMe: { collection_owner: { _eq: owner } },
+    } as Record<FilterType, OperationVariables>
+  )[filterType]);
+
+export const useGraphQlOwnerTokens = (
+  owner: string | undefined,
   filters: AdditionalFilters,
   options?: Options,
 ) => {
-  const { collectionIds } = filters;
+  const { collectionIds, filterType } = filters;
   const { direction, pagination, skip } = options ?? {
     direction: 'desc',
-    skip: false,
+    skip: !owner,
   };
   const { defaultPage, limit } = pagination ?? { defaultPage: 0, limit: 10 };
 
@@ -74,9 +85,8 @@ export const useGraphQlAccountTokens = (
     data: response,
     loading: tokensLoading,
     error,
-  } = useQuery<AccountTokensResponse>(TOKENS_QUERY, {
-    skip,
-    displayName: 'TESTTEST',
+  } = useQuery<OwnerTokensResponse>(OWNER_TOKENS_QUERY, {
+    skip: skip || !owner,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-and-network',
     notifyOnNetworkStatusChange: true,
@@ -85,9 +95,7 @@ export const useGraphQlAccountTokens = (
       offset: limit * page,
       direction,
       where: {
-        owner: {
-          _eq: accountAddress,
-        },
+        ...filtersByType(owner, filterType ?? 'all'),
         collection_id: {
           _in: collectionIds,
         },

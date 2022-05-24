@@ -1,10 +1,12 @@
-import { useContext, useState, VFC } from 'react';
+import { useContext, useEffect, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
-import AccountContext from '@app/account/AccountContext';
-import { useGraphQlAccountTokens } from '@app/api/graphQL/tokens';
-import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
+import { useAccounts } from '@app/hooks';
+import {
+  useGraphQlOwnerTokens,
+  useGraphQlCollectionsByTokensOwner,
+} from '@app/api/graphQL/tokens';
 
 import { CollectionsFilter, NFTsList, TypeFilter } from './components';
 
@@ -13,13 +15,18 @@ export interface NFTsComponentProps {
 }
 
 const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
-  const { selectedAccount } = useContext(AccountContext);
-  const { collections, collectionsLoading } = useGraphQlCollectionsByAccount(
-     selectedAccount?.address ?? null,
+  // this is temporal solution we need to discuss next steps
+  const { selectedAccount, fetchAccounts } = useAccounts();
+  useEffect(() => {
+    void fetchAccounts();
+  }, [fetchAccounts]);
+
+  const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
+    selectedAccount?.address,
     !selectedAccount?.address,
   );
-  const { tokens, tokensCount, tokensLoading, fetchPageData } = useGraphQlAccountTokens(
-    selectedAccount?.address ?? null,
+  const { tokens, tokensCount, tokensLoading, fetchPageData } = useGraphQlOwnerTokens(
+    selectedAccount?.address,
     { collectionIds: collections?.map((c) => c.collection_id) },
     { skip: !selectedAccount?.address || collectionsLoading },
   );
