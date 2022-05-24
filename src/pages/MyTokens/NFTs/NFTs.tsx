@@ -18,7 +18,7 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
   // this is temporal solution we need to discuss next steps
   const { selectedAccount, fetchAccounts } = useAccounts();
   useEffect(() => {
-    void fetchAccounts();
+    fetchAccounts();
   }, [fetchAccounts]);
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(

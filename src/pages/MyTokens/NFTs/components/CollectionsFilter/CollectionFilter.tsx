@@ -34,8 +34,6 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
     }
   };
 
-  console.log(collections);
-
   return (
     <div className={classNames('collections-filter', className)}>
       <Accordion expanded title="Collections">
