@@ -64,4 +64,9 @@ export const Welcome = styled(WelcomeComponent)`
       align-items: center;
     }
   }
+
+  // TODO: [UI-109] resolve zIndex all popping elements
+  .unique-modal-wrapper {
+    z-index: 49;
+  }
 `;
