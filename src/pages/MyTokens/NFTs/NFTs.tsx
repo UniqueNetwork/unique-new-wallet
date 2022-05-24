@@ -1,4 +1,4 @@
-import { useContext, useEffect, VFC } from 'react';
+import { useEffect, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
