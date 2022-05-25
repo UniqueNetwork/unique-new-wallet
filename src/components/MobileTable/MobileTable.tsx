@@ -24,16 +24,12 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
             {columns?.map((column) => (
               <div key={`column-${column.field || ''}`}>
                 {typeof column?.title === 'object' ? (
-                  <>{column.title}</>
+                  column.title
                 ) : (
-                  <Text color={'grey-500'}>{`${column?.title || ''}`}</Text>
+                  <Text color={'grey-500'}>${column?.title}</Text>
                 )}
-                {column.render ? (
-                  <>{column.render(item[column.field as keyof TableRowProps])}</>
-                ) : (
-                  <Text>
-                    {item[column.field as keyof TableRowProps]?.toString() || ''}
-                  </Text>
+                {column.render?.(item[column.field as keyof TableRowProps]) || (
+                  <Text>${item[column.field as keyof TableRowProps]}</Text>
                 )}
               </div>
             ))}
