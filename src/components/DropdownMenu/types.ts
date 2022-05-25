@@ -1,4 +1,4 @@
-import { ButtonProps } from '@unique-nft/ui-kit/dist/cjs/types';
+import { ButtonProps } from '@unique-nft/ui-kit';
 import { ReactNode } from 'react';
 
 export type DropdownMenuProps = Omit<ButtonProps, 'onClick'> & {

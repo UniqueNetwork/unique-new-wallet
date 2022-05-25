@@ -6,8 +6,8 @@ import React, {
   useState,
 } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Select, Tabs } from '@unique-nft/ui-kit';
-import { IconProps, SelectOptionProps } from '@unique-nft/ui-kit/dist/cjs/types';
+import { Button, Select, Tabs, IconProps } from '@unique-nft/ui-kit';
+import { SelectOptionProps } from '@unique-nft/ui-kit/dist/cjs/types';
 
 import { FilterState } from './types';
 

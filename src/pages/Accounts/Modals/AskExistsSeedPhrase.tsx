@@ -3,6 +3,15 @@ import styled from 'styled-components/macro';
 import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
 
 import { addressFromSeed } from '@app/utils';
+import {
+  AddressWrapper,
+  ButtonGroup,
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+  StepsTextStyled,
+  TextWarning,
+} from '@app/pages/Accounts/Modals/commonComponents';
 
 import { TCreateAccountBodyModalProps } from './types';
 import { defaultPairType, derivePath } from './CreateAccount';
@@ -32,84 +41,57 @@ export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish
 
   return (
     <>
-      <AddressWrapper>
-        <Avatar size={24} src={DefaultAvatar} />
-        <Text>{address}</Text>
-      </AddressWrapper>
-      <InputSeedWrapper>
-        <SeedInput value={seed} onChange={onSeedChange} />
-      </InputSeedWrapper>
-      <TextStyled color="additional-warning-500" size="s">
-        Ensure that you keep this seed in a safe place. Anyone with access to it can
-        re-create the account and gain full access to it.
-      </TextStyled>
-      <ConfirmWrapperRow>
-        <Checkbox
-          label={'I have saved my mnemnic seed safely'}
-          checked={confirmSeedSaved}
-          size={'m'}
-          onChange={setConfirmSeedSaved}
-        />
-      </ConfirmWrapperRow>
-      <ButtonWrapper>
-        <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
-        <Button
-          disabled={!address || !confirmSeedSaved}
-          role="primary"
-          title="Next"
-          onClick={onNextClick}
-        />
-      </ButtonWrapper>
+      <ModalContent>
+        <ContentRow>
+          <AddressWrapper>
+            <Avatar size={24} src={DefaultAvatar} />
+            <Text>{address}</Text>
+          </AddressWrapper>
+        </ContentRow>
+        <ContentRow>
+          <SeedInput value={seed} onChange={onSeedChange} />
+        </ContentRow>
+        <ContentRow>
+          <TextWarning color="additional-warning-500" size="s">
+            Ensure that you keep this seed in a safe place. Anyone with access to it can
+            re-create the account and gain full access to it.
+          </TextWarning>
+        </ContentRow>
+        <ContentRow>
+          <Checkbox
+            label="I have saved my mnemnic seed safely"
+            checked={confirmSeedSaved}
+            size="m"
+            onChange={setConfirmSeedSaved}
+          />
+        </ContentRow>
+      </ModalContent>
+      <ModalFooter>
+        <StepsTextStyled size="m">Step 1/3</StepsTextStyled>
+        <ButtonGroup>
+          <Button
+            disabled={!address || !confirmSeedSaved}
+            role="primary"
+            title="Next"
+            onClick={onNextClick}
+          />
+        </ButtonGroup>
+      </ModalFooter>
     </>
   );
 };
 
-const AddressWrapper = styled.div`
-  display: flex;
-  column-gap: calc(var(--prop-gap) / 2);
-  margin: calc(var(--prop-gap) * 2) 0;
-  border: 1px solid var(--color-grey-300);
-  border-radius: 4px;
-  padding: 20px var(--prop-gap);
-`;
-
-const InputSeedWrapper = styled.div`
-  border: 1px solid var(--color-grey-300);
-  border-radius: 4px;
-  padding: var(--prop-gap);
-  display: flex;
-  margin-bottom: var(--prop-gap);
-`;
-
 const SeedInput = styled.textarea`
-  margin-bottom: 32px;
-  width: 100%;
-  border: none;
-  height: auto;
-  resize: none;
-  outline: 0px none transparent;
-`;
-
-const TextStyled = styled(Text)`
   box-sizing: border-box;
-  display: flex;
-  padding: 8px 16px;
-  margin: calc(var(--prop-gap) * 1.5) 0;
-  border-radius: 4px;
-  background-color: var(--color-additional-warning-100);
+  border: 1px solid var(--color-grey-300);
+  border-radius: var(--prop-border-radius);
   width: 100%;
-`;
+  height: auto;
+  padding: var(--prop-gap);
+  outline: none;
+  resize: none;
 
-const ConfirmWrapperRow = styled.div`
-  display: flex;
-  margin-bottom: calc(var(--prop-gap) * 1.5);
-`;
-
-const StepsTextStyled = styled(Text)`
-  flex-grow: 1;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
+  &:focus {
+    border: 1px solid var(--color-grey-400);
+  }
 `;

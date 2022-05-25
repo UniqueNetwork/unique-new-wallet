@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Button, Text, InputText, Avatar } from '@unique-nft/ui-kit';
-import { TableColumnProps } from '@unique-nft/ui-kit/dist/cjs/types';
+import { Avatar, Button, InputText, TableColumnProps, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { useAccounts } from '@app/hooks';
