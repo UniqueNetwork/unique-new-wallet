@@ -1,12 +1,12 @@
-import { useEffect, VFC } from 'react';
+import { useContext, useEffect, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
-import { useAccounts } from '@app/hooks';
 import {
   useGraphQlOwnerTokens,
   useGraphQlCollectionsByTokensOwner,
 } from '@app/api/graphQL/tokens';
+import AccountContext from '@app/account/AccountContext';
 
 import { CollectionsFilter, NFTsList, TypeFilter } from './components';
 
@@ -16,10 +16,7 @@ export interface NFTsComponentProps {
 
 const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
   // this is temporal solution we need to discuss next steps
-  const { selectedAccount, fetchAccounts } = useAccounts();
-  useEffect(() => {
-    fetchAccounts();
-  }, [fetchAccounts]);
+  const { selectedAccount } = useContext(AccountContext);
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
     selectedAccount?.address,
