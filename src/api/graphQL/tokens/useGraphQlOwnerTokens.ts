@@ -72,7 +72,7 @@ export const useGraphQlOwnerTokens = (
   filters: AdditionalFilters,
   options?: Options,
 ) => {
-  const { collectionIds, filterType } = filters;
+  const { collectionIds, filterType = 'all' } = filters;
   const { direction, pagination, skip } = options ?? {
     direction: 'desc',
     skip: !owner,
@@ -95,7 +95,7 @@ export const useGraphQlOwnerTokens = (
       offset: limit * page,
       direction,
       where: {
-        ...filtersByType(owner, filterType ?? 'all'),
+        ...filtersByType(owner, filterType),
         collection_id: {
           _in: collectionIds,
         },
