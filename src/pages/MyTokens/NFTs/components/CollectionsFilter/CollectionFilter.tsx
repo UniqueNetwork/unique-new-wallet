@@ -1,16 +1,15 @@
 import { VFC, useState } from 'react';
-import styled from 'styled-components';
 import classNames from 'classnames';
+import styled from 'styled-components';
 import { Accordion } from '@unique-nft/ui-kit';
 
-import { Collection } from '@app/api/graphQL';
-import { getCollectionCoverUri } from '@app/utils';
+import { CollectionPreview } from '@app/api';
 
 import { CollectionFilterItem } from './CollectionFilterItem';
 
 export interface CollectionsFilterComponentProps {
   className?: string;
-  collections?: Collection[];
+  collections?: CollectionPreview[];
 }
 
 export interface Filter {
@@ -25,8 +24,6 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   className,
   collections,
 }) => {
-  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
-
   const onChangeCollectionsFilter = (collectionId: string) => {
     let newIds: string[] = [];
 
@@ -43,9 +40,9 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
         {collections?.map((collection) => (
           <CollectionFilterItem
             key={collection.collection_id}
-            collectionName={collection.name}
+            collectionName={collection.collection_name}
             collectionId={collection.collection_id?.toString()}
-            collectionCover={getCollectionCoverUri(collection)}
+            collectionCover="" // waiting hasura rework
             onChangeCollectionsFilter={onChangeCollectionsFilter}
           />
         ))}

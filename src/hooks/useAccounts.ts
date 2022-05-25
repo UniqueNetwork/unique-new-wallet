@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { KeypairType } from '@polkadot/util-crypto/types';
@@ -6,11 +6,11 @@ import { KeypairType } from '@polkadot/util-crypto/types';
 import { sleep } from '@app/utils';
 import { DefaultAccountKey } from '@app/account/constants';
 
-import { Account, AccountSigner } from '../account/AccountContext';
 import { getSuri, PairType } from '../utils/seedUtils';
+import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
 
 export const useAccounts = () => {
-  /* const {
+  const {
     accounts,
     selectedAccount,
     isLoading,
@@ -21,18 +21,18 @@ export const useAccounts = () => {
     setIsLoading,
     setFetchAccountsError,
     showSignDialog,
-  } = useContext(AccountContext); */
+  } = useContext(AccountContext);
 
   // TODO: move fetching accounts and balances into context
 
-  const [fetchAccountsError, setFetchAccountsError] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [accounts, setAccounts] = useState<Account[]>();
-  const [selectedAccount, setSelectedAccount] = useState<Account>();
+  // const [fetchAccountsError, setFetchAccountsError] = useState<string>();
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [accounts, setAccounts] = useState<Account[]>();
+  // const [selectedAccount, setSelectedAccount] = useState<Account>();
 
-  const changeAccount = useCallback((account: Account) => {
-    setSelectedAccount(account);
-  }, []);
+  // const changeAccount = useCallback((account: Account) => {
+  //   setSelectedAccount(account);
+  // }, []);
 
   const getExtensionAccounts = useCallback(async () => {
     // this call fires up the authorization popup
