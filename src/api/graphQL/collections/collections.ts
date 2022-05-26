@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client';
+import { ApolloError, gql, useQuery } from '@apollo/client';
 import { useCallback } from 'react';
 
 import {
@@ -6,6 +6,7 @@ import {
   CollectionsVariables,
   FetchMoreCollectionsOptions,
   useGraphQlCollectionsProps,
+  ViewCollection,
 } from './types';
 
 const collectionsQuery = gql`
@@ -22,7 +23,12 @@ const collectionsQuery = gql`
       offchain_schema
       owner
       token_limit
+      tokens_count
       token_prefix
+      date_of_creation
+      schema_version
+      sponsorship
+      owner_can_destroy
     }
     view_collections_aggregate {
       aggregate {
@@ -93,7 +99,16 @@ export const useGraphQlCollections = ({
   };
 };
 
-export const useGraphQlCollection = (collectionId: string) => {
+export type QLCollectionResponse = {
+  collection: ViewCollection | undefined;
+  fetchCollectionsError: ApolloError | undefined;
+  isCollectionFetching: boolean;
+};
+
+export const useGraphQlCollection = (
+  collectionId: string | undefined,
+  filter?: Record<string, unknown>,
+): QLCollectionResponse => {
   const {
     data,
     error: fetchCollectionsError,
@@ -103,15 +118,16 @@ export const useGraphQlCollection = (collectionId: string) => {
     // Used for first execution
     nextFetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
+    skip: !collectionId,
     variables: {
       limit: 1,
       offset: 0,
-      where: { collection_id: { _eq: collectionId } },
+      where: { collection_id: { _eq: collectionId }, ...filter },
     },
   });
 
   return {
-    collection: data?.view_collections[0] || undefined,
+    collection: data?.view_collections[0],
     fetchCollectionsError,
     isCollectionFetching,
   };

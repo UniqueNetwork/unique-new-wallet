@@ -9,7 +9,7 @@ class BaseApi {
 
   constructor() {
     this.http = axios.create({
-      baseURL: config.uniqueApiUrl,
+      baseURL: config.uniqueRestApiUrl,
       paramsSerializer: serializeToQuery,
     });
   }

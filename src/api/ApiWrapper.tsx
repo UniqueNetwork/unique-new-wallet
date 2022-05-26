@@ -8,7 +8,7 @@ import { GqlClient } from './graphQL/gqlClient';
 import { ApiContextProps, ApiProvider } from './ApiContext';
 import config from '../config';
 
-const gqlClient = new GqlClient('');
+const gqlClient = new GqlClient(config.hasuraApiUrl || '');
 
 interface ChainProviderProps {
   children: React.ReactNode;
