@@ -4,14 +4,21 @@ export const getSponsorShip = (
   if (!sponsorship) {
     return null;
   }
-  const objectSponsorship = JSON.parse(sponsorship);
-  for (const key in objectSponsorship) {
-    if (['unconfirmed', 'confirmed'].includes(key)) {
+  try {
+    const objectSponsorship = JSON.parse(sponsorship);
+    const sponsorshipValue = objectSponsorship.confirmed ?? objectSponsorship.unconfirmed;
+
+    if (sponsorshipValue) {
       return {
-        isConfirmed: key === 'confirmed',
-        value: objectSponsorship[key],
+        // eslint-disable-next-line no-prototype-builtins
+        isConfirmed: objectSponsorship.hasOwnProperty('confirmed'),
+        value: sponsorshipValue,
       };
     }
+
+    return null;
+  } catch (e) {
+    console.error(e);
+    return null;
   }
-  return null;
 };
