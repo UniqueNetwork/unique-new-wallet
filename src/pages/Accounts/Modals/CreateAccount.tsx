@@ -1,9 +1,9 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Heading, Modal } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
 
 import { AskCredentialsModal, AskSeedPhrase } from '@app/pages';
 import { useAccounts } from '@app/hooks';
+import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 
 import {
   TCreateAccountModalProps,
@@ -71,9 +71,9 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-      <Content>
+      <ModalHeader>
         <Heading size="2">Add an account via seed phrase</Heading>
-      </Content>
+      </ModalHeader>
       <ModalBodyComponent
         accountProperties={accountProperties}
         onFinish={onStageFinish}
@@ -82,9 +82,3 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
     </Modal>
   );
 };
-
-const Content = styled.div`
-  && h2 {
-    margin-bottom: 0;
-  }
-`;
