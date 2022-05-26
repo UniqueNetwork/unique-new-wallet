@@ -29,7 +29,7 @@ const getAccountsColumns = ({
 }: AccountsColumnsProps): TableColumnProps[] => [
   {
     title: 'Account',
-    width: '36%',
+    width: '40%',
     field: 'address',
     render(address: string, rowData: Account) {
       return (
@@ -45,7 +45,7 @@ const getAccountsColumns = ({
   },
   {
     title: 'Balance',
-    width: '33%',
+    width: '20%',
     field: 'balance',
     render(balance) {
       const { KSM } = balance || {};
@@ -78,7 +78,7 @@ const getAccountsColumns = ({
   },
   {
     title: 'Actions',
-    width: '15%',
+    width: '25%',
     field: 'actions',
     render(address) {
       return (
@@ -143,7 +143,7 @@ export const Accounts = () => {
   const totalBalance = useMemo(
     () =>
       accounts.reduce<BN>(
-        (acc, { balance }) => (balance ? acc.add(new BN(balance)) : acc),
+        (acc, account) => (account?.balance ? acc.add(new BN(account?.balance)) : acc),
         new BN(0),
       ),
     [accounts],

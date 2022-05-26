@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { Text, Heading, Dropdown, SelectOptionProps } from '@unique-nft/ui-kit';
+import { Text, Heading, Dropdown, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { BN } from '@polkadot/util';
 
 import { formatAmount } from '@app/utils';
-import { Icon } from '@app/components';
 
-import Replace from '../../../static/icons/replace.svg';
 import usd from '../../../static/icons/usd-currency.svg';
 import cny from '../../../static/icons/cny-currency.svg';
 import rub from '../../../static/icons/rub-currency.svg';
@@ -63,7 +61,7 @@ export const AccountsTotalBalance = ({ balance }: AccountsTotalBalanceProps) => 
         >
           <CurrencyOption title={currency.title} icon={currency.icon} />
         </Dropdown>
-        <Icon size={24} path={Replace} />
+        <Icon size={24} name="reload" />
       </AccountsTotalBalanceValue>
     </AccountsTotalBalanceWrapper>
   );
@@ -85,7 +83,7 @@ const AccountsTotalBalanceValue = styled.div`
 
 const CurrencyOption = ({ title, icon }: Pick<ICurrency, 'title' | 'icon'>) => (
   <CurrencyOptionWrapper>
-    <Icon size={24} path={icon} />
+    <Icon size={24} file={icon} />
     <Text>{title}</Text>
   </CurrencyOptionWrapper>
 );

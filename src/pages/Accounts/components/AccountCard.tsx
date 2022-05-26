@@ -1,10 +1,9 @@
 import React from 'react';
-import { Text } from '@unique-nft/ui-kit';
+import { Text, Icon } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { shortcutText } from '@app/utils';
 import { Avatar } from '@app/components/Avatar/Avatar';
-import { Icon } from '@app/components';
 
 import CopyIcon from '../../../static/icons/copy.svg';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
@@ -41,7 +40,7 @@ const AccountCard = ({
             {canCopy && (
               <a onClick={onCopyAddress(accountAddress || '')}>
                 <CopyIconWrapper>
-                  <Icon path={CopyIcon} />
+                  <Icon name="copy" size={16} />
                 </CopyIconWrapper>
               </a>
             )}
@@ -60,6 +59,7 @@ const AccountInfoWrapper = styled.div`
   span {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
@@ -69,10 +69,8 @@ const CopyIconWrapper = styled.div`
     height: 24px;
     color: var(--color-grey-400);
     padding: 0;
+    margin-left: calc(var(--prop-gap) / 4);
     cursor: copy;
-    svg {
-      transform: translateY(-2px);
-    }
   }
 `;
 

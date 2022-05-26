@@ -1,10 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
-
-import { Icon } from '@app/components';
-
-import LogOut from '../../../static/icons/log-out.svg';
+import { Icon, Text } from '@unique-nft/ui-kit';
 
 interface AccountContextMenuProps {
   onForgetWalletClick(): void;
@@ -13,7 +9,7 @@ interface AccountContextMenuProps {
 export const AccountContextMenu = ({ onForgetWalletClick }: AccountContextMenuProps) => (
   <>
     <ContextMenuItem onClick={onForgetWalletClick}>
-      <Icon size={24} path={LogOut} />
+      <Icon size={24} name={'logout'} />
       <Text>Forget wallet</Text>
     </ContextMenuItem>
   </>
