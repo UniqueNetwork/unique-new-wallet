@@ -1,58 +1,98 @@
-import { Heading, Text, InputText, Checkbox, Button } from '@unique-nft/ui-kit';
+import { Heading, Text, InputText, Checkbox, Button, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
+import { useFormik } from 'formik';
 
 import { PagePaper } from '@app/components';
+import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
+import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 
-const CollectionSettings = () => (
-  <PagePaper>
-    <SettingsContainer>
-      <Heading size="3">Advanced settings</Heading>
-      <Text>
-        These settings are intended for users who want to place their collection on the
-        marketplace.
-      </Text>
+const CollectionSettings = () => {
+  const { collection, isCollectionFetching } = useCollectionContext() || {};
 
-      <SettingsInput
-        // TODO: icon tooltip
-        label="Collection sponsor address"
-        additionalText="The designated sponsor should approve the request"
-        id="address"
-      />
+  const { token_limit, owner_can_destroy, sponsorship = null } = collection || {};
+  const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
 
-      <Heading size="4">One-time install options</Heading>
-      <Text>
-        Please note that once installed, these settings cannot be changed later. If you do
-        not change them now, you can change them once on the Settings tab in the
-        collection detail card.
-      </Text>
+  const form = useFormik({
+    initialValues: {
+      address: getSponsorShip(sponsorship)?.value || '',
+      limit: token_limit || 0,
+      ownerCanDestroy,
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
 
-      <SettingsInput
-        // TODO: icon tooltip
-        label="Token limit"
-        additionalText="Unlimited by default"
-        id="limit"
-      />
+  return (
+    <PagePaper>
+      <SettingsContainer>
+        {isCollectionFetching ? (
+          <Loader />
+        ) : (
+          <form onSubmit={form.handleSubmit}>
+            <Heading size="3">Advanced settings</Heading>
+            <Text>
+              These settings are intended for users who want to place their collection on
+              the marketplace.
+            </Text>
 
-      <Checkbox
-        checked={true}
-        // TODO: icon tooltip
-        label="Owner can burn collection"
-        onChange={() => {
-          console.log('checked');
-        }}
-      />
+            <SettingsInput
+              // TODO: icon tooltip
+              label="Collection sponsor address"
+              additionalText="The designated sponsor should approve the request"
+              id="address"
+              value={form.values.address}
+              onChange={(value) => {
+                form.setFieldValue('address', value);
+              }}
+            />
 
-      <ButtonsWrapper>
-        <Button title="Save changes" disabled={true} />
-        <Button
-          title="Burn collection"
-          iconLeft={{ size: 15, name: 'burn', color: 'var(--color-coral-500)' }}
-          role="ghost"
-        />
-      </ButtonsWrapper>
-    </SettingsContainer>
-  </PagePaper>
-);
+            <Heading size="4">One-time install options</Heading>
+            <Text>
+              Please note that once installed, these settings cannot be changed later. If
+              you do not change them now, you can change them once on the Settings tab in
+              the collection detail card.
+            </Text>
+
+            <SettingsInput
+              // TODO: icon tooltip
+              label="Token limit"
+              additionalText="Unlimited by default"
+              id="limit"
+              value={form.values.limit.toString()}
+              role="number"
+              onChange={(value) => {
+                form.setFieldValue('limit', value);
+              }}
+            />
+
+            <Checkbox
+              checked={form.values.ownerCanDestroy}
+              // TODO: icon tooltip
+              label="Owner can burn collection"
+              disabled={!ownerCanDestroy}
+              onChange={(value) => {
+                form.setFieldValue('ownerCanDestroy', value);
+              }}
+            />
+
+            <ButtonsWrapper>
+              <Button title="Save changes" type="submit" />
+              {ownerCanDestroy && (
+                <Button
+                  title="Burn collection"
+                  iconLeft={{ size: 15, name: 'burn', color: 'var(--color-coral-500)' }}
+                  role="ghost"
+                />
+              )}
+            </ButtonsWrapper>
+          </form>
+        )}
+      </SettingsContainer>
+    </PagePaper>
+  );
+};
 
 const SettingsContainer = styled.div`
   max-width: 756px;
