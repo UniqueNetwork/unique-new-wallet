@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-  Dropdown,
   Button,
+  Dropdown,
+  Icon,
   InputText,
   TableColumnProps,
   Text,
-  Icon,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { BN } from '@polkadot/util';
@@ -57,7 +57,9 @@ const getAccountsColumns = ({
       return (
         <BalancesWrapper>
           <Text>{`${formatKusamaBalance(KSM || 0)} ${tokenSymbol}`}</Text>
-          <Text color="grey-500" size="s">all transferable</Text>
+          <Text color="grey-500" size="s">
+            all transferable
+          </Text>
         </BalancesWrapper>
       );
     },
@@ -84,8 +86,8 @@ const getAccountsColumns = ({
   {
     title: 'Actions',
     width: '25%',
-    field: 'actions',
-    render(address) {
+    field: 'address',
+    render(address: string) {
       return (
         <ActionsWrapper>
           <Button title="Send" onClick={onShowSendFundsModal(address)} />
@@ -160,7 +162,7 @@ export const Accounts = () => {
         <AccountsTotalBalance balance={totalBalance} />
         <SearchInputWrapper>
           <SearchInputStyled
-            placeholder={'Search'}
+            placeholder="Search"
             iconLeft={{ name: 'magnify', size: 18 }}
             onChange={onSearchStringChange}
           />
@@ -199,6 +201,7 @@ const AccountsPageContent = styled.div`
   margin-top: calc(var(--prop-gap) * 2);
   padding: 0 calc(var(--prop-gap) * 2);
   min-height: 679px;
+
   & > div {
     width: 100%;
   }
@@ -242,9 +245,11 @@ const ActionsWrapper = styled.div`
   align-items: center;
   column-gap: var(--prop-gap);
   padding: 0 !important;
+
   & > div.unique-dropdown {
     padding: 0;
     cursor: pointer;
+
     & > div.dropdown-wrapper {
       padding: 0;
     }
