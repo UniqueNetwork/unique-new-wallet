@@ -1,11 +1,15 @@
 import React, { VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { format } from 'date-fns';
-import { Avatar } from '@unique-nft/ui-kit';
+import { format, addSeconds } from 'date-fns';
+import { Avatar, Loader } from '@unique-nft/ui-kit';
 
 import { AccountLinkComponent, CollectionScanLink } from '@app/components';
 import { PaddedBlock } from '@app/styles/styledVariables';
+import noCollections from '@app/static/icons/no-collections.svg';
+import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
+import { getSponsorShip } from '@app/pages/CollectionPage/utils';
+import { existValue } from '@app/utils';
 
 interface CollectionDescriptionComponentProps {
   className?: string;
@@ -16,55 +20,77 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
   className,
   collectionId,
 }) => {
-  // todo - fetch from api
+  const { collection, isCollectionFetching } = useCollectionContext() || {};
+  const {
+    offchain_schema,
+    schema_version,
+    description,
+    token_prefix,
+    token_limit,
+    tokens_count,
+    sponsorship = null,
+    date_of_creation,
+  } = collection || {};
+
+  const sponsor = getSponsorShip(sponsorship);
+
   return (
     <div className={classNames('collection-description', className)}>
       <CollectionVerticalCard>
-        <Row>
-          <Avatar
-            src="https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e"
-            type="circle"
-          />
-          <Badge>ID: {collectionId}</Badge>
-        </Row>
-        <Row>
-          <span>
-            items: <strong>800</strong>
-          </span>
-          <span>
-            Symbol: <strong>Chel</strong>
-          </span>
-        </Row>
-        <Row>
-          <span>
-            Sponsor:{' '}
-            <AccountLinkComponent value="5DM1n2TnsRcVHQHt2FVkreztcJr9ghqdq6jsmxupgJRiT3m7" />
-          </span>
-        </Row>
-        <Row>
-          <span>
-            Token limit: <strong>20 000</strong>
-          </span>
-        </Row>
-        <Row>
-          <span>
-            Date of creation:{' '}
-            <strong>
-              {format(
-                new Date(new Date().toISOString().slice(0, -1)),
-                'MMMM, d, yyyy, HH:mm:ss',
-              )}{' '}
-              UTC
-            </strong>
-          </span>
-        </Row>
-        <Description>
-          Adopt yourself a Duckie and join The Flock.Each Duck is a 1 of 1
-          programmatically generated with a completely unique combination of traits. No
-          two are identical. In total there are 5000 Duckies. Stay up to date on drops by
-          joining the Discord and following
-        </Description>
-        <CollectionScanLink collectionId={collectionId} />
+        {isCollectionFetching ? (
+          <Loader />
+        ) : (
+          <>
+            <Row>
+              <Avatar
+                src={
+                  offchain_schema && schema_version === 'ImageURL'
+                    ? offchain_schema.replace('{id}', collectionId)
+                    : noCollections
+                }
+                type="circle"
+              />
+              <Badge>ID: {collectionId}</Badge>
+            </Row>
+            <Row>
+              <span>
+                items: <strong>{tokens_count}</strong>
+              </span>
+              <span>
+                Symbol: <strong>{token_prefix}</strong>
+              </span>
+            </Row>
+            {sponsor?.isConfirmed && (
+              <Row>
+                <span>
+                  Sponsor: <AccountLinkComponent value={sponsor.value} />
+                </span>
+              </Row>
+            )}
+            {existValue(token_limit) && (
+              <Row>
+                <span>
+                  Token limit: <strong>{token_limit}</strong>
+                </span>
+              </Row>
+            )}
+            <Row>
+              <span>
+                Date of creation:{' '}
+                <strong>
+                  {date_of_creation
+                    ? `${format(
+                        addSeconds(new Date(0), date_of_creation),
+                        'MMMM, d, yyyy, HH:mm:ss',
+                      )} UTC`
+                    : 'Calculation in progress...'}
+                </strong>
+              </span>
+            </Row>
+            {description && <Description>{description}</Description>}
+            <CollectionScanLink collectionId={collectionId} />
+          </>
+        )}
       </CollectionVerticalCard>
     </div>
   );

@@ -1,3 +1,5 @@
+import { Nullable } from '@app/types';
+
 export type SchemaVersion = 'ImageURL' | 'Unique';
 
 export type VariableOnChainSchema = {
@@ -22,20 +24,12 @@ export interface ViewCollection {
   offchain_schema: string;
   owner: string;
   token_limit: number;
+  tokens_count: number;
   token_prefix: string;
-  // additional properties needed
-  tokens_aggregate?: {
-    aggregate: {
-      count: number;
-    };
-  };
-  type?: string;
-  date_of_creation?: string;
-  holders_count?: number;
-  actions_count?: number;
-  owner_can_trasfer?: string;
-  owner_can_destroy?: string;
+  date_of_creation?: number;
   schema_version?: string;
+  sponsorship: Nullable<string>;
+  owner_can_destroy?: Nullable<boolean>;
 }
 
 export interface CollectionsVariables {

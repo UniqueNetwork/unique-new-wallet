@@ -28,13 +28,23 @@ export interface ViewToken {
   owner: string;
   price: number;
   count_of_views: number;
+<<<<<<< HEAD
   
+=======
+>>>>>>> origin/develop
   collection_id: number;
   collection_name: string;
   collection_cover: string;
 }
 
+<<<<<<< HEAD
 export type CollectionPreview = Pick<ViewToken, 'collection_id' | 'collection_name' | 'collection_cover'>
+=======
+export type CollectionPreview = Pick<
+  ViewToken,
+  'collection_id' | 'collection_name' | 'collection_cover'
+>;
+>>>>>>> origin/develop
 
 export interface TokensData {
   view_tokens: ViewToken[];

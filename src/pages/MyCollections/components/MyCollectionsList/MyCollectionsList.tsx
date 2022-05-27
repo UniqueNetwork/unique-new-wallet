@@ -52,10 +52,10 @@ const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
     <div className={classNames('my-collections-list', className)}>
       <List>
         {myCollections.map((myCollection) => (
-          <Link key={myCollection.id} to={`/my-collection/${myCollection.id}`}>
+          <Link key={myCollection.id} to={`/my-collections/${myCollection.id}/nft`}>
             <CollectionLink
               count={myCollection.tokensCount}
-              id={myCollection.id}
+              // id={myCollection.id}
               image={myCollection.coverImageUrl}
               title={`${myCollection.name} [${myCollection.id}]`}
             />

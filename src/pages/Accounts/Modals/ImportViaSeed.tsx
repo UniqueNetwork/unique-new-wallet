@@ -1,15 +1,15 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Heading, Modal } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
 
 import { useAccounts } from '@app/hooks';
 import { AskCredentialsModal, AskExistsSeedPhrase } from '@app/pages';
+import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 
 import {
-  TCreateAccountModalProps,
   CreateAccountModalStages,
   TAccountProperties,
   TCreateAccountBodyModalProps,
+  TCreateAccountModalProps,
 } from './types';
 import { FinalModal } from './Final';
 import { defaultPairType, derivePath } from './CreateAccount';
@@ -69,11 +69,9 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-      <Content>
-        <Heading size="2">{`Restore an account an account from seed ${
-          stage + 1
-        }/3`}</Heading>
-      </Content>
+      <ModalHeader>
+        <Heading size="2">Add an account via seed phrase</Heading>
+      </ModalHeader>
       <ModalBodyComponent
         accountProperties={accountProperties}
         onFinish={onStageFinish}
@@ -82,9 +80,3 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
     </Modal>
   );
 };
-
-const Content = styled.div`
-  && h2 {
-    margin-bottom: 0;
-  }
-`;

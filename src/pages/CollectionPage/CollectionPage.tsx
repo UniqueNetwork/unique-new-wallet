@@ -4,7 +4,10 @@ import classNames from 'classnames';
 import { Tabs } from '@unique-nft/ui-kit';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { useGraphQlCollection } from '@app/api/graphQL/collections/collections';
+
 import { CollectionNftFilters } from './components';
+import { collectionContext } from './context';
 
 interface CollectionPageComponentProps {
   basePath: string;
@@ -25,6 +28,8 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
   const currentTabIndex = tabUrls.findIndex(
     (tab) => `${baseUrl}/${tab}` === location.pathname,
   );
+
+  const collectionData = useGraphQlCollection(collectionId);
 
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);
@@ -50,10 +55,12 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
           <></>
         </Tabs>
       </div>
-      <Tabs activeIndex={currentTabIndex}>
-        <Outlet />
-        <Outlet />
-      </Tabs>
+      <collectionContext.Provider value={collectionData}>
+        <Tabs activeIndex={currentTabIndex}>
+          <Outlet />
+          <Outlet />
+        </Tabs>
+      </collectionContext.Provider>
     </div>
   );
 };
