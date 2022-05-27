@@ -1,17 +1,15 @@
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Text } from '@unique-nft/ui-kit';
+import { Button, Icon, Text } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
 import { formatKusamaBalance, shortcutText } from '@app/utils/textUtils';
-import { Icon } from '@app/components';
 import { DeviceSize, useApi, useAccounts, useDeviceSize } from '@app/hooks';
 
 import { DropdownSelect, DropdownSelectProps } from './AccountSelect/DropdownSelect';
 import Loading from '../../Loading';
 import { Avatar } from '../../Avatar/Avatar';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
-import Gear from '../../../static/icons/gear.svg';
 import { BalanceOption } from './types';
 
 const tokenSymbol = 'KSM';
@@ -65,7 +63,7 @@ export const WalletManager: FC = () => {
         <>
           <Divider />
           <SettingsButtonWrapper>
-            <Icon path={Gear} size={24} color={'var(--color-grey-500)'} />
+            <Icon name="gear" size={24} color="var(--color-grey-500)" />
           </SettingsButtonWrapper>
         </>
       )}

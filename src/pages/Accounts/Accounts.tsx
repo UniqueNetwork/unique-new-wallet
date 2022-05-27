@@ -1,19 +1,24 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Dropdown, Button, InputText, TableColumnProps, Text } from '@unique-nft/ui-kit';
+import {
+  Dropdown,
+  Button,
+  InputText,
+  TableColumnProps,
+  Text,
+  Icon,
+} from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { BN } from '@polkadot/util';
 
 import { useAccounts } from '@app/hooks';
 import { formatKusamaBalance } from '@app/utils/textUtils';
-import { AccountsGroupButton, Icon, PagePaperNoPadding, Table } from '@app/components';
+import { AccountsGroupButton, PagePaperNoPadding, Table } from '@app/components';
 import { Account } from '@app/account';
 import { AccountsTotalBalance } from '@app/pages/Accounts/components/AccountsTotalBalance';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { TransferFundsModal } from '@app/pages';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
 
-import ContextMenu from '../../static/icons/context-menu.svg';
-import ArrowUpRight from '../../static/icons/arrow-up-right.svg';
 import config from '../../config';
 
 const tokenSymbol = 'KSM';
@@ -70,7 +75,7 @@ const getAccountsColumns = ({
             href={`${config.scanUrl}account/${address}`}
           >
             <Text color="primary-500">UniqueScan</Text>
-            <Icon size={16} path={ArrowUpRight} color="none" />
+            <Icon size={16} name="arrow-up-right" />
           </LinkStyled>
         </LinksWrapper>
       );
@@ -91,7 +96,7 @@ const getAccountsColumns = ({
               <AccountContextMenu onForgetWalletClick={onForgetWalletClick(address)} />
             )}
           >
-            <Icon path={ContextMenu} size={24} />
+            <Icon name="more-horiz" size={24} />
           </Dropdown>
         </ActionsWrapper>
       );

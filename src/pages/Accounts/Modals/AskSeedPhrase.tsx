@@ -8,16 +8,16 @@ import {
   Link,
   Select,
   Text,
+  Icon,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { addressFromSeed } from '@app/utils';
-import { Icon, Tooltip } from '@app/components';
+import { Tooltip } from '@app/components';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import { TCreateAccountBodyModalProps } from './types';
-import Question from '../../../static/icons/question.svg';
 
 const seedGenerators = [{ id: 'Mnemonic', title: 'Mnemonic' }];
 
@@ -80,7 +80,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
             </>
           }
         >
-          <Icon path={Question} />
+          <Icon name="question" size={24} />
         </Tooltip>
       </SeedGeneratorSelectWrapper>
       <InputSeedWrapper>

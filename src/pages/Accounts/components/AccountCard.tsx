@@ -5,7 +5,6 @@ import styled from 'styled-components/macro';
 import { shortcutText } from '@app/utils';
 import { Avatar } from '@app/components/Avatar/Avatar';
 
-import CopyIcon from '../../../static/icons/copy.svg';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
 interface AccountCardProps {

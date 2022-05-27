@@ -5,13 +5,6 @@ import { BN } from '@polkadot/util';
 
 import { formatAmount } from '@app/utils';
 
-import usd from '../../../static/icons/usd-currency.svg';
-import cny from '../../../static/icons/cny-currency.svg';
-import rub from '../../../static/icons/rub-currency.svg';
-import eur from '../../../static/icons/eur-currency.svg';
-import gbp from '../../../static/icons/gbp-currency.svg';
-import jpy from '../../../static/icons/jpy-currency.svg';
-
 interface AccountsTotalBalanceProps {
   balance: BN;
 }
@@ -24,12 +17,12 @@ interface ICurrency extends SelectOptionProps {
 }
 
 const currencies = [
-  { id: 'USD', title: 'USD', symbol: '$', icon: usd },
-  { id: 'CNY', title: 'CNY', symbol: '元', icon: cny },
-  { id: 'RUB', title: 'RUB', symbol: '₽', icon: rub },
-  { id: 'EUR', title: 'EUR', symbol: '€', icon: eur },
-  { id: 'GBP', title: 'GBP', symbol: '£', icon: gbp },
-  { id: 'JPY', title: 'JPY', symbol: '¥', icon: jpy },
+  { id: 'USD', title: 'USD', symbol: '$', icon: 'usd-flag' },
+  { id: 'CNY', title: 'CNY', symbol: '元', icon: 'cny-flag' },
+  { id: 'RUB', title: 'RUB', symbol: '₽', icon: 'rub-flag' },
+  { id: 'EUR', title: 'EUR', symbol: '€', icon: 'eur-flag' },
+  { id: 'GBP', title: 'GBP', symbol: '£', icon: 'gbp-flag' },
+  { id: 'JPY', title: 'JPY', symbol: '¥', icon: 'jpy-flag' },
 ];
 
 export const AccountsTotalBalance = ({ balance }: AccountsTotalBalanceProps) => {
@@ -83,7 +76,7 @@ const AccountsTotalBalanceValue = styled.div`
 
 const CurrencyOption = ({ title, icon }: Pick<ICurrency, 'title' | 'icon'>) => (
   <CurrencyOptionWrapper>
-    <Icon size={24} file={icon} />
+    <Icon size={24} name={icon} />
     <Text>{title}</Text>
   </CurrencyOptionWrapper>
 );
