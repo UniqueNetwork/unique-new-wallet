@@ -1,10 +1,12 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { useCallback, useContext, useEffect } from 'react';
+import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { KeypairType } from '@polkadot/util-crypto/types';
+import { u8aToString } from '@polkadot/util';
 
 import { sleep } from '@app/utils';
 import { DefaultAccountKey } from '@app/account/constants';
+import { TTransaction } from '@app/types';
 
 import { getSuri, PairType } from '../utils/seedUtils';
 import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
@@ -209,7 +211,7 @@ export const useAccounts = () => {
     [showSignDialog, selectedAccount],
   ); */
 
-  /* const signMessage = useCallback(
+  const signMessage = useCallback(
     async (message: string, account?: Account): Promise<string> => {
       const _account = account || selectedAccount;
       if (!_account) throw new Error('Account was not provided');
@@ -226,7 +228,7 @@ export const useAccounts = () => {
         const { signature } = await injector.signer.signRaw({
           address: _account.address,
           type: 'bytes',
-          data: stringToHex(message),
+          data: message,
         });
         signedMessage = signature;
       }
@@ -234,7 +236,7 @@ export const useAccounts = () => {
       return signedMessage;
     },
     [showSignDialog, selectedAccount],
-  ); */
+  );
 
   return {
     accounts,
@@ -247,7 +249,7 @@ export const useAccounts = () => {
     selectedAccount,
     unlockLocalAccount,
     // signTx,
-    // signMessage,
+    signMessage,
     // changeAccount,
   };
 };
