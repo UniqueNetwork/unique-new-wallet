@@ -221,9 +221,8 @@ export const useAccounts = () => {
       if (!injector.signer.signPayload) throw new Error('Web3 not available');
 
       const { signature } = await injector.signer.signPayload(signerPayloadJSON);
-      const signedMessage = signature;
-      if (!signedMessage) throw new Error('Signing failed');
-      return signedMessage;
+      if (!signature) throw new Error('Signing failed');
+      return signature;
     },
     [selectedAccount],
   );
