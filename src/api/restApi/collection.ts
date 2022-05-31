@@ -1,10 +1,17 @@
 import { Api } from '@app/api/restApi/base';
-import { CollectionInfo, UnsignedTxPayload } from '@app/types/Api';
+import { CollectionInfoResponse, UnsignedTxPayloadResponse } from '@app/types/Api';
 
 const BASE_URL = '/collection';
 
 export const getCollectionId = (collectionId: string) =>
-  Api.get<CollectionInfo>(`${BASE_URL}?collectionId=${collectionId}`);
+  Api.get<CollectionInfoResponse>(`${BASE_URL}?collectionId=${collectionId}`);
 
-export const deleteCollection = (collectionId: string, addressAccount: string) =>
-  Api.delete<UnsignedTxPayload>(BASE_URL);
+type TDeleteCollection = {
+  collectionId: number;
+  address: string;
+};
+
+export const deleteCollection = (data: TDeleteCollection) =>
+  Api.delete<UnsignedTxPayloadResponse>(BASE_URL, {
+    data,
+  });
