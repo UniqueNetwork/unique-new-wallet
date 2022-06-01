@@ -1,11 +1,13 @@
-import React, { VFC, useState } from 'react';
+import React, { VFC, useState, useContext, useCallback } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, Select } from '@unique-nft/ui-kit';
+import { Button, InputText, Select } from '@unique-nft/ui-kit';
 
+import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { SuggestGroup } from '@app/components/SuggestGroup';
 import { testSuggestValues } from '@app/components/SuggestGroup/SuggestGroup';
+import { useNFTsContext } from '@app/pages/MyTokens/context';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -13,38 +15,43 @@ interface NFTFiltersComponentProps {
 
 const sortOptions: Option[] = [
   {
-    id: 'nftId-asc',
     title: 'NFT ID',
+    id: 'asc' as Direction,
     iconRight: iconDown,
   },
   {
-    id: 'nftId-desc',
     title: 'NFT ID',
+    id: 'desc' as Direction,
     iconRight: iconUp,
   },
 ];
 
 const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
-  const [sort, setSort] = useState<string>('nftId-asc');
+  const [search, setSearch] = useState('');
+  const { sortByTokenId, changeSortByTokenId, changeSearchText } = useNFTsContext();
 
-  const onChange = (option: Option) => {
-    console.log('option', option);
-    setSort(option.id);
+  const sortByTokenIdHandler = useCallback(({ id }: Option) => {
+    changeSortByTokenId(id as Direction);
+  }, []);
+
+  const searchHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.code === 'Enter') changeSearchText(search);
   };
 
   return (
     <div className={classNames('nft-filters', className)}>
-      <SuggestGroup
-        suggestions={testSuggestValues}
-        getSuggestionValue={(suggestion) => suggestion.title}
-        getActiveSuggestOption={(suggest, activeValue) => suggest.id === activeValue.id}
-        inputProps={{
-          iconLeft: { name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' },
-          placeholder: 'Search',
-        }}
+      <InputText
+        value={search}
+        placeholder="Search"
+        iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
+        onChange={setSearch}
+        onKeyDown={searchHandler}
       />
-
-      <Select options={sortOptions} value={sort} onChange={onChange} />
+      <Select
+        options={sortOptions}
+        value={sortByTokenId}
+        onChange={sortByTokenIdHandler}
+      />
       <Button
         iconLeft={{
           name: 'plus',
@@ -63,14 +70,12 @@ export const NFTFilters = styled(NFTFiltersComponent)`
     display: grid;
     grid-template-columns: 502px 268px 183px;
     grid-column-gap: calc(var(--prop-gap) * 2);
-
     .unique-input-text,
     .unique-select,
     .unique-button {
       width: 100%;
     }
   }
-
   .unique-select {
     .select-value {
       grid-column-gap: 7px;
