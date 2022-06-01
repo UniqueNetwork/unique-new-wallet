@@ -22,14 +22,13 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
 }) => {
   const { collection, isCollectionFetching } = useCollectionContext() || {};
   const {
-    offchain_schema,
-    schema_version,
     description,
     token_prefix,
     token_limit,
     tokens_count,
     sponsorship = null,
     date_of_creation,
+    collection_cover,
   } = collection || {};
 
   const sponsor = getSponsorShip(sponsorship);
@@ -42,14 +41,7 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
         ) : (
           <>
             <Row>
-              <Avatar
-                src={
-                  offchain_schema && schema_version === 'ImageURL'
-                    ? offchain_schema.replace('{id}', collectionId)
-                    : noCollections
-                }
-                type="circle"
-              />
+              <Avatar src={collection_cover || noCollections} type="circle" />
               <Badge>ID: {collectionId}</Badge>
             </Row>
             <Row>

@@ -1,10 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { useCallback, useContext, useEffect } from 'react';
+import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { KeypairType } from '@polkadot/util-crypto/types';
 
 import { sleep } from '@app/utils';
 import { DefaultAccountKey } from '@app/account/constants';
+import { SignerPayloadJSONDto } from '@app/types/Api';
 
 import { getSuri, PairType } from '../utils/seedUtils';
 import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
@@ -20,7 +21,6 @@ export const useAccounts = () => {
     setAccounts,
     setIsLoading,
     setFetchAccountsError,
-    showSignDialog,
   } = useContext(AccountContext);
 
   // TODO: move fetching accounts and balances into context
@@ -209,32 +209,24 @@ export const useAccounts = () => {
     [showSignDialog, selectedAccount],
   ); */
 
-  /* const signMessage = useCallback(
-    async (message: string, account?: Account): Promise<string> => {
+  const signMessage = useCallback(
+    async (
+      signerPayloadJSON: SignerPayloadJSONDto,
+      account?: Account,
+    ): Promise<string> => {
       const _account = account || selectedAccount;
       if (!_account) throw new Error('Account was not provided');
-      let signedMessage;
-      if (_account.signerType === AccountSigner.local) {
-        const signature = await showSignDialog();
-        if (signature) {
-          signedMessage = u8aToString(signature.sign(message));
-        }
-      } else {
-        const injector = await web3FromSource(_account.meta.source);
-        if (!injector.signer.signRaw) throw new Error('Web3 not available');
+      // TODO: добавить проверку на локальные аккаунты. Задача https://cryptousetech.atlassian.net/browse/WMS-914
 
-        const { signature } = await injector.signer.signRaw({
-          address: _account.address,
-          type: 'bytes',
-          data: stringToHex(message),
-        });
-        signedMessage = signature;
-      }
-      if (!signedMessage) throw new Error('Signing failed');
-      return signedMessage;
+      const injector = await web3FromSource(_account.meta.source);
+      if (!injector.signer.signPayload) throw new Error('Web3 not available');
+
+      const { signature } = await injector.signer.signPayload(signerPayloadJSON);
+      if (!signature) throw new Error('Signing failed');
+      return signature;
     },
-    [showSignDialog, selectedAccount],
-  ); */
+    [selectedAccount],
+  );
 
   return {
     accounts,
@@ -247,7 +239,7 @@ export const useAccounts = () => {
     selectedAccount,
     unlockLocalAccount,
     // signTx,
-    // signMessage,
+    signMessage,
     // changeAccount,
   };
 };

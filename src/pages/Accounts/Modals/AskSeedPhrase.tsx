@@ -18,12 +18,14 @@ import { Tooltip } from '@app/components';
 import {
   AddressWrapper,
   ButtonGroup,
-  ContentRow,
-  ModalContent,
-  ModalFooter,
   StepsTextStyled,
   TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';

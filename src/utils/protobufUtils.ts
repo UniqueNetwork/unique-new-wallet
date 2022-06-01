@@ -5,7 +5,6 @@ import {
   AttributeItemType,
   EnumElemType,
   FieldRuleType,
-  FieldType,
   NFTMetaType,
   ProtobufAttributeType,
 } from '@app/types';

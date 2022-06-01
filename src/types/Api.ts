@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-export interface ChainProperties {
+export interface ChainPropertiesResponse {
   /** @example 255 */
   SS58Prefix: number;
 
@@ -26,7 +26,7 @@ export interface ChainProperties {
   genesisHash: string;
 }
 
-export interface TxBuildArgs {
+export interface TxBuildBody {
   /**
    * The ss-58 encoded address
    * @example yGCyN3eydMkze4EPtz59Tn7obwbUbYNZCz48dp8FRdemTaLwm
@@ -98,37 +98,33 @@ export interface SignerPayloadRawDto {
   type: 'bytes' | 'payload';
 }
 
-export interface UnsignedTxPayload {
+export interface UnsignedTxPayloadResponse {
   signerPayloadJSON: SignerPayloadJSONDto;
   signerPayloadRaw: SignerPayloadRawDto;
   signerPayloadHex: string;
 }
 
-export interface SignTxArgs {
-  signerPayloadHex: string;
-}
-
-export interface SignTxResult {
+export interface SignTxResultResponse {
   signature: string;
   signatureType: 'sr25519' | 'ed25519' | 'ecdsa' | 'ethereum';
 }
 
-export interface SubmitTxArgs {
+export interface SubmitTxBody {
   signerPayloadJSON: SignerPayloadJSONDto;
+  /** Warning: Signature must be with SignatureType! */
   signature: string;
-  signatureType?: 'sr25519' | 'ed25519' | 'ecdsa' | 'ethereum';
 }
 
-export interface VerificationResult {
+export interface VerificationResultResponse {
   isValid: boolean;
   errorMessage: string;
 }
 
-export interface SubmitResult {
+export interface SubmitResultResponse {
   hash: string;
 }
 
-export interface Balance {
+export interface BalanceResponse {
   /** @example 411348197000000000000 */
   amount: string;
 
@@ -136,7 +132,7 @@ export interface Balance {
   formatted: string;
 }
 
-export interface TransferBuildArgs {
+export interface TransferBuildBody {
   /**
    * The ss-58 encoded address
    * @example yGCyN3eydMkze4EPtz59Tn7obwbUbYNZCz48dp8FRdemTaLwm
@@ -162,36 +158,7 @@ export interface CollectionSponsorship {
   isConfirmed: boolean;
 }
 
-export interface CollectionLimits {
-  /** @example null */
-  accountTokenOwnershipLimit?: number;
-
-  /** @example null */
-  sponsoredDataSize?: number;
-
-  /** @example null */
-  sponsoredDataRateLimit?: number;
-
-  /** @example null */
-  tokenLimit?: number;
-
-  /** @example null */
-  sponsorTransferTimeout?: number;
-
-  /** @example null */
-  sponsorApproveTimeout?: number;
-
-  /** @example null */
-  ownerCanTransfer?: boolean;
-
-  /** @example null */
-  ownerCanDestroy?: boolean;
-
-  /** @example null */
-  transfersEnabled?: boolean;
-}
-
-export interface CollectionInfo {
+export interface CollectionInfoResponse {
   mode?: 'Nft' | 'Fungible' | 'ReFungible';
   access?: 'Normal' | 'AllowList';
   schemaVersion?: 'ImageURL' | 'Unique';
@@ -209,7 +176,7 @@ export interface CollectionInfo {
   /** @example https://ipfs.unique.network/ipfs/QmcAcH4F9HYQtpqKHxBFwGvkfKb8qckXj2YWUrcc8yd24G/image{id}.png */
   offchainSchema?: string;
   sponsorship?: CollectionSponsorship;
-  limits?: CollectionLimits;
+  limits?: object;
 
   /** @example {"nested":{"onChainMetaData":{"nested":{"NFTMeta":{"fields":{"ipfsJson":{"id":1,"rule":"required","type":"string"}}}}}}} */
   constOnChainSchema?: object;
@@ -229,7 +196,7 @@ export interface CollectionInfo {
   tokensCount: number;
 }
 
-export interface CreateCollectionArgs {
+export interface CreateCollectionBody {
   mode?: 'Nft' | 'Fungible' | 'ReFungible';
   access?: 'Normal' | 'AllowList';
   schemaVersion?: 'ImageURL' | 'Unique';
@@ -247,7 +214,7 @@ export interface CreateCollectionArgs {
   /** @example https://ipfs.unique.network/ipfs/QmcAcH4F9HYQtpqKHxBFwGvkfKb8qckXj2YWUrcc8yd24G/image{id}.png */
   offchainSchema?: string;
   sponsorship?: CollectionSponsorship;
-  limits?: CollectionLimits;
+  limits?: object;
 
   /** @example {"nested":{"onChainMetaData":{"nested":{"NFTMeta":{"fields":{"ipfsJson":{"id":1,"rule":"required","type":"string"}}}}}}} */
   constOnChainSchema?: object;
@@ -261,7 +228,7 @@ export interface CreateCollectionArgs {
   address: string;
 }
 
-export interface BurnCollectionArgs {
+export interface BurnCollectionBody {
   /** @example 1 */
   collectionId: number;
 
@@ -272,13 +239,13 @@ export interface BurnCollectionArgs {
   address: string;
 }
 
-export interface TransferCollectionArgs {
+export interface TransferCollectionBody {
   collectionId: number;
   from: string;
   to: string;
 }
 
-export interface TokenInfoDto {
+export interface TokenInfoResponse {
   /** @example 1 */
   id: number;
 
@@ -301,7 +268,7 @@ export interface TokenInfoDto {
   url: string;
 }
 
-export interface CreateTokenArgs {
+export interface CreateTokenBody {
   /** @example 1 */
   collectionId: number;
 
@@ -315,7 +282,7 @@ export interface CreateTokenArgs {
   constData: object;
 }
 
-export interface BurnTokenArgs {
+export interface BurnTokenBody {
   /** @example 1 */
   collectionId: number;
 
@@ -329,7 +296,7 @@ export interface BurnTokenArgs {
   address: string;
 }
 
-export interface TransferTokenArgs {
+export interface TransferTokenBody {
   /** @example 1 */
   collectionId: number;
 
@@ -348,3 +315,7 @@ export interface TransferTokenArgs {
    */
   to: string;
 }
+
+export type AccountResponse = object;
+
+export type GenerateAccountBody = object;
