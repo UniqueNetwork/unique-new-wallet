@@ -11,7 +11,7 @@ type BurnCollectionModalProps = Omit<ModalProps, 'children'> & {
   onConfirm(): void;
 };
 
-// TODO: wait rest api for fee
+// TODO: wait rest api for fee https://cryptousetech.atlassian.net/browse/SDK-50
 export const BurnCollectionModal = ({
   onConfirm,
   ...modalProps
