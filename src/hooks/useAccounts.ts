@@ -216,6 +216,7 @@ export const useAccounts = () => {
     ): Promise<string> => {
       const _account = account || selectedAccount;
       if (!_account) throw new Error('Account was not provided');
+      // TODO: добавить проверку на локальные аккаунты. Задача https://cryptousetech.atlassian.net/browse/WMS-914
 
       const injector = await web3FromSource(_account.meta.source);
       if (!injector.signer.signPayload) throw new Error('Web3 not available');
