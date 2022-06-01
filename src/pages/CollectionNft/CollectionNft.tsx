@@ -5,11 +5,11 @@ import { useParams } from 'react-router-dom';
 
 import { CollectionDescription, NftList } from './components';
 
-interface CollectionNftComponentProps {
+interface CollectionNftProps {
   className?: string;
 }
 
-const CollectionNftComponent: VFC<CollectionNftComponentProps> = ({ className }) => {
+export const CollectionNft: VFC<CollectionNftProps> = ({ className }) => {
   const { collectionId } = useParams();
 
   if (!collectionId) {
@@ -17,14 +17,14 @@ const CollectionNftComponent: VFC<CollectionNftComponentProps> = ({ className })
   }
 
   return (
-    <div className={classNames('collection-nft', className)}>
+    <Wrapper className={classNames('collection-nft', className)}>
       <CollectionDescription collectionId={collectionId} />
       <NftList collectionId={collectionId} />
-    </div>
+    </Wrapper>
   );
 };
 
-export const CollectionNft = styled(CollectionNftComponent)`
+export const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 291px 1fr;
 `;

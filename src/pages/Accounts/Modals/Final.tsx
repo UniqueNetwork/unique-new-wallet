@@ -4,13 +4,15 @@ import { Avatar, Button, Icon, InputText, Text, Tooltip } from '@unique-nft/ui-k
 import {
   AddressWrapper,
   ButtonGroup,
-  ContentRow,
   LabelText,
-  ModalContent,
-  ModalFooter,
   StepsTextStyled,
   TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';

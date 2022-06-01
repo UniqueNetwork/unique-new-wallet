@@ -6,12 +6,14 @@ import { addressFromSeed } from '@app/utils';
 import {
   AddressWrapper,
   ButtonGroup,
-  ContentRow,
-  ModalContent,
-  ModalFooter,
   StepsTextStyled,
   TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import { TCreateAccountBodyModalProps } from './types';
 import { defaultPairType, derivePath } from './CreateAccount';

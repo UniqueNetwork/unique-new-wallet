@@ -6,12 +6,14 @@ import {
   AdditionalText,
   AddressWrapper,
   ButtonGroup,
-  ContentRow,
   LabelText,
-  ModalContent,
-  ModalFooter,
   StepsTextStyled,
 } from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import { TCreateAccountBodyModalProps } from './types';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
