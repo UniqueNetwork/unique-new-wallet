@@ -1,7 +1,7 @@
-import React, { useContext, useState, VFC } from 'react';
+import React, { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Text, Pagination, TokenLink, Loader } from '@unique-nft/ui-kit';
+import { Text, Pagination, TokenLink } from '@unique-nft/ui-kit';
 
 import { ViewToken } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -20,7 +20,6 @@ const NFTsListComponent: VFC<NFTsListComponentProps> = ({
   className,
   tokens,
   tokensCount,
-  isLoading,
 }) => {
   const { tokensPage, changeTokensPage } = useNFTsContext();
 

@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 
 import { Direction, TypeFilter } from '@app/api/graphQL/tokens';
 
