@@ -1,2 +1,2 @@
 export * from './AccountContext';
-export * from './AccountProvider';
+export { AccountWrapper } from './AccountProvider';

@@ -5,7 +5,7 @@ import { Account, AccountProvider } from './AccountContext';
 import { SignModal } from '../components/SignModal/SignModal';
 import { DefaultAccountKey } from './constants';
 
-const AccountWrapper: FC = ({ children }) => {
+export const AccountWrapper: FC = ({ children }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
@@ -73,5 +73,3 @@ const AccountWrapper: FC = ({ children }) => {
     </AccountProvider>
   );
 };
-
-export default AccountWrapper;
