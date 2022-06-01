@@ -11,7 +11,7 @@ const NFTsNotFoundComponent: VFC<NFTsNotFoundProps> = ({ className }) => (
   <div className={classNames('not-found-container', className)}>
     <Icon name="not-found" size={80} />
     <br />
-    <Text size={'l'} color={'grey-500'} weight="light">
+    <Text size="l" color="grey-500" weight="light">
       No items found
     </Text>
   </div>

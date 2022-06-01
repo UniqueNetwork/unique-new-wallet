@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, VFC } from 'react';
+import { useContext, useMemo, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
@@ -30,7 +30,7 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
     selectedAccount?.address,
     {
       typesFilters,
-      collectionIds: collectionsIds,
+      collectionsIds,
       searchText,
     },
     {

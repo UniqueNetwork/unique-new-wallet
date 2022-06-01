@@ -15,7 +15,7 @@ export interface NTFsContextState {
   changeSearchText: (searchText: string) => void;
 }
 
-const NTFsContext = createContext<NTFsContextState | undefined>(undefined);
+const NTFsContext = createContext<NTFsContextState | null>(null);
 
 export const useNFTsContext = () => {
   const context = useContext(NTFsContext);

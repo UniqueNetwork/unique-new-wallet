@@ -1,12 +1,10 @@
-import React, { VFC, useState, useContext, useCallback } from 'react';
+import React, { VFC, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Button, InputText, Select } from '@unique-nft/ui-kit';
 
 import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
-import { SuggestGroup } from '@app/components/SuggestGroup';
-import { testSuggestValues } from '@app/components/SuggestGroup/SuggestGroup';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 
 interface NFTFiltersComponentProps {

@@ -34,7 +34,7 @@ const TypeFilterItemComponent: VFC<TypeFilterItemComponentProps> = ({
 
 const TypeFilterItemStyled = styled(TypeFilterItemComponent)`
   &.type-filter-item {
-    margin-top: 16px;
+    margin-top: var(--prop-gap);
   }
 `;
 

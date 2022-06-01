@@ -1,7 +1,7 @@
-import { VFC, memo } from 'react';
+import { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Accordion, Loader } from '@unique-nft/ui-kit';
+import { Accordion } from '@unique-nft/ui-kit';
 
 import { Option } from '@app/types';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
@@ -16,7 +16,6 @@ export interface CollectionsFilterComponentProps {
 
 const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   className,
-  isLoading,
   defaultCollections,
 }) => {
   const { changeCollectionsIds } = useNFTsContext();

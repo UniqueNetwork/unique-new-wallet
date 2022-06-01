@@ -1,7 +1,7 @@
-import { VFC, useCallback, memo, useEffect } from 'react';
+import { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Accordion, Checkbox } from '@unique-nft/ui-kit';
+import { Accordion } from '@unique-nft/ui-kit';
 
 import { Option } from '@app/types';
 import { useNFTsContext } from '@app/pages/MyTokens/context';

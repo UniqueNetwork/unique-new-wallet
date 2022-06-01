@@ -1,5 +1,4 @@
 import { gql, OperationVariables, useQuery } from '@apollo/client';
-import { useMemo } from 'react';
 
 import { ViewToken } from './types';
 
@@ -7,7 +6,7 @@ export type Direction = 'asc' | 'desc';
 export type TypeFilter = 'purchased' | 'createdByMe';
 
 type AdditionalFilters = {
-  collectionIds?: number[];
+  collectionsIds?: number[];
   typesFilters?: TypeFilter[];
   searchText?: string;
 };
@@ -79,7 +78,7 @@ const getConditionByCollectionsIds = (collectionsIds: number[] | undefined) => {
 
   return {
     collection_id: {
-      _in: [...collectionsIds],
+      _in: collectionsIds,
     },
   };
 };
@@ -97,7 +96,7 @@ export const useGraphQlOwnerTokens = (
   filters: AdditionalFilters,
   options: Options,
 ) => {
-  const { collectionIds, typesFilters, searchText } = filters;
+  const { collectionsIds, typesFilters, searchText } = filters;
   const { direction, pagination, skip } = options ?? {
     direction: 'desc',
     skip: !owner,
@@ -120,7 +119,7 @@ export const useGraphQlOwnerTokens = (
       where: {
         ...getConditionBySearchText(searchText),
         ...getConditionByTypesFilters(owner, typesFilters),
-        ...getConditionByCollectionsIds(collectionIds),
+        ...getConditionByCollectionsIds(collectionsIds),
       },
     },
   });

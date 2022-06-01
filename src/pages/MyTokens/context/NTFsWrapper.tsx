@@ -16,21 +16,27 @@ export const NFTsWrapper: FC = ({ children }) => {
     setSortByTokenId(sort);
     setTokensPage(defaultPage);
   }, []);
+
   const changeTypeFiltersHandler = useCallback((typeFilter: TypeFilter) => {
     setTokensTypesFilters((previous) => {
-      if (previous.includes(typeFilter))
+      if (previous.includes(typeFilter)) {
         previous = previous.filter((tf) => tf !== typeFilter);
-      else previous = [...previous, typeFilter];
+      } else {
+        previous = [...previous, typeFilter];
+      }
 
       return previous;
     });
     setTokensPage(defaultPage);
   }, []);
+
   const changeCollectionsIdsHandler = useCallback((collectionId: number) => {
     setCollectionsIds((previous) => {
-      if (previous.includes(collectionId))
+      if (previous.includes(collectionId)) {
         previous = previous.filter((id) => id !== collectionId);
-      else previous = [...previous, collectionId];
+      } else {
+        previous = [...previous, collectionId];
+      }
 
       return previous;
     });
