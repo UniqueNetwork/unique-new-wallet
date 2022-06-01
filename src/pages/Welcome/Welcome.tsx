@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import classNames from 'classnames';
 
-import { AccountsGroupButton } from '@app/components';
+import { AccountsGroupButton, PagePaper } from '@app/components';
 
 type Props = {
   className?: string;
@@ -9,7 +9,7 @@ type Props = {
 
 const WelcomeComponent = ({ className }: Props) => {
   return (
-    <div className={classNames('unique-card welcome', className)}>
+    <PagePaper className={classNames('unique-card welcome', className)}>
       <h1 className="header-text">Welcome to Unique network</h1>
       <div className="description">
         <p className="text">
@@ -18,7 +18,7 @@ const WelcomeComponent = ({ className }: Props) => {
         <p className="text">Please select one of the options:</p>
       </div>
       <AccountsGroupButton />
-    </div>
+    </PagePaper>
   );
 };
 
