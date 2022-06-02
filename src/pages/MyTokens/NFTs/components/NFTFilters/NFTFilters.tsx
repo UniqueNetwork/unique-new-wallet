@@ -33,7 +33,9 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
   }, []);
 
   const searchHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.code === 'Enter') changeSearchText(search);
+    if (event.code === 'Enter') {
+      changeSearchText(search);
+    }
   };
 
   return (

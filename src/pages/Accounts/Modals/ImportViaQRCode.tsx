@@ -40,7 +40,9 @@ export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({
   }, []);
 
   const onSaveClick = useCallback(() => {
-    if (!scanned) return;
+    if (!scanned) {
+      return;
+    }
 
     const { name, isAddress, content, genesisHash } = scanned;
 

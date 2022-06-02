@@ -25,9 +25,9 @@ export const Upload: FC<UploadProps> = ({ onChange }) => {
 
   return (
     <UploadWrapper>
-      <input type={'file'} accept={'.json'} onChange={onInputChange} />
+      <input type="file" accept=".json" onChange={onInputChange} />
       <Icon path={UploadIcon} size={48} />
-      {fileName && <Text color={'primary-500'}>{fileName}</Text>}
+      {fileName && <Text color="primary-500">{fileName}</Text>}
     </UploadWrapper>
   );
 };

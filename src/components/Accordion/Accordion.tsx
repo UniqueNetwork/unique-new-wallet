@@ -53,7 +53,7 @@ const Accordion: FC<AccordionProps> = ({
           <AccordionChevronIcon />
         </AccordionTitle>
         {isClearShow && (
-          <Button size={'small'} title={'Clear'} role={'danger'} onClick={onClearClick} />
+          <Button size="small" title="Clear" role="danger" onClick={onClearClick} />
         )}
       </AccordionHeaderWrapper>
       <AccordionBodyWrapper isOpen={isOpen}>{children}</AccordionBodyWrapper>

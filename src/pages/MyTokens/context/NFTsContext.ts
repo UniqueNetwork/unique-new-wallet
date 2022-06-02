@@ -20,8 +20,9 @@ const NTFsContext = createContext<NTFsContextState | null>(null);
 export const useNFTsContext = () => {
   const context = useContext(NTFsContext);
 
-  if (!context)
+  if (!context) {
     throw new Error('NTFsContext value was not provided. Make sure NFTsWrapper exists!');
+  }
 
   return context;
 };

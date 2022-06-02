@@ -68,13 +68,17 @@ const getConditionByTypesFilters = (
   };
   const defaultFilter = { _or: [filters.purchased, filters.createdByMe] };
 
-  if (!filtersTypes || filtersTypes.length === 0) return defaultFilter;
+  if (!filtersTypes || filtersTypes.length === 0) {
+    return defaultFilter;
+  }
 
   return { _or: filtersTypes?.map((ft) => filters[ft]) };
 };
 
 const getConditionByCollectionsIds = (collectionsIds: number[] | undefined) => {
-  if (!collectionsIds || collectionsIds.length === 0) return null;
+  if (!collectionsIds || collectionsIds.length === 0) {
+    return null;
+  }
 
   return {
     collection_id: {
@@ -86,7 +90,9 @@ const getConditionByCollectionsIds = (collectionsIds: number[] | undefined) => {
 const getConditionBySearchText = (searchText: string | null | undefined) => {
   const trimedText = searchText?.trim();
 
-  if (!trimedText) return null;
+  if (!trimedText) {
+    return null;
+  }
 
   return { token_name: { _ilike: `%${trimedText}%` } };
 };

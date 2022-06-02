@@ -13,14 +13,18 @@ const findNetworkParamByName = (
     key.includes(`NET_${network}_${name}`),
   );
 
-  if (envKey) return config[envKey] || '';
+  if (envKey) {
+    return config[envKey] || '';
+  }
 
   return '';
 };
 
 export const getNetworkList = (config: Record<string, string | undefined>): string[] => {
   return Object.keys(config).reduce<string[]>((acc, key) => {
-    if (!key.includes('NET_')) return acc;
+    if (!key.includes('NET_')) {
+      return acc;
+    }
 
     const { network } = configKeyRegexp.exec(key)?.groups || {};
 
@@ -44,10 +48,11 @@ export const getChainList = (
 
 export const getDefaultChain = (config: Record<string, string | undefined>) => {
   const networkList = getNetworkList(config);
-  if (!networkList?.length)
+  if (!networkList?.length) {
     throw new Error(
       'No chains provided in env, please make sure to provide correct APP_NET_YOUR-CHAIN_* in config',
     );
+  }
 
   return networkList[0];
 };

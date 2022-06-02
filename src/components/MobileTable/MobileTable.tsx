@@ -14,9 +14,9 @@ interface MobileTableProps {
 const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
   let children = <Loading />;
 
-  if (!loading && data?.length === 0)
-    children = <Text className={'text_grey'}>No data</Text>;
-  else if (!loading) {
+  if (!loading && data?.length === 0) {
+    children = <Text className="text_grey">No data</Text>;
+  } else if (!loading) {
     children = (
       <>
         {data?.map((item, index) => (
@@ -26,7 +26,7 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
                 {typeof column?.title === 'object' ? (
                   column.title
                 ) : (
-                  <Text color={'grey-500'}>${column?.title}</Text>
+                  <Text color="grey-500">${column?.title}</Text>
                 )}
                 {column.render?.(item[column.field as keyof TableRowProps]) || (
                   <Text>${item[column.field as keyof TableRowProps]}</Text>

@@ -21,7 +21,7 @@ const CollectionSidebarComponent = ({ className }: Props) => {
   return (
     <div className={classNames('collection-sidebar', className)}>
       <Item className="collection-preview">
-        <Heading size={'3'}>Collection preview</Heading>
+        <Heading size="3">Collection preview</Heading>
         <SidebarPreview
           srcImg={srcImg}
           description={description || 'Description'}
@@ -29,10 +29,10 @@ const CollectionSidebarComponent = ({ className }: Props) => {
         />
       </Item>
       <Item className="nft-preview">
-        <Heading size={'3'}>NFT preview</Heading>
+        <Heading size="3">NFT preview</Heading>
         <SidebarPreview
           srcImg={srcImg}
-          description={'Collection name'}
+          description="Collection name"
           title={tokenPrefix || 'tokenPrefix'}
         >
           <AttributeName>

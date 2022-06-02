@@ -26,8 +26,12 @@ export const useDeviceSize = (): DeviceSize => {
   }, []); // Empty array ensures that effect is only run on mount
 
   return useMemo(() => {
-    if (windowWidth && windowWidth < 768) return DeviceSize.sm;
-    if (windowWidth && windowWidth < 1025) return DeviceSize.md;
+    if (windowWidth && windowWidth < 768) {
+      return DeviceSize.sm;
+    }
+    if (windowWidth && windowWidth < 1025) {
+      return DeviceSize.md;
+    }
 
     return DeviceSize.lg;
   }, [windowWidth]);

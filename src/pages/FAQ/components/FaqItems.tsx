@@ -10,7 +10,7 @@ export const faqItems = [
         Use either the{' '}
         <Link
           href="https://polkadot.js.org/extension/"
-          title={'Polkadot.js extension'}
+          title="Polkadot.js extension"
           role="primary"
         />{' '}
         or `Manage accounts` page and follow the instructions.
@@ -28,7 +28,7 @@ export const faqItems = [
           Use the{' '}
           <Link
             href="https://polkadot.js.org/extension/"
-            title={'Polkadot.js extension'}
+            title="Polkadot.js extension"
             role="primary"
           />{' '}
           or the ‘Manage accounts page’ to set up or restore an account. Restore your
