@@ -1,3 +1,5 @@
+import { INetwork } from '@app/types';
+
 export type Offer = {
   collectionId: number;
   tokenId: number;
@@ -7,8 +9,6 @@ export type Offer = {
   creationDate: string;
 };
 
-export type Chain = {
+export interface Chain extends INetwork {
   apiEndpoint: string;
-  name: string;
-  network: string;
-};
+}

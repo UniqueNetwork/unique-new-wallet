@@ -6,18 +6,19 @@ export enum AccountSigner {
   extension = 'Extension',
   local = 'Local',
 }
+
 export interface Account extends InjectedAccountWithMeta {
-  signerType: AccountSigner;
   balance?: string;
+  signerType: AccountSigner;
 }
 
 export type AccountContextProps = {
   isLoading: boolean;
   accounts: Account[];
   selectedAccount: Account | undefined;
+  fetchAccounts: () => Promise<void>;
   fetchAccountsError: string | undefined;
   changeAccount(account: Account): void;
-  setSelectedAccount(account: Account): void;
   setFetchAccountsError(error: string | undefined): void;
   setAccounts(accounts: Account[]): void;
   setIsLoading(loading: boolean): void;

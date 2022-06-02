@@ -32,7 +32,7 @@ export const getNetworkList = (config: Record<string, string | undefined>): stri
   }, []);
 };
 
-export const getChainList = (
+/* export const getChainList = (
   config: Record<string, string | undefined>,
 ): Record<string, Chain> => {
   return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
@@ -40,7 +40,7 @@ export const getChainList = (
 
     return acc;
   }, {});
-};
+}; */
 
 export const getDefaultChain = (config: Record<string, string | undefined>) => {
   const networkList = getNetworkList(config);
@@ -52,15 +52,14 @@ export const getDefaultChain = (config: Record<string, string | undefined>) => {
   return networkList[0];
 };
 
-export const getNetworkParams = (
+/* export const getNetworkParams = (
   config: Record<string, string | undefined>,
   network: string,
 ): Chain => {
   const chain: Chain = {
     apiEndpoint: findNetworkParamByName(config, network, 'API'),
     name: findNetworkParamByName(config, network, 'NAME'),
-    network,
   };
 
   return chain;
-};
+}; */

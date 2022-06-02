@@ -1,15 +1,21 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 
-import config from '@app/config';
-
 import { serializeToQuery } from './helper';
 
-class BaseApi {
+export interface IBaseApi {
+  get: <R>(url: string, config?: AxiosRequestConfig) => Promise<AxiosRequestConfig<R>>;
+  delete: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+  post: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+  put: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+  patch: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+}
+
+export class BaseApi implements IBaseApi {
   private http: AxiosInstance;
 
-  constructor() {
+  constructor(apiEndpoint: string) {
     this.http = axios.create({
-      baseURL: config.uniqueRestApiUrl,
+      baseURL: apiEndpoint,
       paramsSerializer: serializeToQuery,
     });
   }
@@ -52,5 +58,3 @@ class BaseApi {
     return this.http.patch(url, data, config);
   }
 }
-
-export const Api = new BaseApi();
