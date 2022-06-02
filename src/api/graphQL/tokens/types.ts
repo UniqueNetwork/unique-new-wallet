@@ -22,6 +22,7 @@ export enum TokenType {
 export interface ViewToken {
   id: number;
   token_id: number;
+  token_name: string;
   data: TAttributes;
   token_prefix: string;
   image_path: string;

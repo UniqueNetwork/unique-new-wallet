@@ -29,7 +29,7 @@ export const Header: VFC = () => {
           </MenuIcon>
         )}
         <Link to={base}>
-          <LogoIcon src={'/logos/logo.svg'} />
+          <LogoIcon src="/logos/logo.svg" />
         </Link>
 
         {!showMobileMenu && (

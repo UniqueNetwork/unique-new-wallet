@@ -1,25 +1,25 @@
-import { useState } from 'react';
 import { gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { ViewToken } from './types';
 
-type Direction = 'asc' | 'desc';
-type FilterType = 'all' | 'purchased' | 'createdByMe';
+export type Direction = 'asc' | 'desc';
+export type TypeFilter = 'purchased' | 'createdByMe';
 
 type AdditionalFilters = {
-  collectionIds?: number[];
-  filterType?: FilterType;
+  collectionsIds?: number[];
+  typesFilters?: TypeFilter[];
+  searchText?: string;
 };
 
 type Pagination = {
-  defaultPage: number;
+  page: number;
   limit: number;
 };
 
 type Options = {
-  direction?: Direction;
-  pagination?: Pagination;
   skip?: boolean;
+  direction?: Direction;
+  pagination: Pagination;
 };
 
 type OwnerTokensResponse = {
@@ -36,17 +36,17 @@ const OWNER_TOKENS_QUERY = gql`
     $where: view_tokens_bool_exp
     $offset: Int
     $limit: Int
-    $sort: order_by
+    $direction: order_by
   ) {
     view_tokens(
       where: $where
       offset: $offset
       limit: $limit
-      order_by: { token_id: $sort }
+      order_by: { token_id: $direction }
     ) {
       image_path
       token_id
-      token_prefix
+      token_name
       collection_name
       collection_id
     }
@@ -58,28 +58,56 @@ const OWNER_TOKENS_QUERY = gql`
   }
 `;
 
-const filtersByType = (owner: string | undefined, filterType: FilterType) =>
-  ((
-    {
-      all: { _or: [{ owner: { _eq: owner } }, { collection_owner: { _eq: owner } }] },
-      purchased: { _and: [{ owner: { _eq: owner } }, { is_sold: { _eq: true } }] },
-      createdByMe: { collection_owner: { _eq: owner } },
-    } as Record<FilterType, OperationVariables>
-  )[filterType]);
+const getConditionByTypesFilters = (
+  owner: string | undefined,
+  filtersTypes: TypeFilter[] | undefined,
+) => {
+  const filters: Record<TypeFilter, OperationVariables> = {
+    purchased: { _and: [{ owner: { _eq: owner } }, { is_sold: { _eq: true } }] },
+    createdByMe: { collection_owner: { _eq: owner } },
+  };
+  const defaultFilter = { _or: [filters.purchased, filters.createdByMe] };
+
+  if (!filtersTypes || filtersTypes.length === 0) {
+    return defaultFilter;
+  }
+
+  return { _or: filtersTypes?.map((ft) => filters[ft]) };
+};
+
+const getConditionByCollectionsIds = (collectionsIds: number[] | undefined) => {
+  if (!collectionsIds || collectionsIds.length === 0) {
+    return null;
+  }
+
+  return {
+    collection_id: {
+      _in: collectionsIds,
+    },
+  };
+};
+
+const getConditionBySearchText = (searchText: string | null | undefined) => {
+  const trimedText = searchText?.trim();
+
+  if (!trimedText) {
+    return null;
+  }
+
+  return { token_name: { _ilike: `%${trimedText}%` } };
+};
 
 export const useGraphQlOwnerTokens = (
   owner: string | undefined,
   filters: AdditionalFilters,
-  options?: Options,
+  options: Options,
 ) => {
-  const { collectionIds, filterType = 'all' } = filters;
+  const { collectionsIds, typesFilters, searchText } = filters;
   const { direction, pagination, skip } = options ?? {
     direction: 'desc',
     skip: !owner,
   };
-  const { defaultPage, limit } = pagination ?? { defaultPage: 0, limit: 10 };
-
-  const [page, setPage] = useState(defaultPage);
+  const { page, limit } = pagination;
 
   const {
     data: response,
@@ -88,23 +116,21 @@ export const useGraphQlOwnerTokens = (
   } = useQuery<OwnerTokensResponse>(OWNER_TOKENS_QUERY, {
     skip: skip || !owner,
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-and-network',
+    nextFetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
     variables: {
       limit,
       offset: limit * page,
       direction,
       where: {
-        ...filtersByType(owner, filterType),
-        collection_id: {
-          _in: collectionIds,
-        },
+        ...getConditionBySearchText(searchText),
+        ...getConditionByTypesFilters(owner, typesFilters),
+        ...getConditionByCollectionsIds(collectionsIds),
       },
     },
   });
 
   return {
-    fetchPageData: (page: number): void => setPage(page),
     tokensCount: response?.view_tokens_aggregate.aggregate.count,
     tokens: response?.view_tokens,
     tokensLoading,

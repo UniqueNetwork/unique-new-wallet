@@ -171,17 +171,25 @@ export const useAccounts = () => {
         genesisHash, // || rawRpcApi?.genesisHash.toHex(),
         name: name?.trim(),
       };
-      if (isAddress) keyring.addExternal(content, meta);
-      else keyring.addUri(content, password, meta, 'sr25519');
+
+      if (isAddress) {
+        keyring.addExternal(content, meta);
+      } else {
+        keyring.addUri(content, password, meta, 'sr25519');
+      }
     },
     [],
   );
 
   const unlockLocalAccount = useCallback(
     (password: string) => {
-      if (!selectedAccount) return;
+      if (!selectedAccount) {
+        return;
+      }
+
       const signature = keyring.getPair(selectedAccount.address);
       signature.unlock(password);
+
       return signature;
     },
     [selectedAccount],
@@ -215,14 +223,21 @@ export const useAccounts = () => {
       account?: Account,
     ): Promise<string> => {
       const _account = account || selectedAccount;
-      if (!_account) throw new Error('Account was not provided');
+      if (!_account) {
+        throw new Error('Account was not provided');
+      }
       // TODO: добавить проверку на локальные аккаунты. Задача https://cryptousetech.atlassian.net/browse/WMS-914
 
       const injector = await web3FromSource(_account.meta.source);
-      if (!injector.signer.signPayload) throw new Error('Web3 not available');
+      if (!injector.signer.signPayload) {
+        throw new Error('Web3 not available');
+      }
 
       const { signature } = await injector.signer.signPayload(signerPayloadJSON);
-      if (!signature) throw new Error('Signing failed');
+      if (!signature) {
+        throw new Error('Signing failed');
+      }
+
       return signature;
     },
     [selectedAccount],

@@ -56,7 +56,7 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
   return (
     <div className={classNames('main-information', className)}>
       <CollectionStepper activeStep={1} />
-      <Heading size={'2'}>Main information</Heading>
+      <Heading size="2">Main information</Heading>
       <Text>
         Fill fields carefully, because after signing the transaction, the data cannot be
         changed. If you make a mistake, the object will have to be burned and recreated.
@@ -82,7 +82,7 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
           />
           <InputText
             label="Symbol*"
-            additionalText={'Token name as displayed in Wallet (max 4 symbols)'}
+            additionalText="Token name as displayed in Wallet (max 4 symbols)"
             name="symbol"
             value={mainInformationForm.values.tokenPrefix}
             error={touched.tokenPrefix && Boolean(mainInformationForm.errors.tokenPrefix)}

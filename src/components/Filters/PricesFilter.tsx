@@ -37,7 +37,7 @@ const PricesFilter: FC<PricesFilterProps> = ({ onChange }) => {
 
   return (
     <Accordion
-      title={'Price'}
+      title="Price"
       isOpen={true}
       isClearShow={!!minPrice && !!maxPrice}
       onClear={onPricesClear}
@@ -46,17 +46,17 @@ const PricesFilter: FC<PricesFilterProps> = ({ onChange }) => {
         <PricesRangeWrapper>
           <InputText
             value={minPrice?.toString()}
-            placeholder={'Min'}
+            placeholder="Min"
             onChange={onChangeMinPrice}
           />
           <Text>to</Text>
           <InputText
             value={maxPrice?.toString()}
-            placeholder={'Max'}
+            placeholder="Max"
             onChange={onChangeMaxPrice}
           />
         </PricesRangeWrapper>
-        <Button title={'Apply'} onClick={onApply} />
+        <Button title="Apply" onClick={onApply} />
       </PriceFilterWrapper>
     </Accordion>
   );

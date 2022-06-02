@@ -40,7 +40,7 @@ export const WalletManager: FC = () => {
   }, [selectedAccount, currentChain]);
 
   if (!isLoading && accounts?.length === 0) {
-    return <Button title={'Сonnect or create account'} onClick={onCreateAccountClick} />;
+    return <Button title="Сonnect or create account" onClick={onCreateAccountClick} />;
   }
 
   return (
@@ -76,8 +76,8 @@ const AccountOptionCard = (account: Account) => {
     <AccountOptionWrapper>
       <Avatar size={24} src={DefaultAvatar} />
       <AccountOptionPropertyWrapper>
-        {account.meta?.name && <Text size={'m'}>{account.meta?.name}</Text>}
-        <Text size={'s'} color={'grey-500'}>
+        {account.meta?.name && <Text size="m">{account.meta?.name}</Text>}
+        <Text size="s" color="grey-500">
           {shortcutText(account.address)}
         </Text>
       </AccountOptionPropertyWrapper>
@@ -88,8 +88,8 @@ const AccountOptionCard = (account: Account) => {
 const BalanceOptionCard = (balance: BalanceOption) => {
   return (
     <BalanceOptionWrapper>
-      <Text size={'m'}>{`${formatKusamaBalance(balance.value)} ${tokenSymbol}`}</Text>
-      <Text size={'s'} color={'grey-500'}>
+      <Text size="m">{`${formatKusamaBalance(balance.value)} ${tokenSymbol}`}</Text>
+      <Text size="s" color="grey-500">
         {balance?.chain?.name}
       </Text>
     </BalanceOptionWrapper>

@@ -1,2 +1,2 @@
-export * from './useGraphQlOwnerTokens';
 export * from './useGraphQlCollectionsByTokensOwner';
+export * from './useGraphQlOwnerTokens';

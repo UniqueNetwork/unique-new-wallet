@@ -65,7 +65,7 @@ export const TokensCard: FC<TTokensCard> = ({
         </a>
         <a
           href={`${config.scanUrl || ''}collections/${collectionId || ''}`}
-          target={'_blank'}
+          target="_blank"
           rel="noreferrer"
         >
           <Text color="primary-600" size="s">

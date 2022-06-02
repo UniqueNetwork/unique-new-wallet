@@ -61,16 +61,12 @@ export function MobileFilters<T = FilterState>({
     <>
       <MobileFilterActionsWrapper>
         {!isVisible && (
-          <Button
-            role={'primary'}
-            title={'Filter and sort'}
-            onClick={onVisibleButtonClick}
-          />
+          <Button role="primary" title="Filter and sort" onClick={onVisibleButtonClick} />
         )}
         {isVisible && (
           <>
-            <Button title={'Show'} onClick={onShowButtonClick} />
-            <Button role={'danger'} title={'Reset'} onClick={onResetButtonClick} />
+            <Button title="Show" onClick={onShowButtonClick} />
+            <Button role="danger" title="Reset" onClick={onResetButtonClick} />
           </>
         )}
       </MobileFilterActionsWrapper>

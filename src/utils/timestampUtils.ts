@@ -42,7 +42,9 @@ const timeDifference = (when: number, sinceWhen: number | null = null) => {
     amount = Math.round(daysDifference / 7);
   }
 
-  if (amount < 1 && timeType === 'second') return 'Less than a second';
+  if (amount < 1 && timeType === 'second') {
+    return 'Less than a second';
+  }
 
   return `${amount} ${timeType}${amount >= 2 ? 's' : ''}`;
 };

@@ -58,7 +58,9 @@ const getStatusQuery = (status: TokenStatus, currentAccount: string | null = nul
 const getGqlParamsFromFilter = (
   filter: TokensFilter | undefined | null,
 ): Record<string, unknown> => {
-  if (!filter) return {};
+  if (!filter) {
+    return {};
+  }
 
   let gqlWhere = {
     // search (token number and collection data)
@@ -75,8 +77,9 @@ const getGqlParamsFromFilter = (
     let statusQuery = {};
 
     // TODO: pass current user account
-    for (const status of filter.status)
+    for (const status of filter.status) {
       statusQuery = { ...getStatusQuery(status, null), ...statusQuery };
+    }
 
     gqlWhere = { ...statusQuery, ...gqlWhere };
   }
