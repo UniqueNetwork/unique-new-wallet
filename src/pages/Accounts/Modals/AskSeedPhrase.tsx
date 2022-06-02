@@ -1,19 +1,31 @@
-import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import {
   Avatar,
   Button,
   Checkbox,
   Heading,
+  Icon,
   Link,
   Select,
   Text,
-  Icon,
+  Textarea,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { addressFromSeed } from '@app/utils';
 import { Tooltip } from '@app/components';
+import {
+  AddressWrapper,
+  ButtonGroup,
+  StepsTextStyled,
+  TextWarning,
+} from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
@@ -45,9 +57,9 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
     setSeedGenerator(value.id);
   }, []);
 
-  const onSeedChange = useCallback(({ target }: ChangeEvent<HTMLTextAreaElement>) => {
-    changeSeed(target.value);
-  }, []);
+  const onSeedChange = (value: string) => {
+    changeSeed(value);
+  };
 
   useEffect(() => {
     generateSeed();
@@ -59,117 +71,115 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
 
   return (
     <>
-      <AddressWrapper>
-        <Avatar size={24} src={DefaultAvatar} />
-        <Text>{address}</Text>
-      </AddressWrapper>
-      <Heading size={'4'}>The secret seed value for this account</Heading>
-      <SeedGeneratorSelectWrapper>
-        <Select
-          options={seedGenerators}
-          value={seedGenerator}
-          onChange={onSeedGeneratorChange}
-        />
-        <Tooltip
-          title={
-            <>
-              Find out more on{' '}
-              <Link href="https://" title={'Polkadot Wiki'}>
-                Polkadot Wiki
-              </Link>
-            </>
-          }
-        >
-          <Icon name="question" size={24} />
-        </Tooltip>
-      </SeedGeneratorSelectWrapper>
-      <InputSeedWrapper>
-        <SeedInput value={seed} onChange={onSeedChange} />
-        <Button title="Regenerate seed" onClick={generateSeed} />
-      </InputSeedWrapper>
-      <TextStyled color="additional-warning-500" size="s">
-        Ensure that you keep this seed in a safe place. Anyone with access to it can
-        re-create the account and gain full access to it.
-      </TextStyled>
-      <ConfirmWrapperRow>
-        <Checkbox
-          label={'I have saved my mnemnic seed safely'}
-          checked={confirmSeedSaved}
-          size={'m'}
-          onChange={setConfirmSeedSaved}
-        />
-      </ConfirmWrapperRow>
-      <ButtonWrapper>
+      <ModalContent>
+        <ContentRow>
+          <AddressWrapper>
+            <Avatar size={24} src={DefaultAvatar} />
+            <Text>{address}</Text>
+          </AddressWrapper>
+        </ContentRow>
+        <ContentRow>
+          <ContentRowTitle size="4">
+            The secret seed value for this account
+          </ContentRowTitle>
+          <ControlsGroup>
+            <ControlWrapper>
+              <Select
+                options={seedGenerators}
+                value={seedGenerator}
+                onChange={onSeedGeneratorChange}
+              />
+              <ControlIcon className="align-middle">
+                <Tooltip
+                  title={
+                    <>
+                      Find out more on{' '}
+                      <Link href="https://" title={'Polkadot Wiki'}>
+                        Polkadot Wiki
+                      </Link>
+                    </>
+                  }
+                >
+                  <Icon size={24} name="question" color="var(--color-primary-500)" />
+                </Tooltip>
+              </ControlIcon>
+            </ControlWrapper>
+            <ControlWrapper>
+              <Textarea value={seed} onChange={onSeedChange} />
+              <ControlIcon role="button" onClick={generateSeed}>
+                <Icon size={24} name="reload" color="inherit" />
+              </ControlIcon>
+            </ControlWrapper>
+            <TextWarning color="additional-warning-500" size="s">
+              Ensure that you keep this seed in a safe place. Anyone with access to it can
+              re-create the account and gain full access to it.
+            </TextWarning>
+            <Checkbox
+              label={'I have saved my mnemnic seed safely'}
+              checked={confirmSeedSaved}
+              size={'m'}
+              onChange={setConfirmSeedSaved}
+            />
+          </ControlsGroup>
+        </ContentRow>
+      </ModalContent>
+      <ModalFooter>
         <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
-        <Button
-          disabled={!address || !confirmSeedSaved}
-          role="primary"
-          title="Next"
-          onClick={onNextClick}
-        />
-      </ButtonWrapper>
+        <ButtonGroup>
+          <Button
+            disabled={!address || !confirmSeedSaved}
+            role="primary"
+            title="Next"
+            onClick={onNextClick}
+          />
+        </ButtonGroup>
+      </ModalFooter>
     </>
   );
 };
 
-const AddressWrapper = styled.div`
-  display: flex;
-  column-gap: calc(var(--prop-gap) / 2);
-  margin: calc(var(--prop-gap) * 2) 0;
-  border: 1px solid var(--color-grey-300);
-  border-radius: 4px;
-  padding: 20px var(--prop-gap);
+const ContentRowTitle = styled(Heading)`
+  margin-bottom: calc(var(--prop-gap) * 1.5) !important;
 `;
 
-const SeedGeneratorSelectWrapper = styled.div`
+const ControlWrapper = styled.div`
   display: flex;
-  margin-top: calc(var(--prop-gap) * 1.5);
-  margin-bottom: var(--prop-gap);
-  align-items: center;
-  column-gap: 10px;
-  .unique-select {
-    flex-grow: 1;
+
+  & > .unique-select,
+  & > .unique-textarea-text {
+    flex: 1 1 auto;
+  }
+
+  [role^='button'] {
+    cursor: pointer;
+    user-select: none;
   }
 `;
 
-const InputSeedWrapper = styled.div`
-  border: 1px solid var(--color-grey-300);
-  border-radius: 4px;
-  padding: var(--prop-gap);
+const ControlIcon = styled.span`
   display: flex;
-  margin-bottom: var(--prop-gap);
-`;
-
-const SeedInput = styled.textarea`
-  margin-bottom: 32px;
-  width: 100%;
-  border: none;
-  height: auto;
-  resize: none;
-  outline: 0px none transparent;
-`;
-
-const TextStyled = styled(Text)`
-  box-sizing: border-box;
-  display: flex;
-  padding: 8px 16px;
-  margin: calc(var(--prop-gap) * 1.5) 0;
-  border-radius: 4px;
-  background-color: var(--color-additional-warning-100);
-  width: 100%;
-`;
-
-const ConfirmWrapperRow = styled.div`
-  display: flex;
-  margin-bottom: calc(var(--prop-gap) * 1.5);
-`;
-
-const StepsTextStyled = styled(Text)`
-  flex-grow: 1;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: calc(var(--prop-gap) / 2);
+
+  & > div {
+    line-height: 1;
+  }
+
+  &.align-middle {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+`;
+
+const ControlsGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--prop-gap);
+
+  & > :last-child {
+    align-self: baseline;
+  }
 `;

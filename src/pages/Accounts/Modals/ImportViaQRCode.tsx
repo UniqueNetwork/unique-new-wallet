@@ -8,12 +8,14 @@ import { QRReader, ScannedResult } from '@app/components/QRReader/QRReader';
 import { useAccounts } from '@app/hooks';
 import {
   AdditionalText,
-  ContentRow,
   LabelText,
-  ModalContent,
-  ModalFooter,
   ModalHeader,
 } from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import { TCreateAccountModalProps } from './types';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';

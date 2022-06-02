@@ -28,7 +28,6 @@ export interface ViewToken {
   owner: string;
   price: number;
   count_of_views: number;
-
   collection_id: number;
   collection_name: string;
   collection_cover: string;

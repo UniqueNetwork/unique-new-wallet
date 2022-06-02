@@ -15,7 +15,7 @@ import {
   Welcome,
 } from '@app/pages';
 import { CollectionForm } from '@app/context';
-import CollectionSettings from '@app/pages/CollectionSettings';
+import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
 
 export interface RouteItem {
   children?: RouteItem[];
