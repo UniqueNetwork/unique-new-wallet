@@ -75,7 +75,7 @@ export const NFTs = styled(NFTsComponent)`
     max-width: 235px;
     padding-top: calc(var(--prop-gap) * 2);
     padding-left: calc(var(--prop-gap) * 2);
-    padding-right: calc((var(--prop-gap) / 2) * 3);
+    padding-right: calc(var(--prop-gap) * 1.5);
     border-right: 1px solid var(--color-grey-300);
   }
 
