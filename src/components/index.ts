@@ -17,3 +17,4 @@ export * from './Table';
 export * from './TokensCard';
 export * from './Tooltip';
 export * from './Upload';
+export * from './StatusTransactionModal';

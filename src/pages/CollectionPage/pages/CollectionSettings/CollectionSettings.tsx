@@ -4,14 +4,13 @@ import styled from 'styled-components/macro';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
-import { PagePaper } from '@app/components';
+import { PagePaper, StatusTransactionModal } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts } from '@app/hooks';
 import { deleteCollection } from '@app/api/restApi/collection';
 import { extrinsicSubmit } from '@app/api/restApi/extrinsic';
-import { LoadingBurnCollection } from '@app/pages/CollectionNft/components/LoadingBurnCollection';
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
@@ -134,7 +133,10 @@ const CollectionSettings = () => {
           </form>
         )}
       </SettingsContainer>
-      {isLoadingBurnCollection && <LoadingBurnCollection />}
+      <StatusTransactionModal
+        isVisible={isLoadingBurnCollection}
+        description="Burning collection"
+      />
 
       <BurnCollectionModal
         isVisible={isVisibleConfirmModal}
