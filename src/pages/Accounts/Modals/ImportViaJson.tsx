@@ -6,16 +6,17 @@ import keyring from '@polkadot/ui-keyring';
 import { PasswordInput, Upload } from '@app/components';
 import {
   AdditionalText,
-  ContentRow,
   LabelText,
-  ModalContent,
-  ModalFooter,
   ModalHeader,
   TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import { TCreateAccountModalProps } from './types';
-import { convertToU8a, keyringFromFile } from '../../../utils/jsonUtils';
 
 export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   isVisible,

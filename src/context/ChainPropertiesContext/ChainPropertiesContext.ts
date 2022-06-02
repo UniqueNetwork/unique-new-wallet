@@ -1,9 +1,9 @@
 import { Consumer, Context, createContext, Provider } from 'react';
 
-import { ChainProperties } from '@app/types/Api';
+import { ChainPropertiesResponse } from '@app/types/Api';
 
 export type ChainPropertiesContextProps = {
-  chainProperties?: ChainProperties;
+  chainProperties?: ChainPropertiesResponse;
   isLoading: boolean;
 };
 

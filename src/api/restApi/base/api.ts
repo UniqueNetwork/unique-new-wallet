@@ -5,7 +5,7 @@ import { serializeToQuery } from './helper';
 export interface IBaseApi {
   get: <R>(url: string, config?: AxiosRequestConfig) => Promise<AxiosRequestConfig<R>>;
   delete: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
-  post: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+  post: <R, D>(url: string, data: D, config?: AxiosRequestConfig) => Promise<R>;
   put: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
   patch: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
 }

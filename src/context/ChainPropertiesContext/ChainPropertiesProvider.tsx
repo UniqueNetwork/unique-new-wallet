@@ -1,13 +1,13 @@
 import { FC, useCallback, useEffect, useMemo, useState, useRef } from 'react';
 
 import { getChainProperties, IBaseApi } from '@app/api/restApi';
-import { ChainProperties } from '@app/types/Api';
+import { ChainPropertiesResponse } from '@app/types/Api';
 import { useApi } from '@app/hooks';
 
 import { ChainPropertiesProvider } from './ChainPropertiesContext';
 
 export const ChainPropertiesWrapper: FC = ({ children }) => {
-  const [chainProperties, setChainProperties] = useState<ChainProperties>();
+  const [chainProperties, setChainProperties] = useState<ChainPropertiesResponse>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { api } = useApi();
   const apiRef = useRef<IBaseApi>();

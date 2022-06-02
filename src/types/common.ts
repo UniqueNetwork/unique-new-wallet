@@ -23,3 +23,10 @@ export type ResponseError = {
   message: string;
   prettifiedMessage?: string;
 };
+
+export type Option<T> = {
+  id: T;
+  label: string;
+  icon?: string;
+  checked?: boolean;
+};
