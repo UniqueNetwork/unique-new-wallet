@@ -57,7 +57,7 @@ const getAccountsColumns = ({
       return (
         <BalancesWrapper>
           <Text>{`${formatKusamaBalance(KSM || 0)} ${tokenSymbol}`}</Text>
-          <Text color="grey-500" size="s">{`all transferable`}</Text>
+          <Text color="grey-500" size="s">all transferable</Text>
         </BalancesWrapper>
       );
     },

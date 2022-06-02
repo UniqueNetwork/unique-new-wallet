@@ -26,6 +26,8 @@ const AccountCard = ({
     navigator.clipboard.writeText(account);
   };
 
+  const address = isShort ? shortcutText(accountAddress || '') : accountAddress || '';
+
   return (
     <>
       <Avatar size={24} src={DefaultAvatar} />
@@ -34,7 +36,7 @@ const AccountCard = ({
         {!hideAddress && (
           <AddressRow>
             <Text size="s" color="grey-500">
-              {isShort ? shortcutText(accountAddress || '') : accountAddress || ''}
+              {address}
             </Text>
             {canCopy && (
               <a onClick={onCopyAddress(accountAddress || '')}>
