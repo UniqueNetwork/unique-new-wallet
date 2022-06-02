@@ -1,44 +1,51 @@
-import { VFC } from 'react';
+import { memo, useCallback, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Checkbox } from '@unique-nft/ui-kit';
 
 export interface CollectionFilterItemComponentProps {
+  id: number;
+  icon: string;
+  label: string;
   className?: string;
-  collectionId: string;
-  collectionName: string;
-  collectionCover: string;
-  onChangeCollectionsFilter: (collectionId: string) => void;
+  onChange: (collectionId: number) => void;
 }
 
-const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
-  props,
-) => {
-  const {
-    className,
-    collectionId,
-    collectionName,
-    collectionCover,
-    onChangeCollectionsFilter,
-  } = props;
+const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = ({
+  className,
+  id,
+  icon,
+  label,
+  onChange,
+}) => {
+  const [checked, setChecked] = useState(false);
 
-  const onChange = () => {
-    onChangeCollectionsFilter(collectionId);
-  };
+  const onChangeHandler = useCallback((checked: boolean) => {
+    setChecked(checked);
+    onChange(id);
+  }, []);
+
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
   return (
-    <div className={classNames('collection-filter-item', className)}>
+    <div
+      style={{ backgroundColor: `#${randomColor}` }}
+      className={classNames('collection-filter-item', className)}
+    >
       <Checkbox
-        checked
-        iconLeft={{
-          size: 15,
-          file: collectionCover,
-        }}
-        label={collectionName}
-        onChange={onChange}
+        label={label}
+        checked={checked}
+        iconLeft={{ size: 15, file: icon }}
+        onChange={onChangeHandler}
       />
     </div>
   );
 };
 
-export const CollectionFilterItem = styled(CollectionFilterItemComponent)``;
+const CollectionFilterItemStyled = styled(CollectionFilterItemComponent)`
+  &.collection-filter-item {
+    margin-top: 16px;
+  }
+`;
+
+export const CollectionFilterItem = memo(CollectionFilterItemStyled);

@@ -4,9 +4,10 @@ import React, { useEffect, VFC } from 'react';
 import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { PagePaper } from '@app/components';
+import { PagePaperNoPadding } from '@app/components';
 
 import { NFTFilters } from './NFTs';
+import { NFTsWrapper } from './context';
 
 interface MyTokensComponentProps {
   activeTab: number;
@@ -38,38 +39,42 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
   }, [activeTab, basePath, location.pathname, navigate, tabUrls]);
 
   return (
-    <PagePaper>
-      <div className={classNames('my-tokens', className)}>
-        <div className="tabs-header">
-          <Tabs
-            activeIndex={currentTabIndex}
-            labels={['NFTs', 'Coins']}
-            type="slim"
-            onClick={handleClick}
-          />
+    <NFTsWrapper>
+      <PagePaperNoPadding>
+        <div className={classNames('my-tokens', className)}>
+          <div className="tabs-header">
+            <Tabs
+              activeIndex={currentTabIndex}
+              labels={['NFTs', 'Coins']}
+              type="slim"
+              onClick={handleClick}
+            />
+            <Tabs activeIndex={currentTabIndex}>
+              <NFTFilters />
+              <></>
+            </Tabs>
+          </div>
           <Tabs activeIndex={currentTabIndex}>
-            <NFTFilters />
-            <></>
+            <Outlet />
+            <Outlet />
           </Tabs>
         </div>
-        <Tabs activeIndex={currentTabIndex}>
-          <Outlet />
-          <Outlet />
-        </Tabs>
-      </div>
-    </PagePaper>
+      </PagePaperNoPadding>
+    </NFTsWrapper>
   );
 };
 
 export const MyTokens = styled(MyTokensComponent)`
   .tabs-header {
-    align-items: center;
-    border-bottom: 1px solid var(--color-grey-300);
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    padding: 0 calc(var(--prop-gap) * 2);
+    border-bottom: 1px solid var(--color-grey-300);
   }
 
   .unique-tabs-contents {
     padding-top: 0;
+    padding-bottom: 0;
   }
 `;

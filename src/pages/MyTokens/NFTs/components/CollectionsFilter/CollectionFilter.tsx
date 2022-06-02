@@ -1,49 +1,35 @@
-import { VFC, useState } from 'react';
+import { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Accordion } from '@unique-nft/ui-kit';
 
-import { CollectionPreview } from '@app/api';
+import { Option } from '@app/types';
+import { useNFTsContext } from '@app/pages/MyTokens/context';
 
 import { CollectionFilterItem } from './CollectionFilterItem';
 
 export interface CollectionsFilterComponentProps {
   className?: string;
-  collections?: CollectionPreview[];
+  isLoading: boolean;
+  defaultCollections?: Option<number>[];
 }
-
-export interface Filter {
-  collectionIds: string[];
-}
-
-const filters: Filter = {
-  collectionIds: [],
-};
 
 const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   className,
-  collections,
+  defaultCollections,
 }) => {
-  const onChangeCollectionsFilter = (collectionId: string) => {
-    let newIds: string[] = [];
-
-    if (filters.collectionIds.includes(collectionId)) {
-      newIds = filters.collectionIds.filter((item) => item !== collectionId);
-    } else {
-      newIds = [...filters.collectionIds, collectionId];
-    }
-  };
+  const { changeCollectionsIds } = useNFTsContext();
 
   return (
     <div className={classNames('collections-filter', className)}>
       <Accordion expanded title="Collections">
-        {collections?.map((collection) => (
+        {defaultCollections?.map((c) => (
           <CollectionFilterItem
-            key={collection.collection_id}
-            collectionName={collection.collection_name}
-            collectionId={collection.collection_id?.toString()}
-            collectionCover="" // waiting hasura rework
-            onChangeCollectionsFilter={onChangeCollectionsFilter}
+            key={c.id}
+            id={c.id}
+            icon={c.icon}
+            label={c.label}
+            onChange={changeCollectionsIds}
           />
         ))}
       </Accordion>
@@ -52,7 +38,13 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
 };
 
 export const CollectionsFilter = styled(CollectionsFilterComponent)`
+  .loading {
+    text-align: center;
+  }
   &.collections-filter {
     padding-top: calc(var(--prop-gap)) 0;
+  }
+  &.collection-filter-item {
+    margin-top: 16px;
   }
 `;
