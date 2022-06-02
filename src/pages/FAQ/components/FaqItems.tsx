@@ -12,6 +12,8 @@ export const faqItems = [
           href="https://polkadot.js.org/extension/"
           title="Polkadot.js extension"
           role="primary"
+          rel="noopener noreferrer"
+          target="_blank"
         />{' '}
         or `Manage accounts` page and follow the instructions.
         <br />
@@ -30,6 +32,8 @@ export const faqItems = [
             href="https://polkadot.js.org/extension/"
             title="Polkadot.js extension"
             role="primary"
+            rel="noopener noreferrer"
+            target="_blank"
           />{' '}
           or the ‘Manage accounts page’ to set up or restore an account. Restore your
           wallet through the seed phrase, JSON file+password or QR code. When using Chrome
@@ -69,7 +73,13 @@ export const faqItems = [
       <p>
         About 5 QTZ to create and customize the collection. To obtain QTZ visit the MEXC
         Exchange:{' '}
-        <Link href="https://www.mexc.com/" title="https://www.mexc.com/" role="primary" />
+        <Link
+          href="https://www.mexc.com/"
+          title="https://www.mexc.com/"
+          role="primary"
+          rel="noopener noreferrer"
+          target="_blank"
+        />
       </p>
     ),
   },
@@ -117,7 +127,15 @@ export const faqItems = [
     title: 'How can I find my collection in the blockchain?',
     content: (
       <p>
-        Use our <Link href="https://uniquescan.io" title="UniqueScan" role="primary" />.
+        Use our{' '}
+        <Link
+          href="https://uniquescan.io"
+          title="UniqueScan"
+          role="primary"
+          rel="noopener noreferrer"
+          target="_blank"
+        />
+        .
       </p>
     ),
   },
