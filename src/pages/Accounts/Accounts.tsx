@@ -30,7 +30,7 @@ const getAccountsColumns = ({
           <Avatar size={24} src={DefaultAvatar} />
           <AccountInfoWrapper>
             <Text>{accountInfo.name}</Text>
-            <Text size={'s'} color={'grey-500'}>
+            <Text size="s" color="grey-500">
               {accountInfo.address}
             </Text>
           </AccountInfoWrapper>
@@ -59,12 +59,12 @@ const getAccountsColumns = ({
       return (
         <LinksWrapper>
           <LinkStyled
-            target={'_blank'}
-            rel={'noreferrer'}
+            target="_blank"
+            rel="noreferrer"
             href={`${config.scanUrl}account/${address}`}
           >
-            <Text color={'primary-500'}>UniqueScan</Text>
-            <Icon size={16} path={ArrowUpRight} color={'none'} />
+            <Text color="primary-500">UniqueScan</Text>
+            <Icon size={16} path={ArrowUpRight} color="none" />
           </LinkStyled>
         </LinksWrapper>
       );
@@ -77,7 +77,7 @@ const getAccountsColumns = ({
     render(address) {
       return (
         <ActionsWrapper>
-          <Button title={'Send'} onClick={onShowSendFundsModal(address)} />
+          <Button title="Send" onClick={onShowSendFundsModal(address)} />
         </ActionsWrapper>
       );
     },
@@ -134,7 +134,7 @@ export const Accounts = () => {
           <AccountsGroupButton />
           <SearchInputWrapper>
             <SearchInputStyled
-              placeholder={'Account'}
+              placeholder="Account"
               iconLeft={{ name: 'magnify', size: 18 }}
               onChange={onSearchStringChange}
             />

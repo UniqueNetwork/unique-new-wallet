@@ -52,7 +52,7 @@ const CollectionsFilter: FC<CollectionsFilterProps> = ({ value, onChange }) => {
 
   return (
     <Accordion
-      title={'Collections'}
+      title="Collections"
       isOpen={true}
       isClearShow={selectedCollections.length > 0}
       onClear={onCollectionsClear}
@@ -63,12 +63,12 @@ const CollectionsFilter: FC<CollectionsFilterProps> = ({ value, onChange }) => {
           <CheckboxWrapper>
             <Checkbox
               checked={selectedCollections.indexOf(collection.id) !== -1}
-              label={''}
-              size={'m'}
+              label=""
+              size="m"
               key={`collection-${collection.id}`}
               onChange={onCollectionSelect(collection.id)}
             />
-            <Avatar src={collection.coverImageUrl} size={22} type={'circle'} />
+            <Avatar src={collection.coverImageUrl} size={22} type="circle" />
             <Text>{collection.collectionName}</Text>
           </CheckboxWrapper>
         ))}

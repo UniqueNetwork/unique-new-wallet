@@ -37,7 +37,10 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
   );
 
   const onNextClick = useCallback(() => {
-    if (!accountProperties) return;
+    if (!accountProperties) {
+      return;
+    }
+
     onFinish({ ...accountProperties, name, password });
   }, [name, password]);
 

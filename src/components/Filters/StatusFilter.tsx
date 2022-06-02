@@ -57,7 +57,7 @@ const StatusFilter: FC<StatusFilterProps> = ({ onChange }) => {
 
   return (
     <Accordion
-      title={'Status'}
+      title="Status"
       isOpen={true}
       isClearShow={myNFTs || fixedPrice || timedAuction || myBets}
       onClear={onClear}
@@ -65,28 +65,23 @@ const StatusFilter: FC<StatusFilterProps> = ({ onChange }) => {
       <StatusFilterWrapper>
         <Checkbox
           checked={myNFTs}
-          label={'My NFTs on sell'}
-          size={'m'}
+          label="My NFTs on sell"
+          size="m"
           onChange={onMyNFTsChange}
         />
         <Checkbox
           checked={fixedPrice}
-          label={'Fixed price'}
-          size={'m'}
+          label="Fixed price"
+          size="m"
           onChange={onFixedPriceChange}
         />
         <Checkbox
           checked={timedAuction}
-          label={'Timed auction'}
-          size={'m'}
+          label="Timed auction"
+          size="m"
           onChange={onTimedAuctionChange}
         />
-        <Checkbox
-          checked={myBets}
-          label={'My bets'}
-          size={'m'}
-          onChange={onMyBetsChange}
-        />
+        <Checkbox checked={myBets} label="My bets" size="m" onChange={onMyBetsChange} />
       </StatusFilterWrapper>
     </Accordion>
   );

@@ -94,7 +94,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
                   title={
                     <>
                       Find out more on{' '}
-                      <Link href="https://" title={'Polkadot Wiki'}>
+                      <Link href="https://" title="Polkadot Wiki">
                         Polkadot Wiki
                       </Link>
                     </>
@@ -115,16 +115,16 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
               re-create the account and gain full access to it.
             </TextWarning>
             <Checkbox
-              label={'I have saved my mnemnic seed safely'}
+              label="I have saved my mnemnic seed safely"
               checked={confirmSeedSaved}
-              size={'m'}
+              size="m"
               onChange={setConfirmSeedSaved}
             />
           </ControlsGroup>
         </ContentRow>
       </ModalContent>
       <ModalFooter>
-        <StepsTextStyled size={'m'}>Step 1/3</StepsTextStyled>
+        <StepsTextStyled size="m">Step 1/3</StepsTextStyled>
         <ButtonGroup>
           <Button
             disabled={!address || !confirmSeedSaved}

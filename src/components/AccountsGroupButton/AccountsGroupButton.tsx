@@ -43,16 +43,16 @@ export const AccountsGroupButton = () => {
   }, []);
 
   return (
-    <div className={'btn-container'}>
+    <div className="btn-container">
       <Button
-        title={'Create substrate account'}
-        className={'create-account-btn account-group-btn-medium-font'}
+        title="Create substrate account"
+        className="create-account-btn account-group-btn-medium-font"
         onClick={onCreateAccountClick}
       />
       <DropdownMenu
-        title={'Add account via'}
-        role={'primary'}
-        className={'account-group-btn-medium-font'}
+        title="Add account via"
+        role="primary"
+        className="account-group-btn-medium-font"
       >
         <DropdownMenuItem onClick={onImportViaSeedClick}>Seed phrase</DropdownMenuItem>
         <DropdownMenuItem onClick={onImportViaJSONClick}>

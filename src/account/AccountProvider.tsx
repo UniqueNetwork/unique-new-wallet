@@ -23,8 +23,11 @@ export const AccountWrapper: FC = ({ children }) => {
     setIsSignModalVisible(true);
     return new Promise<KeyringPair>((resolve, reject) => {
       onSignCallback.current = (signature?: KeyringPair) => {
-        if (signature) resolve(signature);
-        else reject(new Error('Signing failed'));
+        if (signature) {
+          resolve(signature);
+        } else {
+          reject(new Error('Signing failed'));
+        }
       };
     });
   }, []);

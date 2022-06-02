@@ -28,7 +28,7 @@ export const AccountLinkComponent: VFC<AccountLinkProps> = ({
 
   return (
     <Link to={`/${currentChain?.network}/account/${value}`}>
-      <Text color={'primary-600'} size={size}>
+      <Text color="primary-600" size={size}>
         {shortcut}
       </Text>
     </Link>

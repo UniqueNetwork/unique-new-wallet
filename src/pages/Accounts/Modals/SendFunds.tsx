@@ -93,24 +93,24 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
       <Content>
-        <Heading size="2">{'Send funds'}</Heading>
+        <Heading size="2">Send funds</Heading>
       </Content>
 
-      <Text size={'s'} color={'grey-500'}>
-        {'From'}
+      <Text size="s" color="grey-500">
+        From
       </Text>
       <AddressWrapper>
         <Avatar size={24} src={DefaultAvatar} />
         <Text>{senderAddress || ''}</Text>
       </AddressWrapper>
       <AmountWrapper>
-        <Text size={'s'}>{`${formatKusamaBalance(
+        <Text size="s">{`${formatKusamaBalance(
           senderBalance?.toString() || 0,
         )} ${tokenSymbol}`}</Text>
       </AmountWrapper>
 
-      <Text size={'s'} color={'grey-500'}>
-        {'To'}
+      <Text size="s" color="grey-500">
+        To
       </Text>
       <RecipientSelectWrapper>
         <SelectInput<Account>
@@ -127,7 +127,7 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
       </RecipientSelectWrapper>
       <AmountWrapper>
         {recipientBalance && (
-          <Text size={'s'}>{`${formatKusamaBalance(
+          <Text size="s">{`${formatKusamaBalance(
             recipientBalance?.toString() || 0,
           )} ${tokenSymbol}`}</Text>
         )}

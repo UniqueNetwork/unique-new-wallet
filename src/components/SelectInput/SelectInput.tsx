@@ -57,10 +57,15 @@ export function SelectInput<T = SelectInputOption>({
 
   const showOption = useCallback(
     (option: T) => {
-      if (renderOption) return renderOption(option);
-      if (Object.hasOwnProperty.call(option, 'title'))
+      if (renderOption) {
+        return renderOption(option);
+      }
+      if (Object.hasOwnProperty.call(option, 'title')) {
         return (option as unknown as { title: string }).title;
-      if (typeof option === 'string' || typeof option === 'number') return option;
+      }
+      if (typeof option === 'string' || typeof option === 'number') {
+        return option;
+      }
 
       return null;
     },
@@ -102,7 +107,7 @@ export function SelectInput<T = SelectInputOption>({
         )}
         {selectedValue && <div>{showOption(selectedValue)}</div>}
         <input
-          type={'text'}
+          type="text"
           value={inputValue}
           ref={InputRef}
           onChange={onInputChange}

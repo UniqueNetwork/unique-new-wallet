@@ -24,7 +24,10 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
   onGoBack,
 }) => {
   const onSaveClick = useCallback(() => {
-    if (!accountProperties) return;
+    if (!accountProperties) {
+      return;
+    }
+
     onFinish(accountProperties);
   }, [accountProperties]);
 

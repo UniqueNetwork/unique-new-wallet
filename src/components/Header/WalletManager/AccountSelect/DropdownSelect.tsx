@@ -39,10 +39,15 @@ export function DropdownSelect<T>({
 
   const showOption = useCallback(
     (option: T) => {
-      if (renderOption) return renderOption(option);
-      if (Object.hasOwnProperty.call(option, 'title'))
+      if (renderOption) {
+        return renderOption(option);
+      }
+      if (Object.hasOwnProperty.call(option, 'title')) {
         return (option as unknown as { title: string }).title;
-      if (typeof option === 'string' || typeof option === 'number') return option;
+      }
+      if (typeof option === 'string' || typeof option === 'number') {
+        return option;
+      }
 
       return null;
     },
