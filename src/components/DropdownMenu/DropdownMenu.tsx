@@ -1,10 +1,7 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button } from '@unique-nft/ui-kit';
+import { Button, Icon } from '@unique-nft/ui-kit';
 
-import { Icon } from '@app/components';
-
-import CaretDown from '../../static/icons/caret-down.svg';
 import { DropdownMenuItemProps, DropdownMenuProps } from './types';
 
 export const DropdownMenu: FC<DropdownMenuProps> = ({ children, ...props }) => {
@@ -34,7 +31,7 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ children, ...props }) => {
     <DropdownMenuWrapper>
       <DropdownMenuButtonWrapper ref={DropdownMenuButtonRef}>
         <Button onClick={onDropdownClick} {...props} />
-        <Icon path={CaretDown} size={16} />
+        <Icon name="carret-down" size={16} />
       </DropdownMenuButtonWrapper>
       <DropdownMenuDropdown isOpen={isOpen}>{children}</DropdownMenuDropdown>
     </DropdownMenuWrapper>
@@ -54,7 +51,7 @@ const DropdownMenuButtonWrapper = styled.div`
   button.unique-button {
     padding-right: calc(var(--prop-gap) * 3);
   }
-  span[class^='Icon'] {
+  svg[class^='icon'] {
     position: absolute;
     margin-top: -8px;
     top: 50%;

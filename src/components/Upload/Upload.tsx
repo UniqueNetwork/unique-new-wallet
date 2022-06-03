@@ -1,10 +1,6 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
-
-import { Icon } from '@app/components';
-
-import UploadIcon from '../../static/icons/upload.svg';
+import { Icon, Text } from '@unique-nft/ui-kit';
 
 interface UploadProps {
   onChange(file: File): void;
@@ -26,7 +22,7 @@ export const Upload: FC<UploadProps> = ({ onChange }) => {
   return (
     <UploadWrapper>
       <input type="file" accept=".json" onChange={onInputChange} />
-      <Icon path={UploadIcon} size={48} />
+      <Icon name="upload" size={48} />
       {fileName && <Text color="primary-500">{fileName}</Text>}
     </UploadWrapper>
   );

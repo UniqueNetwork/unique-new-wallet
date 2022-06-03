@@ -4,7 +4,6 @@ import { Heading, InputText, Button, Textarea, Text, Upload } from '@unique-nft/
 import styled from 'styled-components';
 
 import { CollectionFormContext } from '@app/context';
-import uploadImg from '@app/static/icons/upload.svg';
 import { Alert, CollectionStepper } from '@app/components';
 import { MainInformationInitialValues } from '@app/types';
 
@@ -95,7 +94,7 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
           <div className="unique-input-text">
             <label>Upload image</label>
             <div className="additional-text">Choose JPG, PNG, GIF (max 10 Mb)</div>
-            <Upload upload={uploadImg} onChange={setFile} />
+            <Upload onChange={setFile} />
           </div>
           <Alert type="warning" className="alert-wrapper">
             A fee of ~ 2.073447 QTZ can be applied to the transaction
