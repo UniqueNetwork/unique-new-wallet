@@ -23,7 +23,9 @@ const SEED_PREFIX = 'secret';
 export const QRReader: FC<QRReaderProps> = ({ isEthereum, onScan }) => {
   const _onScan = useCallback(
     (data: Result | null | undefined) => {
-      if (!data) return;
+      if (!data) {
+        return;
+      }
 
       const text = data.getText();
       let prefix: string, content: string, genesisHash: string, name: string[];
@@ -39,10 +41,11 @@ export const QRReader: FC<QRReaderProps> = ({ isEthereum, onScan }) => {
       const expectedPrefix = isEthereum ? 'ethereum' : ADDRESS_PREFIX;
       const isValidPrefix = prefix === expectedPrefix || prefix === SEED_PREFIX;
 
-      if (!isValidPrefix)
+      if (!isValidPrefix) {
         throw new Error(
           `Invalid prefix received, expected '${expectedPrefix} or ${SEED_PREFIX}' , found '${prefix}'`,
         );
+      }
 
       const isAddress = prefix === expectedPrefix;
 

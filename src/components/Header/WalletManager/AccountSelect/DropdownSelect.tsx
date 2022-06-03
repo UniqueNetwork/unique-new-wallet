@@ -1,51 +1,33 @@
-import React, {
-  ChangeEvent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/macro';
 
-interface SelectInputOption {
-  key: string;
-  title: string;
-}
+import { Icon } from '@app/components';
+import TriangleDown from '@app/static/icons/triangle-down.svg';
 
-interface SelectInputProps<T = SelectInputOption> {
+export interface DropdownSelectProps<T> {
   className?: string;
   placeholder?: string;
   options: T[];
-  value?: string | T;
-  onChange(value: string | T): void;
+  value?: T;
+  onChange(value: T): void;
   renderOption?(value: T): ReactNode | string;
 }
 
-export function SelectInput<T = SelectInputOption>({
+export function DropdownSelect<T>({
   className,
   placeholder,
   options,
   value,
   onChange,
   renderOption,
-}: SelectInputProps<T>) {
-  const [selectedValue, setSelectedValue] = useState<T>();
-  const [inputValue, setInputValue] = useState<string>('');
+}: DropdownSelectProps<T>) {
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
-  const InputRef = useRef<HTMLInputElement>(null);
+  const InputRef = useRef<HTMLDivElement>(null);
   const DropdownRef = useRef<HTMLDivElement>(null);
 
-  const onInputChange = useCallback(
-    ({ target }: ChangeEvent<HTMLInputElement>) => {
-      onChange(target.value);
-    },
-    [onChange],
-  );
-
-  const onInputFocus = useCallback(() => {
-    setIsDropdownVisible(true);
-  }, [setIsDropdownVisible]);
+  const onClick = useCallback(() => {
+    setIsDropdownVisible(!isDropdownVisible);
+  }, [isDropdownVisible, setIsDropdownVisible]);
 
   const onOptionClick = useCallback(
     (option: T) => () => {
@@ -75,8 +57,8 @@ export function SelectInput<T = SelectInputOption>({
   useEffect(() => {
     const onClickOutside = (event: MouseEvent) => {
       if (
-        InputRef.current &&
         DropdownRef.current &&
+        InputRef.current &&
         !InputRef.current.contains(event.target as Node) &&
         !DropdownRef.current.contains(event.target as Node)
       ) {
@@ -89,30 +71,12 @@ export function SelectInput<T = SelectInputOption>({
     };
   }, []);
 
-  useEffect(() => {
-    if (typeof value === 'string') {
-      setSelectedValue(undefined);
-      setInputValue(value);
-      return;
-    }
-    setSelectedValue(value as T);
-    setInputValue('');
-  }, [value, setSelectedValue, setInputValue]);
-
   return (
     <SelectInputWrapper>
-      <InputWrapper className={className}>
-        {!selectedValue && !inputValue && placeholder && !isDropdownVisible && (
-          <Placeholder>{placeholder}</Placeholder>
-        )}
-        {selectedValue && <div>{showOption(selectedValue)}</div>}
-        <input
-          type="text"
-          value={inputValue}
-          ref={InputRef}
-          onChange={onInputChange}
-          onFocus={onInputFocus}
-        />
+      <InputWrapper className={className} ref={InputRef} onClick={onClick}>
+        {!value && placeholder && <Placeholder>{placeholder}</Placeholder>}
+        {value && showOption(value)}
+        {options.length > 0 && <Icon path={TriangleDown} size={16} />}
       </InputWrapper>
       <Dropdown isOpen={isDropdownVisible} ref={DropdownRef}>
         {options.map((item, index) => (
@@ -130,12 +94,14 @@ const SelectInputWrapper = styled.div`
 `;
 
 const InputWrapper = styled.div`
-  border: 1px solid var(--color-grey-300);
   box-sizing: border-box;
   border-radius: 4px;
   padding: calc(var(--prop-gap) / 2) var(--prop-gap);
   position: relative;
   min-height: 36px;
+  display: flex;
+  align-items: center;
+  column-gap: calc(var(--prop-gap) / 2);
   input {
     position: absolute;
     top: 0;
@@ -153,7 +119,7 @@ const InputWrapper = styled.div`
 const Dropdown = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   position: absolute;
-  width: 100%;
+  min-width: 100%;
   top: calc(100% + 4px);
   flex-direction: column;
   background: var(--color-additional-light);

@@ -40,7 +40,9 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   }, []);
 
   const onRestoreClick = useCallback(() => {
-    if (!pair || !password) return;
+    if (!pair || !password) {
+      return;
+    }
     try {
       keyring.addPair(pair, password);
     } catch (error) {
@@ -56,22 +58,18 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
       </ModalHeader>
       <ModalContent>
         <ContentRow>
-          <LabelText size={'m'}>Upload</LabelText>
-          <AdditionalText size={'s'} color={'grey-500'}>
+          <LabelText size="m">Upload</LabelText>
+          <AdditionalText size="s" color="grey-500">
             Click to select or drop the file here
           </AdditionalText>
           <Upload onChange={onUploadChange} />
         </ContentRow>
         <ContentRow>
-          <LabelText size={'m'}>Password</LabelText>
-          <AdditionalText size={'s'} color={'grey-500'}>
+          <LabelText size="m">Password</LabelText>
+          <AdditionalText size="s" color="grey-500">
             The password that was previously used to encrypt this account
           </AdditionalText>
-          <PasswordInput
-            placeholder={'Password'}
-            value={password}
-            onChange={setPassword}
-          />
+          <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
         </ContentRow>
         <ContentRow>
           <TextWarning color="additional-warning-500" size="s">

@@ -10,7 +10,7 @@ export const faqItems = [
         Use either the{' '}
         <Link
           href="https://polkadot.js.org/extension/"
-          title={'Polkadot.js extension'}
+          title="Polkadot.js extension"
           role="primary"
           rel="noopener noreferrer"
           target="_blank"
@@ -30,7 +30,7 @@ export const faqItems = [
           Use the{' '}
           <Link
             href="https://polkadot.js.org/extension/"
-            title={'Polkadot.js extension'}
+            title="Polkadot.js extension"
             role="primary"
             rel="noopener noreferrer"
             target="_blank"

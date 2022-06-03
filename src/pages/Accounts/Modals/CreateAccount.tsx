@@ -43,7 +43,9 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
   const onStageFinish = useCallback(
     (accountProperties: TAccountProperties) => {
       if (stage === CreateAccountModalStages.Final) {
-        if (!accountProperties) return;
+        if (!accountProperties) {
+          return;
+        }
         addLocalAccount(
           accountProperties.seed,
           derivePath,
@@ -63,11 +65,15 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
   );
 
   const onGoBack = useCallback(() => {
-    if (stage === CreateAccountModalStages.AskSeed) return;
+    if (stage === CreateAccountModalStages.AskSeed) {
+      return;
+    }
     setStage(stage - 1);
   }, [stage]);
 
-  if (!ModalBodyComponent) return null;
+  if (!ModalBodyComponent) {
+    return null;
+  }
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>

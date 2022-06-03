@@ -21,7 +21,10 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
   const { selectedAccount, unlockLocalAccount } = useAccounts();
 
   const onSignClick = useCallback(() => {
-    if (!selectedAccount || selectedAccount.signerType !== AccountSigner.local) return;
+    if (!selectedAccount || selectedAccount.signerType !== AccountSigner.local) {
+      return;
+    }
+
     try {
       setPasswordError(undefined);
       const signature = unlockLocalAccount(password);
@@ -35,20 +38,22 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
     setPassword('');
   }, [selectedAccount, unlockLocalAccount, password, onFinish]);
 
-  if (!selectedAccount) return null;
+  if (!selectedAccount) {
+    return null;
+  }
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
       <Content>
-        <Heading size="2">{'Authorize transaction'}</Heading>
+        <Heading size="2">Authorize transaction</Heading>
       </Content>
       <AddressWrapper>
         <Avatar size={24} src={DefaultAvatar} />
         <Text>{selectedAccount.address || ''}</Text>
       </AddressWrapper>
       <CredentialsWrapper>
-        <PasswordInput placeholder={'Password'} value={password} onChange={setPassword} />
-        {passwordError && <Text color={'coral-500'}>{passwordError}</Text>}
+        <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
+        {passwordError && <Text color="coral-500">{passwordError}</Text>}
       </CredentialsWrapper>
       <ButtonWrapper>
         <Button disabled={!password} role="primary" title="Sign" onClick={onSignClick} />

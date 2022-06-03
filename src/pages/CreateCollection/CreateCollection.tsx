@@ -23,7 +23,7 @@ const CreateCollectionComponent: FC<CreateCollectionProps> = (props) => {
 
   return (
     <div className={classNames('create-collection', className)}>
-      <Heading size={'1'}>Create a collection</Heading>
+      <Heading size="1">Create a collection</Heading>
       <div className="collection-template">
         <div className="collection-content-page">
           <div className="collection-content">

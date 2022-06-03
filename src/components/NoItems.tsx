@@ -10,7 +10,7 @@ const NoItems: FC = () => {
   return (
     <NoItemsWrapper>
       <Icon path={NoItemsIcon} />
-      <Text size={'l'} color={'grey-500'}>
+      <Text size="l" color="grey-500">
         No items found
       </Text>
     </NoItemsWrapper>

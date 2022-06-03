@@ -51,7 +51,7 @@ export const Header: VFC = () => {
       <LeftSideColumn>
         {showMobileMenu && <MenuIcon src={menu} onClick={mobileMenuToggle} />}
         <Link to={base}>
-          <LogoIcon src={'/logos/logo.svg'} />
+          <LogoIcon src="/logos/logo.svg" />
         </Link>
 
         {!showMobileMenu && (

@@ -91,6 +91,13 @@ module.exports = {
         'newlines-between': 'always',
       },
     ],
+    'react/jsx-curly-brace-presence': [
+      'error',
+      {
+        props: 'never',
+        children: 'never',
+      },
+    ],
     'react/jsx-sort-props': [
       'error',
       {
@@ -100,6 +107,7 @@ module.exports = {
         noSortAlphabetically: true,
       },
     ],
+    curly: ['error', 'all'],
     // required as 'off' since typescript-eslint has own versions
     indent: 'off',
     'no-use-before-define': 'off',
