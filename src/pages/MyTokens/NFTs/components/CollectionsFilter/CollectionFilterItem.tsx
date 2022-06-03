@@ -25,13 +25,8 @@ const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
     onChange(id);
   }, []);
 
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-
   return (
-    <div
-      style={{ backgroundColor: `#${randomColor}` }}
-      className={classNames('collection-filter-item', className)}
-    >
+    <div className={classNames('collection-filter-item', className)}>
       <Checkbox
         label={label}
         checked={checked}

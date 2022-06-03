@@ -11,10 +11,14 @@ export const getTokenIpfsUriByImagePath = (imagePath: string | null): string => 
     return '';
   }
 
-  const deserializedImagePath: unknown = JSON.parse(imagePath);
+  try {
+    const deserializedImagePath: unknown = JSON.parse(imagePath);
 
-  if (IPFSGateway && isImagePath(deserializedImagePath) && deserializedImagePath.ipfs) {
-    return `${IPFSGateway}/${deserializedImagePath.ipfs}`;
+    if (IPFSGateway && isImagePath(deserializedImagePath) && deserializedImagePath.ipfs) {
+      return `${IPFSGateway}/${deserializedImagePath.ipfs}`;
+    }
+  } catch (error) {
+    console.error(error);
   }
 
   return '';
