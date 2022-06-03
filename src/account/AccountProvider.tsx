@@ -4,8 +4,7 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 
 import { sleep } from '@app/utils';
-import { getAccountBalance, IBaseApi } from '@app/api/restApi';
-import { useApi } from '@app/hooks';
+import { useAccountBalanceService } from '@app/api';
 
 import { Account, AccountProvider, AccountSigner } from './AccountContext';
 import { SignModal } from '../components/SignModal/SignModal';
@@ -14,11 +13,9 @@ import { DefaultAccountKey } from './constants';
 export const AccountWrapper: FC = ({ children }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isLoadingBalance, setIsLoadingBalance] = useState<boolean>(false);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
-  const { api } = useApi();
-  const apiRef = useRef<IBaseApi>();
+  const { data } = useAccountBalanceService(selectedAccount?.address);
 
   const changeAccount = useCallback((account: Account) => {
     localStorage.setItem(DefaultAccountKey, account.address);
@@ -50,27 +47,34 @@ export const AccountWrapper: FC = ({ children }) => {
     onSignCallback.current && onSignCallback.current(signature);
   }, []);
 
-  const getExtensionAccounts = useCallback(async () => {
-    // this call fires up the authorization popup
+  const initializeExtension = useCallback(async () => {
     let extensions = await web3Enable('unique-minter-wallet');
 
     if (extensions.length === 0) {
-      console.log('Extension not found, retry in 1s');
-
       await sleep(1000);
-      extensions = await web3Enable('my cool dapp');
+
+      extensions = await web3Enable('unique-minter-wallet');
 
       if (extensions.length === 0) {
-        // alert('no extension installed, or the user did not accept the authorization');
-        return [];
+        setFetchAccountsError(
+          'No extension installed, or the user did not accept the authorization',
+        );
+
+        setIsLoading(false);
       }
     }
+
+    return extensions;
+  }, []);
+
+  const getExtensionAccounts = useCallback(async () => {
+    await initializeExtension();
 
     return (await web3Accounts()).map((account) => ({
       ...account,
       signerType: AccountSigner.extension,
     })) as Account[];
-  }, []);
+  }, [initializeExtension]);
 
   const getLocalAccounts = useCallback(() => {
     const keyringAccounts = keyring.getAccounts();
@@ -90,25 +94,10 @@ export const AccountWrapper: FC = ({ children }) => {
     const extensionAccounts = await getExtensionAccounts();
     const localAccounts = getLocalAccounts();
 
-    const allAccounts: Account[] = [...extensionAccounts, ...localAccounts];
-
-    return allAccounts;
+    return [...extensionAccounts, ...localAccounts];
   }, [getExtensionAccounts, getLocalAccounts]);
 
   const fetchAccounts = useCallback(async () => {
-    // this call fires up the authorization popup
-    const extensions = await web3Enable('my cool dapp');
-
-    if (extensions.length === 0) {
-      setFetchAccountsError(
-        'No extension installed, or the user did not accept the authorization',
-      );
-
-      setIsLoading(false);
-
-      return;
-    }
-
     const allAccounts = await getAccounts();
 
     setAccounts(allAccounts);
@@ -120,11 +109,7 @@ export const AccountWrapper: FC = ({ children }) => {
         (item) => item.address === defaultAccountAddress,
       );
 
-      if (defaultAccount) {
-        changeAccount(defaultAccount);
-      } else {
-        changeAccount(allAccounts[0]);
-      }
+      changeAccount(defaultAccount ?? allAccounts[0]);
     } else {
       setFetchAccountsError('No accounts in extension');
     }
@@ -132,28 +117,16 @@ export const AccountWrapper: FC = ({ children }) => {
     setIsLoading(false);
   }, [changeAccount, getAccounts, setAccounts, setFetchAccountsError, setIsLoading]);
 
-  const setSelectedAccountBalance = useCallback(async () => {
-    if (selectedAccount) {
-      apiRef.current = api;
-
-      setIsLoadingBalance(true);
-
-      const { data } = await getAccountBalance(api!, selectedAccount.address);
-
-      setSelectedAccount({
-        ...selectedAccount,
-        balance: data?.amount,
-      });
-
-      setIsLoadingBalance(false);
-    }
-  }, [api, selectedAccount]);
-
   const value = useMemo(
     () => ({
       isLoading,
       accounts,
-      selectedAccount,
+      selectedAccount: selectedAccount
+        ? {
+            ...selectedAccount,
+            balance: data?.amount ?? '0',
+          }
+        : undefined,
       fetchAccounts,
       fetchAccountsError,
       changeAccount,
@@ -166,18 +139,13 @@ export const AccountWrapper: FC = ({ children }) => {
       isLoading,
       accounts,
       selectedAccount,
+      data?.amount,
       fetchAccounts,
       fetchAccountsError,
       changeAccount,
       showSignDialog,
     ],
   );
-
-  useEffect(() => {
-    if (apiRef.current !== api) {
-      void setSelectedAccountBalance();
-    }
-  }, [api, setSelectedAccountBalance]);
 
   useEffect(() => {
     void fetchAccounts();

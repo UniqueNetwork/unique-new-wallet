@@ -9,8 +9,7 @@ import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionCon
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts, useApi } from '@app/hooks';
-import { deleteCollection } from '@app/api/restApi/collection';
-import { extrinsicSubmit } from '@app/api/restApi/extrinsic';
+import { deleteCollection /* extrinsicSubmit */ } from '@app/api';
 import { LoadingBurnCollection } from '@app/pages/CollectionNft/components/LoadingBurnCollection';
 
 const CollectionSettings = () => {
@@ -54,12 +53,13 @@ const CollectionSettings = () => {
         collectionId: collection_id,
         address: selectedAccount.address,
       });
-      const signature = await signMessage(data.signerPayloadJSON, selectedAccount);
+
+      /* const signature = await signMessage(data.signerPayloadJSON, selectedAccount);
 
       await extrinsicSubmit(api!, {
         signerPayloadJSON: { ...data.signerPayloadJSON },
         signature,
-      });
+      }); */
       navigate('/my-collections');
     } catch (e) {
       console.error(e);

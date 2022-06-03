@@ -3,8 +3,8 @@ import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { serializeToQuery } from './helper';
 
 export interface IBaseApi {
-  get: <R>(url: string, config?: AxiosRequestConfig) => Promise<AxiosRequestConfig<R>>;
-  delete: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+  get: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+  delete: <R>(url: string, config?: AxiosRequestConfig) => Promise<AxiosResponse<R>>;
   post: <R, D>(url: string, data: D, config?: AxiosRequestConfig) => Promise<R>;
   put: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
   patch: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
@@ -20,11 +20,13 @@ export class BaseApi implements IBaseApi {
     });
   }
 
-  get<T = any, R = AxiosResponse<T>, D = any>(
+  async get<T = any, R = AxiosResponse<T>, D = any>(
     url: string,
     config?: AxiosRequestConfig<D>,
   ): Promise<R> {
-    return this.http.get(url, config);
+    const response = await this.http.get(url, config);
+
+    return response.data;
   }
 
   delete<T = any, R = AxiosResponse<T>, D = any>(

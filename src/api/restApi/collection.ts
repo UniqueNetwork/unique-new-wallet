@@ -12,6 +12,6 @@ type TDeleteCollection = {
 };
 
 export const deleteCollection = (Api: IBaseApi, data: TDeleteCollection) =>
-  Api.delete<{ data: UnsignedTxPayloadResponse }>(BASE_URL, {
+  Api.delete<UnsignedTxPayloadResponse>(BASE_URL, {
     data,
   });

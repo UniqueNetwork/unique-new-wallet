@@ -23,12 +23,6 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
     setCurrentChain(networks[0]);
   }, []);
 
-  const initializeRestApi = useCallback(() => {
-    if (currentChain) {
-      setApiInstance(new BaseApi(currentChain?.apiEndpoint));
-    }
-  }, [currentChain]);
-
   // get context value for ApiContext
   const value = useMemo<ApiContextProps>(
     () => ({
@@ -40,8 +34,10 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
   );
 
   useEffect(() => {
-    initializeRestApi();
-  }, [initializeRestApi]);
+    if (currentChain) {
+      setApiInstance(new BaseApi(currentChain?.apiEndpoint));
+    }
+  }, [currentChain]);
 
   useEffect(() => {
     void selectDefaultNetwork();
