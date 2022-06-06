@@ -9,7 +9,7 @@ interface AccountContextMenuProps {
 export const AccountContextMenu = ({ onForgetWalletClick }: AccountContextMenuProps) => (
   <>
     <ContextMenuItem onClick={onForgetWalletClick}>
-      <Icon size={24} name={'logout'} />
+      <Icon size={24} name="logout" />
       <Text>Forget wallet</Text>
     </ContextMenuItem>
   </>
