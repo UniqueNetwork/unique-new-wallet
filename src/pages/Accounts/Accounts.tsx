@@ -12,7 +12,7 @@ import { BN } from '@polkadot/util';
 
 import { useAccounts } from '@app/hooks';
 import { formatKusamaBalance } from '@app/utils/textUtils';
-import { AccountsGroupButton, PagePaperNoPadding, Table } from '@app/components';
+import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
 import { Account } from '@app/account';
 import { AccountsTotalBalance } from '@app/pages/Accounts/components/AccountsTotalBalance';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
@@ -68,7 +68,7 @@ const getAccountsColumns = ({
     title: 'Block explorer',
     width: '15%',
     field: 'address',
-    render(address) {
+    render(address: string) {
       return (
         <LinksWrapper>
           <LinkStyled
@@ -110,6 +110,7 @@ export const Accounts = () => {
   const { accounts, fetchAccounts } = useAccounts();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
   const [selectedAddress, setSelectedAddress] = useState<string>();
 
   const onSendFundsClick = useCallback(
@@ -119,9 +120,10 @@ export const Accounts = () => {
     },
     [],
   );
+
   const onForgetWalletClick = useCallback(
     (address: string) => () => {
-      // TODO: show modal to forget wallet
+      setIsOpenConfirm(true);
     },
     [],
   );
@@ -183,6 +185,24 @@ export const Accounts = () => {
         senderAddress={selectedAddress}
         onFinish={onChangeAccountsFinish}
       />
+      <Confirm
+        buttons={[
+          { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
+          {
+            title: 'Yes, I am sure',
+            role: 'primary',
+            onClick: () => setIsOpenConfirm(false),
+          },
+        ]}
+        isVisible={isOpenConfirm}
+        title="Forget wallet"
+        onClose={() => setIsOpenConfirm(false)}
+      >
+        <Text>
+          Are you sure you want to&nbsp;perform this action? You can always recover your
+          wallet with your seed password using the &rsquo;Add account via&rsquo; button
+        </Text>
+      </Confirm>
     </PagePaperNoPadding>
   );
 };

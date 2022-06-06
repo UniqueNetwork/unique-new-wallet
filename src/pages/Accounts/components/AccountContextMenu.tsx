@@ -7,12 +7,10 @@ interface AccountContextMenuProps {
 }
 
 export const AccountContextMenu = ({ onForgetWalletClick }: AccountContextMenuProps) => (
-  <>
-    <ContextMenuItem onClick={onForgetWalletClick}>
-      <Icon size={24} name="logout" />
-      <Text>Forget wallet</Text>
-    </ContextMenuItem>
-  </>
+  <ContextMenuItem onClick={onForgetWalletClick}>
+    <Icon size={24} name="logout" color="currentColor" />
+    <Text>Forget wallet</Text>
+  </ContextMenuItem>
 );
 
 const ContextMenuItem = styled.div`
@@ -20,14 +18,15 @@ const ContextMenuItem = styled.div`
   align-items: center;
   cursor: pointer;
   white-space: nowrap;
+  color: var(--color-additional-dark);
   padding: calc(var(--prop-gap) / 4) calc(var(--prop-gap) / 2) !important;
+
   &:hover {
+    color: var(--color-primary-500);
     background-color: var(--color-primary-100);
+
     span.unique-text {
-      color: var(--color-primary-500);
-    }
-    svg > path {
-      fill: var(--color-primary-500);
+      color: inherit;
     }
   }
 `;
