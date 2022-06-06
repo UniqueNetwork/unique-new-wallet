@@ -1,10 +1,9 @@
 import { VFC, useCallback, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager } from '@unique-nft/ui-kit';
+import { AccountsManager, Icon } from '@unique-nft/ui-kit';
 
 import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
-import menu from '@app/static/icons/menu.svg';
 import { MenuRoute, routes } from '@app/routesConfig';
 import MobileMenuLink from '@app/components/Header/MobileMenuLink';
 import { networks } from '@app/utils';
@@ -49,7 +48,11 @@ export const Header: VFC = () => {
   return (
     <HeaderStyled>
       <LeftSideColumn>
-        {showMobileMenu && <MenuIcon src={menu} onClick={mobileMenuToggle} />}
+        {showMobileMenu && (
+          <MenuIcon onClick={mobileMenuToggle}>
+            <Icon name="menu" size={32} />
+          </MenuIcon>
+        )}
         <Link to={base}>
           <LogoIcon src="/logos/logo.svg" />
         </Link>
@@ -115,7 +118,7 @@ const LeftSideColumn = styled.div`
   align-items: center;
 `;
 
-const MenuIcon = styled.img`
+const MenuIcon = styled.div`
   width: 32px;
   height: 32px;
   margin-right: 8px;

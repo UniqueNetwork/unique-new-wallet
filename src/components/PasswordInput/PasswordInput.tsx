@@ -1,10 +1,6 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-
-import { Icon } from '@app/components';
-
-import Eye from '../../static/icons/eye.svg';
-import EyeClosed from '../../static/icons/eye-closed.svg';
+import { Icon } from '@unique-nft/ui-kit';
 
 interface PasswordInputProps {
   placeholder?: string;
@@ -12,7 +8,7 @@ interface PasswordInputProps {
   onChange(value: string): void;
 }
 
-// todo - use from ui-kit
+// todo - use from ui-kit - can't use until InputText hasn't props type="password" or role="password"
 export const PasswordInput: FC<PasswordInputProps> = ({
   placeholder,
   value,
@@ -39,11 +35,9 @@ export const PasswordInput: FC<PasswordInputProps> = ({
         placeholder={placeholder}
         onChange={onPasswordChange}
       />
-      <Icon
-        path={isVisibleValue ? Eye : EyeClosed}
-        size={24}
-        onClick={onVisibleValueClick}
-      />
+      <IconWrapper onClick={onVisibleValueClick}>
+        <Icon name={isVisibleValue ? 'eye' : 'eye-closed'} size={24} />
+      </IconWrapper>
     </PasswordInputWrapper>
   );
 };
@@ -64,4 +58,8 @@ const PasswordInputStyled = styled.input`
   &::placeholder {
     color: var(--color-grey-500);
   }
+`;
+
+const IconWrapper = styled.div`
+  cursor: pointer;
 `;

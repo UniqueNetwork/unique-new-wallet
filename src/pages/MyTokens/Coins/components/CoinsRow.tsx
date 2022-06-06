@@ -3,8 +3,6 @@ import styled, { css } from 'styled-components';
 import classNames from 'classnames';
 import { Button, Icon } from '@unique-nft/ui-kit';
 
-import { Copy } from '@app/static/icons/icons';
-
 interface CoinsRowComponentProps {
   address: string;
   balanceFull?: number;
@@ -53,7 +51,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           <div className="network-address-copy">
             <span>{address}</span>
             <div onClick={onCopyAccount}>
-              <Icon name="copy" size={24} file={Copy} />
+              <Icon name="copy" size={24} />
             </div>
           </div>
         </div>
