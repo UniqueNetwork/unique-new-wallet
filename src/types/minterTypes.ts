@@ -72,5 +72,5 @@ export type MainInformationInitialValues = {
   description?: string;
   tokenPrefix: string;
   coverImgAddress?: string;
-  file?: { url: string, file: Blob } | null;
+  file?: { url: string; file: Blob } | null;
 };

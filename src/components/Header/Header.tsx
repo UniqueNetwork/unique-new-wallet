@@ -1,24 +1,49 @@
-import { VFC, useCallback, useState } from 'react';
+import { VFC, useCallback, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { Icon } from '@unique-nft/ui-kit';
+import { AccountsManager, Icon } from '@unique-nft/ui-kit';
 
-import { useScreenWidthFromThreshold } from '@app/hooks';
+import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
 import { MenuRoute, routes } from '@app/routesConfig';
 import MobileMenuLink from '@app/components/Header/MobileMenuLink';
+import { networks } from '@app/utils';
+import { ChainPropertiesContext } from '@app/context';
 
-import { WalletManager } from './WalletManager/WalletManager';
 import MenuLink from './MenuLink';
 
 const { base, menuRoutes } = routes;
 
+// TODO - share IAccount from the UI kit
+interface IAccount {
+  address?: string;
+  name?: string;
+}
+
 export const Header: VFC = () => {
+  const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
+  const { chainProperties } = useContext(ChainPropertiesContext);
+  const { currentChain, setCurrentChain } = useApi();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
 
   const mobileMenuToggle = useCallback(() => {
     toggleMobileMenu((prevState) => !prevState);
   }, []);
+
+  const accountsForManager = accounts.map((account) => ({
+    address: account.address,
+    name: account.meta.name,
+  }));
+
+  const onAccountChange = (iAccount: IAccount) => {
+    const targetAccount = accounts.find(
+      (account) => account.address === iAccount.address,
+    );
+
+    if (targetAccount) {
+      changeAccount(targetAccount);
+    }
+  };
 
   return (
     <HeaderStyled>
@@ -45,7 +70,20 @@ export const Header: VFC = () => {
         )}
       </LeftSideColumn>
       <RightSide>
-        <WalletManager />
+        <AccountsManager
+          accounts={accountsForManager}
+          activeNetwork={currentChain}
+          balance={selectedAccount?.balance ?? '0'}
+          isLoading={isLoading}
+          networks={networks}
+          selectedAccount={{
+            address: selectedAccount?.address,
+            name: selectedAccount?.meta.name,
+          }}
+          symbol={chainProperties?.token ?? ''}
+          onNetworkChange={setCurrentChain}
+          onAccountChange={onAccountChange}
+        />
       </RightSide>
 
       {showMobileMenu && mobileMenuIsOpen && (

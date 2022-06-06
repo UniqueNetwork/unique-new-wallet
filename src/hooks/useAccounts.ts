@@ -1,135 +1,25 @@
-import { useCallback, useContext, useEffect } from 'react';
-import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import { useCallback, useContext } from 'react';
+import { web3FromSource } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { KeypairType } from '@polkadot/util-crypto/types';
 
-import { sleep } from '@app/utils';
-import { DefaultAccountKey } from '@app/account/constants';
 import { SignerPayloadJSONDto } from '@app/types/Api';
 
 import { getSuri, PairType } from '../utils/seedUtils';
-import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
+import AccountContext, { Account } from '../account/AccountContext';
 
 export const useAccounts = () => {
   const {
     accounts,
     selectedAccount,
     isLoading,
+    fetchAccounts,
     fetchAccountsError,
     changeAccount,
-    setSelectedAccount,
     setAccounts,
     setIsLoading,
     setFetchAccountsError,
   } = useContext(AccountContext);
-
-  // TODO: move fetching accounts and balances into context
-
-  // const [fetchAccountsError, setFetchAccountsError] = useState<string>();
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [accounts, setAccounts] = useState<Account[]>();
-  // const [selectedAccount, setSelectedAccount] = useState<Account>();
-
-  // const changeAccount = useCallback((account: Account) => {
-  //   setSelectedAccount(account);
-  // }, []);
-
-  const getExtensionAccounts = useCallback(async () => {
-    // this call fires up the authorization popup
-    let extensions = await web3Enable('unique-minter-wallet');
-
-    if (extensions.length === 0) {
-      console.log('Extension not found, retry in 1s');
-
-      await sleep(1000);
-      extensions = await web3Enable('my cool dapp');
-
-      if (extensions.length === 0) {
-        // alert('no extension installed, or the user did not accept the authorization');
-        return [];
-      }
-    }
-
-    return (await web3Accounts()).map((account) => ({
-      ...account,
-      signerType: AccountSigner.extension,
-    })) as Account[];
-  }, []);
-
-  const getLocalAccounts = useCallback(() => {
-    const keyringAccounts = keyring.getAccounts();
-
-    return keyringAccounts.map(
-      (account) =>
-        ({
-          address: account.address,
-          meta: account.meta,
-          signerType: AccountSigner.local,
-        } as Account),
-    );
-  }, []);
-
-  const getAccounts = useCallback(async () => {
-    // this call fires up the authorization popup
-    const extensionAccounts = await getExtensionAccounts();
-    const localAccounts = getLocalAccounts();
-
-    const allAccounts: Account[] = [...extensionAccounts, ...localAccounts];
-
-    console.log('allAccounts', allAccounts);
-
-    return allAccounts;
-  }, [getExtensionAccounts, getLocalAccounts]);
-
-  const getAccountBalance = useCallback(() => {
-    console.log('getAccountBalance');
-  }, []);
-
-  const fetchAccounts = useCallback(async () => {
-    // this call fires up the authorization popup
-    const extensions = await web3Enable('my cool dapp');
-
-    if (extensions.length === 0) {
-      setFetchAccountsError(
-        'No extension installed, or the user did not accept the authorization',
-      );
-
-      setIsLoading(false);
-
-      return;
-    }
-    const allAccounts = await getAccounts();
-
-    setAccounts(allAccounts);
-
-    if (allAccounts?.length) {
-      const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
-
-      const defaultAccount = allAccounts.find(
-        (item) => item.address === defaultAccountAddress,
-      );
-
-      if (defaultAccount) {
-        changeAccount(defaultAccount);
-      } else {
-        changeAccount(allAccounts[0]);
-      }
-    } else {
-      setFetchAccountsError('No accounts in extension');
-    }
-
-    setIsLoading(false);
-  }, [changeAccount, getAccounts]);
-
-  useEffect(() => {
-    const updatedSelectedAccount = accounts?.find(
-      (account) => account.address === selectedAccount?.address,
-    );
-
-    if (updatedSelectedAccount) {
-      setSelectedAccount(updatedSelectedAccount);
-    }
-  }, [accounts, setSelectedAccount, selectedAccount]);
 
   const addLocalAccount = useCallback(
     (

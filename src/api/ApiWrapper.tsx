@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApolloProvider } from '@apollo/client';
 
 import { Chain } from '@app/types';
+import { BaseApi, IBaseApi } from '@app/api';
+import { networks } from '@app/utils';
 
 import { GqlClient } from './graphQL/gqlClient';
 import { ApiContextProps, ApiProvider } from './ApiContext';
@@ -14,26 +15,33 @@ interface ChainProviderProps {
   children: React.ReactNode;
 }
 
-const { chains, defaultChain } = config;
-
 export const ApiWrapper = ({ children }: ChainProviderProps) => {
-  const { chainId } = useParams<'chainId'>();
+  const [apiInstance, setApiInstance] = useState<IBaseApi>();
   const [currentChain, setCurrentChain] = useState<Chain>();
 
-  // update endpoint if chainId is changed
-  useEffect(() => {
-    if (Object.values(chains).length === 0) {
-      throw new Error('Networks is not configured');
-    }
-  }, [chainId]);
+  const selectDefaultNetwork = useCallback(() => {
+    setCurrentChain(networks[0]);
+  }, []);
 
   // get context value for ApiContext
-  const value = useMemo<ApiContextProps>(() => {
-    return {
+  const value = useMemo<ApiContextProps>(
+    () => ({
+      api: apiInstance,
       currentChain,
-      defaultChain,
-    };
+      setCurrentChain,
+    }),
+    [apiInstance, currentChain],
+  );
+
+  useEffect(() => {
+    if (currentChain) {
+      setApiInstance(new BaseApi(currentChain?.apiEndpoint));
+    }
   }, [currentChain]);
+
+  useEffect(() => {
+    void selectDefaultNetwork();
+  }, [selectDefaultNetwork]);
 
   return (
     <ApiProvider value={value}>

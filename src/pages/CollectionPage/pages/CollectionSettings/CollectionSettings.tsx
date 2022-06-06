@@ -8,7 +8,7 @@ import { PagePaper, StatusTransactionModal } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
 import { deleteCollection } from '@app/api/restApi/collection';
 import { extrinsicSubmit } from '@app/api/restApi/extrinsic';
 
@@ -18,6 +18,7 @@ const CollectionSettings = () => {
   const { selectedAccount, signMessage } = useAccounts();
   const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
   const navigate = useNavigate();
+  const { api } = useApi();
 
   const {
     token_limit,
@@ -48,13 +49,14 @@ const CollectionSettings = () => {
     setLoadingBurnCollection(true);
 
     try {
-      const { data } = await deleteCollection({
+      const { data } = await deleteCollection(api!, {
         collectionId: collection_id,
         address: selectedAccount.address,
       });
+
       const signature = await signMessage(data.signerPayloadJSON, selectedAccount);
 
-      await extrinsicSubmit({
+      await extrinsicSubmit(api!, {
         signerPayloadJSON: { ...data.signerPayloadJSON },
         signature,
       });

@@ -1,10 +1,12 @@
 import { Context, Consumer, Provider, createContext } from 'react';
 
 import { Chain } from '@app/types';
+import { IBaseApi } from '@app/api';
 
 export type ApiContextProps = {
+  api: IBaseApi | undefined;
   currentChain: Chain | undefined;
-  defaultChain: Chain;
+  setCurrentChain: (chain: Chain) => void;
 };
 
 const ApiContext: Context<ApiContextProps> = createContext(
