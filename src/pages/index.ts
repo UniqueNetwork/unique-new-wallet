@@ -8,3 +8,4 @@ export * from './MainInformation';
 export * from './MyTokens';
 export * from './MyCollections';
 export * from './Welcome';
+export * from './NFTDetails';

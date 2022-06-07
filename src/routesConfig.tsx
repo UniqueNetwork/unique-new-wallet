@@ -13,6 +13,7 @@ import {
   NFTs,
   NotFound,
   Welcome,
+  NFTDetails,
 } from '@app/pages';
 import { CollectionForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
@@ -41,9 +42,7 @@ export const routes: RouteConfig = {
     {
       name: 'My tokens',
       path: '/my-tokens',
-      component: (
-        <MyTokens activeTab={0} basePath="/my-tokens" tabUrls={['nft', 'coins']} />
-      ),
+      component: <NFTDetails />,
       children: [
         {
           component: <NFTs />,
@@ -135,6 +134,11 @@ export const routes: RouteConfig = {
           path: 'nft-attributes',
         },
       ],
+    },
+    {
+      name: 'NFTDetails',
+      path: '/nft-details',
+      component: <NFTDetails />,
     },
   ],
 };
