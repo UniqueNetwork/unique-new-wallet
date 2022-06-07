@@ -1,7 +1,7 @@
-import { Api } from '@app/api/restApi/base';
 import { SubmitResultResponse, SubmitTxBody } from '@app/types/Api';
+import { IBaseApi } from '@app/api';
 
 const BASE_URL = '/extrinsic';
 
-export const extrinsicSubmit = (data: SubmitTxBody) =>
-  Api.post<SubmitResultResponse>(`${BASE_URL}/submit`, data);
+export const extrinsicSubmit = (Api: IBaseApi, data: SubmitTxBody) =>
+  Api.post<SubmitResultResponse, SubmitTxBody>(`${BASE_URL}/submit`, data);

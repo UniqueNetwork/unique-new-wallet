@@ -1,4 +1,4 @@
-export * from './configParser';
+export * from './availableNetworks';
 export * from './componentHelpers';
 export * from './getAttributes';
 export * from './helpers';

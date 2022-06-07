@@ -1,11 +1,29 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { Avatar, Button, Heading, InputText, Modal, Text } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
+import React, { FC, useCallback, useMemo, useState, VFC } from 'react';
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Heading,
+  Icon,
+  InputText,
+  Modal,
+  Text,
+} from '@unique-nft/ui-kit';
+import styled, { css } from 'styled-components';
 
-import { useAccounts } from '@app/hooks';
-import { SelectInput } from '@app/components/SelectInput/SelectInput';
+import { useAccounts, useFee } from '@app/hooks';
 import { Account } from '@app/account';
 import { formatKusamaBalance } from '@app/utils/textUtils';
+import {
+  AdditionalText,
+  ModalHeader,
+  TextWarning,
+} from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  ContentRow,
+  ModalContent,
+  ModalFooter,
+} from '@app/pages/components/ModalComponents';
 
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
@@ -19,7 +37,7 @@ export type TransferFundsModalProps = {
 
 export const TransferFundsModal: FC<TransferFundsModalProps> = ({
   isVisible,
-  senderAddress,
+  senderAddress = '',
   onFinish,
 }) => {
   const [status, setStatus] = useState<'ask' | 'transfer-stage'>('ask');
@@ -37,7 +55,7 @@ export const TransferFundsModal: FC<TransferFundsModalProps> = ({
   return (
     <AskTransferFundsModal
       isVisible={isVisible}
-      senderAddress={senderAddress || ''}
+      senderAddress={senderAddress}
       onFinish={onTransfer}
       onClose={onFinish}
     />
@@ -57,11 +75,10 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   senderAddress,
   onClose,
 }) => {
-  const { accounts } = useAccounts();
+  const { accounts, selectedAccount } = useAccounts();
+  const { fee } = useFee();
 
-  const [recipientAddress, setRecipientAddress] = useState<
-    string | Account | undefined
-  >();
+  const [recipient, setRecipient] = useState<Account | undefined>();
   const [amount, setAmount] = useState<number>(0);
 
   const senderBalance = useMemo(() => {
@@ -79,12 +96,14 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
     [setAmount],
   );
 
-  const onSend = useCallback(() => {
-    const recipient =
-      typeof recipientAddress === 'string' ? recipientAddress : recipientAddress?.address;
+  const filteredAccounts = useMemo(() => {
+    return accounts.filter(({ address }) => address !== selectedAccount?.address);
+  }, []);
 
-    onFinish(senderAddress, recipient || '', amount.toString());
-  }, [recipientAddress, onFinish, senderAddress, amount]);
+  const onSend = useCallback(
+    () => onFinish(senderAddress, recipient?.address || '', amount.toString()),
+    [recipient, onFinish, senderAddress, amount],
+  );
 
   if (!accounts?.length) {
     return null;
@@ -92,118 +111,264 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
-      <Content>
+      <ModalHeader>
         <Heading size="2">Send funds</Heading>
-      </Content>
-
-      <Text size="s" color="grey-500">
-        From
-      </Text>
-      <AddressWrapper>
-        <Avatar size={24} src={DefaultAvatar} />
-        <Text>{senderAddress || ''}</Text>
-      </AddressWrapper>
-      <AmountWrapper>
-        <Text size="s">{`${formatKusamaBalance(
-          senderBalance?.toString() || 0,
-        )} ${tokenSymbol}`}</Text>
-      </AmountWrapper>
-
-      <Text size="s" color="grey-500">
-        To
-      </Text>
-      <RecipientSelectWrapper>
-        <SelectInput<Account>
-          options={accounts}
-          value={recipientAddress}
-          renderOption={(option) => (
-            <AddressOptionWrapper>
-              <Avatar size={24} src={DefaultAvatar} />
-              <Text>{option?.address || ''}</Text>
-            </AddressOptionWrapper>
-          )}
-          onChange={setRecipientAddress}
-        />
-      </RecipientSelectWrapper>
-      <AmountWrapper>
-        {recipientBalance && (
-          <Text size="s">{`${formatKusamaBalance(
-            recipientBalance?.toString() || 0,
-          )} ${tokenSymbol}`}</Text>
-        )}
-      </AmountWrapper>
-      <AmountInputWrapper>
-        <InputText value={amount.toString()} onChange={onAmountChange} />
-      </AmountInputWrapper>
-      <TextStyled color="additional-warning-500" size="s">
-        A fee of ~ 0.000000000000052 testUNQ can be applied to the transaction, unless the
-        transaction is sponsored
-      </TextStyled>
-      <ButtonWrapper>
+      </ModalHeader>
+      <ModalContent>
+        <ContentRow>
+          <Group>
+            <StyledAdditionalText size="s" color="grey-500">
+              From
+            </StyledAdditionalText>
+            <AccountContainer>
+              <AccountInfo
+                address={selectedAccount?.address}
+                name={selectedAccount?.meta.name}
+                canCopy={true}
+              />
+            </AccountContainer>
+            <Text size="s">{`${formatKusamaBalance(
+              senderBalance?.toString() || 0,
+            )} ${tokenSymbol}`}</Text>
+          </Group>
+          <Group>
+            <StyledAdditionalText size="s" color="grey-500">
+              To
+            </StyledAdditionalText>
+            <AccountSelector
+              defaultValue={selectedAccount}
+              selectOptions={filteredAccounts}
+              selectedValue={recipient}
+              onChangeAccount={setRecipient}
+            />
+            <Text size="s">{`${formatKusamaBalance(
+              recipientBalance?.toString() || 0,
+            )} ${tokenSymbol}`}</Text>
+          </Group>
+        </ContentRow>
+        <ContentRow>
+          {/* TODO: get credits from API */}
+          <InputAmount>
+            <InputText
+              role="decimal"
+              value={amount.toString()}
+              onChange={onAmountChange}
+            />
+            <InputAmountButton>Max</InputAmountButton>
+          </InputAmount>
+        </ContentRow>
+        <ContentRow>
+          {/* TODO: get fee from REST https://cryptousetech.atlassian.net/browse/SDK-50 */}
+          <TextWarning color="additional-warning-500" size="s">
+            A fee of ~ {fee} testUNQ can be applied to the transaction, unless the
+            transaction is sponsored
+          </TextWarning>
+        </ContentRow>
+      </ModalContent>
+      <ModalFooter>
         <Button
           // disabled={!validPassword || !password || !name}
           role="primary"
           title="Confirm"
           onClick={onSend}
         />
-      </ButtonWrapper>
+      </ModalFooter>
     </Modal>
   );
 };
 
-const Content = styled.div`
-  && h2 {
-    margin-bottom: 0;
+const truncateText = css`
+  box-sizing: border-box;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Group = styled.div`
+  &:not(:first-child) {
+    margin-top: var(--prop-gap);
+  }
+
+  & > .unique-text:not(:first-child) {
+    display: block;
+    margin-top: calc(var(--prop-gap) / 2);
+    text-align: right;
   }
 `;
 
-const AddressWrapper = styled.div`
-  display: flex;
-  column-gap: calc(var(--prop-gap) / 2);
-  margin-top: calc(var(--prop-gap) * 2);
-  border: 1px solid var(--color-grey-300);
-  border-radius: 4px;
-  padding: 20px var(--prop-gap);
+const StyledAdditionalText = styled(AdditionalText)`
+  margin-bottom: calc(var(--prop-gap) / 2);
 `;
 
-const AddressOptionWrapper = styled.div`
-  display: flex;
-  column-gap: calc(var(--prop-gap) / 2);
-`;
-
-const TextStyled = styled(Text)`
+const AccountWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
-  padding: 8px 16px;
-  margin: calc(var(--prop-gap) * 1.5) 0;
-  border-radius: 4px;
-  background-color: var(--color-additional-warning-100);
+  align-items: center;
+  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
+  width: 100%;
+
+  .unique-text {
+    display: inline-block;
+    vertical-align: middle;
+    ${truncateText};
+    line-height: 1.5;
+  }
+
+  img {
+    margin-right: var(--prop-gap);
+  }
+`;
+
+const AccountGroup = styled.div`
+  max-width: calc(100% - 40px);
   width: 100%;
 `;
 
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  column-gap: var(--prop-gap);
-`;
+const AddressCopy = styled.button`
+  appearance: none;
+  border: 0 none;
+  border-radius: 0;
+  vertical-align: middle;
+  padding: 0;
+  color: inherit;
+  background: none;
+  cursor: pointer;
 
-const RecipientSelectWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: calc(var(--prop-gap) / 2);
-  margin-bottom: calc(var(--prop-gap) * 1.5);
-  .unique-input-text {
-    width: 100%;
+  &:hover {
+    color: var(--color-grey-600);
   }
 `;
 
-const AmountWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
+const AccountAddress = styled.div`
+  color: var(--color-grey-500);
 
-const AmountInputWrapper = styled.div`
-  .unique-input-text {
-    width: 100%;
+  .unique-text {
+    padding-right: 1.5rem;
+  }
+
+  ${AddressCopy} {
+    margin-bottom: -0.2em;
+    margin-left: -1rem;
   }
 `;
+
+const AccountContainer = styled.div`
+  box-sizing: border-box;
+  border-radius: var(--prop-border-radius);
+  border: 1px solid var(--color-grey-300);
+  position: relative;
+  background-color: var(--color-additional-light);
+`;
+
+const AccountSelectWrapper = styled(AccountContainer)`
+  padding-right: calc(var(--prop-gap) * 2.5);
+  user-select: none;
+
+  &:after {
+    border-style: solid;
+    border-width: 5px;
+    border-color: var(--color-blue-grey-400) transparent transparent transparent;
+    position: absolute;
+    top: 50%;
+    right: var(--prop-gap);
+    width: 0;
+    height: 0;
+    content: '';
+  }
+`;
+
+const AccountSelect = styled.div`
+  .unique-dropdown {
+    width: 100%;
+
+    .dropdown-options,
+    .dropdown-option {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 0;
+      line-height: normal;
+    }
+  }
+`;
+
+const InputAmount = styled.div`
+  position: relative;
+
+  input[type='text'] {
+    width: calc(100% - 76px);
+  }
+`;
+
+const InputAmountButton = styled.button`
+  border: 0;
+  position: absolute;
+  top: 50%;
+  right: calc(var(--prop-gap) / 2);
+  padding: calc(var(--prop-gap) / 2);
+  background: 0 transparent;
+  line-height: 1;
+  color: var(--color-primary-500);
+  font: inherit;
+  font-weight: 500;
+  transform: translate3d(0, -50%, 0);
+  cursor: pointer;
+`;
+
+const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boolean }> = ({
+  name = '',
+  address = '',
+  canCopy,
+}) => {
+  const copyAddress = (address: string) => {
+    void navigator.clipboard.writeText(address);
+  };
+
+  return (
+    <AccountWrapper>
+      <Avatar size={24} src={DefaultAvatar} />
+      <AccountGroup>
+        <Text>{name}</Text>
+        <AccountAddress>
+          <Text color="inherit" size="s">
+            {address}
+          </Text>
+          {canCopy && (
+            <AddressCopy onClick={() => copyAddress(address)}>
+              <Icon size={14} name="copy" color="currentColor" />
+            </AddressCopy>
+          )}
+        </AccountAddress>
+      </AccountGroup>
+    </AccountWrapper>
+  );
+};
+
+const AccountSelector: FC<{
+  selectOptions: any;
+  selectedValue?: Account;
+  defaultValue?: Account;
+  onChangeAccount?(value: Account): void;
+}> = ({ defaultValue, selectedValue, selectOptions, onChangeAccount }) => {
+  return (
+    <AccountSelect>
+      <Dropdown
+        value={selectedValue?.address || defaultValue?.address || ''}
+        options={selectOptions || []}
+        optionKey="address"
+        optionRender={(option: any) => (
+          <AccountInfo address={option.address} name={option.meta.name} />
+        )}
+        onChange={(option: any) => onChangeAccount?.(option)}
+      >
+        <AccountSelectWrapper>
+          <AccountInfo
+            address={selectedValue?.address || selectOptions[0]?.address}
+            name={selectedValue?.meta.name || selectOptions[0]?.meta.name}
+            canCopy={true}
+          />
+        </AccountSelectWrapper>
+      </Dropdown>
+    </AccountSelect>
+  );
+};

@@ -1,18 +1,28 @@
-import { VFC, useCallback, useState } from 'react';
+import { VFC, useCallback, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
+import { AccountsManager, Icon } from '@unique-nft/ui-kit';
 
-import { useScreenWidthFromThreshold } from '@app/hooks';
-import menu from '@app/static/icons/menu.svg';
+import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
 import { MenuRoute, routes } from '@app/routesConfig';
 import MobileMenuLink from '@app/components/Header/MobileMenuLink';
+import { networks } from '@app/utils';
+import { ChainPropertiesContext } from '@app/context';
 
-import { WalletManager } from './WalletManager/WalletManager';
 import MenuLink from './MenuLink';
 
 const { base, menuRoutes } = routes;
 
+// TODO - share IAccount from the UI kit
+interface IAccount {
+  address?: string;
+  name?: string;
+}
+
 export const Header: VFC = () => {
+  const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
+  const { chainProperties } = useContext(ChainPropertiesContext);
+  const { currentChain, setCurrentChain } = useApi();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
 
@@ -20,10 +30,29 @@ export const Header: VFC = () => {
     toggleMobileMenu((prevState) => !prevState);
   }, []);
 
+  const accountsForManager = accounts.map((account) => ({
+    address: account.address,
+    name: account.meta.name,
+  }));
+
+  const onAccountChange = (iAccount: IAccount) => {
+    const targetAccount = accounts.find(
+      (account) => account.address === iAccount.address,
+    );
+
+    if (targetAccount) {
+      changeAccount(targetAccount);
+    }
+  };
+
   return (
     <HeaderStyled>
       <LeftSideColumn>
-        {showMobileMenu && <MenuIcon src={menu} onClick={mobileMenuToggle} />}
+        {showMobileMenu && (
+          <MenuIcon onClick={mobileMenuToggle}>
+            <Icon name="menu" size={32} />
+          </MenuIcon>
+        )}
         <Link to={base}>
           <LogoIcon src="/logos/logo.svg" />
         </Link>
@@ -41,7 +70,20 @@ export const Header: VFC = () => {
         )}
       </LeftSideColumn>
       <RightSide>
-        <WalletManager />
+        <AccountsManager
+          accounts={accountsForManager}
+          activeNetwork={currentChain}
+          balance={selectedAccount?.balance ?? '0'}
+          isLoading={isLoading}
+          networks={networks}
+          selectedAccount={{
+            address: selectedAccount?.address,
+            name: selectedAccount?.meta.name,
+          }}
+          symbol={chainProperties?.token ?? ''}
+          onNetworkChange={setCurrentChain}
+          onAccountChange={onAccountChange}
+        />
       </RightSide>
 
       {showMobileMenu && mobileMenuIsOpen && (
@@ -76,7 +118,7 @@ const LeftSideColumn = styled.div`
   align-items: center;
 `;
 
-const MenuIcon = styled.img`
+const MenuIcon = styled.div`
   width: 32px;
   height: 32px;
   margin-right: 8px;

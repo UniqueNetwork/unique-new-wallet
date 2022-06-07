@@ -9,33 +9,35 @@ import { Welcome } from '@app/pages';
 import { Header } from '../';
 import Loading from '../Loading';
 
-export const PageLayoutComponent: FC = () => {
+export const PageLayout: FC = () => {
   const footer = useFooter();
   const { accounts, isLoading } = useAccounts();
 
   return (
-    <LayoutStyled>
-      <Layout
-        footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
-        header={<Header />}
-      >
-        {isLoading && (
-          <LoadingStyled>
-            <Loading />
-          </LoadingStyled>
-        )}
-        {!isLoading && accounts?.length === 0 && <Welcome />}
-        {!isLoading && accounts?.length !== 0 && (
-          <div className="container">
-            <Outlet />
-          </div>
-        )}
-      </Layout>
-    </LayoutStyled>
+    <Wrapper className="page-layout">
+      <LayoutStyled>
+        <Layout
+          footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
+          header={<Header />}
+        >
+          {isLoading && (
+            <LoadingStyled>
+              <Loading />
+            </LoadingStyled>
+          )}
+          {!isLoading && accounts?.length === 0 && <Welcome />}
+          {!isLoading && accounts?.length !== 0 && (
+            <div className="container">
+              <Outlet />
+            </div>
+          )}
+        </Layout>
+      </LayoutStyled>
+    </Wrapper>
   );
 };
 
-export const PageLayout = styled(PageLayoutComponent)`
+export const Wrapper = styled.div`
   footer {
     .footer__text {
       max-width: 100%;
