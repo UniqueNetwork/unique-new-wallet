@@ -45,7 +45,7 @@ export const useGraphQlTokens = ({
   collectionId,
 }: {
   collectionId: string;
-  collectionOwner: string;
+  collectionOwner: string | undefined;
   filter: { search: string };
   options: OptionsTokenCollection;
 }): TokensListData => {

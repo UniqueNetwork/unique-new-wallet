@@ -1,6 +1,7 @@
 import { useGraphQlTokens } from '@app/api/graphQL/tokens/useGraphQlTokens';
 import { useNftFilterContext } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
+import { useAccounts } from '@app/hooks';
 
 interface NftListComponentProps {
   className?: string;
@@ -9,14 +10,16 @@ interface NftListComponentProps {
 
 export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   const { search, direction, page, onChangePagination } = useNftFilterContext();
+  const { selectedAccount } = useAccounts();
 
   const { tokens, tokensCount, isLoadingTokens } = useGraphQlTokens({
     collectionId,
-    collectionOwner: 'yGHXkYLYqxijLKKfd9Q2CB9shRVu8rPNBS53wvwGTutYg4zTg',
+    collectionOwner: selectedAccount?.address,
     filter: {
       search,
     },
     options: {
+      skip: !selectedAccount?.address,
       direction,
       pagination: {
         page,

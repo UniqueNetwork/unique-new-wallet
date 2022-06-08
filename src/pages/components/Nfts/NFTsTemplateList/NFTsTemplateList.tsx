@@ -76,6 +76,7 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
   height: 100%;
   display: block;
   padding: calc(var(--prop-gap) * 2);
+  box-sizing: border-box;
 
   .token-size-wrapper {
     margin-bottom: 25px;
@@ -93,7 +94,6 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
 
   .nft-list {
     &--empty {
-      height: 100%;
       display: flex;
       justify-content: center;
     }
