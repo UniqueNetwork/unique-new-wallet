@@ -7,10 +7,11 @@ import {
   useGraphQlCollectionsByTokensOwner,
 } from '@app/api/graphQL/tokens';
 import AccountContext from '@app/account/AccountContext';
+import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
+import { CollectionsFilter, TypeFilter } from '@app/pages';
 
 import { useNFTsContext } from '../context';
 import { defaultLimit, defaultTypesFilters } from '../constants';
-import { CollectionsFilter, NFTsList, TypeFilter } from './components';
 
 export interface NFTsComponentProps {
   className?: string;
@@ -19,8 +20,14 @@ export interface NFTsComponentProps {
 const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
-  const { tokensPage, typesFilters, sortByTokenId, collectionsIds, searchText } =
-    useNFTsContext();
+  const {
+    tokensPage,
+    typesFilters,
+    sortByTokenId,
+    collectionsIds,
+    searchText,
+    changeTokensPage,
+  } = useNFTsContext();
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
     selectedAccount?.address,
@@ -60,7 +67,13 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
         />
       </div>
       <div className="tokens-column">
-        <NFTsList tokens={tokens} isLoading={tokensLoading} tokensCount={tokensCount} />
+        <NFTsTemplateList
+          tokens={tokens}
+          isLoading={tokensLoading}
+          tokensCount={tokensCount}
+          page={tokensPage}
+          onPageChange={changeTokensPage}
+        />
       </div>
     </div>
   );
@@ -80,7 +93,6 @@ export const NFTs = styled(NFTsComponent)`
   }
 
   .tokens-column {
-    padding: calc(var(--prop-gap) * 2);
     flex: 1;
 
     > div:nth-of-type(2) {

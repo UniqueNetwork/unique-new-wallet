@@ -1,6 +1,8 @@
 import { gql, OperationVariables, useQuery } from '@apollo/client';
 
-import { ViewToken } from './types';
+import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
+
+import { OptionsTokenCollection, ViewToken } from './types';
 
 export type Direction = 'asc' | 'desc';
 export type TypeFilter = 'purchased' | 'createdByMe';
@@ -9,17 +11,6 @@ type AdditionalFilters = {
   collectionsIds?: number[];
   typesFilters?: TypeFilter[];
   searchText?: string;
-};
-
-type Pagination = {
-  page: number;
-  limit: number;
-};
-
-type Options = {
-  skip?: boolean;
-  direction?: Direction;
-  pagination: Pagination;
 };
 
 type OwnerTokensResponse = {
@@ -87,20 +78,10 @@ const getConditionByCollectionsIds = (collectionsIds: number[] | undefined) => {
   };
 };
 
-const getConditionBySearchText = (searchText: string | null | undefined) => {
-  const trimedText = searchText?.trim();
-
-  if (!trimedText) {
-    return null;
-  }
-
-  return { token_name: { _ilike: `%${trimedText}%` } };
-};
-
 export const useGraphQlOwnerTokens = (
   owner: string | undefined,
   filters: AdditionalFilters,
-  options: Options,
+  options: OptionsTokenCollection,
 ) => {
   const { collectionsIds, typesFilters, searchText } = filters;
   const { direction, pagination, skip } = options ?? {
