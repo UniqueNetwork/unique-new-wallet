@@ -242,19 +242,16 @@ const SearchInputStyled = styled(InputText)`
 
 const AccountCellWrapper = styled.div`
   display: flex;
-  padding: 20px 0 !important;
+  padding: 20px 0;
 `;
 
 const BalancesWrapper = styled.div`
   display: flex;
   flex-direction: column;
   column-gap: calc(var(--prop-gap) / 2);
-  padding: 0 !important;
 `;
 
-const LinksWrapper = styled.div`
-  padding: 0 !important;
-`;
+const LinksWrapper = styled.div``;
 
 const LinkStyled = styled.a`
   display: flex;
@@ -266,14 +263,13 @@ const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
   column-gap: var(--prop-gap);
-  padding: 0 !important;
 
-  & > div.unique-dropdown {
-    padding: 0;
-    cursor: pointer;
-
-    & > div.dropdown-wrapper {
+  .unique-dropdown {
+    .dropdown-wrapper,
+    .dropdown-options {
+      overflow: hidden;
       padding: 0;
+      cursor: pointer;
     }
   }
 `;

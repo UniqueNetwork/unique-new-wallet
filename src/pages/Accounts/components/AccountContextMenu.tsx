@@ -16,10 +16,10 @@ export const AccountContextMenu = ({ onForgetWalletClick }: AccountContextMenuPr
 const ContextMenuItem = styled.div`
   display: flex;
   align-items: center;
-  cursor: pointer;
-  white-space: nowrap;
+  padding: calc(var(--prop-gap) * 0.75) var(--prop-gap);
   color: var(--color-additional-dark);
-  padding: calc(var(--prop-gap) / 4) calc(var(--prop-gap) / 2) !important;
+  white-space: nowrap;
+  cursor: pointer;
 
   &:hover {
     color: var(--color-primary-500);
