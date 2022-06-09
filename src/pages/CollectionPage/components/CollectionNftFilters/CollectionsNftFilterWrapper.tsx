@@ -28,10 +28,6 @@ export const CollectionsNftFilterWrapper = ({ children }: CollectionFilterType) 
     setPage(DEFAULT_PAGE);
   }, []);
 
-  const handleChangeType = useCallback((type: ListNftsFilterType) => {
-    setType(type);
-  }, []);
-
   return (
     <nftListFilterContext.Provider
       value={{
@@ -42,7 +38,7 @@ export const CollectionsNftFilterWrapper = ({ children }: CollectionFilterType) 
         onChangeDirection: handleChangeDirection,
         onChangePagination: setPage,
         onChangeSearch: handleChangeSearch,
-        onChangeType: handleChangeType,
+        onChangeType: setType,
       }}
     >
       {children}

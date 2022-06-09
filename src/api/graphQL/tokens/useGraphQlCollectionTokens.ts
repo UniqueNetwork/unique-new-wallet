@@ -38,7 +38,7 @@ type TokensListData = {
   errorTokens: ApolloError | undefined;
 };
 
-export const useGraphQlTokens = ({
+export const useGraphQlCollectionTokens = ({
   filter,
   collectionOwner,
   options,
