@@ -1,4 +1,4 @@
-import React, { VFC } from 'react';
+import React, { memo, VFC } from 'react';
 import { Heading, Text, Tag } from '@unique-nft/ui-kit';
 
 import { TAttributes } from '@app/api';
@@ -27,7 +27,7 @@ const Attribute: VFC<{ name: string; value: TAttributes[keyof TAttributes] }> = 
   );
 };
 
-export const TokenInformation: VFC<TokenInformationProps> = ({ attributes }) => {
+const TokenInformationComponent: VFC<TokenInformationProps> = ({ attributes }) => {
   const attrsEntries = attributes ? Object.entries(attributes) : null;
 
   return (
@@ -41,3 +41,5 @@ export const TokenInformation: VFC<TokenInformationProps> = ({ attributes }) => 
     </>
   );
 };
+
+export const TokenInformation = memo(TokenInformationComponent);

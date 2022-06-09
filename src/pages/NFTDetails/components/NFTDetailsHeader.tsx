@@ -1,4 +1,4 @@
-import { VFC } from 'react';
+import { memo, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import {
@@ -92,8 +92,8 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   );
 };
 
-export const NFTDetailsHeader = styled(NFTDetailsHeaderComponent)`
+export const NFTDetailsHeader = memo(styled(NFTDetailsHeaderComponent)`
   .transfer-btn {
     margin-top: calc(var(--prop-gap) * 1.5);
   }
-`;
+`);

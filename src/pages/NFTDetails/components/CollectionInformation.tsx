@@ -1,4 +1,4 @@
-import React, { VFC } from 'react';
+import React, { memo, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Avatar, Heading, Text } from '@unique-nft/ui-kit';
@@ -38,7 +38,7 @@ const CollectionInformationComponent: VFC<CollectionInformationProps> = ({
   );
 };
 
-export const CollectionInformation = styled(CollectionInformationComponent)`
+export const CollectionInformation = memo(styled(CollectionInformationComponent)`
   &.collection-information {
     max-width: 1200px;
     display: flex;
@@ -60,4 +60,4 @@ export const CollectionInformation = styled(CollectionInformationComponent)`
     display: block;
     max-width: 724px;
   }
-`;
+`);

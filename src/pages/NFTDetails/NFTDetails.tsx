@@ -1,4 +1,4 @@
-import React, { useContext, VFC } from 'react';
+import React, { useCallback, useContext, useState, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
@@ -47,7 +47,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
             />
           </div>
           <div className="nft-page--info-container">
-            <NFTDetailsHeader title={token?.token_name} subtitle={owner} />
+            <NFTDetailsHeader subtitle={owner} title={token?.token_name} />
             <Divider />
             <TokenInformation attributes={token?.data} />
             <Divider />
