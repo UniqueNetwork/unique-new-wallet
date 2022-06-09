@@ -4,7 +4,7 @@ export type QueryParams = Record<string, string | number | (string | number)[]>;
 
 export type Pagination = {
   page: number;
-  pageSize: number;
+  limit: number;
 };
 
 export type Sortable = {

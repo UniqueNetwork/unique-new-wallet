@@ -1,3 +1,6 @@
+import { Direction } from '@app/api/graphQL/tokens/useGraphQlOwnerTokens';
+import { Pagination } from '@app/types';
+
 export type TAttributes = {
   [key: string]: string | string[];
 };
@@ -5,6 +8,12 @@ export type TAttributes = {
 export type ImagePath = {
   ipfs: string;
   type: string;
+};
+
+export type OptionsTokenCollection = {
+  skip?: boolean;
+  direction?: Direction;
+  pagination: Pagination;
 };
 
 export interface TokensVariables {
@@ -21,18 +30,28 @@ export enum TokenType {
 
 export interface ViewToken {
   id: number;
-  token_id: number;
-  token_name: string;
   data: TAttributes;
   token_prefix: string;
-  image_path: string;
   owner: string;
   price: number;
   count_of_views: number;
-  collection_id: number;
-  collection_name: string;
   collection_cover: string;
+  token_name: string;
+  token_id: number;
+  image_path: string;
+  collection_name: string;
+  collection_id: number;
 }
+
+export type TokenPreviewInfo = Pick<
+  ViewToken,
+  | 'token_name'
+  | 'token_id'
+  | 'image_path'
+  | 'collection_name'
+  | 'collection_id'
+  | 'token_prefix'
+>;
 
 export type CollectionPreview = Pick<
   ViewToken,
