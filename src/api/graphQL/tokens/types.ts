@@ -28,7 +28,7 @@ export enum TokenType {
   none = 'None', // not on sale
 }
 
-export type ViewToken = TokenPreviewInfo & {
+export interface ViewToken {
   id: number;
   data: TAttributes;
   token_prefix: string;
@@ -36,16 +36,22 @@ export type ViewToken = TokenPreviewInfo & {
   price: number;
   count_of_views: number;
   collection_cover: string;
-};
-
-export type TokenPreviewInfo = {
   token_name: string;
-  token_prefix: string;
   token_id: number;
   image_path: string;
   collection_name: string;
   collection_id: number;
-};
+}
+
+export type TokenPreviewInfo = Pick<
+  ViewToken,
+  | 'token_name'
+  | 'token_id'
+  | 'image_path'
+  | 'collection_name'
+  | 'collection_id'
+  | 'token_prefix'
+>;
 
 export type CollectionPreview = Pick<
   ViewToken,
