@@ -116,7 +116,7 @@ export const useGraphQlOwnerTokens = (
   } = useQuery<OwnerTokensResponse>(OWNER_TOKENS_QUERY, {
     skip: skip || !owner,
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
     variables: {
       limit,

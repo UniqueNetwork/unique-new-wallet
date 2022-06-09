@@ -11,9 +11,30 @@ import {
 } from '@unique-nft/ui-kit';
 
 interface NFTDetailsHeaderProps {
-  options: SelectOptionProps[];
+  title?: string;
+  subtitle?: string;
   className?: string;
 }
+
+const options: SelectOptionProps[] = [
+  {
+    id: 1,
+    title: 'Share',
+    icon: {
+      name: 'shared',
+      size: 12,
+    },
+  },
+  {
+    id: 2,
+    title: 'Burn NFT',
+    color: 'var(--color-coral-500)',
+    icon: {
+      name: 'burn',
+      size: 12,
+    },
+  },
+];
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -23,32 +44,40 @@ const HeaderContainer = styled.div`
 
 const HeaderContent = styled.div`
   display: flex;
+  align-items: flex-start;
   flex-direction: column;
+`;
+
+const MenuOptionContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: calc(var(--prop-gap) * 0.5);
 `;
 
 const MenuOption = (option: SelectOptionProps) => {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <MenuOptionContainer>
       <Icon
         size={16}
         color={(option.color as string) ?? ''}
         name={(option.icon as any).name ?? ''}
       />
       <Text color={(option.color as string) ?? ''}>{option.title as string}</Text>
-    </div>
+    </MenuOptionContainer>
   );
 };
 
 const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
-  options,
+  title,
+  subtitle,
   className,
 }) => {
   return (
     <HeaderContainer className={classNames(className)}>
       <HeaderContent>
-        <Heading size="1">Chel #8012</Heading>
+        <Heading size="1">{title ?? ''}</Heading>
         <Text size="s" weight="light" color="grey-500">
-          You own it
+          {subtitle}
         </Text>
         <Button className="transfer-btn" title="Transfer" role="outlined" />
       </HeaderContent>

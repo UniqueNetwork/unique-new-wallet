@@ -32,6 +32,7 @@ export interface ViewToken {
   collection_id: number;
   collection_name: string;
   collection_cover: string;
+  collection_description: string;
 }
 
 export type CollectionPreview = Pick<

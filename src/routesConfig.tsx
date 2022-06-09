@@ -42,7 +42,9 @@ export const routes: RouteConfig = {
     {
       name: 'My tokens',
       path: '/my-tokens',
-      component: <NFTDetails />,
+      component: (
+        <MyTokens activeTab={0} basePath="/my-tokens" tabUrls={['nft', 'coins']} />
+      ),
       children: [
         {
           component: <NFTs />,
