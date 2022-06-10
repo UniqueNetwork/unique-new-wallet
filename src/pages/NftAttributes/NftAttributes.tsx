@@ -6,7 +6,7 @@ const NftAttributes = () => {
   return (
     <>
       <CollectionStepper activeStep={2} />
-      <Heading size={'2'}>NFT attributes</Heading>
+      <Heading size="2">NFT attributes</Heading>
       <Text>
         This functionality allows you to customize the token. You can define your NFT
         traits in the fields below. For example, name, accessory, gender, background,
