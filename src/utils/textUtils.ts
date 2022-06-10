@@ -6,9 +6,9 @@ export const shortcutText = (text: string) => {
   return start && end ? `${start}...${end}` : text;
 };
 
-export const formatAmount = (amount: number | string) => {
+export const formatAmount = (amount: number | string, initialValue = '0') => {
   if (!amount) {
-    return '0';
+    return initialValue;
   }
   const parts = amount.toString().split('.');
 

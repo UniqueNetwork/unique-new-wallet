@@ -127,7 +127,7 @@ export const AccountWrapper: FC = ({ children }) => {
       selectedAccount: selectedAccount
         ? {
             ...selectedAccount,
-            balance: data?.amount ?? '0',
+            balance: data?.amount.toString() ?? '0',
           }
         : undefined,
       fetchAccounts,

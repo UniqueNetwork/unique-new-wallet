@@ -11,6 +11,15 @@ interface MobileTableProps {
   loading?: boolean;
 }
 
+export const getDeepValue = <T extends Record<string, any>>(object: T, path: string) => {
+  return path
+    .split(/[.[\]'"]/)
+    .filter((p) => p)
+    .reduce((o, p) => {
+      return o ? o[p] : undefined;
+    }, object);
+};
+
 const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
   let children = <Loading />;
 
@@ -21,16 +30,15 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
       <>
         {data?.map((item, index) => (
           <MobileTableRow key={index}>
-            {columns?.map((column) => (
-              <div key={`column-${column.field || ''}`}>
+            {columns?.map((column, index) => (
+              <div key={`column-${column.field || index}`}>
                 {typeof column?.title === 'object' ? (
                   column.title
                 ) : (
-                  <Text color="grey-500">${column?.title}</Text>
+                  <Text color="grey-500">{column?.title}</Text>
                 )}
-                {column.render?.(item[column.field as keyof TableRowProps]) || (
-                  <Text>${item[column.field as keyof TableRowProps]}</Text>
-                )}
+                {column.render?.(getDeepValue(item, column.field), item) ||
+                  getDeepValue(item, column.field)}
               </div>
             ))}
           </MobileTableRow>

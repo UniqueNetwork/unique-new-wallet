@@ -6,6 +6,7 @@ import {
   Heading,
   Icon,
   InputText,
+  Loader,
   Modal,
   Text,
 } from '@unique-nft/ui-kit';
@@ -13,7 +14,8 @@ import styled, { css } from 'styled-components';
 
 import { useAccounts, useFee } from '@app/hooks';
 import { Account } from '@app/account';
-import { formatKusamaBalance } from '@app/utils/textUtils';
+import { formatAmount } from '@app/utils';
+import { useAccountBalanceService } from '@app/api';
 import {
   AdditionalText,
   ModalHeader,
@@ -27,27 +29,27 @@ import {
 
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
-const tokenSymbol = 'KSM';
-
 export type TransferFundsModalProps = {
   isVisible: boolean;
-  senderAddress?: string;
+  senderAddress?: Account | undefined;
   onFinish(): void;
 };
 
 export const TransferFundsModal: FC<TransferFundsModalProps> = ({
   isVisible,
-  senderAddress = '',
+  senderAddress,
   onFinish,
 }) => {
-  const [status, setStatus] = useState<'ask' | 'transfer-stage'>('ask');
-  const [recipient, setRecipient] = useState<string>('');
   const [amount, setAmount] = useState<string>('');
+  const [recipient, setRecipient] = useState<string>('');
+  const [sender, setSender] = useState<string>('');
+  const [status, setStatus] = useState<'ask' | 'transfer-stage'>('ask');
 
   const onTransfer = useCallback(
     (_sender: string, _recipient: string, _amount: string) => {
-      setRecipient(_recipient);
       setAmount(_amount);
+      setRecipient(_recipient);
+      setSender(_sender);
     },
     [setStatus, setRecipient, setAmount],
   );
@@ -55,7 +57,7 @@ export const TransferFundsModal: FC<TransferFundsModalProps> = ({
   return (
     <AskTransferFundsModal
       isVisible={isVisible}
-      senderAddress={senderAddress}
+      senderAccount={senderAddress}
       onFinish={onTransfer}
       onClose={onFinish}
     />
@@ -64,7 +66,7 @@ export const TransferFundsModal: FC<TransferFundsModalProps> = ({
 
 type AskSendFundsModalProps = {
   isVisible: boolean;
-  senderAddress: string;
+  senderAccount: Account | undefined;
   onFinish(sender: string, recipient: string, amount: string): void;
   onClose(): void;
 };
@@ -72,37 +74,54 @@ type AskSendFundsModalProps = {
 export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   isVisible,
   onFinish,
-  senderAddress,
+  senderAccount,
   onClose,
 }) => {
   const { accounts, selectedAccount } = useAccounts();
   const { fee } = useFee();
 
-  const [recipient, setRecipient] = useState<Account | undefined>();
-  const [amount, setAmount] = useState<number>(0);
+  const [sender, setSender] = useState<Account | undefined>(
+    senderAccount || selectedAccount,
+  );
+  const recipientOptions: Account[] = useMemo(
+    () => accounts.filter(({ address }) => address !== sender?.address),
+    [accounts, sender?.address],
+  );
 
-  const senderBalance = useMemo(() => {
-    return '';
-  }, []);
+  const [recipient, setRecipient] = useState<Account | undefined>(recipientOptions[0]);
+  const { data } = useAccountBalanceService(sender?.address);
+  const [amount, setAmount] = useState<string>('');
 
-  const recipientBalance = useMemo(() => {
-    return '';
-  }, []);
+  const senderOptions: Account[] = useMemo(
+    () => accounts.filter(({ address }) => address !== recipient?.address),
+    [accounts, recipient?.address],
+  );
 
   const onAmountChange = useCallback(
-    (value: string) => {
-      setAmount(Number(value));
+    (value: string, maxValue: string | undefined) => {
+      let val = value;
+
+      if (isNaN(Number(val))) {
+        val = val.replace(/[^\d.]/g, '');
+
+        if (val.split('.').length > 2) {
+          val = val.replace(/\.+$/, '');
+        }
+      }
+
+      setAmount(val.trim());
     },
     [setAmount],
   );
 
-  const filteredAccounts = useMemo(() => {
-    return accounts.filter(({ address }) => address !== selectedAccount?.address);
-  }, []);
-
   const onSend = useCallback(
-    () => onFinish(senderAddress, recipient?.address || '', amount.toString()),
-    [recipient, onFinish, senderAddress, amount],
+    () =>
+      onFinish(
+        sender?.address || '',
+        recipient?.address.toString() || '',
+        amount.toString(),
+      ),
+    [onFinish, recipient?.address, sender?.address, amount],
   );
 
   if (!accounts?.length) {
@@ -120,41 +139,40 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
             <StyledAdditionalText size="s" color="grey-500">
               From
             </StyledAdditionalText>
-            <AccountContainer>
-              <AccountInfo
-                address={selectedAccount?.address}
-                name={selectedAccount?.meta.name}
-                canCopy={true}
-              />
-            </AccountContainer>
-            <Text size="s">{`${formatKusamaBalance(
-              senderBalance?.toString() || 0,
-            )} ${tokenSymbol}`}</Text>
+            <AccountSelector
+              selectOptions={senderOptions}
+              selectedValue={sender}
+              onChangeAccount={(value) => {
+                setSender(value);
+                setAmount('');
+              }}
+            />
           </Group>
           <Group>
             <StyledAdditionalText size="s" color="grey-500">
               To
             </StyledAdditionalText>
             <AccountSelector
-              defaultValue={selectedAccount}
-              selectOptions={filteredAccounts}
+              selectOptions={recipientOptions}
               selectedValue={recipient}
-              onChangeAccount={setRecipient}
+              onChangeAccount={(value) => {
+                setRecipient(value);
+                setAmount('');
+              }}
             />
-            <Text size="s">{`${formatKusamaBalance(
-              recipientBalance?.toString() || 0,
-            )} ${tokenSymbol}`}</Text>
           </Group>
         </ContentRow>
         <ContentRow>
-          {/* TODO: get credits from API */}
           <InputAmount>
             <InputText
+              placeholder="Enter the amount"
               role="decimal"
-              value={amount.toString()}
-              onChange={onAmountChange}
+              value={formatAmount(amount, '')}
+              onChange={(value) => onAmountChange(value, data?.amount.toString())}
             />
-            <InputAmountButton>Max</InputAmountButton>
+            <InputAmountButton onClick={() => setAmount(data?.amount.toString() || '')}>
+              {data ? 'Max' : <Loader size="small" />}
+            </InputAmountButton>
           </InputAmount>
         </ContentRow>
         <ContentRow>
@@ -166,12 +184,7 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
         </ContentRow>
       </ModalContent>
       <ModalFooter>
-        <Button
-          // disabled={!validPassword || !password || !name}
-          role="primary"
-          title="Confirm"
-          onClick={onSend}
-        />
+        <Button disabled={!amount} role="primary" title="Confirm" onClick={onSend} />
       </ModalFooter>
     </Modal>
   );
@@ -306,6 +319,9 @@ const InputAmountButton = styled.button`
   top: 50%;
   right: calc(var(--prop-gap) / 2);
   padding: calc(var(--prop-gap) / 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: 0 transparent;
   line-height: 1;
   color: var(--color-primary-500);
@@ -347,28 +363,38 @@ const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boolean }> =
 const AccountSelector: FC<{
   selectOptions: any;
   selectedValue?: Account;
-  defaultValue?: Account;
   onChangeAccount?(value: Account): void;
-}> = ({ defaultValue, selectedValue, selectOptions, onChangeAccount }) => {
+}> = ({ selectedValue, selectOptions, onChangeAccount }) => {
+  const { data } = useAccountBalanceService(selectedValue?.address);
+
   return (
-    <AccountSelect>
-      <Dropdown
-        value={selectedValue?.address || defaultValue?.address || ''}
-        options={selectOptions || []}
-        optionKey="address"
-        optionRender={(option: any) => (
-          <AccountInfo address={option.address} name={option.meta.name} />
-        )}
-        onChange={(option: any) => onChangeAccount?.(option)}
-      >
-        <AccountSelectWrapper>
-          <AccountInfo
-            address={selectedValue?.address || selectOptions[0]?.address}
-            name={selectedValue?.meta.name || selectOptions[0]?.meta.name}
-            canCopy={true}
-          />
-        </AccountSelectWrapper>
-      </Dropdown>
-    </AccountSelect>
+    <>
+      <AccountSelect>
+        <Dropdown
+          value={selectedValue?.address}
+          options={selectOptions || []}
+          optionKey="address"
+          optionRender={(option: any) => (
+            <AccountInfo
+              address={option.address}
+              key={option.address}
+              name={option.meta.name}
+            />
+          )}
+          onChange={onChangeAccount as any}
+        >
+          <AccountSelectWrapper>
+            <AccountInfo
+              address={selectedValue?.address}
+              name={selectedValue?.meta.name}
+              canCopy={true}
+            />
+          </AccountSelectWrapper>
+        </Dropdown>
+      </AccountSelect>
+      <Text size="s">
+        {formatAmount(data?.amount || 0)}&nbsp;{data?.unit}
+      </Text>
+    </>
   );
 };
