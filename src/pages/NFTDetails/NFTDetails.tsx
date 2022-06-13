@@ -31,6 +31,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
 
   const { token, loading } = useGraphQlTokenById(tokenId, collectionId);
 
+  const avatar = getTokenIpfsUriByImagePath(token?.image_path ?? '');
   const owner =
     selectedAccount?.address === token?.owner ? 'You own it' : `Owned by ${token?.owner}`;
 
@@ -43,10 +44,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
       ) : (
         <>
           <div className="nft-page--avatar">
-            <Avatar
-              size={536}
-              src={getTokenIpfsUriByImagePath(token?.image_path ?? '')}
-            />
+            <Avatar size={536} src={avatar} />
           </div>
           <div className="nft-page--info-container">
             <NFTDetailsHeader title={token?.token_name} subtitle={owner} />
