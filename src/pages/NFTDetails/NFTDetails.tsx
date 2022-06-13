@@ -1,3 +1,5 @@
+import { title } from 'process';
+
 import React, { useCallback, useContext, useState, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
@@ -47,7 +49,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
             />
           </div>
           <div className="nft-page--info-container">
-            <NFTDetailsHeader subtitle={owner} title={token?.token_name} />
+            <NFTDetailsHeader title={token?.token_name} subtitle={owner} />
             <Divider />
             <TokenInformation attributes={token?.data} />
             <Divider />

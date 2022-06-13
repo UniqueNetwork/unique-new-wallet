@@ -13,7 +13,6 @@ import {
 interface NFTDetailsHeaderProps {
   title?: string;
   subtitle?: string;
-  className?: string;
 }
 
 const options: SelectOptionProps[] = [
@@ -68,14 +67,13 @@ const MenuOption = (option: SelectOptionProps) => {
 };
 
 const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
-  title,
+  title = '',
   subtitle,
-  className,
 }) => {
   return (
-    <HeaderContainer className={classNames(className)}>
+    <HeaderContainer>
       <HeaderContent>
-        <Heading size="1">{title ?? ''}</Heading>
+        <Heading size="1">{title}</Heading>
         <Text size="s" weight="light" color="grey-500">
           {subtitle}
         </Text>

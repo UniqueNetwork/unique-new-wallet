@@ -11,17 +11,17 @@ interface CollectionInformationProps {
 }
 
 const CollectionInformationComponent: VFC<CollectionInformationProps> = ({
-  avatar,
+  avatar = '',
+  title = '',
   description,
-  title,
   className,
 }) => {
   return (
     <div className={classNames(className, 'collection-information')}>
-      <Avatar src={avatar ?? ''} size={64} type="circle" />
+      <Avatar src={avatar} size={64} type="circle" />
       <div className="collection-content">
         <Heading size="4" className="collection-title">
-          {title ?? ''}
+          {title}
         </Heading>
         {!!description && (
           <Text
