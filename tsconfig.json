@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "downlevelIteration": true,
     "allowJs": true,
     "skipLibCheck": true,
@@ -24,9 +20,7 @@
     "paths": {
       "@app/*": ["./*"],
       "@polkadot/types/lookup": ["node_modules/@unique-nft/types/types-lookup"]
-    },
+    }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

@@ -6,6 +6,7 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useGraphQlCollection } from '@app/api/graphQL/collections/collections';
 import { useAccounts } from '@app/hooks';
+import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
@@ -46,26 +47,28 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
   }, [baseUrl, location.pathname, navigate]);
 
   return (
-    <div className={classNames('collection-page', className)}>
-      <div className="tabs-header">
-        <Tabs
-          activeIndex={currentTabIndex}
-          labels={['NFTs', 'Settings']}
-          type="slim"
-          onClick={handleClick}
-        />
-        <Tabs activeIndex={currentTabIndex}>
-          <CollectionNftFilters />
-          <></>
-        </Tabs>
+    <CollectionsNftFilterWrapper>
+      <div className={classNames('collection-page', className)}>
+        <div className="tabs-header">
+          <Tabs
+            activeIndex={currentTabIndex}
+            labels={['NFTs', 'Settings']}
+            type="slim"
+            onClick={handleClick}
+          />
+          <Tabs activeIndex={currentTabIndex}>
+            <CollectionNftFilters />
+            <></>
+          </Tabs>
+        </div>
+        <collectionContext.Provider value={collectionData}>
+          <Tabs activeIndex={currentTabIndex}>
+            <Outlet />
+            <Outlet />
+          </Tabs>
+        </collectionContext.Provider>
       </div>
-      <collectionContext.Provider value={collectionData}>
-        <Tabs activeIndex={currentTabIndex}>
-          <Outlet />
-          <Outlet />
-        </Tabs>
-      </collectionContext.Provider>
-    </div>
+    </CollectionsNftFilterWrapper>
   );
 };
 

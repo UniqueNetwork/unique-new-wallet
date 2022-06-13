@@ -24,7 +24,7 @@ import config from '../../config';
 const tokenSymbol = 'KSM';
 
 type AccountsColumnsProps = {
-  onShowSendFundsModal(address: string): () => void;
+  onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
 };
 
@@ -35,14 +35,14 @@ const getAccountsColumns = ({
   {
     title: 'Account',
     width: '40%',
-    field: 'address',
-    render(address: string, rowData: Account) {
+    field: 'accountInfo',
+    render(address, rowData: Account) {
       return (
         <AccountCellWrapper>
           <AccountCard
             canCopy
-            accountAddress={address}
-            accountName={rowData.meta.name || ''}
+            accountAddress={rowData?.address}
+            accountName={rowData?.meta.name || ''}
           />
         </AccountCellWrapper>
       );
@@ -67,14 +67,14 @@ const getAccountsColumns = ({
   {
     title: 'Block explorer',
     width: '15%',
-    field: 'address',
-    render(address: string) {
+    field: 'explorer',
+    render(address, rowData: Account) {
       return (
         <LinksWrapper>
           <LinkStyled
             target="_blank"
             rel="noreferrer"
-            href={`${config.scanUrl}account/${address}`}
+            href={`${config.scanUrl}account/${rowData?.address}`}
           >
             <Text color="primary-500">UniqueScan</Text>
             <Icon size={16} name="arrow-up-right" />
@@ -86,16 +86,18 @@ const getAccountsColumns = ({
   {
     title: 'Actions',
     width: '25%',
-    field: 'address',
-    render(address: string) {
+    field: 'actions',
+    render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <Button title="Send" onClick={onShowSendFundsModal(address)} />
+          <Button title="Send" onClick={onShowSendFundsModal(rowData)} />
           <Button disabled title="Get" />
           <Dropdown
             placement="right"
             dropdownRender={() => (
-              <AccountContextMenu onForgetWalletClick={onForgetWalletClick(address)} />
+              <AccountContextMenu
+                onForgetWalletClick={onForgetWalletClick(rowData?.address)}
+              />
             )}
           >
             <Icon name="more-horiz" size={24} />
@@ -111,12 +113,12 @@ export const Accounts = () => {
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
-  const [selectedAddress, setSelectedAddress] = useState<string>();
+  const [selectedAddress, setSelectedAddress] = useState<Account>();
 
   const onSendFundsClick = useCallback(
-    (address: string) => () => {
+    (account: Account) => () => {
       setIsOpenModal(true);
-      setSelectedAddress(address);
+      setSelectedAddress(account);
     },
     [],
   );

@@ -1,34 +1,40 @@
-import React, { VFC, useState } from 'react';
+import { VFC, useState, KeyboardEvent } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, InputText, RadioGroup, Select } from '@unique-nft/ui-kit';
+import { Button, IconProps, InputText, RadioGroup, Select } from '@unique-nft/ui-kit';
 
-import { iconDown, iconUp, Option, RadioOption } from '@app/utils';
+import { iconDown, iconUp, RadioOption } from '@app/utils';
+import { useNftFilterContext } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
+import { Direction } from '@app/api/graphQL/tokens';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
 }
+
+type SelectOption = { id: Direction; title: string; iconRight: IconProps };
+
+const KEY_CODE_ENTER = 13;
 
 const radioOptions: RadioOption[] = [
   {
     value: 'All',
   },
   {
-    value: 'Disowned',
+    value: 'Owned',
   },
   {
-    value: 'Sold',
+    value: 'Disowned',
   },
 ];
 
-const sortOptions: Option[] = [
+const sortOptions: SelectOption[] = [
   {
-    id: 'nftId-asc',
+    id: 'asc',
     title: 'NFT ID',
     iconRight: iconDown,
   },
   {
-    id: 'nftId-desc',
+    id: 'desc',
     title: 'NFT ID',
     iconRight: iconUp,
   },
@@ -37,31 +43,35 @@ const sortOptions: Option[] = [
 const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = ({
   className,
 }) => {
-  const [sort, setSort] = useState<string>('nftId-asc');
-  const [ownFilter, setOwnFilter] = useState<string>(radioOptions[0].value);
+  const [search, setSearch] = useState('');
+  const { direction, onChangeSearch, onChangeDirection } = useNftFilterContext();
 
-  const onChange = (option: Option) => {
-    console.log('option', option);
-    setSort(option.id);
+  const handleChangeDirection = (option: SelectOption) => {
+    onChangeDirection(option.id);
   };
 
-  const onOwnFilterChange = (option: RadioOption) => {
-    setOwnFilter(option.value);
+  const handleSearch = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.keyCode === KEY_CODE_ENTER) {
+      onChangeSearch(search);
+    }
   };
 
-  // todo - fix onChange for radio
+  // const handleChangeType = (...args: any) => {
+  //   console.log(args);
+  // };
+
+  // TODO: fix onChange for radio
   return (
     <div className={classNames('collection-nft-filters', className)}>
-      <RadioGroup
-        align="horizontal"
-        options={radioOptions}
-        // onChange={onOwnFilterChange}
-      />
+      {/* <RadioGroup align="horizontal" options={radioOptions} onChange={handleChangeType} /> */}
       <InputText
         iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
         placeholder="Search"
+        value={search}
+        onKeyDown={handleSearch}
+        onChange={setSearch}
       />
-      <Select options={sortOptions} value={sort} onChange={onChange} />
+      <Select options={sortOptions} value={direction} onChange={handleChangeDirection} />
       <Button
         iconLeft={{
           name: 'plus',

@@ -125,11 +125,20 @@ export interface SubmitResultResponse {
 }
 
 export interface BalanceResponse {
-  /** @example 411348197000000000000 */
-  amount: string;
+  /** @example 0.0899 */
+  amount: number;
 
-  /** @example 411.3481 QTZ */
+  /** @example 89.9800 mQTZ */
   formatted: string;
+
+  /** @example 89980000000000001 */
+  raw: string;
+
+  /** @example 0.0899 QTZ */
+  amountWithUnit: string;
+
+  /** @example QTZ */
+  unit: string;
 }
 
 export interface TransferBuildBody {
