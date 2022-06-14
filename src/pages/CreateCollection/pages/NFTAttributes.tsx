@@ -30,9 +30,9 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
   } = useContext(CollectionFormContext);
   const navigate = useNavigate();
 
-  const onPreviousStepClick = useCallback(() => {
+  const onPreviousStepClick = () => {
     navigate('/create-collection/main-information/');
-  }, []);
+  };
 
   return (
     <div className={classNames('main-information', className)}>

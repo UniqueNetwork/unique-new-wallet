@@ -16,7 +16,7 @@ import {
   FieldRuleType,
 } from '@app/types';
 
-import trash from '../../../../static/icons/trash.svg';
+import trash from '../../../../static/icons/trash.svg'; // TODO: get this icon from ui-kit
 
 interface AttributesTableProps {
   className?: string;
@@ -106,7 +106,15 @@ const getAttributesColumns = ({
     width: '40%',
     field: 'values',
     render(values: string[], attribute: ArtificialAttributeItemType) {
-      return <InputText placeholder="Value" />;
+      return (
+        <InputText
+          placeholder="Value"
+          value={values.join(',')}
+          onChange={(value) =>
+            onAttributeChange({ ...attribute, values: value.split(',') })
+          }
+        />
+      );
     },
   },
   {
@@ -131,7 +139,7 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
   value,
   onChange,
 }) => {
-  const onAddAttributeItemClick = useCallback(() => {
+  const onAddAttributeItemClick = () => {
     onChange([
       ...value,
       {
@@ -142,21 +150,15 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
         values: [],
       },
     ]);
-  }, [value]);
+  };
 
-  const onAttributeChange = useCallback(
-    (attribute: ArtificialAttributeItemType) => {
-      onChange(value.map((item) => (item.id !== attribute.id ? item : attribute)));
-    },
-    [value],
-  );
+  const onAttributeChange = (attribute: ArtificialAttributeItemType) => {
+    onChange(value.map((item) => (item.id !== attribute.id ? item : attribute)));
+  };
 
-  const onRemoveAttributeClick = useCallback(
-    (attribute: ArtificialAttributeItemType) => {
-      onChange(value.filter((item) => item.id !== attribute.id));
-    },
-    [value],
-  );
+  const onRemoveAttributeClick = (attribute: ArtificialAttributeItemType) => {
+    onChange(value.filter((item) => item.id !== attribute.id));
+  };
 
   return (
     <div className={className}>
