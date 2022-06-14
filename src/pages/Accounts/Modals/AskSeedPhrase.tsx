@@ -79,9 +79,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
           </AddressWrapper>
         </ContentRow>
         <ContentRow>
-          <ContentRowTitle size="4">
-            The secret seed value for this account
-          </ContentRowTitle>
+          <Heading size="4">The secret seed value for this account</Heading>
           <ControlsGroup>
             <ControlWrapper>
               <Select
@@ -138,10 +136,6 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
   );
 };
 
-const ContentRowTitle = styled(Heading)`
-  margin-bottom: calc(var(--prop-gap) * 1.5) !important;
-`;
-
 const ControlWrapper = styled.div`
   display: flex;
 
@@ -178,6 +172,7 @@ const ControlsGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--prop-gap);
+  margin-top: var(--prop-gap);
 
   & > :last-child {
     align-self: baseline;

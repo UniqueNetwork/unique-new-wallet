@@ -61,6 +61,7 @@ const DropdownMenuButtonWrapper = styled.div`
 
 const DropdownMenuDropdown = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+  z-index: 10;
   position: absolute;
   width: 100%;
   top: calc(100% + 4px);
