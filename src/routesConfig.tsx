@@ -12,6 +12,7 @@ import {
   NFTs,
   NotFound,
   Welcome,
+  NFTDetails,
 } from '@app/pages';
 import { CollectionForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
@@ -135,6 +136,11 @@ export const routes: RouteConfig = {
           path: 'nft-attributes',
         },
       ],
+    },
+    {
+      name: 'NFTDetails',
+      path: '/nft-details',
+      component: <NFTDetails />,
     },
   ],
 };

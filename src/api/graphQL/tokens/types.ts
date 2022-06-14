@@ -36,6 +36,7 @@ export interface ViewToken {
   price: number;
   count_of_views: number;
   collection_cover: string;
+  collection_description: string;
   token_name: string;
   token_id: number;
   image_path: string;
