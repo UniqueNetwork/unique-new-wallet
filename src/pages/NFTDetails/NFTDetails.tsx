@@ -38,7 +38,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
   return (
     <PagePaper className={classNames(className, 'nft-page')}>
       {loading ? (
-        <div className="nft-page--loader">
+        <div className="nft-page__loader">
           <Loader size="middle" />
         </div>
       ) : (
@@ -70,7 +70,7 @@ export const NFTDetails = styled(NFTDetailsComponent)`
   min-height: 500px;
 
   .nft-page {
-    &--loader {
+    &__loader {
       margin: auto;
     }
 
