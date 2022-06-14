@@ -166,22 +166,26 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
         columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
         data={value}
       />
-      <AddButton
-        role="ghost"
-        title="Add field"
-        iconRight={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
-        onClick={onAddAttributeItemClick}
-      />
+      <AddButtonWrapper>
+        <Button
+          role="ghost"
+          title="Add field"
+          iconRight={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
+          onClick={onAddAttributeItemClick}
+        />
+      </AddButtonWrapper>
     </div>
   );
 };
 
-const AddButton = styled(Button)`
-  margin-top: var(--prop-gap);
-  background-color: transparent;
-  border: none;
-  color: var(--color-primary-500) !important;
-  padding: 0 !important;
+const AddButtonWrapper = styled.div`
+  & > button.unique-button.ghost {
+    margin-top: var(--prop-gap);
+    background-color: transparent;
+    border: none;
+    color: var(--color-primary-500);
+    padding: 0;
+  }
 `;
 
 export const AttributesTable = styled(AttributesTableComponent)`
