@@ -43,10 +43,10 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
         </div>
       ) : (
         <>
-          <div className="nft-page--avatar">
+          <div className="nft-page__avatar">
             <Avatar size={536} src={avatar} />
           </div>
-          <div className="nft-page--info-container">
+          <div className="nft-page__info-container">
             <NFTDetailsHeader title={token?.token_name} subtitle={owner} />
             <Divider />
             <TokenInformation attributes={token?.data} />
@@ -74,11 +74,11 @@ export const NFTDetails = styled(NFTDetailsComponent)`
       margin: auto;
     }
 
-    &--avatar {
+    &__avatar {
       margin-right: calc(var(--prop-gap) * 2);
     }
 
-    &--info-container {
+    &__info-container {
       flex-grow: 1;
     }
   }
