@@ -71,11 +71,10 @@ export const faqItems = [
     title: 'How much does it cost to create a collection?',
     content: (
       <p>
-        About 5 QTZ to create and customize the collection. To obtain QTZ visit the MEXC
-        Exchange:{' '}
+        About 5 QTZ to create and customize the collection. To obtain QTZ visit the{' '}
         <Link
           href="https://www.mexc.com/"
-          title="https://www.mexc.com/"
+          title="MEXC Exchange"
           role="primary"
           rel="noopener noreferrer"
           target="_blank"

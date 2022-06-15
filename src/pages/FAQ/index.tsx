@@ -13,7 +13,12 @@ export const Faq = (): React.ReactElement<void> => {
           <Plate>
             {faqItems.map((item, i) => {
               return (
-                <Accordion key={i} className="faq-item" title={item.title}>
+                <Accordion
+                  key={i}
+                  className="faq-item"
+                  expanded={i === 0}
+                  title={item.title}
+                >
                   {item.content}
                 </Accordion>
               );

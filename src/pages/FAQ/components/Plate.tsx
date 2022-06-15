@@ -14,6 +14,7 @@ export const Plate = styled.div`
     max-width: 820px;
     font-size: 1rem;
     line-height: 1.4;
+    color: var(--color-additional-dark);
 
     &:not(:last-child) {
       margin-bottom: calc(var(--prop-gap) * 2);
@@ -21,6 +22,7 @@ export const Plate = styled.div`
 
     .unique-accordion-title {
       margin-bottom: var(--prop-gap);
+      color: inherit;
       font-weight: 700;
       font-size: 1.25rem;
     }
