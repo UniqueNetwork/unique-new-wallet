@@ -13,6 +13,7 @@ import {
   NotFound,
   Welcome,
   NFTDetails,
+  CreateNFT,
 } from '@app/pages';
 import { CollectionForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
@@ -141,6 +142,11 @@ export const routes: RouteConfig = {
       name: 'NFTDetails',
       path: '/nft-details',
       component: <NFTDetails />,
+    },
+    {
+      component: <CreateNFT />,
+      name: 'Create a NFT',
+      path: '/create-nft',
     },
   ],
 };
