@@ -1,13 +1,14 @@
 import React, { VFC } from 'react';
 import styled, { css } from 'styled-components';
 import classNames from 'classnames';
-import { Button, Icon } from '@unique-nft/ui-kit';
+import { Button, Icon, Loader } from '@unique-nft/ui-kit';
 
 interface CoinsRowComponentProps {
-  address: string;
-  balanceFull?: number;
-  balanceLocked?: number;
-  balanceTransferable?: number;
+  address?: string;
+  balanceFull?: string;
+  balanceLocked?: string;
+  balanceTransferable?: string;
+  loading?: boolean;
   className?: string;
   iconName: string;
   name: string;
@@ -16,10 +17,11 @@ interface CoinsRowComponentProps {
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
   const {
-    address,
-    balanceFull,
-    balanceLocked,
-    balanceTransferable,
+    address = '',
+    balanceFull = '',
+    balanceLocked = '',
+    balanceTransferable = '',
+    loading,
     className,
     iconName,
     name,
@@ -57,15 +59,19 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         </div>
       </NetworkAddress>
       <NetworkBalances>
-        <div className="balance-full">{`${balanceFull} ${symbol}`}</div>
-        <div className="balance-transferable">
-          {balanceTransferable
-            ? `${balanceTransferable} ${symbol} transferable`
-            : 'no transferable'}
-        </div>
-        <div className="balance-locked">
-          {balanceLocked ? `${balanceLocked} ${symbol} locked` : 'no locked'}
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="balance-full">{balanceFull}</div>
+            <div className="balance-transferable">
+              {`${balanceTransferable} transferable` ?? 'no transferable'}
+            </div>
+            <div className="balance-locked">
+              {balanceLocked ? `${balanceLocked} ${symbol} locked` : 'no locked'}
+            </div>
+          </>
+        )}
       </NetworkBalances>
       <NetworkActions>
         <Button disabled title="Send" />
@@ -116,6 +122,7 @@ const NetworkAddress = styled.div`
 
 const NetworkBalances = styled.div`
   .balance-full {
+    min-width: 300px;
     ${BoldMargin4};
   }
 

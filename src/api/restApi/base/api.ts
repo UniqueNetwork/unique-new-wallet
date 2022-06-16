@@ -3,6 +3,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { serializeToQuery } from './helper';
 
 export interface IBaseApi {
+  readonly baseURL?: string;
   get: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
   delete: <R>(url: string, config?: AxiosRequestConfig) => Promise<AxiosResponse<R>>;
   post: <R, D>(url: string, data: D, config?: AxiosRequestConfig) => Promise<R>;
@@ -12,6 +13,9 @@ export interface IBaseApi {
 
 export class BaseApi implements IBaseApi {
   private http: AxiosInstance;
+  get baseURL() {
+    return this.http.defaults.baseURL;
+  }
 
   constructor(apiEndpoint: string) {
     this.http = axios.create({
