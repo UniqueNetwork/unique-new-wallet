@@ -1,9 +1,12 @@
-import React, { VFC } from 'react';
+import React, { useContext, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Heading } from '@unique-nft/ui-kit';
 
 import { NotFoundCoins } from '@app/components';
+import AccountContext from '@app/account/AccountContext';
+import { useAccountBalanceService } from '@app/api';
+import config from '@app/config';
 
 import { CoinsRow } from './components';
 
@@ -11,56 +14,60 @@ interface CoinsComponentProps {
   className?: string;
 }
 
-const hasCoins = true;
+const CoinsContainer = styled.div`
+  padding: 32px;
+`;
 
 export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
+  const { selectedAccount } = useContext(AccountContext);
+
+  const { isLoading: qtzLoading, data: qtzBalance } = useAccountBalanceService(
+    selectedAccount?.address,
+    config.quartzRestApiUrl,
+  );
+  const { isLoading: opalLoading, data: opalBalance } = useAccountBalanceService(
+    selectedAccount?.address,
+    config.uniqueRestApiUrl,
+  );
+
   return (
-    <div className={classNames('my-tokens--coins', className)}>
-      {hasCoins ? (
-        <>
-          <Heading size="4">Network</Heading>
-          <CoinsRow
-            address="5Gxot8ZtS687tSfsVmNR7NH168cMv7xznkW8hhiGDAE4Y6cj"
-            balanceFull={0.0089}
-            balanceLocked={0.0089}
-            balanceTransferable={0}
-            iconName="chain-quartz"
-            name="Quarts"
-            symbol="QTZ"
-          />
-          <CoinsRow
-            address="5Gxot8ZtS687tSfsVmNR7NH168cMv7xznkW8hhiGDAE4Y6cj"
-            balanceFull={0.0089}
-            balanceLocked={0.0089}
-            balanceTransferable={0}
-            iconName="chain-kusama"
-            name="Kusama"
-            symbol="KSM"
-          />
-          <CoinsRow
-            address="5Gxot8ZtS687tSfsVmNR7NH168cMv7xznkW8hhiGDAE4Y6cj"
-            balanceFull={0.0089}
-            balanceLocked={0.0089}
-            balanceTransferable={0}
-            iconName="chain-unique"
-            name="Unique network"
-            symbol="UNQ"
-          />
-          <Heading size="4">Testnet</Heading>
-          <CoinsRow
-            address="5Gxot8ZtS687tSfsVmNR7NH168cMv7xznkW8hhiGDAE4Y6cj"
-            balanceFull={0.0089}
-            balanceLocked={0.0089}
-            balanceTransferable={0}
-            iconName="chain-opal"
-            name="Opal"
-            symbol="OPL"
-          />
-        </>
-      ) : (
-        <NotFoundCoins />
-      )}
-    </div>
+    <CoinsContainer>
+      <Heading size="4">Network</Heading>
+      <CoinsRow
+        loading={qtzLoading}
+        address={selectedAccount?.address}
+        balanceFull={qtzBalance?.formatted}
+        balanceTransferable={qtzBalance?.amountWithUnit}
+        iconName="chain-quartz"
+        name="Quartz"
+        symbol="QTZ"
+      />
+      <CoinsRow
+        loading={opalLoading}
+        address={selectedAccount?.address}
+        balanceFull={opalBalance?.formatted}
+        balanceTransferable={opalBalance?.amountWithUnit}
+        iconName="chain-opal"
+        name="Opal"
+        symbol="OPL"
+      />
+      <CoinsRow
+        address={selectedAccount?.address}
+        balanceFull="0 KSM"
+        balanceTransferable="0 KSM"
+        iconName="chain-kusama"
+        name="Kusama"
+        symbol="KSM"
+      />
+      <CoinsRow
+        address={selectedAccount?.address}
+        balanceFull="0 UNQ"
+        balanceTransferable="0 UNQ"
+        iconName="chain-unique"
+        name="Unique network"
+        symbol="UNQ"
+      />
+    </CoinsContainer>
   );
 };
 
