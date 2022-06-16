@@ -1,1 +1,1 @@
-export * from './CreateNFT';
+export { CreateNFT } from './CreateNFT';
