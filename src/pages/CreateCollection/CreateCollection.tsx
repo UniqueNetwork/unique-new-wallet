@@ -17,7 +17,7 @@ const CreateCollectionComponent: FC<CreateCollectionProps> = (props) => {
 
   useEffect(() => {
     if (location.pathname === '/create-collection') {
-      navigate('main-information');
+      navigate('/create-collection/main-information/');
     }
   }, [location.pathname, navigate]);
 
@@ -49,7 +49,6 @@ export const CreateCollection = styled(CreateCollectionComponent)`
     .unique-input-text,
     .unique-textarea-text {
       width: 100%;
-      margin-top: 30px;
     }
   }
 
@@ -58,8 +57,32 @@ export const CreateCollection = styled(CreateCollectionComponent)`
     width: 100%;
   }
 
+  .collection-heading {
+    display: flex;
+    flex-direction: column;
+    row-gap: calc(var(--prop-gap) / 2);
+    margin-top: calc(var(--prop-gap) * 2);
+    .unique-font-heading {
+      margin-bottom: 0;
+    }
+  }
+
   .collection-content {
     max-width: 756px;
+    display: flex;
+    flex-direction: column;
+    row-gap: calc(var(--prop-gap) * 2);
+    margin: calc(var(--prop-gap) * 1.5) 0;
+    .collection-upload-wrapper {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--prop-gap);
+      .collection-upload-title {
+        display: flex;
+        flex-direction: column;
+        row-gap: calc(var(--prop-gap) / 4);
+      }
+    }
   }
 
   .collection-content-page,

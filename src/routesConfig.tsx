@@ -7,15 +7,17 @@ import {
   CollectionNft,
   CollectionPage,
   Faq,
-  MainInformation,
   MyCollections,
   MyTokens,
   NFTs,
   NotFound,
   Welcome,
+  NFTDetails,
+  CreateNFT,
 } from '@app/pages';
 import { CollectionForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
+import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/pages';
 
 export interface RouteItem {
   children?: RouteItem[];
@@ -130,11 +132,21 @@ export const routes: RouteConfig = {
           path: 'main-information',
         },
         {
-          component: <div>Nft attributes</div>,
+          component: <NFTAttributes />,
           name: 'Nft attributes',
           path: 'nft-attributes',
         },
       ],
+    },
+    {
+      name: 'NFTDetails',
+      path: '/nft-details',
+      component: <NFTDetails />,
+    },
+    {
+      component: <CreateNFT />,
+      name: 'Create a NFT',
+      path: '/create-nft',
     },
   ],
 };

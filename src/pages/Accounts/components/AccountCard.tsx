@@ -56,6 +56,7 @@ const AccountInfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding-left: var(--prop-gap);
 
   span {
     overflow: hidden;
