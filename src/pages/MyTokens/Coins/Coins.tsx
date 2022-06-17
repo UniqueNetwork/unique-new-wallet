@@ -1,12 +1,12 @@
-import React, { useContext, VFC } from 'react';
+import React, { useCallback, useContext, useState, VFC } from 'react';
 import styled from 'styled-components';
-import classNames from 'classnames';
 import { Heading } from '@unique-nft/ui-kit';
 
-import { NotFoundCoins } from '@app/components';
-import AccountContext from '@app/account/AccountContext';
-import { useAccountBalanceService } from '@app/api';
 import config from '@app/config';
+import { NetworkType } from '@app/types';
+import { TransferFundsModal } from '@app/pages';
+import { useAccountBalanceService } from '@app/api';
+import AccountContext from '@app/account/AccountContext';
 
 import { CoinsRow } from './components';
 
@@ -20,6 +20,8 @@ const CoinsContainer = styled.div`
 
 export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   const { selectedAccount } = useContext(AccountContext);
+  const [fundsModalVisibility, setFundsModalVisibility] = useState(false);
+  const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
 
   const { isLoading: qtzLoading, data: qtzBalance } = useAccountBalanceService(
     selectedAccount?.address,
@@ -30,44 +32,62 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     config.uniqueRestApiUrl,
   );
 
+  const sendFundsHandler = useCallback((networkType: NetworkType) => {
+    setSelectedNetworkType(networkType);
+    setFundsModalVisibility(true);
+  }, []);
+
   return (
-    <CoinsContainer>
-      <Heading size="4">Network</Heading>
-      <CoinsRow
-        loading={qtzLoading}
-        address={selectedAccount?.address}
-        balanceFull={qtzBalance?.formatted}
-        balanceTransferable={qtzBalance?.amountWithUnit}
-        iconName="chain-quartz"
-        name="Quartz"
-        symbol="QTZ"
+    <>
+      <TransferFundsModal
+        networkType={selectedNetworkType}
+        isVisible={fundsModalVisibility}
+        onFinish={() => {
+          setFundsModalVisibility(false);
+        }}
       />
-      <CoinsRow
-        loading={opalLoading}
-        address={selectedAccount?.address}
-        balanceFull={opalBalance?.formatted}
-        balanceTransferable={opalBalance?.amountWithUnit}
-        iconName="chain-opal"
-        name="Opal"
-        symbol="OPL"
-      />
-      <CoinsRow
-        address={selectedAccount?.address}
-        balanceFull="0 KSM"
-        balanceTransferable="0 KSM"
-        iconName="chain-kusama"
-        name="Kusama"
-        symbol="KSM"
-      />
-      <CoinsRow
-        address={selectedAccount?.address}
-        balanceFull="0 UNQ"
-        balanceTransferable="0 UNQ"
-        iconName="chain-unique"
-        name="Unique network"
-        symbol="UNQ"
-      />
-    </CoinsContainer>
+      <CoinsContainer>
+        <Heading size="4">Network</Heading>
+        <CoinsRow
+          loading={qtzLoading}
+          address={selectedAccount?.address}
+          balanceFull={qtzBalance?.formatted}
+          balanceTransferable={qtzBalance?.amountWithUnit}
+          iconName="chain-quartz"
+          name="Quartz"
+          symbol="QTZ"
+          onSend={sendFundsHandler}
+        />
+        <CoinsRow
+          loading={opalLoading}
+          address={selectedAccount?.address}
+          balanceFull={opalBalance?.formatted}
+          balanceTransferable={opalBalance?.amountWithUnit}
+          iconName="chain-opal"
+          name="Opal"
+          symbol="OPL"
+          onSend={sendFundsHandler}
+        />
+        <CoinsRow
+          address={selectedAccount?.address}
+          balanceFull="0 KSM"
+          balanceTransferable="0 KSM"
+          iconName="chain-kusama"
+          name="Kusama"
+          symbol="KSM"
+          onSend={() => {}}
+        />
+        <CoinsRow
+          address={selectedAccount?.address}
+          balanceFull="0 UNQ"
+          balanceTransferable="0 UNQ"
+          iconName="chain-unique"
+          name="Unique network"
+          symbol="UNQ"
+          onSend={() => {}}
+        />
+      </CoinsContainer>
+    </>
   );
 };
 

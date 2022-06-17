@@ -1,7 +1,9 @@
 import React, { VFC } from 'react';
-import styled, { css } from 'styled-components';
 import classNames from 'classnames';
+import styled, { css } from 'styled-components';
 import { Button, Icon, Loader } from '@unique-nft/ui-kit';
+
+import { NetworkType } from '@app/types';
 
 interface CoinsRowComponentProps {
   address?: string;
@@ -12,7 +14,8 @@ interface CoinsRowComponentProps {
   className?: string;
   iconName: string;
   name: string;
-  symbol: string;
+  symbol: NetworkType;
+  onSend: (network: NetworkType) => void;
 }
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
@@ -26,6 +29,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     iconName,
     name,
     symbol,
+    onSend,
   } = props;
 
   const copyAddress = (account: string) => {
@@ -74,8 +78,8 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         )}
       </NetworkBalances>
       <NetworkActions>
-        <Button disabled title="Send" />
-        <Button title="Get" />
+        <Button title="Send" onClick={() => onSend(symbol)} />
+        <Button disabled title="Get" />
       </NetworkActions>
     </div>
   );
