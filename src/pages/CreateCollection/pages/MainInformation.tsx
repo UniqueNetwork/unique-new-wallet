@@ -1,20 +1,23 @@
-import { VFC, useContext, useCallback } from 'react';
+import React, { VFC, useContext, useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { Heading, InputText, Button, Textarea, Text, Upload } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { CollectionFormContext } from '@app/context';
-import { Alert, CollectionStepper } from '@app/components';
-import { MainInformationInitialValues } from '@app/types';
+import { Alert, CollectionStepper, Confirm } from '@app/components';
+import { useFileUpload } from '@app/api';
 
 export interface MainInformationComponentProps {
   className?: string;
 }
 
 const MainInformationComponent: VFC<MainInformationComponentProps> = ({ className }) => {
-  const { mainInformationForm } = useContext(CollectionFormContext);
+  const { mainInformationForm, setCoverImgFile } = useContext(CollectionFormContext);
+  const { uploadFile } = useFileUpload();
+  const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
-  const { handleSubmit, setFieldValue, values, errors, touched } = mainInformationForm;
+  const { dirty, submitForm, isValid, setFieldValue, values, errors, touched } =
+    mainInformationForm;
 
   const setName = useCallback(
     (value: string) => {
@@ -46,23 +49,50 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
     [setFieldValue],
   );
 
-  const setFile = useCallback(
-    (data: MainInformationInitialValues['file']) => {
-      setFieldValue('file', data);
-    },
-    [setFieldValue],
-  );
+  const uploadCover = async (file: Blob) => {
+    const response = await uploadFile(file);
+
+    setFieldValue('coverImgAddress', response?.address);
+  };
+
+  const setCover = (data: { url: string; file: Blob } | null) => {
+    if (data?.file) {
+      const file: Blob = data?.file;
+
+      setCoverImgFile(file);
+
+      void uploadCover(file);
+    }
+  };
+
+  const onFormSubmit = () => {
+    if (!values.coverImgAddress) {
+      setIsOpenConfirm(true);
+    } else {
+      void submitForm();
+    }
+  };
+
+  const onClickStep = (step: number) => {
+    if (!dirty || !isValid) {
+      return;
+    }
+
+    if (step === 2) {
+      onFormSubmit();
+    }
+  };
 
   return (
     <div className={classNames('main-information', className)}>
-      <CollectionStepper activeStep={1} />
+      <CollectionStepper activeStep={1} onClickStep={onClickStep} />
       <Heading size="2">Main information</Heading>
       <Text>
         Fill fields carefully, because after signing the transaction, the data cannot be
         changed. If you make a mistake, the object will have to be burned and recreated.
       </Text>
       <div>
-        <form onSubmit={handleSubmit}>
+        <form>
           <InputText
             label="Name*"
             additionalText="Max 64 symbols"
@@ -94,24 +124,45 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
           <div className="unique-input-text">
             <label>Upload image</label>
             <div className="additional-text">Choose JPG, PNG, GIF (max 10 Mb)</div>
-            <Upload onChange={setFile} />
+            <Upload onChange={setCover} />
           </div>
           <Alert type="warning" className="alert-wrapper">
-            A fee of ~ 2.073447 QTZ can be applied to the transaction
+            {/* TODO - get fee from the API */}A fee of ~ 2.073447 QTZ can be applied to
+            the transaction
           </Alert>
           <div className="main-information-button">
             <Button
+              disabled={!dirty || !isValid}
               iconRight={{
                 color: 'var(--color-primary-400)',
                 name: 'arrow-right',
                 size: 12,
               }}
               title="Next step"
-              type="submit"
+              type="button"
+              onClick={onFormSubmit}
             />
           </div>
         </form>
       </div>
+      <Confirm
+        buttons={[
+          { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
+          {
+            title: 'Yes, I am sure',
+            role: 'primary',
+            onClick: () => {
+              setIsOpenConfirm(false);
+              void submitForm();
+            },
+          },
+        ]}
+        isVisible={isOpenConfirm}
+        title="You have not entered the cover. Are you sure that you want to create the collection without it?"
+        onClose={() => setIsOpenConfirm(false)}
+      >
+        <Text>You cannot return to editing the cover in this product version.</Text>
+      </Confirm>
     </div>
   );
 };

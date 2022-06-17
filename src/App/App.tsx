@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { Notifications } from '@unique-nft/ui-kit';
 
 import { ApiWrapper } from '@app/api';
 import { PageLayout } from '@app/components';
@@ -13,7 +14,9 @@ export default function App() {
       <AccountWrapper>
         <ChainPropertiesWrapper>
           <PageLayout>
-            <Outlet />
+            <Notifications closingDelay={3000}>
+              <Outlet />
+            </Notifications>
           </PageLayout>
         </ChainPropertiesWrapper>
       </AccountWrapper>
