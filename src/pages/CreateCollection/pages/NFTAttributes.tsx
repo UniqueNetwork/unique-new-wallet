@@ -1,4 +1,4 @@
-import React, { VFC, useContext, useMemo, useState, useEffect } from 'react';
+import React, { VFC, useContext, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import {
@@ -36,7 +36,6 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
   } = useContext(CollectionFormContext);
   const navigate = useNavigate();
   const { onCreateCollection } = useCollectionMutation();
-  const { info } = useNotifications();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
   const onPreviousStepClick = () => {
@@ -77,14 +76,6 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
     () => attributes.filter((attr) => attr.name !== 'ipfsJson'),
     [attributes],
   );
-
-  useEffect(() => {
-    info('Test Content', {
-      name: 'burn',
-      size: 32,
-      color: 'white',
-    });
-  }, [info]);
 
   return (
     <div className={classNames('main-information', className)}>

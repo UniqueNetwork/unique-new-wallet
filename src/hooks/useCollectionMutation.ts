@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { useNotifications } from '@unique-nft/ui-kit';
 
 import { convertArtificialAttributesToProtobuf, fillProtobufJson } from '@app/utils';
 import { AttributeItemType, NftCollectionDTO, ProtobufAttributeType } from '@app/types';
@@ -19,6 +20,7 @@ export const useCollectionMutation = () => {
   const { selectedAccount, signMessage } = useAccounts();
   const { createCollection } = useCollectionCreate();
   const { submitExtrinsic } = useExtrinsicSubmit();
+  const { error, info } = useNotifications();
 
   const converted: AttributeItemType[] =
     convertArtificialAttributesToProtobuf(attributes);
@@ -59,30 +61,31 @@ export const useCollectionMutation = () => {
   };
 
   const onCreateCollection = async () => {
-    console.log('onCreateCollection', onCreateCollection);
-
     const createResp = await createCollection(collectionFull);
 
     if (!createResp?.signerPayloadJSON) {
-      // TODO - notify user
+      error('Create collection error', {
+        name: 'Create collection',
+        size: 32,
+        color: 'white',
+      });
+
       return;
     }
 
-    console.log('signerPayloadJSON', createResp.signerPayloadJSON);
-
     const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
 
-    console.log('signature', signature);
-
-    const result = await submitExtrinsic({
+    await submitExtrinsic({
       signerPayloadJSON: createResp.signerPayloadJSON,
       signature,
     });
 
-    console.log('result', result);
+    info('Collection successfully created', {
+      name: 'Create collection',
+      size: 32,
+      color: 'white',
+    });
   };
-
-  console.log('collectionFull', attributes);
 
   return {
     onCreateCollection,

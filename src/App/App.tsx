@@ -10,16 +10,16 @@ import './styles.scss';
 
 export default function App() {
   return (
-    <ApiWrapper>
-      <AccountWrapper>
-        <ChainPropertiesWrapper>
-          <PageLayout>
-            <Notifications closingDelay={3000}>
+    <Notifications closingDelay={3000}>
+      <ApiWrapper>
+        <AccountWrapper>
+          <ChainPropertiesWrapper>
+            <PageLayout>
               <Outlet />
-            </Notifications>
-          </PageLayout>
-        </ChainPropertiesWrapper>
-      </AccountWrapper>
-    </ApiWrapper>
+            </PageLayout>
+          </ChainPropertiesWrapper>
+        </AccountWrapper>
+      </ApiWrapper>
+    </Notifications>
   );
 }
