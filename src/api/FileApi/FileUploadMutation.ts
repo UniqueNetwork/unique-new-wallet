@@ -29,7 +29,6 @@ export class FileUploadMutation extends EndpointMutation<
   }
 
   async request(payload: FileUploadMutationPayload): Promise<FileUploadMutationResponse> {
-    console.log('payload', payload);
     const formData = new FormData();
     formData.append('file', payload.file, 'nftImage');
 

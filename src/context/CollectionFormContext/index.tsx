@@ -58,9 +58,7 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
     initialValues: mainInformationDefaultValues,
     validationSchema: schema,
     validateOnBlur: true,
-    onSubmit: (values) => {
-      console.log('onSubmit values', values);
-
+    onSubmit: () => {
       navigate('/create-collection/nft-attributes');
     },
   });
@@ -97,8 +95,6 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
       variableSchema,
     ],
   );
-
-  console.log('value', value);
 
   return (
     <CollectionFormContext.Provider value={value}>

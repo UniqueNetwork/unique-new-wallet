@@ -17,14 +17,10 @@ export const useExtrinsicSubmit = () => {
       return;
     }
 
-    const response = await submitMutation.mutateAsync({
+    return submitMutation.mutateAsync({
       api,
       extrinsic,
     });
-
-    console.log('submitExtrinsic response', response);
-
-    return response;
   };
 
   return {

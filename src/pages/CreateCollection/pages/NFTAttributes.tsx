@@ -8,12 +8,16 @@ import {
   Text,
   Checkbox,
   Accordion,
-  useNotifications,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
-import { Alert, CollectionStepper, Confirm } from '@app/components';
+import {
+  Alert,
+  CollectionStepper,
+  Confirm,
+  StatusTransactionModal,
+} from '@app/components';
 import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
 import { useCollectionMutation } from '@app/hooks';
 import { ArtificialAttributeItemType } from '@app/types';
@@ -35,11 +39,17 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
     setOwnerCanDestroy,
   } = useContext(CollectionFormContext);
   const navigate = useNavigate();
-  const { onCreateCollection } = useCollectionMutation();
+  const { isCreatingCollection, onCreateCollection } = useCollectionMutation();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
   const onPreviousStepClick = () => {
     navigate('/create-collection/main-information');
+  };
+
+  const createCollection = async () => {
+    await onCreateCollection();
+
+    navigate('/my-collections');
   };
 
   const onSubmitAttributes = () => {
@@ -49,7 +59,7 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
       if (attributes?.length < 2) {
         setIsOpenConfirm(true);
       } else {
-        void onCreateCollection();
+        void createCollection();
       }
     }
   };
@@ -156,6 +166,10 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
       >
         <Text>You cannot return to editing the attributes in this product version.</Text>
       </Confirm>
+      <StatusTransactionModal
+        isVisible={isCreatingCollection}
+        description="Creating collection"
+      />
     </div>
   );
 };

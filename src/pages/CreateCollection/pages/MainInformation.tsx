@@ -12,7 +12,8 @@ export interface MainInformationComponentProps {
 }
 
 const MainInformationComponent: VFC<MainInformationComponentProps> = ({ className }) => {
-  const { mainInformationForm, setCoverImgFile } = useContext(CollectionFormContext);
+  const { coverImgFile, mainInformationForm, setCoverImgFile } =
+    useContext(CollectionFormContext);
   const { uploadFile } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
@@ -124,7 +125,11 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
           <div className="unique-input-text">
             <label>Upload image</label>
             <div className="additional-text">Choose JPG, PNG, GIF (max 10 Mb)</div>
-            <Upload onChange={setCover} />
+            <Upload
+              // TODO - fix file preload, file clearing
+              // upload={coverImgFile ? URL.createObjectURL(coverImgFile) : undefined}
+              onChange={setCover}
+            />
           </div>
           <Alert type="warning" className="alert-wrapper">
             {/* TODO - get fee from the API */}A fee of ~ 2.073447 QTZ can be applied to

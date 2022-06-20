@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 
 import { convertArtificialAttributesToProtobuf, fillProtobufJson } from '@app/utils';
@@ -16,7 +16,7 @@ export const useCollectionMutation = () => {
     ownerCanTransfer,
     tokenLimit,
   } = useContext(CollectionFormContext);
-
+  const [isCreatingCollection, setSsCreatingCollection] = useState<boolean>(false);
   const { selectedAccount, signMessage } = useAccounts();
   const { createCollection } = useCollectionCreate();
   const { submitExtrinsic } = useExtrinsicSubmit();
@@ -25,8 +25,6 @@ export const useCollectionMutation = () => {
   const converted: AttributeItemType[] =
     convertArtificialAttributesToProtobuf(attributes);
   const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
-
-  console.log('converted', converted, 'protobufJson', protobufJson);
 
   const collectionFull: NftCollectionDTO = {
     address: selectedAccount?.address ?? '',
@@ -60,7 +58,10 @@ export const useCollectionMutation = () => {
     },
   };
 
+  // TODO - add error handler for low balance - Error. Balance too low
   const onCreateCollection = async () => {
+    setSsCreatingCollection(true);
+
     const createResp = await createCollection(collectionFull);
 
     if (!createResp?.signerPayloadJSON) {
@@ -69,6 +70,8 @@ export const useCollectionMutation = () => {
         size: 32,
         color: 'white',
       });
+
+      setSsCreatingCollection(false);
 
       return;
     }
@@ -85,9 +88,12 @@ export const useCollectionMutation = () => {
       size: 32,
       color: 'white',
     });
+
+    setSsCreatingCollection(false);
   };
 
   return {
+    isCreatingCollection,
     onCreateCollection,
   };
 };

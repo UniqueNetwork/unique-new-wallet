@@ -10,7 +10,7 @@ import './styles.scss';
 
 export default function App() {
   return (
-    <Notifications closingDelay={3000}>
+    <Notifications closingDelay={5000}>
       <ApiWrapper>
         <AccountWrapper>
           <ChainPropertiesWrapper>

@@ -17,14 +17,10 @@ export const useCollectionCreate = () => {
       return;
     }
 
-    const response = await createMutation.mutateAsync({
+    return createMutation.mutateAsync({
       api,
       collection,
     });
-
-    console.log('response', response);
-
-    return response;
   };
 
   return {
