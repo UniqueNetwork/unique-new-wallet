@@ -40,12 +40,18 @@ const getStatusQuery = (status: TokenStatus, currentAccount: string | null = nul
       return {};
     case TokenStatus.ownedByMe:
       return {
-        owner: { _eq: currentAccount },
+        _or: [
+          { owner: { _eq: currentAccount } },
+          { owner_normalized: { _eq: currentAccount } },
+        ],
       };
     // TODO: waiting BE for status (on sale/on auction)
     case TokenStatus.myOnSell:
       return {
-        owner: { _eq: currentAccount },
+        _or: [
+          { owner: { _eq: currentAccount } },
+          { owner_normalized: { _eq: currentAccount } },
+        ],
         // TODO: on sale
       };
     case TokenStatus.timedAuction:
