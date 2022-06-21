@@ -1,10 +1,8 @@
-import { title } from 'process';
-
-import React, { useCallback, useContext, useState, VFC } from 'react';
+import React, { useContext, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { PagePaper } from '@app/components';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -23,13 +21,13 @@ interface NFTDetailsProps {
 }
 
 const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
+  const { collectionId = '', tokenId = '' } = useParams();
   const { selectedAccount } = useContext(AccountContext);
-  const [searchParams] = useSearchParams();
 
-  const tokenId = parseInt(searchParams.get('tokenId') ?? '');
-  const collectionId = parseInt(searchParams.get('collectionId') ?? '');
-
-  const { token, loading } = useGraphQlTokenById(tokenId, collectionId);
+  const { token, loading } = useGraphQlTokenById(
+    parseInt(tokenId),
+    parseInt(collectionId),
+  );
 
   const avatar = getTokenIpfsUriByImagePath(token?.image_path ?? '');
   const isCurrentAccountOwner = selectedAccount?.address === token?.owner;

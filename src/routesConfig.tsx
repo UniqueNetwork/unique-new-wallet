@@ -28,13 +28,14 @@ export interface RouteItem {
 }
 
 export interface MenuRoute extends RouteItem {
+  notProtected?: boolean;
   children?: MenuRoute[];
 }
 
 export interface RouteConfig {
   base: string;
   menuRoutes: MenuRoute[];
-  otherRoutes: RouteItem[];
+  otherRoutes: MenuRoute[];
 }
 
 export const routes: RouteConfig = {
@@ -51,18 +52,6 @@ export const routes: RouteConfig = {
           component: <NFTs />,
           name: 'NFTs',
           path: '/nft',
-          children: [
-            {
-              component: <div>NftId</div>,
-              name: '',
-              path: '/:collectionId/:nftId',
-            },
-            {
-              component: <div>Create a NFT</div>,
-              name: 'Create a NFT',
-              path: 'create-nft',
-            },
-          ],
         },
         {
           component: <Coins />,
@@ -99,6 +88,7 @@ export const routes: RouteConfig = {
       component: <Faq />,
       name: 'FAQ',
       path: '/faq',
+      notProtected: true,
     },
   ],
   otherRoutes: [
@@ -116,6 +106,7 @@ export const routes: RouteConfig = {
       component: <Accounts />,
       name: 'Accounts',
       path: '/accounts',
+      notProtected: true,
     },
     {
       component: (
@@ -140,8 +131,9 @@ export const routes: RouteConfig = {
     },
     {
       name: 'NFTDetails',
-      path: '/nft-details',
+      path: 'nft-details/:collectionId/:tokenId',
       component: <NFTDetails />,
+      notProtected: true,
     },
     {
       component: <CreateNFT />,

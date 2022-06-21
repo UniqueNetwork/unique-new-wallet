@@ -49,7 +49,7 @@ const NFTsListComponent = ({
               key={`${collection_id}-${token_id}`}
               image={getTokenIpfsUriByImagePath(image_path)}
               link={{
-                href: `/nft-details?tokenId=${token_id}&collectionId=${collection_id}`,
+                href: `/nft-details/${collection_id}/${token_id}`,
                 title: `${collection_name} [id ${collection_id}]`,
               }}
               title={token_name}
