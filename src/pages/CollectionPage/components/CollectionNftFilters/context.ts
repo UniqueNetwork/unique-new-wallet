@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 
 import { Direction } from '@app/api/graphQL/tokens';
 
-export type ListNftsFilterType = 'all' | 'sold' | 'disowned';
+export type ListNftsFilterType = 'all' | 'owned' | 'disowned';
 
 type TListFilter = {
   direction: Direction;

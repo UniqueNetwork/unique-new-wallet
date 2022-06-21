@@ -8,6 +8,7 @@ declare type Env = {
 } & Record<string, string | undefined>;
 
 declare type Config = {
+  quartzRestApiUrl: string | undefined;
   uniqueApiUrl: string | undefined;
   uniqueRestApiUrl: string | undefined;
   scanUrl: string | undefined;
@@ -25,6 +26,9 @@ declare global {
 
 const config: Config = {
   // defaultChain: '',
+  quartzRestApiUrl:
+    window.ENV?.REACT_APP_NET_QUARTZ_REST_API_URL ||
+    process.env.REACT_APP_NET_QUARTZ_REST_API_URL,
   uniqueApiUrl: window.ENV?.UNIQUE_API_URL || process.env.REACT_APP_UNIQUE_API_URL,
   uniqueRestApiUrl: window.ENV?.REST_API_URL || process.env.REACT_APP_REST_API_URL,
   imageServerUrl: window.ENV?.IMAGE_SERVER_URL || process.env.REACT_APP_IMAGE_SERVER_URL,

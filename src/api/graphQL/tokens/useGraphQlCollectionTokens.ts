@@ -2,6 +2,7 @@ import { useQuery, gql, ApolloError } from '@apollo/client';
 
 import { OptionsTokenCollection, TokenPreviewInfo } from '@app/api';
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
+import { ListNftsFilterType } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 
 const COLLECTION_TOKENS = gql`
   query CollectionTokens(
@@ -46,14 +47,14 @@ export const useGraphQlCollectionTokens = ({
 }: {
   collectionId: string;
   collectionOwner: string | undefined;
-  filter: { search: string };
+  filter: { search: string; type: ListNftsFilterType };
   options: OptionsTokenCollection;
 }): TokensListData => {
   const {
     pagination: { page, limit },
     direction,
   } = options;
-  const { search } = filter;
+  const { search, type } = filter;
   const { loading, data, error } = useQuery(COLLECTION_TOKENS, {
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'network-only',
@@ -65,6 +66,7 @@ export const useGraphQlCollectionTokens = ({
       where: {
         collection_id: { _eq: collectionId },
         collection_owner: { _eq: collectionOwner },
+        ...(type !== 'all' && { is_sold: { _eq: type === 'disowned' } }),
         ...getConditionBySearchText(search),
       },
     },

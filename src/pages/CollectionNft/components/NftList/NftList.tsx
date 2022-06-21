@@ -9,7 +9,7 @@ interface NftListComponentProps {
 }
 
 export const NftList = ({ className, collectionId }: NftListComponentProps) => {
-  const { search, direction, page, onChangePagination } = useNftFilterContext();
+  const { search, direction, page, onChangePagination, type } = useNftFilterContext();
   const { selectedAccount } = useAccounts();
 
   const { tokens, tokensCount, isLoadingTokens } = useGraphQlCollectionTokens({
@@ -17,6 +17,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     collectionOwner: selectedAccount?.address,
     filter: {
       search,
+      type,
     },
     options: {
       skip: !selectedAccount?.address,

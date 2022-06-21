@@ -1,4 +1,5 @@
 import React, { VFC, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Button, InputText, Select } from '@unique-nft/ui-kit';
@@ -25,6 +26,7 @@ const sortOptions: Option[] = [
 ];
 
 const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const { sortByTokenId, changeSortByTokenId, changeSearchText } = useNFTsContext();
 
@@ -60,6 +62,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
         }}
         title="Create an NFT"
         role="primary"
+        onClick={() => navigate('/create-nft')}
       />
     </div>
   );
