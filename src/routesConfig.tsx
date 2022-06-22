@@ -53,14 +53,9 @@ export const routes: RouteConfig = {
           path: '/nft',
           children: [
             {
-              component: <div>NftId</div>,
+              component: <NFTDetails />,
               name: '',
               path: '/:collectionId/:nftId',
-            },
-            {
-              component: <div>Create a NFT</div>,
-              name: 'Create a NFT',
-              path: 'create-nft',
             },
           ],
         },
@@ -137,11 +132,6 @@ export const routes: RouteConfig = {
           path: 'nft-attributes',
         },
       ],
-    },
-    {
-      name: 'NFTDetails',
-      path: '/nft-details',
-      component: <NFTDetails />,
     },
     {
       component: <CreateNFT />,

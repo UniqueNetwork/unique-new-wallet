@@ -8,12 +8,17 @@ export type AccountCollectionsResponse = {
 
 const ACCOUNT_COLLECTIONS = gql`
   query Collections($owner: String) {
-    collections(where: { owner: { _eq: $owner } }) {
+    collections(
+      where: { _or: [{ owner: { _eq: $owner } }, { owner_normalized: { _eq: $owner } }] }
+    ) {
       name
+      description
       owner
+      owner_normalized
       collection_id
       schema_version
       offchain_schema
+      const_chain_schema
       variable_on_chain_schema
     }
   }
@@ -25,7 +30,7 @@ export const useGraphQlCollectionsByAccount = (
 ) => {
   const {
     data: response,
-    loading: userCollectionsLoading,
+    loading,
     error,
   } = useQuery<AccountCollectionsResponse>(ACCOUNT_COLLECTIONS, {
     skip,
@@ -36,7 +41,7 @@ export const useGraphQlCollectionsByAccount = (
 
   return {
     collections: response?.collections,
-    collectionsLoading: userCollectionsLoading,
+    collectionsLoading: loading,
     error,
   };
 };

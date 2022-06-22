@@ -28,10 +28,10 @@ export interface CollectionFormProps {
   setMintFest: (mintFest: boolean) => void;
   setOwnerCanDestroy: (ownerCanDestroy: boolean) => void;
   setOwnerCanTransfer: (ownerCanTransfer: boolean) => void;
-  setTokenImg: (tokenImg: File | null) => void;
+  setTokenImg: (tokenImg: Blob | null) => void;
   setTokenLimit: (tokenLimit: number) => void;
   setVariableSchema: (variableSchema: string) => void;
-  tokenImg: File | null;
+  tokenImg: Blob | null;
   tokenLimit: number;
   variableSchema: string;
 }

@@ -33,6 +33,12 @@ export type ArtificialAttributeItemType = {
   values: string[];
 };
 
+export type TokenAttribute = {
+  name: string;
+  value?: string | number;
+  values?: number[];
+};
+
 export type EnumElemType = {
   options: { [key: string]: string };
   values: { [key: string]: number };

@@ -1,5 +1,6 @@
 export * from './useAccounts';
 export * from './useApi';
+export * from './useCollection';
 export * from './useCollections';
 export * from './useCollectionMutation';
 export * from './useDeviceSize';

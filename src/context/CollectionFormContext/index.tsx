@@ -34,7 +34,7 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
   const [ownerCanDestroy, setOwnerCanDestroy] = useState<boolean>(true);
   const [tokenLimit, setTokenLimit] = useState<number>(0);
   const [variableSchema, setVariableSchema] = useState<string>('');
-  const [tokenImg, setTokenImg] = useState<File | null>(null);
+  const [tokenImg, setTokenImg] = useState<Blob | null>(null);
   const [mintFest, setMintFest] = useState<boolean>(false);
 
   const mainInformationDefaultValues: MainInformationInitialValues = {

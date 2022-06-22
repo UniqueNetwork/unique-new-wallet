@@ -1,4 +1,4 @@
-import { Nullable } from '@app/types';
+import { Nullable, ProtobufAttributeType } from '@app/types';
 
 export type SchemaVersion = 'ImageURL' | 'Unique';
 
@@ -10,9 +10,11 @@ export type VariableOnChainSchema = {
 export interface Collection {
   collection_id: number;
   name: string;
+  description?: string;
   owner: string;
   offchain_schema: string;
   schema_version: SchemaVersion;
+  const_on_chain_schema?: ProtobufAttributeType;
   variable_on_chain_schema?: VariableOnChainSchema;
 }
 

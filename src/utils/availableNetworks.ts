@@ -3,7 +3,7 @@ import { Chain } from '@app/types';
 // TODO - use urls from ENV
 export const networks: Chain[] = [
   {
-    apiEndpoint: 'https://web.quartz.uniquenetwork.dev/',
+    apiEndpoint: 'https://web.uniquenetwork.dev/',
     id: 'quartz',
     name: 'Quartz',
     icon: {
