@@ -1,17 +1,16 @@
 import { VFC, useCallback, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager, Icon } from '@unique-nft/ui-kit';
+import { AccountsManager, Button, Icon, Skeleton } from '@unique-nft/ui-kit';
 
 import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
-import { MenuRoute, routes } from '@app/routesConfig';
+import { routes } from '@app/routesConfig';
 import MobileMenuLink from '@app/components/Header/MobileMenuLink';
 import { networks } from '@app/utils';
 import { ChainPropertiesContext } from '@app/context';
+import { ROUTE } from '@app/routes';
 
 import MenuLink from './MenuLink';
-
-const { base, menuRoutes } = routes;
 
 // TODO - share IAccount from the UI kit
 interface IAccount {
@@ -20,9 +19,10 @@ interface IAccount {
 }
 
 export const Header: VFC = () => {
-  const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
-  const { chainProperties } = useContext(ChainPropertiesContext);
+  const navigate = useNavigate();
   const { currentChain, setCurrentChain } = useApi();
+  const { chainProperties } = useContext(ChainPropertiesContext);
+  const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
 
@@ -45,6 +45,8 @@ export const Header: VFC = () => {
     }
   };
 
+  const createOrConnectAccountHandler = () => navigate('/accounts');
+
   return (
     <HeaderStyled>
       <LeftSideColumn>
@@ -53,49 +55,61 @@ export const Header: VFC = () => {
             <Icon name="menu" size={32} />
           </MenuIcon>
         )}
-        <Link to={base}>
+        <Link to={ROUTE.BASE}>
           <LogoIcon src="/logos/logo.svg" />
         </Link>
 
         {!showMobileMenu && (
           <nav>
-            {menuRoutes.map((menuRoute: MenuRoute) => (
-              <MenuLink
-                key={menuRoute.name}
-                name={menuRoute.name}
-                path={menuRoute.path}
-              />
-            ))}
+            <MenuLink name="My tokens" path={ROUTE.MY_TOKENS} />
+            <MenuLink name="My collections" path={ROUTE.MY_COLLECTIONS} />
+            <MenuLink name="FAQ" path={ROUTE.FAQ} />
           </nav>
         )}
       </LeftSideColumn>
       <RightSide>
-        <AccountsManager
-          accounts={accountsForManager}
-          activeNetwork={currentChain}
-          balance={selectedAccount?.balance ?? '0'}
-          isLoading={isLoading}
-          networks={networks}
-          selectedAccount={{
-            address: selectedAccount?.address,
-            name: selectedAccount?.meta.name,
-          }}
-          symbol={chainProperties?.token ?? ''}
-          onNetworkChange={setCurrentChain}
-          onAccountChange={onAccountChange}
-        />
+        {!isLoading && !!accounts.length && (
+          <AccountsManager
+            accounts={accountsForManager}
+            activeNetwork={currentChain}
+            balance={selectedAccount?.balance ?? '0'}
+            isLoading={isLoading}
+            networks={networks}
+            selectedAccount={{
+              address: selectedAccount?.address,
+              name: selectedAccount?.meta.name,
+            }}
+            symbol={chainProperties?.token ?? ''}
+            onNetworkChange={setCurrentChain}
+            onAccountChange={onAccountChange}
+          />
+        )}
+        {!isLoading && !accounts.length && (
+          <Button
+            title="Create or connect account"
+            className="create-account-btn account-group-btn-medium-font"
+            onClick={createOrConnectAccountHandler}
+          />
+        )}
       </RightSide>
 
       {showMobileMenu && mobileMenuIsOpen && (
         <MobileMenu>
-          {menuRoutes.map((menuRoute: MenuRoute) => (
-            <MobileMenuLink
-              key={menuRoute.name}
-              mobileMenuToggle={mobileMenuToggle}
-              name={menuRoute.name}
-              path={menuRoute.path}
-            />
-          ))}
+          <MobileMenuLink
+            name="My tokens"
+            path={ROUTE.MY_TOKENS}
+            mobileMenuToggle={mobileMenuToggle}
+          />
+          <MobileMenuLink
+            name="My collections"
+            path={ROUTE.MY_COLLECTIONS}
+            mobileMenuToggle={mobileMenuToggle}
+          />
+          <MobileMenuLink
+            name="FAQ"
+            path={ROUTE.FAQ}
+            mobileMenuToggle={mobileMenuToggle}
+          />
         </MobileMenu>
       )}
     </HeaderStyled>

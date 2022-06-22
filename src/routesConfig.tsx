@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { RouteObject } from 'react-router-dom';
 
 import {
   Accounts,
@@ -19,126 +19,124 @@ import { CollectionForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
 import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/pages';
 
-export interface RouteItem {
-  children?: RouteItem[];
-  component: ReactNode;
-  index?: boolean;
-  name: string;
-  path: string;
-}
+import {
+  COLLECTION_TABS_ROUTE,
+  CREATE_COLLECTION_TABS_ROUTE,
+  MY_COLLECTIONS_ROUTE,
+  MY_TOKENS_TABS_ROUTE,
+  ROUTE,
+} from './routes';
 
-export interface MenuRoute extends RouteItem {
-  notProtected?: boolean;
-  children?: MenuRoute[];
-}
+export type RouteItem = Omit<RouteObject, 'children'> & {
+  name: string;
+  children?: RouteItem[];
+};
 
 export interface RouteConfig {
   base: string;
-  menuRoutes: MenuRoute[];
-  otherRoutes: MenuRoute[];
+
+  protectedRoutes: RouteItem[];
+  sharedRoutes: RouteItem[];
 }
 
 export const routes: RouteConfig = {
-  base: '/',
-  menuRoutes: [
+  base: ROUTE.BASE,
+  protectedRoutes: [
+    {
+      index: true,
+      element: <Welcome />,
+      name: 'Welcome',
+    },
     {
       name: 'My tokens',
-      path: '/my-tokens',
-      component: (
-        <MyTokens activeTab={0} basePath="/my-tokens" tabUrls={['nft', 'coins']} />
+      path: ROUTE.MY_TOKENS,
+      element: (
+        <MyTokens activeTab={0} basePath={ROUTE.MY_TOKENS} tabUrls={['nft', 'coins']} />
       ),
       children: [
         {
-          component: <NFTs />,
+          element: <NFTs />,
           name: 'NFTs',
-          path: '/nft',
+          path: MY_TOKENS_TABS_ROUTE.NFT,
         },
         {
-          component: <Coins />,
+          element: <Coins />,
           name: 'Coins',
-          path: 'coins',
+          path: MY_TOKENS_TABS_ROUTE.COINS,
         },
       ],
     },
     {
-      component: <MyCollections />,
+      element: <MyCollections />,
       name: 'My collections',
-      path: '/my-collections',
+      path: ROUTE.MY_COLLECTIONS,
       children: [
         {
-          component: <CollectionPage basePath="/my-collections" />,
+          element: <CollectionPage basePath={ROUTE.MY_COLLECTIONS} />,
           name: 'Collection page',
-          path: '/:collectionId',
+          path: MY_COLLECTIONS_ROUTE.COLLECTION,
           children: [
             {
-              component: <CollectionNft />,
+              element: <CollectionNft />,
               name: 'NFTs',
-              path: 'nft',
+              path: COLLECTION_TABS_ROUTE.NFT,
             },
             {
-              component: <CollectionSettings />,
+              element: <CollectionSettings />,
               name: 'Settings',
-              path: 'settings',
+              path: COLLECTION_TABS_ROUTE.SETTINGS,
             },
           ],
         },
       ],
     },
     {
-      component: <Faq />,
-      name: 'FAQ',
-      path: '/faq',
-      notProtected: true,
-    },
-  ],
-  otherRoutes: [
-    {
-      component: <Welcome />,
-      name: 'Welcome',
-      path: '/',
-    },
-    {
-      component: <NotFound />,
-      name: 'Accounts',
-      path: '*',
-    },
-    {
-      component: <Accounts />,
-      name: 'Accounts',
-      path: '/accounts',
-      notProtected: true,
-    },
-    {
-      component: (
+      element: (
         <CollectionForm>
           <CreateCollection />
         </CollectionForm>
       ),
       name: 'Create collection',
-      path: '/create-collection',
+      path: ROUTE.CREATE_COLLECTION,
       children: [
         {
-          component: <MainInformation />,
+          element: <MainInformation />,
           name: 'Main information',
-          path: 'main-information',
+          path: CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION,
         },
         {
-          component: <NFTAttributes />,
+          element: <NFTAttributes />,
           name: 'Nft attributes',
-          path: 'nft-attributes',
+          path: CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES,
         },
       ],
     },
     {
+      element: <CreateNFT />,
+      name: 'Create a NFT',
+      path: ROUTE.CREATE_NFT,
+    },
+  ],
+  sharedRoutes: [
+    {
       name: 'NFTDetails',
-      path: 'nft-details/:collectionId/:tokenId',
-      component: <NFTDetails />,
-      notProtected: true,
+      path: ROUTE.TOKEN,
+      element: <NFTDetails />,
     },
     {
-      component: <CreateNFT />,
-      name: 'Create a NFT',
-      path: '/create-nft',
+      element: <Faq />,
+      name: 'FAQ',
+      path: ROUTE.FAQ,
+    },
+    {
+      element: <Accounts />,
+      name: 'Accounts',
+      path: ROUTE.ACCOUNTS,
+    },
+    {
+      element: <NotFound />,
+      name: 'Not found',
+      path: ROUTE.NOT_FOUND,
     },
   ],
 };
