@@ -7,7 +7,7 @@ import { useAccounts } from './hooks';
 import { Welcome } from './pages';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from './routes';
 
-const LoadingStyled = styled.div`
+const LoaderContainer = styled.div`
   margin: auto;
 `;
 
@@ -17,9 +17,9 @@ export const ProtectedRoute: FC = ({ children }) => {
 
   if (isLoading) {
     return (
-      <LoadingStyled>
+      <LoaderContainer>
         <Loader size="middle" />
-      </LoadingStyled>
+      </LoaderContainer>
     );
   }
 
@@ -28,7 +28,6 @@ export const ProtectedRoute: FC = ({ children }) => {
   }
 
   if (pathname === ROUTE.BASE) {
-    console.log('true');
     return <Navigate replace to={`${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`} />;
   }
 
