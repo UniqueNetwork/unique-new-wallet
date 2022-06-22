@@ -1,7 +1,6 @@
-import React, { memo, VFC, useCallback } from 'react';
+import React, { VFC } from 'react';
 import styled from 'styled-components';
-
-import closeIcon from './closeIcon.svg';
+import { Icon } from '@unique-nft/ui-kit';
 
 interface Props {
   deleteItem: (enumItem: string) => void;
@@ -9,14 +8,16 @@ interface Props {
 }
 
 const EnumInputItem: VFC<Props> = ({ deleteItem, enumItem }) => {
-  const onDeleteItem = useCallback(() => {
+  const onDeleteItem = () => {
     deleteItem(enumItem);
-  }, [deleteItem, enumItem]);
+  };
 
   return (
     <Wrapper className="enum-input--item">
       {enumItem}
-      <img alt="delete item" src={closeIcon} onClick={onDeleteItem} />
+      <div onClick={onDeleteItem}>
+        <Icon name="close" size={12} />
+      </div>
     </Wrapper>
   );
 };
@@ -36,13 +37,15 @@ const Wrapper = styled.div`
     line-height: 16px;
     white-space: nowrap;
 
-    img {
-      width: 12px;
-      height: 12px;
+    svg {
       cursor: pointer;
       display: block !important;
+
+      path {
+        fill: white;
+      }
     }
   }
 `;
 
-export default memo(EnumInputItem);
+export default EnumInputItem;

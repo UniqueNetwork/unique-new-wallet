@@ -1,9 +1,12 @@
-import { FileService } from '@app/api/FileApi/FileService';
+import { useState } from 'react';
+
 import { BaseApi, useApiMutation } from '@app/api';
 import config from '@app/config';
 
+import { FileService } from '../FileService';
+
 export const useFileUpload = () => {
-  const api = new BaseApi(config?.imageServerUrl ?? '');
+  const [api] = useState(() => new BaseApi(config?.imageServerUrl ?? ''));
 
   const fileUpload = useApiMutation({
     endpoint: FileService.fileUpload,
