@@ -8,17 +8,14 @@ import { PagePaper, StatusTransactionModal } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
-import { useAccounts, useApi } from '@app/hooks';
-import { deleteCollection } from '@app/api/restApi/collection';
-import { extrinsicSubmit } from '@app/api/restApi/extrinsic';
+import { useAccounts } from '@app/hooks';
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
   const { collection, isCollectionFetching } = useCollectionContext() || {};
-  const { selectedAccount, signMessage } = useAccounts();
+  const { selectedAccount } = useAccounts();
   const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
   const navigate = useNavigate();
-  const { api } = useApi();
 
   const {
     token_limit,
@@ -40,7 +37,7 @@ const CollectionSettings = () => {
     },
   });
 
-  const handleBurnCollection = async () => {
+  const handleBurnCollection = () => {
     if (!collection_id || !selectedAccount) {
       return;
     }
@@ -49,7 +46,7 @@ const CollectionSettings = () => {
     setLoadingBurnCollection(true);
 
     try {
-      const { data } = await deleteCollection(api!, {
+      /* const { data } = await deleteCollection(api!, {
         collectionId: collection_id,
         address: selectedAccount.address,
       });
@@ -59,7 +56,7 @@ const CollectionSettings = () => {
       await extrinsicSubmit(api!, {
         signerPayloadJSON: { ...data.signerPayloadJSON },
         signature,
-      });
+      }); */
       navigate('/my-collections');
     } catch (e) {
       console.error(e);

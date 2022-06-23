@@ -15,34 +15,24 @@ export type AttributesCallBackType = (
 
 export interface CollectionFormProps {
   attributes: ArtificialAttributeItemType[];
-  avatarImg: File | null;
-  coverImgFile: File | null;
-  coverImgAddress?: string;
-  description: string;
+  coverImgFile: Blob | null;
   imgAddress?: string;
   mainInformationForm: FormikProps<MainInformationInitialValues>;
   mintFest: boolean;
-  name: string;
   ownerCanDestroy: boolean;
   ownerCanTransfer: boolean;
   setAttributes: (
     attributes: ArtificialAttributeItemType[] | AttributesCallBackType,
   ) => void;
-  setAvatarImg: (avatarImg: File | null) => void;
-  setCoverImgFile: (coverImg: File | null) => void;
-  setCoverImgAddress: (address: string | undefined) => void;
-  setDescription: (description: string) => void;
+  setCoverImgFile: (coverImg: Blob | null) => void;
   setMintFest: (mintFest: boolean) => void;
-  setName: (name: string) => void;
   setOwnerCanDestroy: (ownerCanDestroy: boolean) => void;
   setOwnerCanTransfer: (ownerCanTransfer: boolean) => void;
   setTokenImg: (tokenImg: File | null) => void;
-  setTokenLimit: (tokenLimit: string) => void;
-  setTokenPrefix: (tokenPrefix: string) => void;
+  setTokenLimit: (tokenLimit: number) => void;
   setVariableSchema: (variableSchema: string) => void;
   tokenImg: File | null;
-  tokenLimit: string;
-  tokenPrefix: string;
+  tokenLimit: number;
   variableSchema: string;
 }
 

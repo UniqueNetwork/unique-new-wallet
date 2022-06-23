@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { MutationKey, MutationOptions, QueryClient } from 'react-query';
+import { IBaseApi } from '@app/api';
 
 import { HttpError, Nullable } from './types';
 
@@ -46,5 +47,8 @@ export abstract class EndpointMutation<ClientModel, RequestParams = void> {
     return;
   }
 
-  abstract request(payload?: RequestParams, signal?: AbortSignal): Promise<ClientModel>;
+  abstract request(
+    payload?: RequestParams,
+    signal?: AbortSignal
+  ): Promise<ClientModel>;
 }

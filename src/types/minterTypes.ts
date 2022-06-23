@@ -68,9 +68,8 @@ export type ProtobufAttributeType = {
 };
 
 export type MainInformationInitialValues = {
-  name: string;
-  description?: string;
-  tokenPrefix: string;
-  coverImgAddress?: string;
-  file?: { url: string; file: Blob } | null;
+  name: string | undefined;
+  description: string | undefined;
+  tokenPrefix: string | undefined;
+  coverImgAddress: string | undefined;
 };

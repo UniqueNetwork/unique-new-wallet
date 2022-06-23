@@ -3,15 +3,12 @@ import { Outlet } from 'react-router-dom';
 import { Layout } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { useAccounts, useFooter } from '@app/hooks';
-import { Welcome } from '@app/pages';
+import { useFooter } from '@app/hooks';
 
 import { Header } from '../';
-import Loading from '../Loading';
 
 export const PageLayout: FC = () => {
   const footer = useFooter();
-  const { accounts, isLoading } = useAccounts();
 
   return (
     <Wrapper className="page-layout">
@@ -20,17 +17,7 @@ export const PageLayout: FC = () => {
           footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
           header={<Header />}
         >
-          {isLoading && (
-            <LoadingStyled>
-              <Loading />
-            </LoadingStyled>
-          )}
-          {!isLoading && accounts?.length === 0 && <Welcome />}
-          {!isLoading && accounts?.length !== 0 && (
-            <div className="container">
-              <Outlet />
-            </div>
-          )}
+          <Outlet />
         </Layout>
       </LayoutStyled>
     </Wrapper>
@@ -44,18 +31,18 @@ export const Wrapper = styled.div`
     }
   }
 
+  .unique-layout__content {
+    width: 100%;
+    margin: 0 auto;
+    max-width: var(--prop-container-width);
+  }
+
   .container {
     width: 100%;
     max-width: var(--prop-container-width);
     padding: 0 var(--prop-gap);
     margin: 0 auto;
   }
-`;
-
-const LoadingStyled = styled.div`
-  position: relative;
-  flex: 1;
-  display: flex;
 `;
 
 const LayoutStyled = styled.div`

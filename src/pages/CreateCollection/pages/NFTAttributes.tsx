@@ -1,4 +1,4 @@
-import { VFC, useContext, useCallback } from 'react';
+import React, { VFC, useContext, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import {
@@ -11,17 +11,27 @@ import {
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { CollectionFormContext } from '@app/context';
-import { Alert, CollectionStepper } from '@app/components';
+import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
+import {
+  Alert,
+  CollectionStepper,
+  Confirm,
+  StatusTransactionModal,
+} from '@app/components';
 import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
+import { useCollectionMutation } from '@app/hooks';
+import { ArtificialAttributeItemType } from '@app/types';
 
 export interface NFTAttributesComponentProps {
   className?: string;
 }
 
+const maxTokenLimit = 4294967295;
+
 const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className }) => {
   const {
     attributes,
+    mainInformationForm,
     setAttributes,
     tokenLimit,
     setTokenLimit,
@@ -29,21 +39,64 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
     setOwnerCanDestroy,
   } = useContext(CollectionFormContext);
   const navigate = useNavigate();
+  const { isCreatingCollection, onCreateCollection } = useCollectionMutation();
+  const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
   const onPreviousStepClick = () => {
-    navigate('/create-collection/main-information/');
+    navigate('/create-collection/main-information');
   };
+
+  const createCollection = async () => {
+    await onCreateCollection();
+
+    navigate('/my-collections');
+  };
+
+  const onSubmitAttributes = () => {
+    const { isSubmitting, isValid } = mainInformationForm;
+
+    if (isSubmitting && isValid) {
+      if (attributes?.length < 2) {
+        setIsOpenConfirm(true);
+      } else {
+        void createCollection();
+      }
+    }
+  };
+
+  const onSetTokenLimit = (value: string) => {
+    if (!value) {
+      return;
+    }
+
+    const numVal = Number(value);
+
+    if (numVal > maxTokenLimit || numVal < 0) {
+      return;
+    }
+
+    setTokenLimit(numVal);
+  };
+
+  const onSetAttributes = (attributes: ArtificialAttributeItemType[]) => {
+    setAttributes([...attributes, ...defaultAttributesWithTokenIpfs]);
+  };
+
+  const attributesWithoutIpfs = useMemo(
+    () => attributes.filter((attr) => attr.name !== 'ipfsJson'),
+    [attributes],
+  );
 
   return (
     <div className={classNames('main-information', className)}>
-      <CollectionStepper activeStep={2} />
+      <CollectionStepper activeStep={2} onClickStep={onPreviousStepClick} />
       <Heading size="2">NFT attrubutes</Heading>
       <Text>
         Customize your token — define your NTF&apos;s traits: name, accessory, gender,
         background, face, body, tier, etc.
       </Text>
       <div>
-        <AttributesTable value={attributes} onChange={setAttributes} />
+        <AttributesTable value={attributesWithoutIpfs} onChange={onSetAttributes} />
         <AdvancedSettingsAccordion title="Advanced settings ">
           <AdvancedSettingsWrapper>
             <Text>This section contains marketplace related settings.</Text>
@@ -63,8 +116,8 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
             <InputText
               label="Token limit"
               additionalText="Unlimited by default"
-              value={tokenLimit}
-              onChange={setTokenLimit}
+              value={tokenLimit.toString()}
+              onChange={onSetTokenLimit}
             />
             <Checkbox
               label="Owner can burn collection"
@@ -74,7 +127,8 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
           </AdvancedSettingsWrapper>
         </AdvancedSettingsAccordion>
         <Alert type="warning" className="alert-wrapper">
-          A fee of ~ 2.073447 QTZ can be applied to the transaction
+          {/* TODO - get fee from the API */}A fee of ~ 2.073447 QTZ can be applied to the
+          transaction
         </Alert>
         <div className="nft-attributes-buttons">
           <Button
@@ -86,9 +140,36 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
             title="Previous step"
             onClick={onPreviousStepClick}
           />
-          <Button title="Create a collection" type="submit" role="primary" />
+          <Button
+            title="Create a collection"
+            type="button"
+            role="primary"
+            onClick={onSubmitAttributes}
+          />
         </div>
       </div>
+      <Confirm
+        buttons={[
+          { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
+          {
+            title: 'Yes, I am sure',
+            role: 'primary',
+            onClick: () => {
+              setIsOpenConfirm(false);
+              void onCreateCollection();
+            },
+          },
+        ]}
+        isVisible={isOpenConfirm}
+        title="You have not entered attributes. Are you sure that you want to create the collection without them?"
+        onClose={() => setIsOpenConfirm(false)}
+      >
+        <Text>You cannot return to editing the attributes in this product version.</Text>
+      </Confirm>
+      <StatusTransactionModal
+        isVisible={isCreatingCollection}
+        description="Creating collection"
+      />
     </div>
   );
 };
