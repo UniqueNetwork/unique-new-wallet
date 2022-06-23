@@ -25,7 +25,7 @@ export class SubmitExtrinsicMutation extends EndpointMutation<
 
   async request(payload: SubmitExtrinsicMutationPayload): Promise<SubmitExtrinsicResult> {
     return payload.api.post<SubmitExtrinsicResult, SubmittableExtrinsicDTO>(
-      `${this.baseUrl}`,
+      this.baseUrl,
       payload.extrinsic,
     );
   }

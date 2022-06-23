@@ -57,13 +57,15 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
   };
 
   const setCover = (data: { url: string; file: Blob } | null) => {
-    if (data?.file) {
-      const file: Blob = data?.file;
-
-      setCoverImgFile(file);
-
-      void uploadCover(file);
+    if (!data?.file) {
+      return;
     }
+
+    const file: Blob = data?.file;
+
+    setCoverImgFile(file);
+
+    void uploadCover(file);
   };
 
   const onFormSubmit = () => {
