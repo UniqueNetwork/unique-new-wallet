@@ -4,10 +4,13 @@ import './CollectionStepper.scss';
 
 const steps: StepperProps['steps'] = ['Main information', 'NFT attributes'];
 
-export const CollectionStepper = ({ activeStep }: Pick<StepperProps, 'activeStep'>) => {
+export const CollectionStepper = ({
+  activeStep,
+  onClickStep,
+}: Omit<StepperProps, 'steps'>) => {
   return (
     <div className="collection-stepper">
-      <Stepper steps={steps} activeStep={activeStep} />
+      <Stepper steps={steps} activeStep={activeStep} onClickStep={onClickStep} />
     </div>
   );
 };

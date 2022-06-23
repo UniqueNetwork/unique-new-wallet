@@ -2,6 +2,7 @@ export * from './useAccounts';
 export * from './useApi';
 export * from './useCollections';
 export * from './useDeviceSize';
+export * from './useCollectionMutation';
 export * from './useFee';
 export * from './useFooter';
 export * from './useGetIcon';

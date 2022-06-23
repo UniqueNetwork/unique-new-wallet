@@ -14,7 +14,7 @@ type Props = {
 };
 
 const CollectionSidebarComponent = ({ className }: Props) => {
-  const { mainInformationForm } = useContext(CollectionFormContext);
+  const { coverImgFile, mainInformationForm } = useContext(CollectionFormContext);
   const { values } = mainInformationForm;
   const { name, description, tokenPrefix } = values;
 
@@ -23,7 +23,7 @@ const CollectionSidebarComponent = ({ className }: Props) => {
       <Item className="collection-preview">
         <Heading size="3">Collection preview</Heading>
         <SidebarPreview
-          srcImg={srcImg}
+          srcImg={coverImgFile ? URL.createObjectURL(coverImgFile) : srcImg}
           description={description || 'Description'}
           title={name || 'Name'}
         />

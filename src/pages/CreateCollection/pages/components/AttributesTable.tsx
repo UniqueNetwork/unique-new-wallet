@@ -1,4 +1,4 @@
-import React, { useCallback, VFC } from 'react';
+import React, { VFC } from 'react';
 import {
   InputText,
   TableColumnProps,
@@ -16,6 +16,7 @@ import {
   FieldRuleType,
 } from '@app/types';
 
+import { EnumsInput } from './EnumsInput';
 import trash from '../../../../static/icons/trash.svg'; // TODO: get this icon from ui-kit
 
 interface AttributesTableProps {
@@ -107,12 +108,11 @@ const getAttributesColumns = ({
     field: 'values',
     render(values: string[], attribute: ArtificialAttributeItemType) {
       return (
-        <InputText
-          placeholder="Value"
-          value={values.join(',')}
-          onChange={(value) =>
-            onAttributeChange({ ...attribute, values: value.split(',') })
-          }
+        <EnumsInput
+          isDisabled={attribute.fieldType === 'string'}
+          maxSymbols={40}
+          setValues={(values: string[]) => onAttributeChange({ ...attribute, values })}
+          values={attribute.values}
         />
       );
     },

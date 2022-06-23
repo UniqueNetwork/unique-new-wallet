@@ -33,34 +33,42 @@ export class BaseApi implements IBaseApi {
     return response.data;
   }
 
-  delete<T = any, R = AxiosResponse<T>, D = any>(
+  async delete<T = any, R = AxiosResponse<T>, D = any>(
     url: string,
     config?: AxiosRequestConfig<D>,
   ): Promise<R> {
-    return this.http.delete(url, config);
+    const response = await this.http.delete(url, config);
+
+    return response.data;
   }
 
-  post<T = any, R = AxiosResponse<T>, D = any>(
+  async post<T = any, R = AxiosResponse<T>, D = any>(
     url: string,
     data?: D,
     config?: AxiosRequestConfig<D>,
   ): Promise<R> {
-    return this.http.post(url, data, config);
+    const response = await this.http.post(url, data, config);
+
+    return response.data;
   }
 
-  put<T = any, R = AxiosResponse<T>, D = any>(
+  async put<T = any, R = AxiosResponse<T>, D = any>(
     url: string,
     data?: D,
     config?: AxiosRequestConfig<D>,
   ): Promise<R> {
-    return this.http.put(url, data, config);
+    const response = await this.http.put(url, data, config);
+
+    return response.data;
   }
 
-  patch<T = any, R = AxiosResponse<T>, D = any>(
+  async patch<T = any, R = AxiosResponse<T>, D = any>(
     url: string,
     data?: D,
     config?: AxiosRequestConfig<D>,
   ): Promise<R> {
-    return this.http.patch(url, data, config);
+    const response = await this.http.patch(url, data, config);
+
+    return response.data;
   }
 }

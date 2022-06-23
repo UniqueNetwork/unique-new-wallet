@@ -45,9 +45,11 @@ export const SidebarPreview = styled(SidebarPreviewComponent)`
     font-size: 18px;
     margin-bottom: 5px;
   }
+
   .description {
     color: var(--color-grey-500);
   }
+
   .preview-avatar {
     width: 64px;
     height: 64px;
@@ -56,5 +58,9 @@ export const SidebarPreview = styled(SidebarPreviewComponent)`
     display: flex;
     align-items: center;
     justify-content: center;
+
+    img {
+      width: 100%;
+    }
   }
 `;

@@ -2,6 +2,7 @@ import React, { useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Button, InputText, Select } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 import { iconDown, iconUp, Option } from '@app/utils';
 import { PaddedBlock } from '@app/styles/styledVariables';
@@ -39,10 +40,14 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
 }) => {
   const [searchString, setSearchString] = useState<string>('');
   const [sort, setSort] = useState<string>('collectionId-asc');
+  const navigate = useNavigate();
 
   const onChange = (option: Option) => {
-    console.log('option', option);
     setSort(option.id);
+  };
+
+  const onCreateCollection = () => {
+    navigate('/create-collection/main-information');
   };
 
   return (
@@ -63,6 +68,7 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
         }}
         title="Create collection"
         role="primary"
+        onClick={onCreateCollection}
       />
     </div>
   );

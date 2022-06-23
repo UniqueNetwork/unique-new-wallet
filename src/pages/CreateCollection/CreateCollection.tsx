@@ -17,7 +17,7 @@ const CreateCollectionComponent: FC<CreateCollectionProps> = (props) => {
 
   useEffect(() => {
     if (location.pathname === '/create-collection') {
-      navigate('/create-collection/main-information/');
+      navigate('/create-collection/main-information');
     }
   }, [location.pathname, navigate]);
 
