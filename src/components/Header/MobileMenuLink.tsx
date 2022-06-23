@@ -6,10 +6,14 @@ import { Text } from '@unique-nft/ui-kit';
 interface MenuLinkProps {
   mobileMenuToggle: () => void;
   name: string;
-  path: string;
+  path?: string;
 }
 
-export const MobileMenuLink: VFC<MenuLinkProps> = ({ mobileMenuToggle, name, path }) => {
+export const MobileMenuLink: VFC<MenuLinkProps> = ({
+  mobileMenuToggle,
+  name,
+  path = '',
+}) => {
   const resolved = useResolvedPath(path);
   const match = useMatch(`${resolved.pathname}/*`);
 

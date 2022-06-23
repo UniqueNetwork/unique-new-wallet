@@ -7,6 +7,7 @@ import {
   IPaginationProps,
   Loader,
 } from '@unique-nft/ui-kit';
+import { useLocation, useResolvedPath } from 'react-router-dom';
 
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
@@ -28,49 +29,51 @@ const NFTsListComponent = ({
   page,
   onPageChange,
   isLoading,
-}: NFTsListComponentProps) => (
-  <div className={classNames('nft-list', className)}>
-    {isLoading && <Loader isFullPage={true} size="large" />}
-    {!isNaN(Number(tokensCount)) && (
-      <div className="token-size-wrapper">
-        <Text size="m">{`${tokensCount} items`}</Text>
-      </div>
-    )}
+}: NFTsListComponentProps) => {
+  return (
+    <div className={classNames('nft-list', className)}>
+      {isLoading && <Loader isFullPage={true} size="large" />}
+      {!isNaN(Number(tokensCount)) && (
+        <div className="token-size-wrapper">
+          <Text size="m">{`${tokensCount} items`}</Text>
+        </div>
+      )}
 
-    {tokensCount === 0 ? (
-      <div className="nft-list--empty">
-        <NFTsNotFound />
-      </div>
-    ) : (
-      <div className="nft-list--content">
-        {tokens.map(
-          ({ token_id, token_name, collection_name, collection_id, image_path }) => (
-            <TokenLink
-              key={`${collection_id}-${token_id}`}
-              image={getTokenIpfsUriByImagePath(image_path)}
-              link={{
-                href: `/nft-details?tokenId=${token_id}&collectionId=${collection_id}`,
-                title: `${collection_name} [id ${collection_id}]`,
-              }}
-              title={token_name}
-            />
-          ),
-        )}
-      </div>
-    )}
-    {!!tokensCount && (
-      <div className="nft-list--footer">
-        <Text size="m">{`${tokensCount} items`}</Text>
-        <Pagination
-          withIcons={true}
-          current={page}
-          size={tokensCount}
-          onPageChange={onPageChange}
-        />
-      </div>
-    )}
-  </div>
-);
+      {tokensCount === 0 ? (
+        <div className="nft-list--empty">
+          <NFTsNotFound />
+        </div>
+      ) : (
+        <div className="nft-list--content">
+          {tokens.map(
+            ({ token_id, token_name, collection_name, collection_id, image_path }) => (
+              <TokenLink
+                key={`${collection_id}-${token_id}`}
+                image={getTokenIpfsUriByImagePath(image_path)}
+                link={{
+                  href: `/token/${collection_id}/${token_id}`,
+                  title: `${collection_name} [id ${collection_id}]`,
+                }}
+                title={token_name}
+              />
+            ),
+          )}
+        </div>
+      )}
+      {!!tokensCount && (
+        <div className="nft-list--footer">
+          <Text size="m">{`${tokensCount} items`}</Text>
+          <Pagination
+            withIcons={true}
+            current={page}
+            size={tokensCount}
+            onPageChange={onPageChange}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const NFTsTemplateList = styled(NFTsListComponent)`
   height: 100%;
