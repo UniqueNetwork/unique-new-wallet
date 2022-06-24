@@ -11,7 +11,7 @@ export const networksUrls: Record<NetworkType, string | undefined> = {
 // TODO - use urls from ENV
 export const networks: Chain[] = [
   {
-    apiEndpoint: networksUrls.QTZ || '',
+    apiEndpoint: 'https://web.uniquenetwork.dev/',
     id: 'quartz',
     name: 'Quartz',
     icon: {
