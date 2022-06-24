@@ -1,8 +1,6 @@
-import { useApiMutation } from '@app/api';
-import { SubmittableExtrinsicDTO } from '@app/types';
+import { useApiMutation, ExtrinsicApiService } from '@app/api';
+import { SubmitExtrinsicResult, SubmittableExtrinsicDTO } from '@app/types';
 import { useApi } from '@app/hooks';
-
-import { ExtrinsicApiService } from '../ExtrinsicApiService';
 
 export const useExtrinsicSubmit = () => {
   const { api } = useApi();
@@ -11,7 +9,9 @@ export const useExtrinsicSubmit = () => {
     endpoint: ExtrinsicApiService.submitExtrinsic,
   });
 
-  const submitExtrinsic = async (extrinsic: SubmittableExtrinsicDTO) => {
+  const submitExtrinsic = async (
+    extrinsic: SubmittableExtrinsicDTO,
+  ): Promise<SubmitExtrinsicResult | void> => {
     if (!api) {
       // TODO - notify user
       return;

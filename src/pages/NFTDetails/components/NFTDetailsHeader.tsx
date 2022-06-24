@@ -9,11 +9,18 @@ import {
   Icon,
 } from '@unique-nft/ui-kit';
 
+import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
+
 interface NFTDetailsHeaderProps {
   title?: string;
   ownerAddress?: string;
   isCurrentAccountOwner?: boolean;
   className?: string;
+  onShowModal(modal: TNFTModalType): void;
+}
+
+interface MenuOptionItem extends SelectOptionProps {
+  id: TNFTModalType;
 }
 
 const HeaderContainer = styled.div`
@@ -52,11 +59,12 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   ownerAddress,
   isCurrentAccountOwner,
   className,
+  onShowModal,
 }) => {
   const options = useMemo(() => {
     const items: SelectOptionProps[] = [
       {
-        id: 1,
+        id: 'share',
         title: 'Share',
         icon: {
           name: 'shared',
@@ -67,7 +75,7 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
 
     if (isCurrentAccountOwner) {
       items.push({
-        id: 2,
+        id: 'burn',
         title: 'Burn NFT',
         color: 'var(--color-coral-500)',
         icon: {
@@ -97,13 +105,19 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
           )}
         </Text>
         {isCurrentAccountOwner && (
-          <Button className="transfer-btn" title="Transfer" role="outlined" />
+          <Button
+            className="transfer-btn"
+            title="Transfer"
+            role="outlined"
+            onClick={() => onShowModal('transfer')}
+          />
         )}
       </HeaderContent>
       <Dropdown
         placement="right"
         options={options}
-        optionRender={(opt) => <MenuOption {...opt} />}
+        optionRender={(opt) => <MenuOption {...(opt as MenuOptionItem)} />}
+        onChange={(opt) => onShowModal((opt as MenuOptionItem).id)}
       >
         <Icon size={40} name="rounded-rectangle-more" />
       </Dropdown>
