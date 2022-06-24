@@ -4,7 +4,7 @@ import { Heading } from '@unique-nft/ui-kit';
 
 import config from '@app/config';
 import { NetworkType } from '@app/types';
-import { TransferFundsModal } from '@app/pages';
+import { RampModal, TransferFundsModal } from '@app/pages';
 import { useAccountBalanceService } from '@app/api';
 import AccountContext from '@app/account/AccountContext';
 
@@ -20,6 +20,7 @@ const CoinsContainer = styled.div`
 
 export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   const { selectedAccount } = useContext(AccountContext);
+  const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisibility, setFundsModalVisibility] = useState(false);
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
 
@@ -37,6 +38,9 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     setFundsModalVisibility(true);
   }, []);
 
+  const getCoinsHandler = useCallback(() => setRampModalVisible(true), []);
+  const closeRampModalHandler = useCallback(() => setRampModalVisible(false), []);
+
   return (
     <>
       <TransferFundsModal
@@ -46,9 +50,11 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           setFundsModalVisibility(false);
         }}
       />
+      <RampModal isVisible={rampModalVisible} onClose={closeRampModalHandler} />
       <CoinsContainer>
         <Heading size="4">Network</Heading>
         <CoinsRow
+          getDisabled
           loading={qtzLoading}
           address={selectedAccount?.address}
           balanceFull={qtzBalance?.formatted}
@@ -57,8 +63,10 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           name="Quartz"
           symbol="QTZ"
           onSend={sendFundsHandler}
+          onGet={getCoinsHandler}
         />
         <CoinsRow
+          getDisabled
           loading={opalLoading}
           address={selectedAccount?.address}
           balanceFull={opalBalance?.formatted}
@@ -67,6 +75,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           name="Opal"
           symbol="OPL"
           onSend={sendFundsHandler}
+          onGet={getCoinsHandler}
         />
         <CoinsRow
           address={selectedAccount?.address}
@@ -76,8 +85,10 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           name="Kusama"
           symbol="KSM"
           onSend={() => {}}
+          onGet={getCoinsHandler}
         />
         <CoinsRow
+          getDisabled
           address={selectedAccount?.address}
           balanceFull="0 UNQ"
           balanceTransferable="0 UNQ"
@@ -85,6 +96,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           name="Unique network"
           symbol="UNQ"
           onSend={() => {}}
+          onGet={getCoinsHandler}
         />
       </CoinsContainer>
     </>

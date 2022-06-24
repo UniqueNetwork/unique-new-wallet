@@ -2,6 +2,7 @@ import React, { VFC } from 'react';
 import classNames from 'classnames';
 import styled, { css } from 'styled-components';
 import { Button, Icon, Loader } from '@unique-nft/ui-kit';
+import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
 
 import { NetworkType } from '@app/types';
 
@@ -15,7 +16,10 @@ interface CoinsRowComponentProps {
   iconName: string;
   name: string;
   symbol: NetworkType;
+  sendDisabled?: boolean;
+  getDisabled?: boolean;
   onSend: (network: NetworkType) => void;
+  onGet: () => void;
 }
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
@@ -29,7 +33,10 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     iconName,
     name,
     symbol,
+    sendDisabled,
+    getDisabled,
     onSend,
+    onGet,
   } = props;
 
   const copyAddress = (account: string) => {
@@ -78,8 +85,8 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         )}
       </NetworkBalances>
       <NetworkActions>
-        <Button title="Send" onClick={() => onSend(symbol)} />
-        <Button disabled title="Get" />
+        <Button disabled={sendDisabled} title="Send" onClick={() => onSend(symbol)} />
+        <Button disabled={getDisabled} title="Get" onClick={onGet} />
       </NetworkActions>
     </div>
   );
