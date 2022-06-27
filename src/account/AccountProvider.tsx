@@ -103,22 +103,25 @@ export const AccountWrapper: FC = ({ children }) => {
   const fetchAccounts = useCallback(async () => {
     const allAccounts = await getAccounts();
 
-    setAccounts(allAccounts);
-
     if (allAccounts?.length) {
-      const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
-
-      const defaultAccount = allAccounts.find(
-        (item) => item.address === defaultAccountAddress,
-      );
-
-      changeAccount(defaultAccount ?? allAccounts[0]);
+      setAccounts(allAccounts);
     } else {
       setFetchAccountsError('No accounts in extension');
     }
-
     setIsLoading(false);
   }, [changeAccount, getAccounts, setAccounts, setFetchAccountsError, setIsLoading]);
+
+  useEffect(() => {
+    if (accounts?.length) {
+      const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
+
+      const defaultAccount = accounts.find(
+        (item) => item.address === defaultAccountAddress,
+      );
+
+      changeAccount(defaultAccount ?? accounts[0]);
+    }
+  }, [accounts]);
 
   const value = useMemo(
     () => ({
@@ -127,7 +130,7 @@ export const AccountWrapper: FC = ({ children }) => {
       selectedAccount: selectedAccount
         ? {
             ...selectedAccount,
-            balance: data?.amount.toString() ?? '0',
+            balance: data?.amount?.toString() ?? '0',
           }
         : undefined,
       fetchAccounts,
