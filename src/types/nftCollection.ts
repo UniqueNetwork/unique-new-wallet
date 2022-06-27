@@ -2,7 +2,7 @@
 // { key: '_old_schemaVersion', value: 'Unique' },
 // { key: '_old_variableOnChainSchema', value: '' },
 // { key: '_old_constOnChainSchema', value: JSON.stringify(protobufJson) }
-import {ProtobufAttributeType} from "@app/types/minterTypes";
+import { ProtobufAttributeType } from '@app/types/minterTypes';
 
 export interface CollectionProperty {
   key: string;
