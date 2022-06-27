@@ -16,16 +16,16 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
   onClose,
 }) => {
   const [address, setAddress] = useState<string>('');
-  const onAddressInputChange = useCallback((value: string) => {
+  const onAddressInputChange = (value: string) => {
     setAddress(value);
-  }, []);
+  };
 
-  const onConfirmTransferClick = useCallback(() => {
+  const onConfirmTransferClick = () => {
     if (!address) {
       return;
     }
     onTransfer(address);
-  }, [address, onTransfer]);
+  };
 
   return (
     <Modal isClosable isVisible={isVisible} onClose={onClose}>

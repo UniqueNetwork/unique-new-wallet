@@ -1,8 +1,9 @@
 import React, { VFC } from 'react';
-import { Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { AdditionalWarning100 } from '@app/styles/colors';
+import { Confirm } from '@app/components';
 
 interface AskBurnModalProps {
   isVisible: boolean;
@@ -12,18 +13,17 @@ interface AskBurnModalProps {
 
 export const AskBurnModal: VFC<AskBurnModalProps> = ({ isVisible, onBurn, onClose }) => {
   return (
-    <Modal isClosable isVisible={isVisible} onClose={onClose}>
-      <HeadingWrapper>
-        <Heading size="2">Burn NFT</Heading>
-      </HeadingWrapper>
+    <Confirm
+      isVisible={isVisible}
+      title="Burn NFT"
+      buttons={[{ title: 'Confirm', role: 'primary', onClick: onBurn }]}
+      onClose={onClose}
+    >
       <Text size="m">You will not be able to undo this action.</Text>
       <TextStyled color="additional-warning-500" size="s">
         A fee of ~ 2.073447 QTZ can be applied to the transaction
       </TextStyled>
-      <ButtonWrapper>
-        <Button role="primary" title="Confirm" onClick={onBurn} />
-      </ButtonWrapper>
-    </Modal>
+    </Confirm>
   );
 };
 
@@ -31,7 +31,7 @@ const TextStyled = styled(Text)`
   box-sizing: border-box;
   display: flex;
   padding: calc(var(--prop-gap) / 2) var(--prop-gap);
-  margin-bottom: var(--prop-gap);
+  margin: var(--prop-gap) 0;
   border-radius: 4px;
   background-color: ${AdditionalWarning100};
   width: 100%;
