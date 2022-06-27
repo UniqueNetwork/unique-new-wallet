@@ -16,7 +16,11 @@ import { Account } from '@app/account';
 import { NetworkType } from '@app/types';
 import { formatAmount, networksUrls } from '@app/utils';
 import { useAccounts, useFee } from '@app/hooks';
-import { useAccountBalanceService } from '@app/api';
+import {
+  useAccountBalanceService,
+  useBalanceTransfer,
+  useExtrinsicSubmit,
+} from '@app/api';
 import {
   AdditionalText,
   ModalHeader,
@@ -83,8 +87,10 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   senderAccount,
   onClose,
 }) => {
-  const { accounts, selectedAccount } = useAccounts();
   const { fee } = useFee();
+  const { accounts, selectedAccount, signMessage } = useAccounts();
+  const { transfer } = useBalanceTransfer();
+  const { submitExtrinsic } = useExtrinsicSubmit();
 
   const [sender, setSender] = useState<Account | undefined>(
     senderAccount || selectedAccount,
@@ -123,15 +129,29 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
     [setAmount],
   );
 
-  const onSend = useCallback(
-    () =>
-      onFinish(
-        sender?.address || '',
-        recipient?.address.toString() || '',
-        amount.toString(),
-      ),
-    [onFinish, recipient?.address, sender?.address, amount],
-  );
+  const onSend = useCallback(async () => {
+    if (!sender || !recipient) {
+      return;
+    }
+
+    const tx = await transfer({
+      address: sender?.address,
+      destination: recipient?.address.toString(),
+      amount: parseInt(amount),
+    });
+
+    const signature = await signMessage(tx.signerPayloadJSON);
+    const submitResult = await submitExtrinsic({
+      ...tx,
+      signature,
+    });
+
+    onFinish(
+      sender?.address || '',
+      recipient?.address.toString() || '',
+      amount.toString(),
+    );
+  }, [onFinish, recipient?.address, sender?.address, amount]);
 
   if (!accounts?.length) {
     return null;
@@ -196,7 +216,14 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
         </ContentRow>
       </ModalContent>
       <ModalFooter>
-        <Button disabled={!amount} role="primary" title="Confirm" onClick={onSend} />
+        <Button
+          disabled={!amount}
+          role="primary"
+          title="Confirm"
+          onClick={() => {
+            onSend();
+          }}
+        />
       </ModalFooter>
     </Modal>
   );
