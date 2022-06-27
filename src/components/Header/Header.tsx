@@ -74,6 +74,7 @@ export const Header: VFC = () => {
           <nav>
             <MenuLink name="My tokens" path={ROUTE.MY_TOKENS} />
             <MenuLink name="My collections" path={ROUTE.MY_COLLECTIONS} />
+            <MenuLink name="My accounts" path={ROUTE.ACCOUNTS} />
             <MenuLink name="FAQ" path={ROUTE.FAQ} />
           </nav>
         )}
@@ -114,6 +115,11 @@ export const Header: VFC = () => {
           <MobileMenuLink
             name="My collections"
             path={ROUTE.MY_COLLECTIONS}
+            mobileMenuToggle={mobileMenuToggle}
+          />
+          <MobileMenuLink
+            name="My accounts"
+            path={ROUTE.ACCOUNTS}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
