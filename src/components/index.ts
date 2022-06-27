@@ -18,3 +18,4 @@ export * from './Tooltip';
 export * from './Upload';
 export * from './StatusTransactionModal';
 export * from './Confirm';
+export * from './Stages';

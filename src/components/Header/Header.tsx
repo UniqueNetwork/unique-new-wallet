@@ -1,10 +1,11 @@
-import { VFC, useCallback, useState, useContext } from 'react';
+import { VFC, useCallback, useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager, Button, Icon, Skeleton } from '@unique-nft/ui-kit';
+import { AccountsManager, Button, Icon } from '@unique-nft/ui-kit';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
+import keyring from '@polkadot/ui-keyring';
 
 import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
-import { routes } from '@app/routesConfig';
 import MobileMenuLink from '@app/components/Header/MobileMenuLink';
 import { networks } from '@app/utils';
 import { ChainPropertiesContext } from '@app/context';
@@ -44,6 +45,16 @@ export const Header: VFC = () => {
       changeAccount(targetAccount);
     }
   };
+
+  useEffect(() => {
+    cryptoWaitReady().then(() => {
+      keyring.loadAll({});
+    });
+  }, []);
+
+  useEffect(() => {
+    // todo keyring.loadAll({ <-- SS58, GenesisHash })
+  }, [chainProperties]);
 
   const createOrConnectAccountHandler = () => navigate('/accounts');
 
