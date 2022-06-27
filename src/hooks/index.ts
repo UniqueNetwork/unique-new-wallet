@@ -12,3 +12,4 @@ export * from './useGetIcon';
 export * from './usePagination';
 export * from './useRestApi';
 export * from './useScreenWidthFromThreshold';
+export * from './useTokenMutation';

@@ -2,14 +2,15 @@ import React, { useContext, useState, VFC } from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import { Avatar, Button, Heading, Suggest, Upload } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
-import { Alert } from '@app/components';
-import { useAccounts, useCollection, useFee } from '@app/hooks';
+import { Alert, StatusTransactionModal } from '@app/components';
+import { useAccounts, useCollection, useFee, useTokenMutation } from '@app/hooks';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection, useFileUpload, useTokenCreate } from '@app/api';
 import { getCoverURLFromCollection } from '@app/utils';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
-import { AttributeItemType, TokenField } from '@app/types';
+import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
 import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
 
@@ -39,21 +40,19 @@ interface ICreateNFTProps {
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { fee } = useFee();
-  const { setTokenImg, tokenImg } = useContext(TokenFormContext);
+  const { attributes, setAttributes, setTokenImg, tokenImg } =
+    useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
-  const { createToken } = useTokenCreate();
   const { uploadFile } = useFileUpload();
-  const [isCreating, setIsCreating] = useState<boolean>(false);
-  const [traits, setTraits] = useState<string[]>([]);
-  const [name, setName] = useState('');
+  const navigate = useNavigate();
   const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
   const { collections, collectionsLoading } = useGraphQlCollectionsByAccount(
     selectedAccount?.address ?? null,
   );
   const collection = useCollection(selectedCollection?.id ?? 0);
-  const tokenFields = get(collection, 'properties.fields', []);
+  const { isCreatingNFT, onCreateNFT } = useTokenMutation(selectedCollection?.id ?? 0);
 
-  console.log('collection!!!', collection);
+  const tokenFields = get(collection, 'properties.fields', []);
 
   const collectionsOptions: Option[] =
     collections?.map((collection: Collection) => ({
@@ -63,39 +62,13 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
       img: getCoverURLFromCollection(collection),
     })) ?? [];
 
-  const setAttributeValue = (attribute: AttributeItemType, value: string | number[]) => {
-    /* setTokenConstAttributes(
-      (prevAttributes: { [key: string]: TokenAttribute }) =>
-        ({
-          ...prevAttributes,
-          [attribute.name]: {
-            name: prevAttributes[attribute.name].name,
-            value:
-              attribute.rule === 'repeated'
-                ? prevAttributes[attribute.name].value
-                : (value as string),
-            values:
-              attribute.rule === 'repeated'
-                ? (value as number[])
-                : prevAttributes[attribute.name].values,
-          },
-        } as { [key: string]: TokenAttribute }),
-    ); */
-  };
-
   const uploadImage = async (file: Blob) => {
     const response = await uploadFile(file);
 
-    setAttributeValue(
-      {
-        fieldType: 'string',
-        id: 1,
-        name: 'ipfsJson',
-        rule: 'required',
-        values: [],
-      },
-      JSON.stringify({ ipfs: response?.address, type: 'image' }),
-    );
+    setAttributes({
+      ...attributes,
+      ipfsJson: JSON.stringify({ ipfs: response?.address, type: 'image' }),
+    });
   };
 
   const setImage = (data: { url: string; file: Blob } | null) => {
@@ -110,44 +83,15 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   console.log('collections', collections);
 
-  const onConfirm = () => {
-    setIsCreating(true);
-    /*
-     setSsCreatingCollection(true);
+  const onConfirmAndClose = async () => {
+    await onCreateNFT();
 
-    const createResp = await createCollection(collectionFull);
-
-    if (!createResp?.signerPayloadJSON) {
-      error('Create collection error', {
-        name: 'Create collection',
-        size: 32,
-        color: 'white',
-      });
-
-      setSsCreatingCollection(false);
-
-      return;
-    }
-
-    const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
-
-    await submitExtrinsic({
-      signerPayloadJSON: createResp.signerPayloadJSON,
-      signature,
-    });
-
-    info('Collection successfully created', {
-      name: 'Create collection',
-      size: 32,
-      color: 'white',
-    });
-
-    setSsCreatingCollection(false);
-     */
+    navigate('/my-tokens/nft');
   };
 
-  const onConfirmAndCreateMore = () => {
-    onConfirm();
+  const onConfirmAndCreateMore = async () => {
+    await onCreateNFT();
+    // resetForm();
   };
 
   // TODO - add redirect to main page here if user has no collections
@@ -231,18 +175,19 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                 disabled={false}
                 title="Confirm and create more"
                 role="primary"
-                onClick={onConfirm}
+                onClick={() => void onConfirmAndCreateMore()}
               />
               <Button
                 disabled={false}
                 title="Confirm and close"
-                onClick={onConfirmAndCreateMore}
+                onClick={() => void onConfirmAndClose()}
               />
             </ButtonGroup>
           </Form>
         </WrapperContent>
         <Sidebar collectionId={selectedCollection?.id} />
       </MainWrapper>
+      <StatusTransactionModal isVisible={isCreatingNFT} description="Creating NFT" />
     </>
   );
 };

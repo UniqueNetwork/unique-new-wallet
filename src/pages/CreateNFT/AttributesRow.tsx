@@ -1,7 +1,7 @@
 import { VFC, useMemo, useContext, useState } from 'react';
 import { InputText, Select, SelectOptionProps } from '@unique-nft/ui-kit';
 
-import { TokenAttributes, TokenField } from '@app/types';
+import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
 
 import { FormRow, LabelText } from './components';
@@ -16,54 +16,66 @@ interface IOption extends SelectOptionProps {
   title: string;
 }
 
+const createOptionsByFiled = (tokenField: TokenField): IOption[] =>
+  tokenField.items?.map((val: string, index: number) => ({
+    title: JSON.parse(val).en as string,
+    id: index.toString(),
+  })) ?? [];
+
+const createValueByField = (tokenField: TokenField, value: string): IOption | undefined =>
+  createOptionsByFiled(tokenField)?.find((item: IOption) => value === item.title);
+
+const createMultiValueByField = (tokenField: TokenField, values: string[]): IOption[] =>
+  createOptionsByFiled(tokenField)?.filter((item: IOption) =>
+    values?.includes(item.title),
+  );
+
 export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }) => {
   const { attributes, setAttributes } = useContext(TokenFormContext);
-  const [textValue, setTextValue] = useState<string>(() =>
-    tokenField.type === 'text' ? (attributes[tokenField.name] as string) : '',
+  const [multiSelectValue, setMultiSelectValue] = useState<IOption[]>(() =>
+    createMultiValueByField(tokenField, attributes[tokenField.name] as string[]),
   );
-  const [multiSelectValue, setMultiSelectValue] = useState<IOption[]>([]);
-  const [selectValue, setSelectValue] = useState<IOption>();
+  const [selectValue, setSelectValue] = useState<IOption | undefined>(() =>
+    createValueByField(tokenField, attributes[tokenField.name] as string),
+  );
 
-  const onSetAttributeValue = () => {
-    console.log('textValue', textValue);
-    // setAttributeValue(collectionAttribute, value);
-  };
-
-  const onSetAttributesMultiValue = (option: Array<{ title: string; id: number }>) => {
-    console.log('option multi', option);
-
-    /* const newAttributes = { ...attributes };
-
+  const onSetAttributeValue = (value: string) => {
     setAttributes({
-      ...newAttributes,
-      [tokenField.name]: [
-        ...(option as unknown as Array<{ title: string; id: string }>).map(
-          (optionItem: { title: string; id: string }) => optionItem.title,
-        ),
-      ] as string[],
-    }); */
-
-    // setValue(option.map((item) => item.id.toString()));
-  };
-
-  const onSelectAttributeValue = (option: SelectOptionProps) => {
-    console.log('option', option);
-
-    const newAttributes = { ...attributes };
-
-    setAttributes({
-      ...newAttributes,
-      [tokenField.name]: [option.title as string],
+      ...attributes,
+      [tokenField.name]: value,
     });
+  };
+
+  const setAttributesFromSelect = (value: IOption) => {
+    setAttributes({
+      ...attributes,
+      [tokenField.name]: [value?.title],
+    });
+  };
+
+  const setAttributesFromMultiSelect = (value: IOption[]) => {
+    setAttributes({
+      ...attributes,
+      [tokenField.name]: value?.map((val) => val.title),
+    });
+  };
+
+  const onSetMultiSelectValue = (value: IOption[]) => {
+    setMultiSelectValue(value);
+
+    setAttributesFromMultiSelect(value);
+  };
+
+  const onSetSelectValue = (value: IOption) => {
+    setSelectValue(value);
+
+    setAttributesFromSelect(value);
   };
 
   const options = useMemo(() => {
     try {
       if (tokenField.type === 'select' && tokenField?.items?.length) {
-        return tokenField.items.map((val: string, index: number) => ({
-          title: JSON.parse(val).en,
-          id: index,
-        }));
+        return createOptionsByFiled(tokenField);
       }
     } catch (e) {
       console.log('token field parse error', e);
@@ -72,10 +84,9 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
     return [];
   }, [tokenField]);
 
-  /* const value =
-    tokenField.type === 'select' ? (attributes[tokenField.name] as string[]) : []; */
-
   console.log(
+    'attributes',
+    attributes,
     'selectValue',
     selectValue,
     'collectionField',
@@ -94,9 +105,10 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
           </LabelText>
           <InputText
             maxLength={maxLength}
-            value={textValue}
-            onChange={setTextValue}
-            onBlur={onSetAttributeValue}
+            value={
+              tokenField.type === 'text' ? (attributes[tokenField.name] as string) : ''
+            }
+            onChange={onSetAttributeValue}
           />
         </>
       )}
@@ -113,7 +125,7 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
               optionKey="id"
               optionValue="title"
               values={multiSelectValue?.map(({ id }) => id)}
-              onChange={(options: IOption[]) => setMultiSelectValue(options)}
+              onChange={(options: IOption[]) => onSetMultiSelectValue(options)}
             />
           )}
           {!tokenField.multi && (
@@ -122,7 +134,7 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
               optionKey="id"
               optionValue="title"
               value={selectValue?.id}
-              onChange={(option: IOption) => setSelectValue(option)}
+              onChange={(option: IOption) => onSetSelectValue(option)}
             />
           )}
         </>

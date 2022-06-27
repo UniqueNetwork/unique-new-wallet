@@ -18,7 +18,7 @@ export class TokenCreateMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = '/collection';
+    this.baseUrl = '/token';
 
     this.request = this.request.bind(this);
   }
