@@ -49,6 +49,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
           tokenId: token.token_id,
         });
         if (!tx) {
+          // TODO: move this message to general dictionary
           throw new Error('Unexpected error');
         }
 
@@ -62,6 +63,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
           setTxHash(submitResult.hash);
         }
       } catch (e) {
+        // TODO: move this message to general dictionary
         error('Transfer cancelled');
         onClose();
       }

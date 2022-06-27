@@ -19,6 +19,7 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({ isVisible, onBurn, onClos
       buttons={[{ title: 'Confirm', role: 'primary', onClick: onBurn }]}
       onClose={onClose}
     >
+      {/* TODO: get fee from the API */}
       <Text size="m">You will not be able to undo this action.</Text>
       <TextStyled color="additional-warning-500" size="s">
         A fee of ~ 2.073447 QTZ can be applied to the transaction
@@ -35,16 +36,4 @@ const TextStyled = styled(Text)`
   border-radius: 4px;
   background-color: ${AdditionalWarning100};
   width: 100%;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: calc(var(--prop-gap) * 1.5);
-`;
-
-const HeadingWrapper = styled.div`
-  && h2 {
-    margin-bottom: calc(var(--prop-gap) * 2);
-  }
 `;
