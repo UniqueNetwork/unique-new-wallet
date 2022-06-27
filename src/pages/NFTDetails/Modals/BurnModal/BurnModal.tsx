@@ -6,6 +6,7 @@ import { useExtrinsicSubmit, ViewToken } from '@app/api';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useExtrinsicStatus } from '@app/api/restApi/extrinsic/hooks/useExtrinsicStatus';
 import { useTokenBurn } from '@app/api/restApi/token/hooks/useTokenBurn';
+import { BurnTokenBody } from '@app/types/Api';
 
 interface BurnModalProps {
   isVisible: boolean;
@@ -22,6 +23,7 @@ export const BurnModal: VFC<BurnModalProps> = ({
 }) => {
   const { selectedAccount, signMessage } = useAccounts();
   const { tokenBurn } = useTokenBurn();
+  const [tokenBurnBody, setTokenBurnBody] = useState<BurnTokenBody | undefined>();
   const { submitExtrinsic } = useExtrinsicSubmit();
   const { info, error } = useNotifications();
   const [status, setStatus] = useState<'ask-burn' | 'burn-stages'>('ask-burn');
@@ -30,17 +32,13 @@ export const BurnModal: VFC<BurnModalProps> = ({
   const { data: extrinsicStatus } = useExtrinsicStatus(txHash);
 
   const onBurn = async () => {
-    if (!token || !selectedAccount?.address) {
+    if (!tokenBurnBody) {
       return;
     }
 
     setStatus('burn-stages');
     try {
-      const tx = await tokenBurn({
-        address: selectedAccount.address,
-        collectionId: token.collection_id,
-        tokenId: token.token_id,
-      });
+      const tx = await tokenBurn(tokenBurnBody);
       if (!tx) {
         // TODO: move this message to general dictionary
         throw new Error('Unexpected error');
@@ -77,6 +75,19 @@ export const BurnModal: VFC<BurnModalProps> = ({
     }
   }, [extrinsicStatus]);
 
+  useEffect(() => {
+
+    if (!selectedAccount || !token) {
+      return;
+    }
+
+    setTokenBurnBody({
+      address: selectedAccount.address,
+      collectionId: token.collection_id,
+      tokenId: token.token_id,
+    });
+  }, [selectedAccount]);
+
   if (!selectedAccount || !token) {
     return null;
   }
@@ -85,6 +96,7 @@ export const BurnModal: VFC<BurnModalProps> = ({
     return (
       <AskBurnModal
         isVisible={isVisible}
+        tokenBurnBody={tokenBurnBody}
         onBurn={() => {
           void onBurn();
         }}

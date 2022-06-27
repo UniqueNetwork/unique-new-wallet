@@ -1,20 +1,36 @@
-import React, { VFC } from 'react';
+import React, { useEffect, VFC } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { AdditionalWarning100 } from '@app/styles/colors';
 import { Confirm } from '@app/components';
 import { useFee } from '@app/hooks';
+import { useTokenBurn } from '@app/api/restApi/token/hooks/useTokenBurn';
+import { UnsignedExtrinsicDTO } from '@app/types';
+import { BurnTokenBody } from '@app/types/Api';
 
 interface AskBurnModalProps {
   isVisible: boolean;
+  tokenBurnBody?: BurnTokenBody;
   onBurn(): void;
   onClose(): void;
 }
 
-export const AskBurnModal: VFC<AskBurnModalProps> = ({ isVisible, onBurn, onClose }) => {
+export const AskBurnModal: VFC<AskBurnModalProps> = ({ isVisible, onBurn, onClose, tokenBurnBody }) => {
 
+  const { tokenBurn } = useTokenBurn();
   const { fee, calculate } = useFee();
+
+  useEffect(() => {
+
+    if (!tokenBurnBody) {
+      return;
+    }
+
+    tokenBurn(tokenBurnBody).then((extrinsic) => {
+      calculate(extrinsic as UnsignedExtrinsicDTO);
+    });
+  }, [tokenBurnBody]);
 
   return (
     <Confirm
