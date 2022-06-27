@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Checkbox } from '@unique-nft/ui-kit';
 
+import { getTokenIpfsUriByImagePath } from '@app/utils';
+
 export interface CollectionFilterItemComponentProps {
   id: number;
   icon: string;
@@ -30,7 +32,7 @@ const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
       <Checkbox
         label={label}
         checked={checked}
-        iconLeft={{ size: 15, file: icon }}
+        iconLeft={{ size: 15, file: getTokenIpfsUriByImagePath(icon) }}
         onChange={onChangeHandler}
       />
     </div>
