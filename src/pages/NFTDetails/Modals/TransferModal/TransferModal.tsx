@@ -92,7 +92,13 @@ export const TransferModal: VFC<TransferModalProps> = ({
 
   if (status === 'ask-transfer') {
     return (
-      <AskTransferModal isVisible={isVisible} onTransfer={onTransfer} onClose={onClose} />
+      <AskTransferModal
+        isVisible={isVisible}
+        onTransfer={(receiver) => {
+          void onTransfer(receiver);
+        }}
+        onClose={onClose}
+      />
     );
   }
   if (status === 'transfer-stages') {

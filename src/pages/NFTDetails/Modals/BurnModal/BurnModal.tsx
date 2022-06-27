@@ -42,7 +42,6 @@ export const BurnModal: VFC<BurnModalProps> = ({
         tokenId: token.token_id,
       });
       if (!tx) {
-
         // TODO: move this message to general dictionary
         throw new Error('Unexpected error');
       }
@@ -83,7 +82,15 @@ export const BurnModal: VFC<BurnModalProps> = ({
   }
 
   if (status === 'ask-burn') {
-    return <AskBurnModal isVisible={isVisible} onBurn={onBurn} onClose={onClose} />;
+    return (
+      <AskBurnModal
+        isVisible={isVisible}
+        onBurn={() => {
+          void onBurn();
+        }}
+        onClose={onClose}
+      />
+    );
   }
   if (status === 'burn-stages') {
     return <BurnStagesModal />;
