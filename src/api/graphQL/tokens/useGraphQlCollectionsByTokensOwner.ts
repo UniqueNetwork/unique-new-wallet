@@ -9,7 +9,13 @@ type CollectionsByTokensOwnerResponse = {
 const COLLECTIONS_BY_TOKENS_OWNER = gql`
   query Collections($owner: String) {
     view_tokens(
-      where: { _or: [{ owner: { _eq: $owner } }, { collection_owner: { _eq: $owner } }] }
+      where: {
+        _or: [
+          { owner: { _eq: $owner } }
+          { owner_normalized: { _eq: $owner } }
+          { collection_owner: { _eq: $owner } }
+        ]
+      }
       distinct_on: collection_id
     ) {
       collection_cover

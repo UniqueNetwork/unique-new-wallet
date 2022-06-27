@@ -4,6 +4,7 @@ import { ApolloProvider } from '@apollo/client';
 import { Chain } from '@app/types';
 import { BaseApi, IBaseApi } from '@app/api';
 import { networks } from '@app/utils';
+import { DefaultNetworkKey } from '@app/account/constants';
 
 import { GqlClient } from './graphQL/gqlClient';
 import { ApiContextProps, ApiProvider } from './ApiContext';
@@ -20,7 +21,15 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
   const [currentChain, setCurrentChain] = useState<Chain>();
 
   const selectDefaultNetwork = useCallback(() => {
-    setCurrentChain(networks[0]);
+    setCurrentChain(
+      networks.find(({ id }) => {
+        const defaultNetworkId = localStorage.getItem(DefaultNetworkKey);
+        if (!defaultNetworkId) {
+          return true;
+        }
+        return id === defaultNetworkId;
+      }) || networks[0],
+    );
   }, []);
 
   // get context value for ApiContext
@@ -36,6 +45,7 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
   useEffect(() => {
     if (currentChain) {
       setApiInstance(new BaseApi(currentChain?.apiEndpoint));
+      localStorage.setItem(DefaultNetworkKey, currentChain.id);
     }
   }, [currentChain]);
 

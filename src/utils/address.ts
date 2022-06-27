@@ -18,7 +18,7 @@ export const getTokenIpfsUriByImagePath = (imagePath: string | null): string => 
       return `${IPFSGateway}/${deserializedImagePath.ipfs}`;
     }
   } catch (error) {
-    console.error(error);
+    console.warn(error);
   }
 
   return '';

@@ -1,5 +1,4 @@
-import { memo, VFC } from 'react';
-import classNames from 'classnames';
+import { memo, useMemo, VFC } from 'react';
 import styled from 'styled-components';
 import {
   Button,
@@ -10,31 +9,19 @@ import {
   Icon,
 } from '@unique-nft/ui-kit';
 
+import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
+
 interface NFTDetailsHeaderProps {
   title?: string;
-  subtitle?: string;
+  ownerAddress?: string;
+  isCurrentAccountOwner?: boolean;
   className?: string;
+  onShowModal(modal: TNFTModalType): void;
 }
 
-const options: SelectOptionProps[] = [
-  {
-    id: 1,
-    title: 'Share',
-    icon: {
-      name: 'shared',
-      size: 12,
-    },
-  },
-  {
-    id: 2,
-    title: 'Burn NFT',
-    color: 'var(--color-coral-500)',
-    icon: {
-      name: 'burn',
-      size: 12,
-    },
-  },
-];
+interface MenuOptionItem extends SelectOptionProps {
+  id: TNFTModalType;
+}
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -69,22 +56,68 @@ const MenuOption = (option: SelectOptionProps) => {
 
 const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   title = '',
-  subtitle,
+  ownerAddress,
+  isCurrentAccountOwner,
   className,
+  onShowModal,
 }) => {
+  const options = useMemo(() => {
+    const items: SelectOptionProps[] = [
+      {
+        id: 'share',
+        title: 'Share',
+        icon: {
+          name: 'shared',
+          size: 12,
+        },
+      },
+    ];
+
+    if (isCurrentAccountOwner) {
+      items.push({
+        id: 'burn',
+        title: 'Burn NFT',
+        color: 'var(--color-coral-500)',
+        icon: {
+          name: 'burn',
+          size: 12,
+        },
+      });
+    }
+
+    return items;
+  }, [isCurrentAccountOwner]);
+
   return (
     <HeaderContainer className={className}>
       <HeaderContent>
         <Heading size="1">{title}</Heading>
         <Text size="s" weight="light" color="grey-500">
-          {subtitle}
+          {isCurrentAccountOwner ? (
+            'You own it'
+          ) : (
+            <>
+              Owned by{' '}
+              <Text size="s" weight="light" color="primary-500">
+                {ownerAddress}
+              </Text>
+            </>
+          )}
         </Text>
-        <Button className="transfer-btn" title="Transfer" role="outlined" />
+        {isCurrentAccountOwner && (
+          <Button
+            className="transfer-btn"
+            title="Transfer"
+            role="outlined"
+            onClick={() => onShowModal('transfer')}
+          />
+        )}
       </HeaderContent>
       <Dropdown
         placement="right"
         options={options}
-        optionRender={(opt) => <MenuOption {...opt} />}
+        optionRender={(opt) => <MenuOption {...(opt as MenuOptionItem)} />}
+        onChange={(opt) => onShowModal((opt as MenuOptionItem).id)}
       >
         <Icon size={40} name="rounded-rectangle-more" />
       </Dropdown>

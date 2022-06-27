@@ -120,6 +120,7 @@ const CollectionSettings = () => {
 
             <ButtonsWrapper>
               <Button title="Save changes" disabled={true} type="submit" />
+              {/* TODO: WAL-343
               {ownerCanDestroy && (
                 <Button
                   title="Burn collection"
@@ -127,7 +128,7 @@ const CollectionSettings = () => {
                   role="ghost"
                   onClick={() => setVisibleConfirmModal(true)}
                 />
-              )}
+              )} */}
             </ButtonsWrapper>
           </form>
         )}

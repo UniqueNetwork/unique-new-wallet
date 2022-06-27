@@ -1,15 +1,15 @@
-import { title } from 'process';
-
-import React, { useCallback, useContext, useState, VFC } from 'react';
+import React, { useContext, useState, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { encodeAddress } from '@polkadot/util-crypto';
 
 import { PagePaper } from '@app/components';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import AccountContext from '@app/account/AccountContext';
 import { useGraphQlTokenById } from '@app/api/graphQL/tokens';
+import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
 
 import {
   CollectionInformation,
@@ -23,17 +23,27 @@ interface NFTDetailsProps {
 }
 
 const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
+  const { collectionId = '', tokenId = '' } = useParams();
   const { selectedAccount } = useContext(AccountContext);
-  const [searchParams] = useSearchParams();
+  const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
 
-  const tokenId = parseInt(searchParams.get('tokenId') ?? '');
-  const collectionId = parseInt(searchParams.get('collectionId') ?? '');
-
-  const { token, loading } = useGraphQlTokenById(tokenId, collectionId);
+  const { token, loading, refetch } = useGraphQlTokenById(
+    parseInt(tokenId),
+    parseInt(collectionId),
+  );
 
   const avatar = getTokenIpfsUriByImagePath(token?.image_path ?? '');
-  const owner =
-    selectedAccount?.address === token?.owner ? 'You own it' : `Owned by ${token?.owner}`;
+  const isCurrentAccountOwner =
+    selectedAccount?.address &&
+    token?.owner &&
+    encodeAddress(selectedAccount?.address) === encodeAddress(token?.owner);
+
+  const onModalClose = () => setCurrentModal('none');
+
+  const onComplete = () => {
+    refetch();
+    setCurrentModal('none');
+  };
 
   return (
     <PagePaper className={classNames(className, 'nft-page')}>
@@ -47,7 +57,12 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
             <Avatar size={536} src={avatar} />
           </div>
           <div className="nft-page__info-container">
-            <NFTDetailsHeader title={token?.token_name} subtitle={owner} />
+            <NFTDetailsHeader
+              title={token?.token_name}
+              ownerAddress={token?.owner}
+              isCurrentAccountOwner={isCurrentAccountOwner}
+              onShowModal={setCurrentModal}
+            />
             <Divider />
             <TokenInformation attributes={token?.data} />
             <Divider />
@@ -59,6 +74,12 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
           </div>
         </>
       )}
+      <NFTModals
+        modalType={currentModal}
+        token={token}
+        onComplete={onComplete}
+        onClose={onModalClose}
+      />
     </PagePaper>
   );
 };
@@ -66,7 +87,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
 export const NFTDetails = styled(NFTDetailsComponent)`
   display: flex;
   flex-direction: row;
-  align-items: flex-top;
+  align-items: flex-start;
   min-height: 500px;
 
   .nft-page {

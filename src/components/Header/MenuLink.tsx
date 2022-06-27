@@ -4,10 +4,10 @@ import { Link, useResolvedPath, useMatch } from 'react-router-dom';
 
 interface MenuLinkProps {
   name: string;
-  path: string;
+  path?: string;
 }
 
-export const MenuLink: VFC<MenuLinkProps> = ({ name, path }) => {
+export const MenuLink: VFC<MenuLinkProps> = ({ name, path = '' }) => {
   const resolved = useResolvedPath(path);
   const match = useMatch(`${resolved.pathname}/*`);
 
