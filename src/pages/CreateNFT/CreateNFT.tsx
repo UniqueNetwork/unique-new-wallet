@@ -1,25 +1,20 @@
 import React, { useContext, useState, VFC } from 'react';
 import classNames from 'classnames';
-import {
-  Avatar,
-  Button,
-  Heading,
-  InputText,
-  Select,
-  SelectOptionProps,
-  Suggest,
-  Upload,
-} from '@unique-nft/ui-kit';
+import get from 'lodash/get';
+import { Avatar, Button, Heading, Suggest, Upload } from '@unique-nft/ui-kit';
 
 import { Alert } from '@app/components';
-import { useAccounts, useFee } from '@app/hooks';
+import { useAccounts, useCollection, useFee } from '@app/hooks';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { Collection, useFileUpload } from '@app/api';
+import { Collection, useFileUpload, useTokenCreate } from '@app/api';
 import { getCoverURLFromCollection } from '@app/utils';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
-import { AttributeItemType, TokenAttribute } from '@app/types';
+import { AttributeItemType, TokenField } from '@app/types';
+import { TokenFormContext } from '@app/context';
+import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
 
 import {
+  Attributes,
   AdditionalText,
   ButtonGroup,
   Form,
@@ -30,7 +25,6 @@ import {
   UploadWidget,
   WrapperContent,
 } from './components';
-import { CollectionFormContext } from '../../context/CollectionFormContext/CollectionFormContext';
 
 interface Option {
   id: number;
@@ -45,19 +39,22 @@ interface ICreateNFTProps {
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { fee } = useFee();
-  const { setTokenImg, tokenImg } = useContext(CollectionFormContext);
+  const { setTokenImg, tokenImg } = useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
+  const { createToken } = useTokenCreate();
   const { uploadFile } = useFileUpload();
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [traits, setTraits] = useState<string[]>([]);
   const [name, setName] = useState('');
   const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
-  const [tokenConstAttributes, setTokenConstAttributes] = useState<{
-    [key: string]: TokenAttribute;
-  }>({});
   const { collections, collectionsLoading } = useGraphQlCollectionsByAccount(
     selectedAccount?.address ?? null,
   );
+  const collection = useCollection(selectedCollection?.id ?? 0);
+  const tokenFields = get(collection, 'properties.fields', []);
+
+  console.log('collection!!!', collection);
+
   const collectionsOptions: Option[] =
     collections?.map((collection: Collection) => ({
       id: collection.collection_id,
@@ -67,7 +64,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     })) ?? [];
 
   const setAttributeValue = (attribute: AttributeItemType, value: string | number[]) => {
-    setTokenConstAttributes(
+    /* setTokenConstAttributes(
       (prevAttributes: { [key: string]: TokenAttribute }) =>
         ({
           ...prevAttributes,
@@ -83,7 +80,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                 : prevAttributes[attribute.name].values,
           },
         } as { [key: string]: TokenAttribute }),
-    );
+    ); */
   };
 
   const uploadImage = async (file: Blob) => {
@@ -214,32 +211,17 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
               </UploadWidget>
             </FormRow>
             <Heading size="3">Attributes</Heading>
-            {/* <FormRow>
-              <InputText label="Name*" name="name" value={name} onChange={setName} />
-            </FormRow>
-            <FormRow>
-              <LabelText>Gender*</LabelText>
-              <Suggest
-                suggestions={genderOptions}
-                getSuggestionValue={(value) => value}
-                getActiveSuggestOption={(option: string, activeOption: string) =>
-                  option === activeOption
-                }
-              />
-            </FormRow>
-            <FormRow>
-              <Select
-                multi
-                label="Traits*"
-                options={traitOptions}
-                optionKey="id"
-                optionValue="title"
-                values={traits}
-                onChange={(options: SelectOptionProps[]) => {
-                  setTraits(options.map((option: any) => option.id as string));
-                }}
-              />
-            </FormRow> */}
+            <Attributes>
+              {tokenFields
+                .filter((tokenField: TokenField) => tokenField.name !== 'ipfsJson')
+                .map((tokenField: TokenField, index: number) => (
+                  <AttributesRow
+                    tokenField={tokenField}
+                    key={`${tokenField.name}-${index}`}
+                    maxLength={64}
+                  />
+                ))}
+            </Attributes>
             <Alert type="warning">
               {/* TODO - get fee from the API */}A fee of ~ {fee} QTZ can be applied to
               the transaction

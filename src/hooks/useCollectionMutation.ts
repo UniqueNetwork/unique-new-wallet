@@ -22,44 +22,47 @@ export const useCollectionMutation = () => {
   const { submitExtrinsic } = useExtrinsicSubmit();
   const { error, info } = useNotifications();
 
-  const converted: AttributeItemType[] =
-    convertArtificialAttributesToProtobuf(attributes);
-  const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
-
-  const collectionFull: NftCollectionDTO = {
-    address: selectedAccount?.address ?? '',
-    description: mainInformationForm.values.description ?? '',
-    limits: {
-      ownerCanDestroy,
-      ownerCanTransfer,
-      tokenLimit: tokenLimit ?? 0,
-    },
-    metaUpdatePermission: 'ItemOwner',
-    mode: 'Nft',
-    name: mainInformationForm.values.name ?? '',
-    properties: {
-      offchainSchema: '',
-      schemaVersion: 'Unique',
-      variableOnChainSchema: '{}',
-      constOnChainSchema: protobufJson,
-    },
-    tokenPrefix: mainInformationForm.values.tokenPrefix ?? '',
-    permissions: {
-      access: 'Normal',
-      mintMode: true,
-      nesting: 'Disabled',
-    },
-    tokenPropertyPermissions: {
-      constData: {
-        mutable: true,
-        collectionAdmin: true,
-        tokenOwner: true,
-      },
-    },
-  };
-
   // TODO - add error handler for low balance - Error. Balance too low
   const onCreateCollection = async () => {
+    const converted: AttributeItemType[] =
+      convertArtificialAttributesToProtobuf(attributes);
+    const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
+    const varDataWithImage = {
+      collectionCover: mainInformationForm.values.coverImgAddress,
+    };
+
+    const collectionFull: NftCollectionDTO = {
+      address: selectedAccount?.address ?? '',
+      description: mainInformationForm.values.description ?? '',
+      limits: {
+        ownerCanDestroy,
+        ownerCanTransfer,
+        tokenLimit: tokenLimit ?? 0,
+      },
+      metaUpdatePermission: 'ItemOwner',
+      mode: 'Nft',
+      name: mainInformationForm.values.name ?? '',
+      properties: {
+        offchainSchema: '',
+        schemaVersion: 'Unique',
+        variableOnChainSchema: JSON.stringify(varDataWithImage),
+        constOnChainSchema: protobufJson,
+      },
+      tokenPrefix: mainInformationForm.values.tokenPrefix ?? '',
+      permissions: {
+        access: 'Normal',
+        mintMode: true,
+        nesting: 'Disabled',
+      },
+      tokenPropertyPermissions: {
+        constData: {
+          mutable: true,
+          collectionAdmin: true,
+          tokenOwner: true,
+        },
+      },
+    };
+
     setSsCreatingCollection(true);
 
     const createResp = await createCollection(collectionFull);

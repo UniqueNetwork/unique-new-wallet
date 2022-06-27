@@ -18,20 +18,16 @@ export interface CollectionFormProps {
   coverImgFile: Blob | null;
   imgAddress?: string;
   mainInformationForm: FormikProps<MainInformationInitialValues>;
-  mintFest: boolean;
   ownerCanDestroy: boolean;
   ownerCanTransfer: boolean;
   setAttributes: (
     attributes: ArtificialAttributeItemType[] | AttributesCallBackType,
   ) => void;
   setCoverImgFile: (coverImg: Blob | null) => void;
-  setMintFest: (mintFest: boolean) => void;
   setOwnerCanDestroy: (ownerCanDestroy: boolean) => void;
   setOwnerCanTransfer: (ownerCanTransfer: boolean) => void;
-  setTokenImg: (tokenImg: Blob | null) => void;
   setTokenLimit: (tokenLimit: number) => void;
   setVariableSchema: (variableSchema: string) => void;
-  tokenImg: Blob | null;
   tokenLimit: number;
   variableSchema: string;
 }

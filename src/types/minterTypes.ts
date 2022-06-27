@@ -17,6 +17,19 @@ export enum MinterType {
 export type ArtificialFieldType = 'string' | 'enum' | 'repeated';
 export type ArtificialFieldRuleType = 'optional' | 'required';
 
+export type TokenField = {
+  id: number;
+  type: 'select' | 'text';
+  name: string;
+  multi: boolean;
+  items?: string[];
+  required: boolean;
+};
+
+export type TokenAttributes = {
+  [key: string]: string | string[];
+};
+
 export type AttributeItemType = {
   id: number;
   fieldType: FieldType;
@@ -33,16 +46,11 @@ export type ArtificialAttributeItemType = {
   values: string[];
 };
 
-export type TokenAttribute = {
-  name: string;
-  value?: string | number;
-  values?: number[];
-};
-
 export type EnumElemType = {
   options: { [key: string]: string };
   values: { [key: string]: number };
 };
+
 export type NFTMetaType = {
   fields: {
     [key: string]: {

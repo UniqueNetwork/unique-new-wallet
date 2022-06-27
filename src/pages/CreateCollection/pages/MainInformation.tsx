@@ -12,8 +12,7 @@ export interface MainInformationComponentProps {
 }
 
 const MainInformationComponent: VFC<MainInformationComponentProps> = ({ className }) => {
-  const { coverImgFile, mainInformationForm, setCoverImgFile } =
-    useContext(CollectionFormContext);
+  const { mainInformationForm, setCoverImgFile } = useContext(CollectionFormContext);
   const { uploadFile } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 

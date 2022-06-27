@@ -34,8 +34,6 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
   const [ownerCanDestroy, setOwnerCanDestroy] = useState<boolean>(true);
   const [tokenLimit, setTokenLimit] = useState<number>(0);
   const [variableSchema, setVariableSchema] = useState<string>('');
-  const [tokenImg, setTokenImg] = useState<Blob | null>(null);
-  const [mintFest, setMintFest] = useState<boolean>(false);
 
   const mainInformationDefaultValues: MainInformationInitialValues = {
     name: undefined,
@@ -68,18 +66,14 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
       attributes,
       coverImgFile,
       mainInformationForm,
-      mintFest,
       ownerCanDestroy,
       ownerCanTransfer,
       setAttributes,
       setCoverImgFile,
-      setMintFest,
       setOwnerCanDestroy,
       setOwnerCanTransfer,
-      setTokenImg,
       setTokenLimit,
       setVariableSchema,
-      tokenImg,
       tokenLimit,
       variableSchema,
     }),
@@ -87,10 +81,8 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
       attributes,
       coverImgFile,
       mainInformationForm,
-      mintFest,
       ownerCanDestroy,
       ownerCanTransfer,
-      tokenImg,
       tokenLimit,
       variableSchema,
     ],

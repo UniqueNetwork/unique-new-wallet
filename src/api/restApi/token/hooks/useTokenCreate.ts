@@ -1,6 +1,6 @@
 import { useApiMutation } from '@app/api';
 import { NftTokenDTO } from '@app/types';
-import { useApi, useMessage} from '@app/hooks';
+import { useApi, useMessage } from '@app/hooks';
 
 import { TokenApiService } from '../TokenApiService';
 

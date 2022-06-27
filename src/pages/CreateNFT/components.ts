@@ -108,8 +108,12 @@ export const LabelText = styled(Text).attrs({
   weight: 'bold',
 })`
   display: block;
-  margin-bottom: calc(var(--prop-gap) / 4);
+  margin-bottom: var(--prop-gap);
   font-weight: 600;
+`;
+
+export const Attributes = styled.div`
+  margin-bottom: calc(var(--prop-gap) * 2);
 `;
 
 export const AdditionalText = styled(Text).attrs({ size: 's', color: 'grey-500' })`
@@ -181,7 +185,9 @@ export const Form = styled.form`
 `;
 
 export const FormRow = styled.div`
-  &:not(:last-child) {
-    margin-bottom: calc(var(--prop-gap) * 2);
+  margin-bottom: calc(var(--prop-gap) * 2);
+
+  &:last-child {
+    margin-bottom: 0;
   }
 `;
