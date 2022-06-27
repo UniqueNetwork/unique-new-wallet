@@ -1,20 +1,24 @@
-import React, { VFC, useContext, useCallback, useState } from 'react';
+import React, { VFC, useContext, useCallback, useState, useEffect } from 'react';
 import classNames from 'classnames';
 import { Heading, InputText, Button, Textarea, Text, Upload } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { CollectionFormContext } from '@app/context';
 import { Alert, CollectionStepper, Confirm } from '@app/components';
-import { useFileUpload } from '@app/api';
+import { useCollectionCreate, useFileUpload } from '@app/api';
+import { NftCollectionDTO, UnsignedExtrinsicDTO } from '@app/types';
+import { useFee } from '@app/hooks';
 
 export interface MainInformationComponentProps {
   className?: string;
 }
 
 const MainInformationComponent: VFC<MainInformationComponentProps> = ({ className }) => {
-  const { coverImgFile, mainInformationForm, setCoverImgFile } =
+  const { mainInformationForm, setCoverImgFile } =
     useContext(CollectionFormContext);
   const { uploadFile } = useFileUpload();
+  const { createCollection } = useCollectionCreate();
+  const { fee, calculate } = useFee();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
   const { dirty, submitForm, isValid, setFieldValue, values, errors, touched } =
@@ -86,6 +90,15 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
     }
   };
 
+  useEffect(() => {
+
+    (async() => {
+      const extrinsic = await createCollection({} as NftCollectionDTO);
+      calculate(extrinsic as UnsignedExtrinsicDTO);
+    })();
+
+  }, []);
+
   return (
     <div className={classNames('main-information', className)}>
       <CollectionStepper activeStep={1} onClickStep={onClickStep} />
@@ -134,7 +147,7 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
             />
           </div>
           <Alert type="warning" className="alert-wrapper">
-            {/* TODO - get fee from the API */}A fee of ~ 2.073447 QTZ can be applied to
+            A fee of ~ {fee} can be applied to
             the transaction
           </Alert>
           <div className="main-information-button">
