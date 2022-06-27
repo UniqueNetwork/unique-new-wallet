@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { AdditionalWarning100 } from '@app/styles/colors';
 import { Confirm } from '@app/components';
+import { useFee } from '@app/hooks';
 
 interface AskBurnModalProps {
   isVisible: boolean;
@@ -12,6 +13,9 @@ interface AskBurnModalProps {
 }
 
 export const AskBurnModal: VFC<AskBurnModalProps> = ({ isVisible, onBurn, onClose }) => {
+
+  const { fee, calculate } = useFee();
+
   return (
     <Confirm
       isVisible={isVisible}
@@ -19,10 +23,9 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({ isVisible, onBurn, onClos
       buttons={[{ title: 'Confirm', role: 'primary', onClick: onBurn }]}
       onClose={onClose}
     >
-      {/* TODO: get fee from the API */}
       <Text size="m">You will not be able to undo this action.</Text>
       <TextStyled color="additional-warning-500" size="s">
-        A fee of ~ 2.073447 QTZ can be applied to the transaction
+        A fee of ~ {fee} can be applied to the transaction
       </TextStyled>
     </Confirm>
   );

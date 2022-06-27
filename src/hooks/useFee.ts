@@ -1,4 +1,3 @@
-import { QueryClient } from 'react-query';
 import { useState } from 'react';
 
 import { EndpointMutation } from '@app/api/restApi/request';
@@ -40,7 +39,7 @@ export const useFee = (): {
   calculate: (extrinsic: UnsignedExtrinsicDTO) => void;
 } => {
   const { api } = useApi();
-  const [fee, setFee] = useState<string>('');
+  const [fee, setFee] = useState<string>('...');
 
   const feeMutation = useApiMutation({
     endpoint: new CalculateFeeMutation(),

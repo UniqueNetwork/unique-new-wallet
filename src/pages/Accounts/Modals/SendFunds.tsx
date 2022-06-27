@@ -78,7 +78,7 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   onClose,
 }) => {
   const { accounts, selectedAccount } = useAccounts();
-  const { fee } = useFee();
+  const { fee, calculate } = useFee();
 
   const [sender, setSender] = useState<Account | undefined>(
     senderAccount || selectedAccount,
@@ -176,9 +176,8 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
           </InputAmount>
         </ContentRow>
         <ContentRow>
-          {/* TODO: get fee from REST https://cryptousetech.atlassian.net/browse/SDK-50 */}
           <TextWarning color="additional-warning-500" size="s">
-            A fee of ~ {fee} testUNQ can be applied to the transaction, unless the
+            A fee of ~ {fee} can be applied to the transaction, unless the
             transaction is sponsored
           </TextWarning>
         </ContentRow>

@@ -1,4 +1,4 @@
-import React, { VFC, useContext, useMemo, useState } from 'react';
+import React, { VFC, useContext, useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import {
@@ -19,8 +19,9 @@ import {
   StatusTransactionModal,
 } from '@app/components';
 import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
-import { useCollectionMutation } from '@app/hooks';
-import { ArtificialAttributeItemType } from '@app/types';
+import { useCollectionMutation, useFee } from '@app/hooks';
+import { ArtificialAttributeItemType, NftCollectionDTO, UnsignedExtrinsicDTO } from '@app/types';
+import { useCollectionCreate } from '@app/api';
 
 export interface NFTAttributesComponentProps {
   className?: string;
@@ -41,6 +42,8 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
   const navigate = useNavigate();
   const { isCreatingCollection, onCreateCollection } = useCollectionMutation();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
+  const { fee, calculate } = useFee();
+  const collectionCreate = useCollectionCreate();
 
   const onPreviousStepClick = () => {
     navigate('/create-collection/main-information');
@@ -87,6 +90,15 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
     [attributes],
   );
 
+  useEffect(() => {
+
+    (async() => {
+      const extrinsic = await collectionCreate.createCollection({} as NftCollectionDTO);
+      calculate(extrinsic as UnsignedExtrinsicDTO);
+    })();
+
+  }, []);
+
   return (
     <div className={classNames('main-information', className)}>
       <CollectionStepper activeStep={2} onClickStep={onPreviousStepClick} />
@@ -127,7 +139,7 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
           </AdvancedSettingsWrapper>
         </AdvancedSettingsAccordion>
         <Alert type="warning" className="alert-wrapper">
-          {/* TODO - get fee from the API */}A fee of ~ 2.073447 QTZ can be applied to the
+          A fee of ~ {fee} can be applied to the
           transaction
         </Alert>
         <div className="nft-attributes-buttons">

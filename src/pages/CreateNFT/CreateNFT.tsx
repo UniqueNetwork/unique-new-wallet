@@ -307,7 +307,7 @@ const SuggestOption = styled.div`
 `;
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
-  const { fee } = useFee();
+  const { fee, calculate } = useFee();
   const [traits, setTraits] = useState<string[]>([]);
   const [name, setName] = useState('');
   const [selectedCollection, setSelectedCollection] = useState<any>();
@@ -380,7 +380,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
               />
             </FormRow>
             <Alert type="warning">
-              A fee of ~ {fee} QTZ can be applied to the transaction
+              A fee of ~ {fee} can be applied to the transaction
             </Alert>
             <ButtonGroup>
               <Button disabled={false} title="Confirm and create more" role="primary" />

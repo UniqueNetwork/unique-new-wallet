@@ -1,4 +1,5 @@
 import { Button, Heading, Modal, Text, ModalProps } from '@unique-nft/ui-kit';
+import { useEffect } from 'react';
 
 import { Alert } from '@app/components';
 import {
@@ -6,6 +7,7 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { useFee } from '@app/hooks';
 
 type BurnCollectionModalProps = Omit<ModalProps, 'children'> & {
   onConfirm(): void;
@@ -15,21 +17,30 @@ type BurnCollectionModalProps = Omit<ModalProps, 'children'> & {
 export const BurnCollectionModal = ({
   onConfirm,
   ...modalProps
-}: BurnCollectionModalProps) => (
-  <Modal {...modalProps} isClosable={true}>
-    <ModalContent>
-      <ContentRow>
-        <Heading size="2">Burn collection</Heading>
-        <Text>You will not be able to undo this action.</Text>
-      </ContentRow>
-      <ContentRow>
-        <Alert type="warning">
-          A fee of ~ 2.073447 QTZ can be applied to the transaction
-        </Alert>
-      </ContentRow>
-      <ModalFooter>
-        <Button role="primary" title="Confirm" onClick={onConfirm} />
-      </ModalFooter>
-    </ModalContent>
-  </Modal>
-);
+}: BurnCollectionModalProps) => {
+  const { fee, calculate } = useFee();
+
+  useEffect(() => {
+    (async () => {
+      // todo burn collection mutation
+      // calculate(extrinsic as UnsignedExtrinsicDTO);
+    })();
+  }, []);
+
+  return (
+    <Modal {...modalProps} isClosable={true}>
+      <ModalContent>
+        <ContentRow>
+          <Heading size="2">Burn collection</Heading>
+          <Text>You will not be able to undo this action.</Text>
+        </ContentRow>
+        <ContentRow>
+          <Alert type="warning">A fee of ~ {fee} can be applied to the transaction</Alert>
+        </ContentRow>
+        <ModalFooter>
+          <Button role="primary" title="Confirm" onClick={onConfirm} />
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
