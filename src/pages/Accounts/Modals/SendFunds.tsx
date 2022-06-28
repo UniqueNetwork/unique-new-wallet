@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState, VFC } from 'react';
+import React, { FC, useCallback, useLayoutEffect, useMemo, useState, VFC } from 'react';
 import {
   Avatar,
   Button,
@@ -16,11 +16,7 @@ import { Account } from '@app/account';
 import { NetworkType } from '@app/types';
 import { formatAmount, networksUrls } from '@app/utils';
 import { useAccounts, useFee } from '@app/hooks';
-import {
-  useAccountBalanceService,
-  useBalanceTransfer,
-  useExtrinsicSubmit,
-} from '@app/api';
+import { useAccountBalanceService, useExtrinsicSubmit } from '@app/api';
 import {
   AdditionalText,
   ModalHeader,
@@ -34,63 +30,27 @@ import {
 
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
-export type TransferFundsModalProps = {
-  networkType?: NetworkType;
+type TransferFundsModalProps = {
   isVisible: boolean;
-  senderAddress?: Account | undefined;
-  onFinish(): void;
+  networkType?: NetworkType;
+  senderAccount?: Account;
+  onClose: () => void;
+  onConfirm: (
+    senderAddress?: string,
+    destinationAddress?: string,
+    amount?: number,
+  ) => void;
 };
 
 export const TransferFundsModal: FC<TransferFundsModalProps> = ({
-  networkType,
-  isVisible,
-  senderAddress,
-  onFinish,
-}) => {
-  const [amount, setAmount] = useState<string>('');
-  const [recipient, setRecipient] = useState<string>('');
-  const [sender, setSender] = useState<string>('');
-  const [status, setStatus] = useState<'ask' | 'transfer-stage'>('ask');
-
-  const onTransfer = useCallback(
-    (_sender: string, _recipient: string, _amount: string) => {
-      setAmount(_amount);
-      setRecipient(_recipient);
-      setSender(_sender);
-    },
-    [setStatus, setRecipient, setAmount],
-  );
-
-  return (
-    <AskTransferFundsModal
-      networkType={networkType}
-      isVisible={isVisible}
-      senderAccount={senderAddress}
-      onFinish={onTransfer}
-      onClose={onFinish}
-    />
-  );
-};
-
-type AskSendFundsModalProps = {
-  isVisible: boolean;
-  networkType?: NetworkType;
-  senderAccount: Account | undefined;
-  onFinish(sender: string, recipient: string, amount: string): void;
-  onClose(): void;
-};
-
-export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
-  networkType,
-  isVisible,
-  onFinish,
   senderAccount,
+  networkType,
+  isVisible,
   onClose,
+  onConfirm,
 }) => {
   const { fee } = useFee();
-  const { accounts, selectedAccount, signMessage } = useAccounts();
-  const { transfer } = useBalanceTransfer();
-  const { submitExtrinsic } = useExtrinsicSubmit();
+  const { accounts, selectedAccount } = useAccounts();
 
   const [sender, setSender] = useState<Account | undefined>(
     senderAccount || selectedAccount,
@@ -129,29 +89,17 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
     [setAmount],
   );
 
-  const onSend = useCallback(async () => {
-    if (!sender || !recipient) {
-      return;
+  useLayoutEffect(() => {
+    if (isVisible) {
+      const body = document.getElementsByTagName('body')[0];
+
+      body.style.overflow = 'hidden';
+
+      return () => {
+        body.style.overflow = 'auto';
+      };
     }
-
-    const tx = await transfer({
-      address: sender?.address,
-      destination: recipient?.address.toString(),
-      amount: parseInt(amount),
-    });
-
-    const signature = await signMessage(tx.signerPayloadJSON);
-    const submitResult = await submitExtrinsic({
-      ...tx,
-      signature,
-    });
-
-    onFinish(
-      sender?.address || '',
-      recipient?.address.toString() || '',
-      amount.toString(),
-    );
-  }, [onFinish, recipient?.address, sender?.address, amount]);
+  }, [isVisible]);
 
   if (!accounts?.length) {
     return null;
@@ -221,7 +169,7 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
           role="primary"
           title="Confirm"
           onClick={() => {
-            onSend();
+            onConfirm(sender?.address, recipient?.address, parseInt(amount));
           }}
         />
       </ModalFooter>

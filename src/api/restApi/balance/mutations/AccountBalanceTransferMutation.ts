@@ -1,7 +1,8 @@
 import { QueryClient } from 'react-query';
 
-import { EndpointMutation, IBaseApi } from '@app/api';
-import { CollectionCreateResponse } from '@app/types';
+import { IBaseApi } from '@app/api';
+import { EndpointMutation } from '@app/api/restApi/request';
+import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 export type BalanceTransferRequestDTO = {
   address: string;
@@ -9,36 +10,36 @@ export type BalanceTransferRequestDTO = {
   amount: number;
 };
 
-interface Payload<TBody> {
+interface BalanceTransferPayload {
   api: IBaseApi;
-  body: TBody;
+  balanceTransfer: BalanceTransferRequestDTO;
 }
 
 export class AccountBalanceTransferMutation extends EndpointMutation<
-  any,
-  Payload<BalanceTransferRequestDTO>
+  UnsignedTxPayloadResponse,
+  BalanceTransferPayload
 > {
   protected baseUrl;
 
   constructor() {
     super();
 
-    this.baseUrl = '/balance';
+    this.baseUrl = '/balance/transfer';
 
     this.request = this.request.bind(this);
   }
 
-  async request(payload: Payload<BalanceTransferRequestDTO>): Promise<any> {
-    return payload.api.post<any, BalanceTransferRequestDTO>(
+  async request(payload: BalanceTransferPayload) {
+    return payload.api.post<UnsignedTxPayloadResponse, BalanceTransferRequestDTO>(
       `${this.baseUrl}`,
-      payload.body,
+      payload.balanceTransfer,
     );
   }
 
   afterMutationSuccess(
     queryClient: QueryClient,
-    data: CollectionCreateResponse,
-    payload: Payload<BalanceTransferRequestDTO>,
+    data: UnsignedTxPayloadResponse,
+    payload: BalanceTransferPayload,
   ) {
     // TODO - add notification here
     // invalidate category query here

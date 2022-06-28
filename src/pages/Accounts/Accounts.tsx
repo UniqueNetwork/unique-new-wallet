@@ -184,8 +184,9 @@ export const Accounts = () => {
       </AccountsPageContent>
       <TransferFundsModal
         isVisible={isOpenModal}
-        senderAddress={selectedAddress}
-        onFinish={onChangeAccountsFinish}
+        senderAccount={selectedAddress}
+        onClose={onChangeAccountsFinish}
+        onConfirm={() => {}} // I'll do handler here
       />
       <Confirm
         buttons={[

@@ -19,7 +19,7 @@ export const useBalanceTransfer = () => {
 
     return transferMutation.mutateAsync({
       api,
-      body: transferDTO,
+      balanceTransfer: transferDTO,
     });
   };
 

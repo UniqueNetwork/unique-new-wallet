@@ -1,4 +1,4 @@
-import React, { memo, useEffect, VFC } from 'react';
+import React, { memo, useEffect, useLayoutEffect, VFC } from 'react';
 import styled from 'styled-components';
 import { Modal } from '@unique-nft/ui-kit';
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
@@ -18,6 +18,18 @@ interface RampModalProps {
 }
 
 const RampModalComponent: VFC<RampModalProps> = ({ className, isVisible, onClose }) => {
+  useLayoutEffect(() => {
+    if (isVisible) {
+      const body = document.getElementsByTagName('body')[0];
+
+      body.style.overflow = 'hidden';
+
+      return () => {
+        body.style.overflow = 'auto';
+      };
+    }
+  }, [isVisible]);
+
   useEffect(() => {
     if (isVisible) {
       const rampContainer = document.getElementById(rampContainerId);
