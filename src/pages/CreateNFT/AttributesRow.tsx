@@ -108,7 +108,7 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
             {tokenField.name}
             {tokenField.required && '*'}
           </LabelText>
-          {tokenField.multi && (
+          {tokenField.multi ? (
             <Select
               multi
               name={tokenField.name}
@@ -118,8 +118,7 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
               values={multiSelectValue?.map(({ id }) => id)}
               onChange={(options: IOption[]) => onSetMultiSelectValue(options)}
             />
-          )}
-          {!tokenField.multi && (
+          ) : (
             <Select
               options={options}
               optionKey="id"

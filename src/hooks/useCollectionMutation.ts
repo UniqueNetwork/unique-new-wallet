@@ -63,6 +63,8 @@ export const useCollectionMutation = () => {
       },
     };
 
+    console.log('collectionFull', collectionFull);
+
     setSsCreatingCollection(true);
 
     const createResp = await createCollection(collectionFull);

@@ -5,7 +5,7 @@ import { Avatar, Button, Heading, Suggest, Upload } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { Alert, StatusTransactionModal } from '@app/components';
-import { useAccounts, useCollection, useFee, useTokenMutation } from '@app/hooks';
+import { useAccounts, useFee, useTokenMutation } from '@app/hooks';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection, useFileUpload } from '@app/api';
 import { getCoverURLFromCollection } from '@app/utils';
@@ -13,6 +13,7 @@ import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
 import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
+import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 
 import {
   Attributes,
@@ -51,7 +52,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { collections, collectionsLoading } = useGraphQlCollectionsByAccount(
     selectedAccount?.address ?? null,
   );
-  const collection = useCollection(selectedCollection?.id ?? 0);
+  const { data: collection } = useCollectionQuery(selectedCollection?.id ?? 0);
   const { isCreatingNFT, onCreateNFT } = useTokenMutation(selectedCollection?.id ?? 0);
 
   const tokenFields = get(collection, 'properties.fields', []);

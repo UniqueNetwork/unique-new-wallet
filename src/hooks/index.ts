@@ -1,6 +1,5 @@
 export * from './useAccounts';
 export * from './useApi';
-export * from './useCollection';
 export * from './useCollectionCover';
 export * from './useCollections';
 export * from './useCollectionMutation';

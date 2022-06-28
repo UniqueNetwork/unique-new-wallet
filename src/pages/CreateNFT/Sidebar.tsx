@@ -2,9 +2,10 @@ import { Heading } from '@unique-nft/ui-kit';
 import React, { useContext, useMemo, VFC } from 'react';
 import get from 'lodash/get';
 
-import { useCollection, useCollectionCover } from '@app/hooks';
+import { useCollectionCover } from '@app/hooks';
 import { TokenFormContext } from '@app/context';
 import { TokenField } from '@app/types';
+import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 
 import { SidebarRow, WrapperSidebar } from './components';
 import { Card } from './Card';
@@ -20,7 +21,7 @@ export interface SidebarProps {
 
 export const Sidebar: VFC<SidebarProps> = ({ collectionId }) => {
   const { attributes, tokenImg } = useContext(TokenFormContext);
-  const collection = useCollection(collectionId ?? 0);
+  const { data: collection } = useCollectionQuery(collectionId ?? 0);
   const collectionCover = useCollectionCover(collection);
   const tokenFields = get(collection, 'properties.fields', []);
 
