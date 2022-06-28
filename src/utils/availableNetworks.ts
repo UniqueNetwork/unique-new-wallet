@@ -3,15 +3,14 @@ import { Chain, NetworkType } from '@app/types';
 
 export const networksUrls: Record<NetworkType, string | undefined> = {
   QTZ: config.quartzRestApiUrl,
-  OPL: config.uniqueRestApiUrl,
+  OPL: '',
   KSM: '',
-  UNQ: '',
+  UNQ: config.uniqueRestApiUrl,
 };
 
-// TODO - use urls from ENV
 export const networks: Chain[] = [
   {
-    apiEndpoint: 'https://web.uniquenetwork.dev/',
+    apiEndpoint: networksUrls.UNQ || '',
     id: 'quartz',
     name: 'Quartz',
     icon: {
