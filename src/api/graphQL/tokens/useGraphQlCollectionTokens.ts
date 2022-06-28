@@ -65,7 +65,10 @@ export const useGraphQlCollectionTokens = ({
       direction,
       where: {
         collection_id: { _eq: collectionId },
-        collection_owner: { _eq: collectionOwner },
+        _or: [
+          { collection_owner: { _eq: collectionOwner } },
+          { collection_owner_normalized: { _eq: collectionOwner } },
+        ],
         ...(type !== 'all' && { is_sold: { _eq: type === 'disowned' } }),
         ...getConditionBySearchText('token_name', search),
       },

@@ -1,11 +1,13 @@
 import React, { useEffect, useState, VFC } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
 import { useExtrinsicSubmit, ViewToken } from '@app/api';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useExtrinsicStatus } from '@app/api/restApi/extrinsic/hooks/useExtrinsicStatus';
 import { useTokenBurn } from '@app/api/restApi/token/hooks/useTokenBurn';
+import { ROUTE } from '@app/routes';
 
 interface BurnModalProps {
   isVisible: boolean;
@@ -20,6 +22,7 @@ export const BurnModal: VFC<BurnModalProps> = ({
   onClose,
   onComplete,
 }) => {
+  const navigate = useNavigate();
   const { selectedAccount, signMessage } = useAccounts();
   const { tokenBurn } = useTokenBurn();
   const { submitExtrinsic } = useExtrinsicSubmit();
@@ -70,6 +73,7 @@ export const BurnModal: VFC<BurnModalProps> = ({
     if (isCompleted) {
       onComplete();
       info('Transfer completed successfully');
+      navigate(ROUTE.MY_TOKENS);
     }
     if (isError) {
       error(errorMessage);

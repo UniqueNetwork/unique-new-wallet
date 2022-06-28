@@ -7,6 +7,7 @@ import { Button, InputText, Select } from '@unique-nft/ui-kit';
 import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
+import { ROUTE } from '@app/routes';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -62,7 +63,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
         }}
         title="Create an NFT"
         role="primary"
-        onClick={() => navigate('/create-nft')}
+        onClick={() => navigate(ROUTE.CREATE_NFT)}
       />
     </div>
   );
