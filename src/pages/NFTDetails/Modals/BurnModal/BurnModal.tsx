@@ -72,7 +72,7 @@ export const BurnModal: VFC<BurnModalProps> = ({
     const { isCompleted, isError, errorMessage } = extrinsicStatus;
     if (isCompleted) {
       onComplete();
-      info('Transfer completed successfully');
+      info('Burn token completed successfully');
       navigate(ROUTE.MY_TOKENS);
     }
     if (isError) {
