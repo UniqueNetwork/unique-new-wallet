@@ -9,6 +9,7 @@ export interface TokenFormProps {
   setAttributes: (attributes: TokenAttributes) => void;
   setTokenImg: (tokenImage: Blob | null) => void;
   tokenImg: Blob | null;
+  resetForm: () => void;
 }
 
 export const TokenFormContext: React.Context<TokenFormProps> = React.createContext(

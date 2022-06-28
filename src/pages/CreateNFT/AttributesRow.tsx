@@ -84,17 +84,6 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
     return [];
   }, [tokenField]);
 
-  console.log(
-    'attributes',
-    attributes,
-    'selectValue',
-    selectValue,
-    'collectionField',
-    tokenField,
-    'options',
-    options,
-  );
-
   return (
     <FormRow>
       {tokenField.type === 'text' && (
@@ -104,6 +93,7 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
             {attributes.rule === 'required' && '*'}
           </LabelText>
           <InputText
+            name={tokenField.name}
             maxLength={maxLength}
             value={
               tokenField.type === 'text' ? (attributes[tokenField.name] as string) : ''
@@ -121,6 +111,7 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
           {tokenField.multi && (
             <Select
               multi
+              name={tokenField.name}
               options={options}
               optionKey="id"
               optionValue="title"

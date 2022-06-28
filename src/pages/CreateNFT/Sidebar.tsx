@@ -19,37 +19,21 @@ export interface SidebarProps {
 }
 
 export const Sidebar: VFC<SidebarProps> = ({ collectionId }) => {
-  const { tokenImg } = useContext(TokenFormContext);
+  const { attributes, tokenImg } = useContext(TokenFormContext);
   const collection = useCollection(collectionId ?? 0);
   const collectionCover = useCollectionCover(collection);
   const tokenFields = get(collection, 'properties.fields', []);
-
-  console.log('collection!', collection, 'tokenFields', tokenFields);
 
   const fieldGroups = useMemo<TokenFieldGroup[]>(() => {
     const attrs: TokenFieldGroup[] = tokenFields
       ?.filter((field: TokenField) => field.name !== 'ipfsJson')
       .map((field: TokenField) => ({
         group: field.name,
-        values: [],
+        values: [attributes?.[field.name] ?? null],
       }));
-    /* [
-            { group: 'Name', values: ['Name'] },
-            { group: 'Gender', values: ['Female'] },
-            {
-              group: 'Traits',
-              values: [
-                'Eyes To The Right',
-                'Eyes To The Left',
-                'Eyes To The Up',
-                'Eyes To The Down',
-              ],
-            },
-          ]
-     */
 
     return attrs;
-  }, [tokenFields]);
+  }, [attributes, tokenFields]);
 
   if (!collection) {
     return null;

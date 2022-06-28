@@ -46,9 +46,9 @@ export const Card: VFC<IPreviewCard> = ({
                   <Text size="s" color="grey-500">
                     {item.group}
                   </Text>
-                  {item.values?.map((tag: string, n: number) => (
-                    <Tag label={tag} role="default" key={n} />
-                  ))}
+                  {item.values?.[0]?.length && (
+                    <Tag label={item.values.join(', ')} role="default" />
+                  )}
                 </AttributesGroup>
               );
             })}

@@ -1,7 +1,7 @@
 // Copyright 2017-2022 @polkadot/UseTech authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -19,22 +19,22 @@ export function TokenForm({ children }: Props): React.ReactElement<Props> | null
   const [attributes, setAttributes] = useState<TokenAttributes>({});
   const [tokenImg, setTokenImg] = useState<Blob | null>(null);
 
+  // TODO - move token to Formik
   const schema = Yup.object({
-    name: Yup.string().min(2, 'Too Short!').max(64, 'Too Long!').required('Required'),
-    description: Yup.string().min(2, 'Too Short!').max(256, 'Too Long!'),
-    tokenPrefix: Yup.string()
-      .min(2, 'Too Short!')
-      .max(4, 'Too Long!')
-      .required('Required'),
-    coverImgAddress: Yup.string(),
+    ipfsJson: Yup.string().required('Required'),
   });
+
+  const resetForm = useCallback(() => {
+    setAttributes({});
+    setTokenImg(null);
+  }, []);
 
   const tokenForm = useFormik({
     initialValues: {},
     validationSchema: schema,
     validateOnBlur: true,
     onSubmit: () => {
-      navigate('/create-collection/nft-attributes');
+      navigate('/');
     },
   });
 
@@ -45,8 +45,9 @@ export function TokenForm({ children }: Props): React.ReactElement<Props> | null
       setAttributes,
       setTokenImg,
       tokenImg,
+      resetForm,
     }),
-    [attributes, tokenForm, tokenImg],
+    [attributes, tokenForm, tokenImg, resetForm],
   );
 
   return <TokenFormContext.Provider value={value}>{children}</TokenFormContext.Provider>;
