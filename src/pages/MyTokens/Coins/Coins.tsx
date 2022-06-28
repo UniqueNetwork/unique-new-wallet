@@ -31,6 +31,8 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
 
+  // todo: repair balance after changing models
+
   const { isLoading: qtzLoading, data: qtzBalance } = useAccountBalanceService(
     selectedAccount?.address,
     config.quartzRestApiUrl,
@@ -131,7 +133,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           iconName="chain-kusama"
           name="Kusama"
           symbol="KSM"
-          onSend={() => {}}
+          onSend={sendFundsHandler}
           onGet={getCoinsHandler}
         />
         <CoinsRow
@@ -143,7 +145,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           iconName="chain-unique"
           name="Unique network"
           symbol="UNQ"
-          onSend={() => {}}
+          onSend={sendFundsHandler}
           onGet={getCoinsHandler}
         />
       </CoinsContainer>
