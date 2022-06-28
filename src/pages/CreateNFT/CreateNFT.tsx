@@ -8,7 +8,7 @@ import { Alert, StatusTransactionModal } from '@app/components';
 import { useAccounts, useFee, useTokenMutation } from '@app/hooks';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection, useFileUpload } from '@app/api';
-import { getCoverURLFromCollection } from '@app/utils';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
@@ -49,7 +49,7 @@ const defaultOptions = {
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { fee } = useFee();
-  const { attributes, setAttributes, setTokenImg, tokenImg, resetForm } =
+  const { attributes, setAttributes, setTokenImg, resetForm } =
     useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
   const { uploadFile } = useFileUpload();
@@ -72,7 +72,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
       id: collection.collection_id,
       title: collection.name,
       description: collection.description,
-      img: getCoverURLFromCollection(collection),
+      img: getTokenIpfsUriByImagePath(collection.collection_cover),
     })) ?? [];
 
   const uploadImage = async (file: Blob) => {
@@ -151,11 +151,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                             isActive,
                           })}
                         >
-                          <Avatar
-                            size={24}
-                            src={tokenImg ? URL.createObjectURL(tokenImg) : ''}
-                            type="circle"
-                          />
+                          <Avatar size={24} src={suggestion.img || ''} type="circle" />
                           {suggestion?.title} [id {suggestion?.id}]
                         </SuggestOption>
                       );
