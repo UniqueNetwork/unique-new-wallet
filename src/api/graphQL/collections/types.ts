@@ -1,9 +1,22 @@
-import { Nullable, ProtobufAttributeType } from '@app/types';
+import { Nullable, Pagination, ProtobufAttributeType } from '@app/types';
+import { Direction } from '@app/api/graphQL/tokens';
 
 export type SchemaVersion = 'ImageURL' | 'Unique';
 
 export type VariableOnChainSchema = {
   collectionCover?: string;
+};
+
+export type TOrderBy = {
+  collection_id?: Direction;
+  tokens_count?: Direction;
+};
+
+export type OptionsAccountCollection = {
+  skip?: boolean;
+  order?: TOrderBy;
+  pagination: Pagination;
+  search?: string;
 };
 
 // can be common and extendeble for othe API methods to collections table
@@ -16,7 +29,19 @@ export interface Collection {
   schema_version: SchemaVersion;
   const_on_chain_schema?: ProtobufAttributeType;
   variable_on_chain_schema?: VariableOnChainSchema;
+  owner_normalized: string;
+  collection_cover: string;
+  tokens_count: number;
 }
+
+export type AccountCollectionsData = {
+  view_collections: Collection[];
+  view_collections_aggregate: {
+    aggregate: {
+      count: number;
+    };
+  };
+};
 
 export interface ViewCollection {
   collection_cover: string;
@@ -38,6 +63,10 @@ export interface CollectionsVariables {
   limit?: number;
   offset?: number;
   where?: Record<string, unknown>;
+}
+
+export interface AccountCollectionsVariables extends CollectionsVariables {
+  order_by?: TOrderBy;
 }
 
 export interface CollectionsData {

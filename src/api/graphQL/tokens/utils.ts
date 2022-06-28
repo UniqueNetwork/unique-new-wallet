@@ -1,9 +1,12 @@
-export const getConditionBySearchText = (searchText: string | null | undefined) => {
+export const getConditionBySearchText = (
+  searchKey: string,
+  searchText: string | null | undefined,
+) => {
   const trimmedText = searchText?.trim();
 
   if (!trimmedText) {
     return null;
   }
 
-  return { token_name: { _ilike: `%${trimmedText}%` } };
+  return { [searchKey]: { _ilike: `%${trimmedText}%` } };
 };

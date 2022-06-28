@@ -39,6 +39,14 @@ interface ICreateNFTProps {
   className?: string;
 }
 
+const defaultOptions = {
+  skip: false,
+  pagination: {
+    page: 0,
+    limit: 300,
+  },
+};
+
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { fee } = useFee();
   const { attributes, setAttributes, setTokenImg, tokenImg, resetForm } =
@@ -49,9 +57,11 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
   // TODO - remove this FAQ after uploadFile value fix and move to Formik
   const [reloadForm, toggleReload] = useState<boolean>(false);
-  const { collections, collectionsLoading } = useGraphQlCollectionsByAccount(
-    selectedAccount?.address ?? null,
-  );
+  // TODO - use searchOnType here
+  const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
+    accountAddress: selectedAccount?.address,
+    options: defaultOptions,
+  });
   const { data: collection } = useCollectionQuery(selectedCollection?.id ?? 0);
   const { isCreatingNFT, onCreateNFT } = useTokenMutation(selectedCollection?.id ?? 0);
 
@@ -107,12 +117,12 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   };
 
   // TODO - add redirect to main page here if user has no collections
-  if (!collections?.length && !collectionsLoading) {
+  if (!collections?.length && !isCollectionsLoading) {
     return null;
   }
 
   // TODO - add some loader here
-  if (collectionsLoading) {
+  if (isCollectionsLoading) {
     return null;
   }
 

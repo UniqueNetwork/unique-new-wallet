@@ -9,7 +9,7 @@ import { PaddedBlock } from '@app/styles/styledVariables';
 import noCollections from '@app/static/icons/no-collections.svg';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
-import { existValue } from '@app/utils';
+import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
 
 interface CollectionDescriptionComponentProps {
   className?: string;
@@ -28,7 +28,7 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
     tokens_count,
     sponsorship = null,
     date_of_creation,
-    collection_cover,
+    collection_cover = null,
   } = collection || {};
 
   const sponsor = getSponsorShip(sponsorship);
@@ -41,7 +41,10 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
         ) : (
           <>
             <Row>
-              <Avatar src={collection_cover || noCollections} type="circle" />
+              <Avatar
+                src={getTokenIpfsUriByImagePath(collection_cover) || noCollections}
+                type="circle"
+              />
               <Badge>ID: {collectionId}</Badge>
             </Row>
             <Row>

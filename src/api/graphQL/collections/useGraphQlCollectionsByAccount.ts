@@ -1,47 +1,72 @@
 import { gql, useQuery } from '@apollo/client';
 
-import { Collection } from './types';
+import {
+  AccountCollectionsData,
+  AccountCollectionsVariables,
+  OptionsAccountCollection,
+} from '@app/api';
+import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
-export type AccountCollectionsResponse = {
-  collections: Collection[];
-};
-
-const ACCOUNT_COLLECTIONS = gql`
-  query Collections($owner: String) {
-    collections(
-      where: { _or: [{ owner: { _eq: $owner } }, { owner_normalized: { _eq: $owner } }] }
-    ) {
+const accountCollectionsQuery = gql`
+  query getAccountCollections(
+    $limit: Int
+    $offset: Int
+    $order_by: [view_collections_order_by!]
+    $where: view_collections_bool_exp = {}
+  ) {
+    view_collections(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+      collection_cover
       name
-      description
-      owner
-      owner_normalized
       collection_id
-      schema_version
-      offchain_schema
-      const_chain_schema
-      variable_on_chain_schema
+      owner_normalized
+      tokens_count
+    }
+    view_collections_aggregate(where: $where) {
+      aggregate {
+        count
+      }
     }
   }
 `;
 
-export const useGraphQlCollectionsByAccount = (
-  accountAddress: string | null,
-  skip?: boolean,
-) => {
+export const useGraphQlCollectionsByAccount = ({
+  accountAddress,
+  options,
+}: {
+  accountAddress: string | undefined;
+  options: OptionsAccountCollection;
+}) => {
   const {
-    data: response,
-    loading,
-    error,
-  } = useQuery<AccountCollectionsResponse>(ACCOUNT_COLLECTIONS, {
-    skip,
+    order,
+    pagination: { page, limit },
+    search,
+  } = options;
+  const { data, error, loading } = useQuery<
+    AccountCollectionsData,
+    AccountCollectionsVariables
+  >(accountCollectionsQuery, {
+    skip: !accountAddress,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
-    variables: { owner: accountAddress },
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      limit,
+      offset: limit * page,
+      order_by: order,
+      where: {
+        _or: [
+          { owner: { _eq: accountAddress } },
+          { owner_normalized: { _eq: accountAddress } },
+        ],
+        ...getConditionBySearchText('name', search),
+      },
+    },
   });
 
   return {
-    collections: response?.collections,
-    collectionsLoading: loading,
+    collections: data?.view_collections || [],
+    collectionsCount: data?.view_collections_aggregate.aggregate.count || 0,
+    isCollectionsLoading: loading,
     error,
   };
 };

@@ -32,9 +32,7 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
     (tab) => `${baseUrl}/${tab}` === location.pathname,
   );
 
-  const collectionData = useGraphQlCollection(collectionId, {
-    owner: { _eq: selectedAccount?.address },
-  });
+  const collectionData = useGraphQlCollection(collectionId, selectedAccount?.address);
 
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);

@@ -114,7 +114,7 @@ export const useGraphQlOwnerTokens = (
       offset: limit * page,
       direction,
       where: {
-        ...getConditionBySearchText(searchText),
+        ...getConditionBySearchText('token_name', searchText),
         ...getConditionByTypesFilters(owner, typesFilters),
         ...getConditionByCollectionsIds(collectionsIds),
       },

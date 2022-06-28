@@ -107,7 +107,7 @@ export type QLCollectionResponse = {
 
 export const useGraphQlCollection = (
   collectionId: string | undefined,
-  filter?: Record<string, unknown>,
+  address: string | undefined,
 ): QLCollectionResponse => {
   const {
     data,
@@ -118,11 +118,14 @@ export const useGraphQlCollection = (
     // Used for first execution
     nextFetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
-    skip: !collectionId,
+    skip: !collectionId || !address,
     variables: {
       limit: 1,
       offset: 0,
-      where: { collection_id: { _eq: collectionId }, ...filter },
+      where: {
+        collection_id: { _eq: collectionId },
+        _or: [{ owner: { _eq: address } }, { owner_normalized: { _eq: address } }],
+      },
     },
   });
 
