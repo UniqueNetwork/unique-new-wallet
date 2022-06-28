@@ -30,6 +30,11 @@ export const NFTsWrapper: FC = ({ children }) => {
     setTokensPage(defaultPage);
   }, []);
 
+  const setTypeFiltersHandler = useCallback((typeFilters: TypeFilter[]) => {
+    setTokensTypesFilters(typeFilters);
+    setTokensPage(defaultPage);
+  }, []);
+
   const changeCollectionsIdsHandler = useCallback((collectionId: number) => {
     setCollectionsIds((previous) => {
       if (previous.includes(collectionId)) {
@@ -57,6 +62,7 @@ export const NFTsWrapper: FC = ({ children }) => {
         changeTokensPage: setTokensPage,
         typesFilters: tokensTypesFilters,
         changeTypesFilters: changeTypeFiltersHandler,
+        setTypesFilters: setTypeFiltersHandler,
         collectionsIds,
         changeCollectionsIds: changeCollectionsIdsHandler,
         searchText,

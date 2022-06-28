@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, VFC } from 'react';
+import { memo, useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Checkbox } from '@unique-nft/ui-kit';
@@ -8,6 +8,7 @@ import { TypeFilter } from '@app/api/graphQL/tokens';
 export interface TypeFilterItemComponentProps {
   id: TypeFilter;
   label: string;
+  checked: boolean;
   className?: string;
   onChange: (typeId: TypeFilter) => void;
 }
@@ -17,17 +18,15 @@ const TypeFilterItemComponent: VFC<TypeFilterItemComponentProps> = ({
   label,
   onChange,
   className,
+  checked,
 }) => {
-  const [checked, setChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
-  const onChangeHandler = useCallback((checked: boolean) => {
-    setChecked(checked);
-    onChange(id);
-  }, []);
+  useEffect(() => setIsChecked(checked), [checked]);
 
   return (
     <div className={classNames('type-filter-item', className)}>
-      <Checkbox checked={checked} label={label} onChange={onChangeHandler} />
+      <Checkbox checked={isChecked} label={label} onChange={() => onChange(id)} />
     </div>
   );
 };

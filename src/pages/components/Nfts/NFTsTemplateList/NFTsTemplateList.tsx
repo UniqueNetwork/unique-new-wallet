@@ -6,10 +6,13 @@ import {
   TokenLink,
   IPaginationProps,
   Loader,
+  Chip,
+  Link,
 } from '@unique-nft/ui-kit';
 import { useLocation, useResolvedPath } from 'react-router-dom';
 
-import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
+import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
 import { TokenPreviewInfo } from '@app/api';
 
@@ -30,12 +33,41 @@ const NFTsListComponent = ({
   onPageChange,
   isLoading,
 }: NFTsListComponentProps) => {
+  const {
+    searchText,
+    typesFilters,
+    changeSearchText,
+    setTypesFilters,
+    changeTypesFilters,
+  } = useNFTsContext();
   return (
     <div className={classNames('nft-list', className)}>
       {isLoading && <Loader isFullPage={true} size="large" />}
       {!isNaN(Number(tokensCount)) && (
         <div className="token-size-wrapper">
           <Text size="m">{`${tokensCount} items`}</Text>
+          {!!(searchText || typesFilters.length) && (
+            <>
+              {searchText && (
+                <Chip label={searchText} onClose={() => changeSearchText('')} />
+              )}
+              {typesFilters.map((filter) => (
+                <Chip
+                  label={Dictionary[`filter_type_${filter}`]}
+                  key={filter}
+                  onClose={() => changeTypesFilters(filter)}
+                />
+              ))}
+              <Link
+                title="Clear all"
+                role="danger"
+                onClick={() => {
+                  changeSearchText('');
+                  setTypesFilters([]);
+                }}
+              />
+            </>
+          )}
         </div>
       )}
 
@@ -83,6 +115,11 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
 
   .token-size-wrapper {
     margin-bottom: 25px;
+    min-height: 47px;
+    line-height: 42px;
+    > span {
+      margin: 0 10px 10px 0;
+    }
   }
 
   .unique-token-link {

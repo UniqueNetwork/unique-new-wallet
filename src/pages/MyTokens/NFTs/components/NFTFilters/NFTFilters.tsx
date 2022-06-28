@@ -1,4 +1,4 @@
-import React, { VFC, useState, useCallback } from 'react';
+import React, { VFC, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
@@ -27,8 +27,9 @@ const sortOptions: Option[] = [
 
 const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
-  const { sortByTokenId, changeSortByTokenId, changeSearchText } = useNFTsContext();
+  const { sortByTokenId, searchText, changeSortByTokenId, changeSearchText } =
+    useNFTsContext();
+  const [search, setSearch] = useState<string>('');
 
   const sortByTokenIdHandler = useCallback(({ id }: Option) => {
     changeSortByTokenId(id as Direction);
@@ -36,9 +37,11 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
 
   const searchHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
-      changeSearchText(search);
+      changeSearchText(search.trim());
     }
   };
+
+  useEffect(() => setSearch(searchText), [searchText]);
 
   return (
     <div className={classNames('nft-filters', className)}>

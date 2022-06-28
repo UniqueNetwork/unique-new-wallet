@@ -18,7 +18,7 @@ const TypeFilterComponent: VFC<TypeFilterComponentProps> = ({
   className,
   defaultTypes,
 }) => {
-  const { changeTypesFilters } = useNFTsContext();
+  const { typesFilters, changeTypesFilters } = useNFTsContext();
 
   return (
     <div className={classNames('collections-filter', className)}>
@@ -28,6 +28,7 @@ const TypeFilterComponent: VFC<TypeFilterComponentProps> = ({
             key={t.id}
             id={t.id}
             label={t.label}
+            checked={typesFilters.includes(t.id)}
             onChange={changeTypesFilters}
           />
         ))}
