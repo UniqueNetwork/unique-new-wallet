@@ -60,7 +60,12 @@ const getConditionByTypesFilters = (
         { is_sold: { _eq: true } },
       ],
     },
-    createdByMe: { collection_owner: { _eq: owner } },
+    createdByMe: {
+      _or: [
+        { collection_owner: { _eq: owner } },
+        { collection_owner_normalized: { _eq: owner } },
+      ],
+    },
   };
   const defaultFilter = { _or: [filters.purchased, filters.createdByMe] };
 

@@ -1,4 +1,4 @@
-import { Nullable, Pagination } from '@app/types';
+import { Nullable, Pagination, ProtobufAttributeType } from '@app/types';
 import { Direction } from '@app/api/graphQL/tokens';
 
 export type SchemaVersion = 'ImageURL' | 'Unique';
@@ -23,7 +23,12 @@ export type OptionsAccountCollection = {
 export interface Collection {
   collection_id: number;
   name: string;
+  description?: string;
   owner: string;
+  offchain_schema: string;
+  schema_version: SchemaVersion;
+  const_on_chain_schema?: ProtobufAttributeType;
+  variable_on_chain_schema?: VariableOnChainSchema;
   owner_normalized: string;
   collection_cover: string;
   tokens_count: number;

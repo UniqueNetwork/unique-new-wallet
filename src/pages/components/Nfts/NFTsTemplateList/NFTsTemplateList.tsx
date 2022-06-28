@@ -7,7 +7,6 @@ import {
   IPaginationProps,
   Loader,
 } from '@unique-nft/ui-kit';
-import { useLocation, useResolvedPath } from 'react-router-dom';
 
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
