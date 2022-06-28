@@ -43,7 +43,7 @@ const MyCollectionsListComponent = ({
         order,
         pagination: {
           page,
-          limit: 9,
+          limit: 10,
         },
         search,
       },
