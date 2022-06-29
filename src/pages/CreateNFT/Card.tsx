@@ -26,35 +26,35 @@ export const Card: VFC<IPreviewCard> = ({
   title = 'Name',
   picture,
   geometry = 'circle',
-}) => {
-  return (
-    <PreviewCard>
-      <div className={classNames({ '_empty-picture': picture === undefined })}>
-        <Avatar size={64} src={picture || imgUrl} type={geometry} />
-      </div>
-      <PreviewCardInfo>
-        <PreviewCardTitle>{title}</PreviewCardTitle>
-        <PreviewCardDescription size="s" color="grey-500">
-          {description}
-        </PreviewCardDescription>
-        {attributes && (
-          <PreviewCardAttributes>
-            <Text size="m">Attributes</Text>
-            {attributes.map((item, i) => {
-              return (
-                <AttributesGroup key={i}>
-                  <Text size="s" color="grey-500">
-                    {item.group}
-                  </Text>
-                  {item.values.map((value: string) => (
-                    <Tag label={value} role="default" />
+}) => (
+  <PreviewCard>
+    <div className={classNames({ '_empty-picture': picture === undefined })}>
+      <Avatar size={64} src={picture || imgUrl} type={geometry} />
+    </div>
+    <PreviewCardInfo>
+      <PreviewCardTitle>{title}</PreviewCardTitle>
+      <PreviewCardDescription size="s" color="grey-500">
+        {description}
+      </PreviewCardDescription>
+      {attributes && (
+        <PreviewCardAttributes>
+          <Text size="m">Attributes</Text>
+          {attributes.map((item, i) => {
+            return (
+              <AttributesGroup key={i}>
+                <Text size="s" color="grey-500">
+                  {item.group}
+                </Text>
+                {item.values
+                  ?.filter((val: string) => !!val)
+                  .map((value: string) => (
+                    <Tag key={value} label={value} role="default" />
                   ))}
-                </AttributesGroup>
-              );
-            })}
-          </PreviewCardAttributes>
-        )}
-      </PreviewCardInfo>
-    </PreviewCard>
-  );
-};
+              </AttributesGroup>
+            );
+          })}
+        </PreviewCardAttributes>
+      )}
+    </PreviewCardInfo>
+  </PreviewCard>
+);

@@ -83,6 +83,18 @@ export const useCollectionMutation = () => {
 
     const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
 
+    if (!signature) {
+      error('Sign transaction error', {
+        name: 'Create collection',
+        size: 32,
+        color: 'white',
+      });
+
+      setSsCreatingCollection(false);
+
+      return;
+    }
+
     await submitExtrinsic({
       signerPayloadJSON: createResp.signerPayloadJSON,
       signature,

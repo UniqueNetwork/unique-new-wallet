@@ -6,23 +6,31 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
-import { TokenAttributes } from '@app/types';
+import { TokenAttributes, TokenField } from '@app/types';
+import { ROUTE } from '@app/routes';
 
 import TokenFormContext from './TokenFormContext';
+import { createDynamicYupSchema } from './createDynamicYupSchema';
 
 interface Props {
   children: React.ReactNode;
+}
+
+interface YupSchemaDefaultInterface {
+  [key: string]: any;
 }
 
 export function TokenForm({ children }: Props): React.ReactElement<Props> | null {
   const navigate = useNavigate();
   const [attributes, setAttributes] = useState<TokenAttributes>({});
   const [tokenImg, setTokenImg] = useState<Blob | null>(null);
+  const [schema, setSchema] = useState<Yup.SchemaOf<YupSchemaDefaultInterface>>();
 
-  // TODO - move token to Formik
-  const schema = Yup.object({
-    ipfsJson: Yup.string().required('Required'),
-  });
+  const createSchema = (tokenFields: TokenField[]) => {
+    const dynamicSchema = createDynamicYupSchema(tokenFields);
+
+    setSchema(dynamicSchema);
+  };
 
   const resetForm = useCallback(() => {
     setAttributes({});
@@ -30,17 +38,20 @@ export function TokenForm({ children }: Props): React.ReactElement<Props> | null
   }, []);
 
   const tokenForm = useFormik({
-    initialValues: {},
+    initialValues: {
+      ipfsJson: '',
+    },
     validationSchema: schema,
     validateOnBlur: true,
     onSubmit: () => {
-      navigate('/');
+      navigate(ROUTE.MY_TOKENS);
     },
   });
 
   const value = useMemo(
     () => ({
       attributes,
+      createSchema,
       tokenForm,
       setAttributes,
       setTokenImg,
