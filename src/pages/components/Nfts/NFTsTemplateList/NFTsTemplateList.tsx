@@ -15,6 +15,7 @@ import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
 import { TokenPreviewInfo } from '@app/api';
+import { Option } from '@app/types';
 
 interface NFTsListComponentProps {
   className?: string;
@@ -22,6 +23,7 @@ interface NFTsListComponentProps {
   tokensCount?: number;
   isLoading: boolean;
   page: number;
+  defaultCollections?: Option<number>[];
   onPageChange: IPaginationProps['onPageChange'];
 }
 
@@ -32,13 +34,17 @@ const NFTsListComponent = ({
   page,
   onPageChange,
   isLoading,
+  defaultCollections,
 }: NFTsListComponentProps) => {
   const {
     searchText,
     typesFilters,
+    collectionsIds,
     changeSearchText,
     setTypesFilters,
     changeTypesFilters,
+    changeCollectionsIds,
+    setCollectionsIds,
   } = useNFTsContext();
   return (
     <div className={classNames('nft-list', className)}>
@@ -46,7 +52,7 @@ const NFTsListComponent = ({
       {!isNaN(Number(tokensCount)) && (
         <div className="token-size-wrapper">
           <Text size="m">{`${tokensCount} items`}</Text>
-          {!!(searchText || typesFilters.length) && (
+          {!!(searchText || typesFilters.length || collectionsIds.length) && (
             <>
               {searchText && (
                 <Chip label={searchText} onClose={() => changeSearchText('')} />
@@ -58,12 +64,27 @@ const NFTsListComponent = ({
                   onClose={() => changeTypesFilters(filter)}
                 />
               ))}
+              {collectionsIds.map((id) => {
+                const { label, icon } =
+                  defaultCollections?.find((c) => c.id === id && c) || {};
+                return (
+                  <Chip
+                    label={label!}
+                    {...(icon && {
+                      iconLeft: { size: 22, file: icon },
+                    })}
+                    key={id}
+                    onClose={() => changeCollectionsIds(id)}
+                  />
+                );
+              })}
               <Link
                 title="Clear all"
                 role="danger"
                 onClick={() => {
                   changeSearchText('');
                   setTypesFilters([]);
+                  setCollectionsIds([]);
                 }}
               />
             </>
@@ -81,7 +102,7 @@ const NFTsListComponent = ({
             ({ token_id, token_name, collection_name, collection_id, image_path }) => (
               <TokenLink
                 key={`${collection_id}-${token_id}`}
-                image={getTokenIpfsUriByImagePath(image_path)}
+                image={image_path ?? getTokenIpfsUriByImagePath(image_path)}
                 link={{
                   href: `/token/${collection_id}/${token_id}`,
                   title: `${collection_name} [id ${collection_id}]`,
@@ -115,11 +136,11 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
 
   .token-size-wrapper {
     margin-bottom: 25px;
-    min-height: 47px;
-    line-height: 42px;
-    > span {
-      margin: 0 10px 10px 0;
-    }
+    min-height: 32px;
+    display: flex;
+    flex-flow: wrap;
+    align-items: center;
+    gap: 10px;
   }
 
   .unique-token-link {

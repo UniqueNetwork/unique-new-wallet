@@ -12,6 +12,7 @@ export interface NTFsContextState {
   setTypesFilters: (typeFilters: TypeFilter[]) => void;
   collectionsIds: number[];
   changeCollectionsIds: (collectionsFilters: number) => void;
+  setCollectionsIds: (collectionsFilters: number[]) => void;
   searchText: string;
   changeSearchText: (searchText: string) => void;
 }

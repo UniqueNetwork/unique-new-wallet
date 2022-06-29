@@ -48,6 +48,11 @@ export const NFTsWrapper: FC = ({ children }) => {
     setTokensPage(defaultPage);
   }, []);
 
+  const setCollectionsIdsHandler = useCallback((collectionIds: number[]) => {
+    setCollectionsIds(collectionIds);
+    setTokensPage(defaultPage);
+  }, []);
+
   const changeSearchTextHandler = useCallback((searchText: string) => {
     setSearchText(searchText);
     setTokensPage(defaultPage);
@@ -65,6 +70,7 @@ export const NFTsWrapper: FC = ({ children }) => {
         setTypesFilters: setTypeFiltersHandler,
         collectionsIds,
         changeCollectionsIds: changeCollectionsIdsHandler,
+        setCollectionsIds: setCollectionsIdsHandler,
         searchText,
         changeSearchText: changeSearchTextHandler,
       }}

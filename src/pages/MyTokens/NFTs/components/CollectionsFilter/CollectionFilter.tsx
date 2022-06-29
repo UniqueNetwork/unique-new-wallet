@@ -18,7 +18,7 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   className,
   defaultCollections,
 }) => {
-  const { changeCollectionsIds } = useNFTsContext();
+  const { collectionsIds, changeCollectionsIds } = useNFTsContext();
 
   return (
     <div className={classNames('collections-filter', className)}>
@@ -29,6 +29,7 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
             id={c.id}
             icon={c.icon}
             label={c.label}
+            checked={collectionsIds.includes(c.id)}
             onChange={changeCollectionsIds}
           />
         ))}

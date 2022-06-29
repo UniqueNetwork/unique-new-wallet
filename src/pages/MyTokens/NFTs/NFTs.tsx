@@ -72,6 +72,7 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
           isLoading={tokensLoading}
           tokensCount={tokensCount}
           page={tokensPage}
+          defaultCollections={defaultCollections}
           onPageChange={changeTokensPage}
         />
       </div>

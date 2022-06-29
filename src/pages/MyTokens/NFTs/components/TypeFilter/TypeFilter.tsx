@@ -11,6 +11,7 @@ import { TypeFilterItem } from './TypeFilterItem';
 
 export interface TypeFilterComponentProps {
   defaultTypes?: Option<TFilter>[];
+  defaultCollections?: Option<number>[];
   className?: string;
 }
 
