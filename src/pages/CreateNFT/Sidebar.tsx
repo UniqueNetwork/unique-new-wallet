@@ -30,7 +30,10 @@ export const Sidebar: VFC<SidebarProps> = ({ collectionId }) => {
       ?.filter((field: TokenField) => field.name !== 'ipfsJson')
       .map((field: TokenField) => ({
         group: field.name,
-        values: [attributes?.[field.name] ?? null],
+        values:
+          field.type === 'text'
+            ? [attributes?.[field.name] ?? null]
+            : attributes?.[field.name] ?? null,
       }));
 
     return attrs;
@@ -53,9 +56,9 @@ export const Sidebar: VFC<SidebarProps> = ({ collectionId }) => {
       <SidebarRow>
         <Heading size="3">NFT preview</Heading>
         <Card
+          attributes={fieldGroups}
           title={collection.tokenPrefix}
           description={collection.name}
-          attributes={fieldGroups}
           geometry="square"
           picture={tokenImg ? URL.createObjectURL(tokenImg) : undefined}
         />

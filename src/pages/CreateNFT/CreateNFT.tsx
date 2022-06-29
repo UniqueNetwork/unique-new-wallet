@@ -1,4 +1,4 @@
-import React, { useContext, useState, VFC } from 'react';
+import React, { useContext, useEffect, useState, VFC } from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import { Avatar, Button, Heading, Suggest, Upload } from '@unique-nft/ui-kit';
@@ -49,7 +49,7 @@ const defaultOptions = {
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { fee } = useFee();
-  const { attributes, setAttributes, setTokenImg, resetForm } =
+  const { attributes, createSchema, setAttributes, setTokenImg, resetForm } =
     useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
   const { uploadFile } = useFileUpload();
@@ -111,10 +111,20 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   };
 
   const onConfirmAndCreateMore = async () => {
-    await onCreateNFT();
+    try {
+      await onCreateNFT();
+    } catch (error) {
+      console.log('error', error);
+    }
 
     onResetForm();
   };
+
+  useEffect(() => {
+    if (tokenFields?.length) {
+      createSchema(tokenFields);
+    }
+  }, [tokenFields]);
 
   // TODO - add redirect to main page here if user has no collections
   if (!collections?.length && !isCollectionsLoading) {
@@ -125,6 +135,8 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   if (isCollectionsLoading) {
     return null;
   }
+
+  const disabled = !attributes.ipfsJson;
 
   return (
     <>
@@ -196,13 +208,13 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
               </Alert>
               <ButtonGroup>
                 <Button
-                  disabled={!selectedCollection?.id}
+                  disabled={!selectedCollection?.id || disabled}
                   title="Confirm and create more"
                   role="primary"
                   onClick={() => void onConfirmAndCreateMore()}
                 />
                 <Button
-                  disabled={!selectedCollection?.id}
+                  disabled={!selectedCollection?.id || disabled}
                   title="Confirm and close"
                   onClick={() => void onConfirmAndClose()}
                 />

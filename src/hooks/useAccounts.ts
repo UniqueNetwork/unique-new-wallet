@@ -17,8 +17,6 @@ export const useAccounts = () => {
     fetchAccountsError,
     changeAccount,
     setAccounts,
-    setIsLoading,
-    setFetchAccountsError,
   } = useContext(AccountContext);
 
   const addLocalAccount = useCallback(
@@ -98,33 +96,11 @@ export const useAccounts = () => {
     [selectedAccount],
   );
 
-  /* const signTx = useCallback(
-    async (tx: TTransaction, account?: Account): Promise<TTransaction> => {
-      const _account = account || selectedAccount;
-      if (!_account) throw new Error('Account was not provided');
-      let signedTx;
-      if (_account.signerType === AccountSigner.local) {
-        const signature = await showSignDialog();
-        if (signature) {
-          signedTx = await tx.signAsync(signature);
-        }
-      } else {
-        const injector = await web3FromSource(_account.meta.source);
-        signedTx = await tx.signAsync(_account.address, {
-          signer: injector.signer,
-        });
-      }
-      if (!signedTx) throw new Error('Signing failed');
-      return signedTx;
-    },
-    [showSignDialog, selectedAccount],
-  ); */
-
   const signMessage = useCallback(
     async (
       signerPayloadJSON: SignerPayloadJSONDto,
       account?: Account,
-    ): Promise<string> => {
+    ): Promise<string | null> => {
       const _account = account || selectedAccount;
       if (!_account) {
         throw new Error('Account was not provided');
@@ -132,16 +108,25 @@ export const useAccounts = () => {
       // TODO: добавить проверку на локальные аккаунты. Задача https://cryptousetech.atlassian.net/browse/WMS-914
 
       const injector = await web3FromSource(_account.meta.source);
+
       if (!injector.signer.signPayload) {
         throw new Error('Web3 not available');
       }
 
-      const { signature } = await injector.signer.signPayload(signerPayloadJSON);
-      if (!signature) {
-        throw new Error('Signing failed');
-      }
+      return injector.signer
+        .signPayload(signerPayloadJSON)
+        .then(({ signature }) => {
+          if (!signature) {
+            throw new Error('Signing failed');
+          }
 
-      return signature;
+          return signature;
+        })
+        .catch((err) => {
+          console.log('err', err);
+
+          return null;
+        });
     },
     [selectedAccount],
   );
@@ -156,8 +141,6 @@ export const useAccounts = () => {
     fetchAccountsError,
     selectedAccount,
     unlockLocalAccount,
-    // signTx,
     signMessage,
-    // changeAccount,
   };
 };
