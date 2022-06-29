@@ -1,14 +1,12 @@
-import { QueryKey, UseQueryResult } from 'react-query';
+import { UseQueryResult } from 'react-query';
 
-import { BalanceResponse } from '@app/types/Api';
-
-import { useApiQuery } from '../../hooks';
-import { AccountApiService } from '../AccountApiService';
+import { AllBalancesResponse } from '@app/types/Api';
+import { useApiQuery, AccountApiService } from '@app/api';
 
 export const useAccountBalanceService = (
   address?: string,
   networkURL?: string,
-): UseQueryResult<BalanceResponse> =>
+): UseQueryResult<AllBalancesResponse> =>
   useApiQuery({
     baseURL: networkURL,
     endpoint: AccountApiService.balanceQuery,

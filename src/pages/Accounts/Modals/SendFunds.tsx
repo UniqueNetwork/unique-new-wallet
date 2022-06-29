@@ -148,9 +148,17 @@ export const TransferFundsModal: FC<TransferFundsModalProps> = ({
               placeholder="Enter the amount"
               role="decimal"
               value={formatAmount(amount, '')}
-              onChange={(value) => onAmountChange(value, data?.amount?.toString())}
+              onChange={(value) =>
+                onAmountChange(value, data?.availableBalance.amount?.toString())
+              }
             />
-            <InputAmountButton onClick={() => setAmount(data?.amount?.toString() || '')}>
+            <InputAmountButton
+              onClick={() =>
+                setAmount(
+                  (data?.availableBalance.amount?.toString() || '').replace(/\D/g, ''),
+                )
+              }
+            >
               {data ? 'Max' : <Loader size="small" />}
             </InputAmountButton>
           </InputAmount>
@@ -384,7 +392,9 @@ const AccountSelector: FC<{
           </AccountSelectWrapper>
         </Dropdown>
       </AccountSelect>
-      <Text size="s">{data?.formatted}</Text>
+      <Text size="s">
+        {data?.availableBalance.amount} {data?.availableBalance.unit}
+      </Text>
     </>
   );
 };

@@ -56,7 +56,7 @@ export const Header: VFC = () => {
     // todo keyring.loadAll({ <-- SS58, GenesisHash })
   }, [chainProperties]);
 
-  const createOrConnectAccountHandler = () => navigate('/accounts');
+  const createOrConnectAccountHandler = () => navigate(ROUTE.ACCOUNTS);
 
   return (
     <HeaderStyled>
@@ -91,7 +91,7 @@ export const Header: VFC = () => {
               address: selectedAccount?.address,
               name: selectedAccount?.meta.name,
             }}
-            symbol={chainProperties?.token ?? ''}
+            symbol={selectedAccount?.unitBalance ?? ''}
             onNetworkChange={setCurrentChain}
             onAccountChange={onAccountChange}
           />

@@ -130,7 +130,8 @@ export const AccountWrapper: FC = ({ children }) => {
       selectedAccount: selectedAccount
         ? {
             ...selectedAccount,
-            balance: data?.amount?.toString() ?? '0',
+            balance: data?.availableBalance.amount?.toString() ?? '0',
+            unitBalance: data?.availableBalance.unit ?? '',
           }
         : undefined,
       fetchAccounts,
@@ -145,7 +146,7 @@ export const AccountWrapper: FC = ({ children }) => {
       isLoading,
       accounts,
       selectedAccount,
-      data?.amount,
+      data?.availableBalance,
       fetchAccounts,
       fetchAccountsError,
       changeAccount,
