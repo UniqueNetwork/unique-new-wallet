@@ -121,6 +121,16 @@ export const SendFundsModal: FC<SendFundsModalProps> = (props) => {
           }
 
           const signature = await signMessage(tx.signerPayloadJSON);
+          if (!signature) {
+            error('Transfer error', {
+              name: 'Transfer',
+              size: 32,
+              color: 'white',
+            });
+
+            return;
+          }
+
           const submitResult = await submitExtrinsic({
             ...tx,
             signature,
