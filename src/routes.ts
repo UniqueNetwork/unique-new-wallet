@@ -1,4 +1,4 @@
-export enum ROUTE {
+export const enum ROUTE {
   BASE = '/',
   MY_TOKENS = '/my-tokens',
   MY_COLLECTIONS = '/my-collections',
@@ -10,21 +10,21 @@ export enum ROUTE {
   NOT_FOUND = '*',
 }
 
-export enum MY_TOKENS_TABS_ROUTE {
+export const enum MY_TOKENS_TABS_ROUTE {
   NFT = 'nft',
   COINS = 'coins',
 }
 
-export enum MY_COLLECTIONS_ROUTE {
+export const enum MY_COLLECTIONS_ROUTE {
   COLLECTION = ':collectionId',
 }
 
-export enum COLLECTION_TABS_ROUTE {
+export const enum COLLECTION_TABS_ROUTE {
   NFT = 'nft',
   SETTINGS = 'settings',
 }
 
-export enum CREATE_COLLECTION_TABS_ROUTE {
+export const enum CREATE_COLLECTION_TABS_ROUTE {
   MAIN_INFORMATION = 'main-information',
   NFT_ATTRIBUTES = 'nft-attributes',
 }

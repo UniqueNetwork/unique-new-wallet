@@ -1,11 +1,13 @@
 import React, { useEffect, useState, VFC } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
 import { useExtrinsicSubmit, ViewToken } from '@app/api';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useExtrinsicStatus } from '@app/api/restApi/extrinsic/hooks/useExtrinsicStatus';
 import { useTokenBurn } from '@app/api/restApi/token/hooks/useTokenBurn';
+import { ROUTE } from '@app/routes';
 
 interface BurnModalProps {
   isVisible: boolean;
@@ -20,6 +22,7 @@ export const BurnModal: VFC<BurnModalProps> = ({
   onClose,
   onComplete,
 }) => {
+  const navigate = useNavigate();
   const { selectedAccount, signMessage } = useAccounts();
   const { tokenBurn } = useTokenBurn();
   const { submitExtrinsic } = useExtrinsicSubmit();
@@ -42,7 +45,6 @@ export const BurnModal: VFC<BurnModalProps> = ({
         tokenId: token.token_id,
       });
       if (!tx) {
-
         // TODO: move this message to general dictionary
         throw new Error('Unexpected error');
       }
@@ -70,7 +72,8 @@ export const BurnModal: VFC<BurnModalProps> = ({
     const { isCompleted, isError, errorMessage } = extrinsicStatus;
     if (isCompleted) {
       onComplete();
-      info('Transfer completed successfully');
+      info('Burn token completed successfully');
+      navigate(ROUTE.MY_TOKENS);
     }
     if (isError) {
       error(errorMessage);
@@ -83,7 +86,15 @@ export const BurnModal: VFC<BurnModalProps> = ({
   }
 
   if (status === 'ask-burn') {
-    return <AskBurnModal isVisible={isVisible} onBurn={onBurn} onClose={onClose} />;
+    return (
+      <AskBurnModal
+        isVisible={isVisible}
+        onBurn={() => {
+          void onBurn();
+        }}
+        onClose={onClose}
+      />
+    );
   }
   if (status === 'burn-stages') {
     return <BurnStagesModal />;

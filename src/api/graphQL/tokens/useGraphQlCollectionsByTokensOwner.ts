@@ -14,6 +14,7 @@ const COLLECTIONS_BY_TOKENS_OWNER = gql`
           { owner: { _eq: $owner } }
           { owner_normalized: { _eq: $owner } }
           { collection_owner: { _eq: $owner } }
+          { collection_owner_normalized: { _eq: $owner } }
         ]
       }
       distinct_on: collection_id

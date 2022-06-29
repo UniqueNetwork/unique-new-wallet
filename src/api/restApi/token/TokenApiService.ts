@@ -1,7 +1,9 @@
-import { TransferTokenMutation } from '@app/api/restApi/token/TransferTokenMutation';
-import { BurnTokenMutation } from '@app/api/restApi/token/BurnTokenMutation';
+import { BurnTokenMutation } from './BurnTokenMutation';
+import { TransferTokenMutation } from './TransferTokenMutation';
+import { TokenCreateMutation } from './TokenCreateMutation';
 
 export class TokenApiService {
+  static tokenCreateMutation = new TokenCreateMutation();
   static transferMutation = new TransferTokenMutation();
   static burnMutation = new BurnTokenMutation();
 }

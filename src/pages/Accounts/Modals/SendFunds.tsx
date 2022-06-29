@@ -148,9 +148,9 @@ export const TransferFundsModal: FC<TransferFundsModalProps> = ({
               placeholder="Enter the amount"
               role="decimal"
               value={formatAmount(amount, '')}
-              onChange={(value) => onAmountChange(value, data?.amount.toString())}
+              onChange={(value) => onAmountChange(value, data?.amount?.toString())}
             />
-            <InputAmountButton onClick={() => setAmount(data?.amount.toString() || '')}>
+            <InputAmountButton onClick={() => setAmount(data?.amount?.toString() || '')}>
               {data ? 'Max' : <Loader size="small" />}
             </InputAmountButton>
           </InputAmount>

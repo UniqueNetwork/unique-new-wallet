@@ -1,35 +1,43 @@
 import React, { useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, InputText, Select } from '@unique-nft/ui-kit';
+import { Button, IconProps, InputText, Select } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
+import { TOrderBy } from '@app/api';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { PaddedBlock } from '@app/styles/styledVariables';
-import { Grey300 } from '@app/styles/colors';
+import { Direction } from '@app/api/graphQL/tokens';
+import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
+
+type SelectOption = {
+  id: string;
+  title: string;
+  iconRight: IconProps;
+};
 
 interface MyCollectionsFilterComponentProps {
   className?: string;
 }
 
-const sortOptions: Option[] = [
+const sortOptions: SelectOption[] = [
   {
-    id: 'collectionId-asc',
+    id: 'collection desc',
     title: 'Collection ID',
     iconRight: iconDown,
   },
   {
-    id: 'collectionId-desc',
+    id: 'collection asc',
     title: 'Collection ID',
     iconRight: iconUp,
   },
   {
-    id: 'items-asc',
+    id: 'items desc',
     title: 'items',
     iconRight: iconDown,
   },
   {
-    id: 'items-desc',
+    id: 'items asc',
     title: 'items',
     iconRight: iconUp,
   },
@@ -38,12 +46,33 @@ const sortOptions: Option[] = [
 export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps> = ({
   className,
 }) => {
-  const [searchString, setSearchString] = useState<string>('');
-  const [sort, setSort] = useState<string>('collectionId-asc');
   const navigate = useNavigate();
+  const [searchString, setSearchString] = useState<string>('');
+  const [sort, setSort] = useState<string>('collection desc');
+  const { onChangeOrder, onChangeSearch } = useMyCollectionsContext();
 
   const onChange = (option: Option) => {
+    const filterParam = option.id.split(' ');
+    let sortBy: TOrderBy;
+
+    switch (filterParam[0]) {
+      case 'items':
+        sortBy = {
+          tokens_count: filterParam[1] as Direction,
+        };
+        break;
+      default:
+        sortBy = {
+          collection_id: filterParam[1] as Direction,
+        };
+    }
+
     setSort(option.id);
+    onChangeOrder(sortBy);
+  };
+
+  const handleSearchString = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.code === 'Enter' && onChangeSearch(searchString);
   };
 
   const onCreateCollection = () => {
@@ -57,6 +86,7 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
           iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
           value={searchString}
           onChange={setSearchString}
+          onKeyDown={handleSearchString}
         />
         <Select options={sortOptions} value={sort} onChange={onChange} />
       </LeftColumn>
@@ -86,8 +116,7 @@ export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    // todo - change to var
-    border-bottom: 1px solid ${Grey300};
+    border-bottom: 1px solid var(--color-grey-300);
 
     .unique-input-text,
     .unique-select {
