@@ -16,7 +16,7 @@ import { Account } from '@app/account';
 import { NetworkType } from '@app/types';
 import { formatAmount, networksUrls } from '@app/utils';
 import { useAccounts, useFee } from '@app/hooks';
-import { useAccountBalanceService, useExtrinsicSubmit } from '@app/api';
+import { useAccountBalanceService } from '@app/api';
 import {
   AdditionalText,
   ModalHeader,
