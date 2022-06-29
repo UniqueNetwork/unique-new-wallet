@@ -74,7 +74,11 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
           const signature = await signMessage(tx.signerPayloadJSON);
 
-          const submitResult = await submitExtrinsic({
+          if (!signature) {
+            throw new Error('There is no signature');
+          }
+
+          await submitExtrinsic({
             ...tx,
             signature,
           });
