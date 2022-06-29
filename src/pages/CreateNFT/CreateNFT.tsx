@@ -111,11 +111,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   };
 
   const onConfirmAndCreateMore = async () => {
-    try {
-      await onCreateNFT();
-    } catch (error) {
-      console.log('error', error);
-    }
+    await onCreateNFT();
 
     onResetForm();
   };
