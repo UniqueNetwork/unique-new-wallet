@@ -130,18 +130,14 @@ export const Accounts = () => {
     [],
   );
 
-  const onSearchStringChange = useCallback((value: string) => {
-    setSearchString(value);
-  }, []);
-
   const filteredAccounts = useMemo(() => {
     if (!searchString) {
       return accounts;
     }
     return accounts?.filter(
       (account) =>
-        account.address.includes(searchString) ||
-        account.meta.name?.includes(searchString),
+        account.address.toLowerCase().includes(searchString.toLowerCase()) ||
+        account.meta.name?.toLowerCase().includes(searchString.toLowerCase()),
     );
   }, [accounts, searchString]);
 
@@ -168,7 +164,8 @@ export const Accounts = () => {
           <SearchInputStyled
             placeholder="Search"
             iconLeft={{ name: 'magnify', size: 18 }}
-            onChange={onSearchStringChange}
+            value={searchString}
+            onChange={setSearchString}
           />
         </SearchInputWrapper>
         <AccountsGroupButton />
