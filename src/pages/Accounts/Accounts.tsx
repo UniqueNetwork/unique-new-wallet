@@ -16,7 +16,7 @@ import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/co
 import { Account } from '@app/account';
 import { AccountsTotalBalance } from '@app/pages/Accounts/components/AccountsTotalBalance';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
-import { TransferFundsModal } from '@app/pages';
+import { SendFundsModal } from '@app/pages';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
 
 import config from '../../config';
@@ -182,11 +182,10 @@ export const Accounts = () => {
           data={filteredAccounts}
         />
       </AccountsPageContent>
-      <TransferFundsModal
+      <SendFundsModal
         isVisible={isOpenModal}
         senderAccount={selectedAddress}
         onClose={onChangeAccountsFinish}
-        onConfirm={() => {}} // I'll do handler here
       />
       <Confirm
         buttons={[
