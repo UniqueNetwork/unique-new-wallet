@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState, VFC } from 'react';
+import React, { FC, useCallback, useLayoutEffect, useMemo, useState, VFC } from 'react';
 import {
   Avatar,
   Button,
@@ -12,9 +12,10 @@ import {
 } from '@unique-nft/ui-kit';
 import styled, { css } from 'styled-components';
 
-import { useAccounts, useFee } from '@app/hooks';
 import { Account } from '@app/account';
-import { formatAmount } from '@app/utils';
+import { NetworkType } from '@app/types';
+import { formatAmount, networksUrls } from '@app/utils';
+import { useAccounts, useFee } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
 import {
   AdditionalText,
@@ -29,56 +30,27 @@ import {
 
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
-export type TransferFundsModalProps = {
+type TransferFundsModalProps = {
   isVisible: boolean;
-  senderAddress?: Account | undefined;
-  onFinish(): void;
+  networkType?: NetworkType;
+  senderAccount?: Account;
+  onClose: () => void;
+  onConfirm: (
+    senderAddress?: string,
+    destinationAddress?: string,
+    amount?: number,
+  ) => void;
 };
 
 export const TransferFundsModal: FC<TransferFundsModalProps> = ({
-  isVisible,
-  senderAddress,
-  onFinish,
-}) => {
-  const [amount, setAmount] = useState<string>('');
-  const [recipient, setRecipient] = useState<string>('');
-  const [sender, setSender] = useState<string>('');
-  const [status, setStatus] = useState<'ask' | 'transfer-stage'>('ask');
-
-  const onTransfer = useCallback(
-    (_sender: string, _recipient: string, _amount: string) => {
-      setAmount(_amount);
-      setRecipient(_recipient);
-      setSender(_sender);
-    },
-    [setStatus, setRecipient, setAmount],
-  );
-
-  return (
-    <AskTransferFundsModal
-      isVisible={isVisible}
-      senderAccount={senderAddress}
-      onFinish={onTransfer}
-      onClose={onFinish}
-    />
-  );
-};
-
-type AskSendFundsModalProps = {
-  isVisible: boolean;
-  senderAccount: Account | undefined;
-  onFinish(sender: string, recipient: string, amount: string): void;
-  onClose(): void;
-};
-
-export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
-  isVisible,
-  onFinish,
   senderAccount,
+  networkType,
+  isVisible,
   onClose,
+  onConfirm,
 }) => {
-  const { accounts, selectedAccount } = useAccounts();
   const { fee } = useFee();
+  const { accounts, selectedAccount } = useAccounts();
 
   const [sender, setSender] = useState<Account | undefined>(
     senderAccount || selectedAccount,
@@ -89,7 +61,10 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
   );
 
   const [recipient, setRecipient] = useState<Account | undefined>(recipientOptions[0]);
-  const { data } = useAccountBalanceService(sender?.address);
+  const { data } = useAccountBalanceService(
+    sender?.address,
+    networkType && networksUrls[networkType],
+  );
   const [amount, setAmount] = useState<string>('');
 
   const senderOptions: Account[] = useMemo(
@@ -114,15 +89,17 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
     [setAmount],
   );
 
-  const onSend = useCallback(
-    () =>
-      onFinish(
-        sender?.address || '',
-        recipient?.address.toString() || '',
-        amount.toString(),
-      ),
-    [onFinish, recipient?.address, sender?.address, amount],
-  );
+  useLayoutEffect(() => {
+    if (isVisible) {
+      const body = document.getElementsByTagName('body')[0];
+
+      body.style.overflow = 'hidden';
+
+      return () => {
+        body.style.overflow = 'auto';
+      };
+    }
+  }, [isVisible]);
 
   if (!accounts?.length) {
     return null;
@@ -140,6 +117,8 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
               From
             </StyledAdditionalText>
             <AccountSelector
+              networkType={networkType}
+              canCopy={!!senderOptions.length}
               selectOptions={senderOptions}
               selectedValue={sender}
               onChangeAccount={(value) => {
@@ -153,6 +132,7 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
               To
             </StyledAdditionalText>
             <AccountSelector
+              canCopy={!!recipientOptions.length}
               selectOptions={recipientOptions}
               selectedValue={recipient}
               onChangeAccount={(value) => {
@@ -184,7 +164,14 @@ export const AskTransferFundsModal: FC<AskSendFundsModalProps> = ({
         </ContentRow>
       </ModalContent>
       <ModalFooter>
-        <Button disabled={!amount} role="primary" title="Confirm" onClick={onSend} />
+        <Button
+          disabled={!amount}
+          role="primary"
+          title="Confirm"
+          onClick={() => {
+            onConfirm(sender?.address, recipient?.address, parseInt(amount));
+          }}
+        />
       </ModalFooter>
     </Modal>
   );
@@ -361,11 +348,16 @@ const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boolean }> =
 };
 
 const AccountSelector: FC<{
+  canCopy?: boolean;
+  networkType?: NetworkType;
   selectOptions: any;
   selectedValue?: Account;
   onChangeAccount?(value: Account): void;
-}> = ({ selectedValue, selectOptions, onChangeAccount }) => {
-  const { data } = useAccountBalanceService(selectedValue?.address);
+}> = ({ canCopy = true, networkType, selectedValue, selectOptions, onChangeAccount }) => {
+  const { data } = useAccountBalanceService(
+    selectedValue?.address,
+    networkType && networksUrls[networkType],
+  );
 
   return (
     <>
@@ -387,14 +379,12 @@ const AccountSelector: FC<{
             <AccountInfo
               address={selectedValue?.address}
               name={selectedValue?.meta.name}
-              canCopy={true}
+              canCopy={canCopy}
             />
           </AccountSelectWrapper>
         </Dropdown>
       </AccountSelect>
-      <Text size="s">
-        {formatAmount(data?.amount || 0)}&nbsp;{data?.unit}
-      </Text>
+      <Text size="s">{data?.formatted}</Text>
     </>
   );
 };

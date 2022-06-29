@@ -1,9 +1,16 @@
-import { Chain } from '@app/types';
+import config from '@app/config';
+import { Chain, NetworkType } from '@app/types';
 
-// TODO - use urls from ENV
+export const networksUrls: Record<NetworkType, string | undefined> = {
+  QTZ: config.quartzRestApiUrl,
+  OPL: '',
+  KSM: '',
+  UNQ: config.uniqueRestApiUrl,
+};
+
 export const networks: Chain[] = [
   {
-    apiEndpoint: 'https://web.uniquenetwork.dev/',
+    apiEndpoint: networksUrls.QTZ || '',
     id: 'quartz',
     name: 'Quartz',
     icon: {
@@ -12,7 +19,7 @@ export const networks: Chain[] = [
     },
   },
   {
-    apiEndpoint: 'https://web.uniquenetwork.dev/',
+    apiEndpoint: networksUrls.OPL || '',
     id: 'opal',
     name: 'Opal',
     icon: {

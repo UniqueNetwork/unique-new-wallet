@@ -3,7 +3,7 @@ import { QueryKey } from 'react-query';
 import { BalanceResponse } from '@app/types/Api';
 import { IBaseApi } from '@app/api';
 
-import { EndpointQuery } from '../request';
+import { EndpointQuery } from '../../request';
 
 export interface RequestArgs {
   address: string;

@@ -1,7 +1,10 @@
-import React, { VFC } from 'react';
-import styled, { css } from 'styled-components';
+import React, { memo, useCallback, useEffect, VFC } from 'react';
 import classNames from 'classnames';
-import { Button, Icon, Loader } from '@unique-nft/ui-kit';
+import styled, { css } from 'styled-components';
+import { Button, Icon, Loader, useNotifications } from '@unique-nft/ui-kit';
+import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
+
+import { NetworkType } from '@app/types';
 
 interface CoinsRowComponentProps {
   address?: string;
@@ -12,7 +15,11 @@ interface CoinsRowComponentProps {
   className?: string;
   iconName: string;
   name: string;
-  symbol: string;
+  symbol: NetworkType;
+  sendDisabled?: boolean;
+  getDisabled?: boolean;
+  onSend: (network: NetworkType) => void;
+  onGet: () => void;
 }
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
@@ -26,23 +33,23 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     iconName,
     name,
     symbol,
+    sendDisabled,
+    getDisabled,
+    onSend,
+    onGet,
   } = props;
 
-  const copyAddress = (account: string) => {
-    void navigator.clipboard.writeText(account);
+  const { info, error } = useNotifications();
 
-    // todo - add notification from ui kit here https://cryptousetech.atlassian.net/browse/UI-94
-    /* return queueAction({
-        account,
-        action: 'clipboard',
-        message: 'address copied',
-        status: 'queued'
-      }); */
-  };
+  const copyAddressHandler = useCallback(() => {
+    if (address) {
+      navigator.clipboard.writeText(address);
 
-  const onCopyAccount = () => {
-    address && copyAddress(address);
-  };
+      info('address copied');
+    } else {
+      error('address is not found');
+    }
+  }, []);
 
   return (
     <div className={classNames('coins-row', className)}>
@@ -52,7 +59,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           <div className="network-name">{name}</div>
           <div className="network-address-copy">
             <span>{address}</span>
-            <div onClick={onCopyAccount}>
+            <div onClick={copyAddressHandler}>
               <Icon name="copy" size={24} />
             </div>
           </div>
@@ -74,8 +81,8 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         )}
       </NetworkBalances>
       <NetworkActions>
-        <Button disabled title="Send" />
-        <Button title="Get" />
+        <Button disabled={sendDisabled} title="Send" onClick={() => onSend(symbol)} />
+        <Button disabled={getDisabled} title="Get" onClick={onGet} />
       </NetworkActions>
     </div>
   );
@@ -133,9 +140,11 @@ const NetworkBalances = styled.div`
   }
 `;
 
-export const CoinsRow = styled(CoinsRowComponent)`
+export const CoinsRowStyled = styled(CoinsRowComponent)`
   display: flex;
   justify-content: space-between;
   padding: var(--prop-gap) 0;
   border-bottom: 1px solid var(--color-grey-300);
 `;
+
+export const CoinsRow = memo(CoinsRowStyled);
