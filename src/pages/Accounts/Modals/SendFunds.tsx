@@ -272,7 +272,13 @@ const AskSendFundsModal: FC<AskSendFundsModalProps> = ({
               value={formatAmount(amount, '')}
               onChange={(value) => onAmountChange(value)}
             />
-            <InputAmountButton onClick={() => setAmount(data?.amount?.toString() || '')}>
+            <InputAmountButton
+              onClick={() =>
+                setAmount(
+                  (data?.availableBalance.amount?.toString() || '').replace(/\D/g, ''),
+                )
+              }
+            >
               {data ? 'Max' : <Loader size="small" />}
             </InputAmountButton>
           </InputAmount>
@@ -506,7 +512,9 @@ const AccountSelector: FC<{
           </AccountSelectWrapper>
         </Dropdown>
       </AccountSelect>
-      <Text size="s">{data?.formatted}</Text>
+      <Text size="s">
+        {data?.availableBalance.amount} {data?.availableBalance.unit}
+      </Text>
     </>
   );
 };

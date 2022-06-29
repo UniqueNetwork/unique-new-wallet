@@ -25,7 +25,6 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
   const { selectedAccount } = useAccounts();
 
-  // todo: repair balance after changing models
   const { isLoading: qtzLoading, data: qtzBalance } = useAccountBalanceService(
     selectedAccount?.address,
     config.quartzRestApiUrl,
@@ -61,11 +60,12 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           getDisabled
           loading={qtzLoading}
           address={selectedAccount?.address}
-          balanceFull={qtzBalance?.formatted}
-          balanceTransferable={qtzBalance?.amountWithUnit}
+          balanceFull={qtzBalance?.freeBalance.amount}
+          balanceTransferable={qtzBalance?.availableBalance.amount}
+          balanceLocked={qtzBalance?.lockedBalance.amount}
           iconName="chain-quartz"
           name="Quartz"
-          symbol="QTZ"
+          symbol={qtzBalance?.freeBalance.unit}
           onSend={sendFundsHandler}
           onGet={getCoinsHandler}
         />
@@ -73,19 +73,20 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           getDisabled
           loading={opalLoading}
           address={selectedAccount?.address}
-          balanceFull={opalBalance?.formatted}
-          balanceTransferable={opalBalance?.amountWithUnit}
+          balanceFull={opalBalance?.freeBalance.amount}
+          balanceTransferable={opalBalance?.availableBalance.amount}
+          balanceLocked={opalBalance?.lockedBalance.amount}
           iconName="chain-opal"
           name="Opal"
-          symbol="OPL"
+          symbol={opalBalance?.freeBalance.unit}
           onSend={sendFundsHandler}
           onGet={getCoinsHandler}
         />
         <CoinsRow
           sendDisabled
           address={selectedAccount?.address}
-          balanceFull="0 KSM"
-          balanceTransferable="0 KSM"
+          balanceFull=""
+          balanceTransferable=""
           iconName="chain-kusama"
           name="Kusama"
           symbol="KSM"
@@ -96,8 +97,8 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           getDisabled
           sendDisabled
           address={selectedAccount?.address}
-          balanceFull="0 UNQ"
-          balanceTransferable="0 UNQ"
+          balanceFull=""
+          balanceTransferable=""
           iconName="chain-unique"
           name="Unique network"
           symbol="UNQ"

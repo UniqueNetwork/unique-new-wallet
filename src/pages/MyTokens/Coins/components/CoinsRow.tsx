@@ -1,8 +1,7 @@
-import React, { memo, useCallback, useEffect, VFC } from 'react';
+import React, { memo, useCallback, VFC } from 'react';
 import classNames from 'classnames';
 import styled, { css } from 'styled-components';
 import { Button, Icon, Loader, useNotifications } from '@unique-nft/ui-kit';
-import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
 
 import { NetworkType } from '@app/types';
 
@@ -70,9 +69,13 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           <Loader />
         ) : (
           <>
-            <div className="balance-full">{balanceFull}</div>
+            <div className="balance-full">
+              {balanceFull || '0'} {symbol}
+            </div>
             <div className="balance-transferable">
-              {`${balanceTransferable} transferable` ?? 'no transferable'}
+              {balanceTransferable
+                ? `${balanceTransferable} ${symbol} transferable`
+                : 'no transferable'}
             </div>
             <div className="balance-locked">
               {balanceLocked ? `${balanceLocked} ${symbol} locked` : 'no locked'}

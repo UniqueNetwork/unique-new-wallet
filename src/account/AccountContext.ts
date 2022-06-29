@@ -9,6 +9,7 @@ export enum AccountSigner {
 
 export interface Account extends InjectedAccountWithMeta {
   balance?: string;
+  unitBalance: string;
   signerType: AccountSigner;
 }
 
