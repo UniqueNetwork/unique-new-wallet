@@ -9,6 +9,7 @@ import {
   Select,
   RadioOptionValueType,
 } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 import { iconDown, iconUp } from '@app/utils';
 import {
@@ -16,6 +17,7 @@ import {
   useNftFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import { Direction } from '@app/api/graphQL/tokens';
+import { ROUTE } from '@app/routes';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -56,6 +58,7 @@ const sortOptions: SelectOption[] = [
 const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = ({
   className,
 }) => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const { direction, onChangeSearch, onChangeDirection, onChangeType } =
     useNftFilterContext();
@@ -93,6 +96,7 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         }}
         title="Create an NFT"
         role="primary"
+        onClick={() => navigate(ROUTE.CREATE_NFT)}
       />
     </div>
   );

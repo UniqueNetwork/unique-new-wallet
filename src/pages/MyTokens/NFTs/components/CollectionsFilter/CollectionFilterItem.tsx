@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Checkbox } from '@unique-nft/ui-kit';
 
+import { getTokenIpfsUriByImagePath } from '@app/utils';
+
 export interface CollectionFilterItemComponentProps {
   id: number;
   icon: string;

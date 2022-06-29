@@ -54,8 +54,18 @@ const getConditionByTypesFilters = (
   filtersTypes: TypeFilter[] | undefined,
 ) => {
   const filters: Record<TypeFilter, OperationVariables> = {
-    purchased: { _and: [{ owner: { _eq: owner } }, { is_sold: { _eq: true } }] },
-    createdByMe: { collection_owner: { _eq: owner } },
+    purchased: {
+      _and: [
+        { _or: [{ owner: { _eq: owner } }, { owner_normalized: { _eq: owner } }] },
+        { is_sold: { _eq: true } },
+      ],
+    },
+    createdByMe: {
+      _or: [
+        { collection_owner: { _eq: owner } },
+        { collection_owner_normalized: { _eq: owner } },
+      ],
+    },
   };
   const defaultFilter = { _or: [filters.purchased, filters.createdByMe] };
 
@@ -104,7 +114,7 @@ export const useGraphQlOwnerTokens = (
       offset: limit * page,
       direction,
       where: {
-        ...getConditionBySearchText(searchText),
+        ...getConditionBySearchText('token_name', searchText),
         ...getConditionByTypesFilters(owner, typesFilters),
         ...getConditionByCollectionsIds(collectionsIds),
       },

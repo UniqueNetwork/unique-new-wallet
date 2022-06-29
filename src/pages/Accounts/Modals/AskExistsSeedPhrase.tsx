@@ -1,6 +1,8 @@
-import React, { ChangeEvent, FC, useCallback, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
+import keyring from '@polkadot/ui-keyring';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { addressFromSeed } from '@app/utils';
 import {
@@ -23,6 +25,14 @@ export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish
   const [seed, setSeed] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [confirmSeedSaved, setConfirmSeedSaved] = useState<boolean>(false);
+
+  useEffect(() => {
+    cryptoWaitReady().then(() => {
+      keyring.loadAll({
+        // todo <-- SS58
+      });
+    });
+  }, []);
 
   const changeSeed = useCallback(
     (value: string) => {

@@ -9,7 +9,6 @@ import {
   Chip,
   Link,
 } from '@unique-nft/ui-kit';
-import { useLocation, useResolvedPath } from 'react-router-dom';
 
 import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';

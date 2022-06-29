@@ -26,18 +26,22 @@ const TOKEN_BY_ID_QUERY = gql`
 `;
 
 export const useGraphQlTokenById = (tokenId: number, collectionId: number) => {
-  const { data, loading, error } = useQuery<TokenByIdResponse>(TOKEN_BY_ID_QUERY, {
-    fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-first',
-    variables: {
-      tokenId,
-      collectionId,
+  const { data, loading, error, refetch } = useQuery<TokenByIdResponse>(
+    TOKEN_BY_ID_QUERY,
+    {
+      fetchPolicy: 'network-only',
+      nextFetchPolicy: 'cache-first',
+      variables: {
+        tokenId,
+        collectionId,
+      },
     },
-  });
+  );
 
   return {
     error,
     loading,
     token: data?.view_tokens[0],
+    refetch,
   };
 };

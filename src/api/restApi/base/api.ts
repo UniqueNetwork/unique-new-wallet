@@ -5,10 +5,10 @@ import { serializeToQuery } from './helper';
 export interface IBaseApi {
   readonly baseURL?: string;
   get: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
-  delete: <R>(url: string, config?: AxiosRequestConfig) => Promise<AxiosResponse<R>>;
+  delete: <R, D>(url: string, data: D, config?: AxiosRequestConfig) => Promise<R>;
   post: <R, D>(url: string, data: D, config?: AxiosRequestConfig) => Promise<R>;
   put: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
-  patch: <R>(url: string, config?: AxiosRequestConfig) => Promise<R>;
+  patch: <R, D>(url: string, data: D, config?: AxiosRequestConfig) => Promise<R>;
 }
 
 export class BaseApi implements IBaseApi {
@@ -35,9 +35,10 @@ export class BaseApi implements IBaseApi {
 
   async delete<T = any, R = AxiosResponse<T>, D = any>(
     url: string,
+    data?: D,
     config?: AxiosRequestConfig<D>,
   ): Promise<R> {
-    const response = await this.http.delete(url, config);
+    const response = await this.http.delete(url, { ...config, data });
 
     return response.data;
   }

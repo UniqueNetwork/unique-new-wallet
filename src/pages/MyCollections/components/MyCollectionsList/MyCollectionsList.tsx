@@ -1,71 +1,98 @@
-import React, { VFC } from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { CollectionLink, Pagination, Text } from '@unique-nft/ui-kit';
-import { Link } from 'react-router-dom';
+import {
+  CollectionLink,
+  IPaginationProps,
+  Loader,
+  Pagination,
+  Text,
+} from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
+import { TOrderBy } from '@app/api';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
+import AccountContext from '@app/account/AccountContext';
+import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { LisFooter, PaddedBlock } from '@app/styles/styledVariables';
+import { NotFoundCoins } from '@app/components';
+import noCoverImage from '@app/static/icons/empty-image.svg';
 
 interface MyCollectionsListComponentProps {
   className?: string;
+  page: number;
+  order?: TOrderBy;
+  search?: string;
+  onPageChange: IPaginationProps['onPageChange'];
 }
 
-interface MyCollectionWithCount {
-  coverImageUrl: string;
-  id: string;
-  name: string;
-  tokensCount: number;
-}
-
-const myCollections: MyCollectionWithCount[] = [
-  {
-    id: '1',
-    coverImageUrl:
-      'https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e',
-    name: 'Chelobrik',
-    tokensCount: 10000,
-  },
-  {
-    id: '2',
-    coverImageUrl:
-      'https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e',
-    name: 'Chelobrik',
-    tokensCount: 10000,
-  },
-  {
-    id: '3',
-    coverImageUrl:
-      'https://ipfs.unique.network/ipfs/QmaPhgoqUVNLi9v6Rfqvx3jp5WyGNMZibWxouWTQqGXG8e',
-    name: 'Chelobrik',
-    tokensCount: 10000,
-  },
-];
-
-const MyCollectionsListComponent: VFC<MyCollectionsListComponentProps> = ({
+const MyCollectionsListComponent = ({
   className,
-}) => {
-  const onPageChange = (page: number) => {
-    console.log('page', page);
-  };
+  order,
+  page,
+  search,
+  onPageChange,
+}: MyCollectionsListComponentProps) => {
+  const navigate = useNavigate();
+  const { selectedAccount } = useContext(AccountContext);
+
+  const { collections, collectionsCount, isCollectionsLoading } =
+    useGraphQlCollectionsByAccount({
+      accountAddress: selectedAccount?.address,
+      options: {
+        order,
+        pagination: {
+          page,
+          limit: 10,
+        },
+        search,
+      },
+    });
 
   return (
     <div className={classNames('my-collections-list', className)}>
-      <List>
-        {myCollections.map((myCollection) => (
-          <Link key={myCollection.id} to={`/my-collections/${myCollection.id}/nft`}>
-            <CollectionLink
-              count={myCollection.tokensCount}
-              // id={myCollection.id}
-              image={myCollection.coverImageUrl}
-              title={`${myCollection.name} [${myCollection.id}]`}
+      {isCollectionsLoading ? (
+        <Loader size="middle" />
+      ) : collectionsCount > 0 ? (
+        <>
+          <List>
+            {collections?.map((collection) => (
+              /* TODO: div wrapper change onClick to href prop */
+              <CollectionItem
+                key={collection.collection_id}
+                className={classNames({ '_no-cover': !collection.collection_cover })}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(`/my-collections/${collection.collection_id}/nft`);
+                }}
+              >
+                <CollectionLink
+                  count={collection.tokens_count || 0}
+                  image={
+                    collection.collection_cover
+                      ? getTokenIpfsUriByImagePath(collection.collection_cover)
+                      : noCoverImage
+                  }
+                  title={`${collection.name} [${collection.collection_id}]`}
+                />
+              </CollectionItem>
+            ))}
+          </List>
+          <Footer>
+            <Text size="m">
+              {`${collectionsCount} ${collectionsCount === 1 ? 'item' : 'items'}`}
+            </Text>
+            <Pagination
+              withIcons
+              size={collectionsCount}
+              current={page}
+              onPageChange={onPageChange}
             />
-          </Link>
-        ))}
-      </List>
-      <Footer>
-        <Text size="m">{`${myCollections.length} items`}</Text>
-        <Pagination withIcons size={100} onPageChange={onPageChange} />
-      </Footer>
+          </Footer>
+        </>
+      ) : (
+        <NotFoundCoins />
+      )}
     </div>
   );
 };
@@ -81,4 +108,15 @@ const List = styled.div`
 
 export const MyCollectionsList = styled(MyCollectionsListComponent)`
   ${PaddedBlock};
+`;
+
+const CollectionItem = styled.div`
+  &._no-cover {
+    & > .unique-collection-link {
+      & > .unique-avatar {
+        object-fit: none;
+        background-color: var(--color-blue-grey-100);
+      }
+    }
+  }
 `;
