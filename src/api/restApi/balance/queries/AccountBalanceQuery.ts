@@ -1,6 +1,6 @@
 import { QueryKey } from 'react-query';
 
-import { BalanceResponse } from '@app/types/Api';
+import { AllBalancesResponse } from '@app/types/Api';
 import { IBaseApi } from '@app/api';
 
 import { EndpointQuery } from '../../request';
@@ -9,7 +9,7 @@ export interface RequestArgs {
   address: string;
 }
 
-export class AccountBalanceQuery extends EndpointQuery<BalanceResponse, RequestArgs> {
+export class AccountBalanceQuery extends EndpointQuery<AllBalancesResponse, RequestArgs> {
   protected baseUrl;
 
   constructor() {
@@ -22,7 +22,7 @@ export class AccountBalanceQuery extends EndpointQuery<BalanceResponse, RequestA
     return ['account', 'balance', address];
   }
 
-  request(api: IBaseApi, { address }: RequestArgs): Promise<BalanceResponse> {
-    return api.get<BalanceResponse>(`${this.baseUrl}?address=${address}`);
+  request(api: IBaseApi, { address }: RequestArgs): Promise<AllBalancesResponse> {
+    return api.get(`${this.baseUrl}?address=${address}`);
   }
 }
