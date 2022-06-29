@@ -67,46 +67,52 @@ export const useCollectionMutation = () => {
 
     setSsCreatingCollection(true);
 
-    const createResp = await createCollection(collectionFull);
+    try {
+      const createResp = await createCollection(collectionFull);
 
-    if (!createResp?.signerPayloadJSON) {
-      error('Create collection error', {
+      if (!createResp?.signerPayloadJSON) {
+        error('Create collection error', {
+          name: 'Create collection',
+          size: 32,
+          color: 'white',
+        });
+
+        return;
+      }
+
+      const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
+
+      if (!signature) {
+        error('Sign transaction error', {
+          name: 'Create collection',
+          size: 32,
+          color: 'white',
+        });
+
+        return;
+      }
+
+      await submitExtrinsic({
+        signerPayloadJSON: createResp.signerPayloadJSON,
+        signature,
+      });
+
+      info('Collection successfully created', {
         name: 'Create collection',
         size: 32,
         color: 'white',
       });
+    } catch (e) {
+      console.error(e);
 
-      setSsCreatingCollection(false);
-
-      return;
-    }
-
-    const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
-
-    if (!signature) {
-      error('Sign transaction error', {
+      error('Creating collection error', {
         name: 'Create collection',
         size: 32,
         color: 'white',
       });
-
+    } finally {
       setSsCreatingCollection(false);
-
-      return;
     }
-
-    await submitExtrinsic({
-      signerPayloadJSON: createResp.signerPayloadJSON,
-      signature,
-    });
-
-    info('Collection successfully created', {
-      name: 'Create collection',
-      size: 32,
-      color: 'white',
-    });
-
-    setSsCreatingCollection(false);
   };
 
   return {
