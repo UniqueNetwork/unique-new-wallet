@@ -10,7 +10,7 @@ export const networksUrls: Record<NetworkType, string | undefined> = {
 
 export const networks: Chain[] = [
   {
-    apiEndpoint: networksUrls.UNQ || '',
+    apiEndpoint: networksUrls.QTZ || '',
     id: 'quartz',
     name: 'Quartz',
     icon: {
