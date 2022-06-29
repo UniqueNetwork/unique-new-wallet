@@ -5,12 +5,8 @@ import { Heading } from '@unique-nft/ui-kit';
 import config from '@app/config';
 import { NetworkType } from '@app/types';
 import { useAccounts } from '@app/hooks';
-import { RampModal, TransferFundsModal } from '@app/pages';
-import {
-  useAccountBalanceService,
-  useBalanceTransfer,
-  useExtrinsicSubmit,
-} from '@app/api';
+import { RampModal, SendFundsModal } from '@app/pages';
+import { useAccountBalanceService } from '@app/api';
 
 import { CoinsRow } from './components';
 
@@ -23,13 +19,11 @@ const CoinsContainer = styled.div`
 `;
 
 export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
-  const { transfer } = useBalanceTransfer();
-  const { submitExtrinsic } = useExtrinsicSubmit();
-  const { selectedAccount, signMessage } = useAccounts();
-
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
+
+  const { selectedAccount } = useAccounts();
 
   const { isLoading: qtzLoading, data: qtzBalance } = useAccountBalanceService(
     selectedAccount?.address,
@@ -52,53 +46,12 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     [],
   );
 
-  const confirmTransferFundsHandler = useCallback(
-    (senderAddress?: string, destinationAddress?: string, amount?: number) => {
-      if (!senderAddress || !destinationAddress || !amount) {
-        return;
-      }
-
-      const transferCoins = async () => {
-        try {
-          const tx = await transfer({
-            address: senderAddress,
-            destination: destinationAddress,
-            amount,
-          });
-
-          if (!tx) {
-            throw new Error('Unexpected error');
-          }
-
-          const signature = await signMessage(tx.signerPayloadJSON);
-
-          if (!signature) {
-            throw new Error('There is no signature');
-          }
-
-          await submitExtrinsic({
-            ...tx,
-            signature,
-          });
-        } catch (e) {
-          console.error(e);
-        } finally {
-          setFundsModalVisible(false);
-        }
-      };
-
-      transferCoins();
-    },
-    [],
-  );
-
   return (
     <>
-      <TransferFundsModal
+      <SendFundsModal
         isVisible={fundsModalVisible}
         networkType={selectedNetworkType}
         onClose={closeTransferFundsModalHandler}
-        onConfirm={confirmTransferFundsHandler}
       />
       <RampModal isVisible={rampModalVisible} onClose={closeRampModalHandler} />
       <CoinsContainer>
