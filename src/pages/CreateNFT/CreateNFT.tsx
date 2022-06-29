@@ -1,4 +1,4 @@
-import React, { useContext, useState, VFC } from 'react';
+import React, { useContext, useEffect, useState, VFC } from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import { Avatar, Button, Heading, Suggest, Upload } from '@unique-nft/ui-kit';
@@ -14,6 +14,7 @@ import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
 import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
+import { ROUTE } from '@app/routes';
 
 import {
   Attributes,
@@ -49,7 +50,7 @@ const defaultOptions = {
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { fee } = useFee();
-  const { attributes, setAttributes, setTokenImg, resetForm } =
+  const { attributes, createSchema, setAttributes, setTokenImg, resetForm } =
     useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
   const { uploadFile } = useFileUpload();
@@ -97,7 +98,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const onConfirmAndClose = async () => {
     await onCreateNFT();
 
-    navigate('/my-tokens/nft');
+    navigate(ROUTE.MY_TOKENS);
   };
 
   // TODO - remove this FAQ after uploadFile value fix and move to Formik
@@ -116,6 +117,12 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     onResetForm();
   };
 
+  useEffect(() => {
+    if (tokenFields?.length) {
+      createSchema(tokenFields);
+    }
+  }, [tokenFields]);
+
   // TODO - add redirect to main page here if user has no collections
   if (!collections?.length && !isCollectionsLoading) {
     return null;
@@ -125,6 +132,8 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   if (isCollectionsLoading) {
     return null;
   }
+
+  const disabled = !attributes.ipfsJson;
 
   return (
     <>
@@ -196,13 +205,13 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
               </Alert>
               <ButtonGroup>
                 <Button
-                  disabled={!selectedCollection?.id}
+                  disabled={!selectedCollection?.id || disabled}
                   title="Confirm and create more"
                   role="primary"
                   onClick={() => void onConfirmAndCreateMore()}
                 />
                 <Button
-                  disabled={!selectedCollection?.id}
+                  disabled={!selectedCollection?.id || disabled}
                   title="Confirm and close"
                   onClick={() => void onConfirmAndClose()}
                 />

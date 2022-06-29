@@ -54,6 +54,17 @@ export const TransferModal: VFC<TransferModalProps> = ({
         }
 
         const signature = await signMessage(tx.signerPayloadJSON);
+
+        if (!signature) {
+          error('Transfer error', {
+            name: 'Transfer',
+            size: 32,
+            color: 'white',
+          });
+
+          return;
+        }
+
         const submitResult = await submitExtrinsic({
           ...tx,
           signature,

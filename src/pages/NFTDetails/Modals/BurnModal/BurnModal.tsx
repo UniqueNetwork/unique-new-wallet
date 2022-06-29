@@ -50,6 +50,17 @@ export const BurnModal: VFC<BurnModalProps> = ({
       }
 
       const signature = await signMessage(tx.signerPayloadJSON);
+
+      if (!signature) {
+        error('Burn error', {
+          name: 'Burn NFT',
+          size: 32,
+          color: 'white',
+        });
+
+        return;
+      }
+
       const submitResult = await submitExtrinsic({
         ...tx,
         signature,

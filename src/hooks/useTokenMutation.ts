@@ -43,6 +43,18 @@ export const useTokenMutation = (collectionId: number) => {
 
     const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
 
+    if (!signature) {
+      error('Sign transaction error', {
+        name: 'Create NFT',
+        size: 32,
+        color: 'white',
+      });
+
+      setIsCreatingNFT(false);
+
+      return;
+    }
+
     const submitResult = await submitExtrinsic({
       signerPayloadJSON: createResp.signerPayloadJSON,
       signature,
