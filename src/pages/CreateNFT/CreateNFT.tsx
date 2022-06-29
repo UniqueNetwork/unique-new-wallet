@@ -14,6 +14,7 @@ import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
 import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
+import { ROUTE } from '@app/routes';
 
 import {
   Attributes,
@@ -97,7 +98,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const onConfirmAndClose = async () => {
     await onCreateNFT();
 
-    navigate('/my-tokens/nft');
+    navigate(ROUTE.MY_TOKENS);
   };
 
   // TODO - remove this FAQ after uploadFile value fix and move to Formik

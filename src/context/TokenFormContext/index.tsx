@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
 import { TokenAttributes, TokenField } from '@app/types';
+import { ROUTE } from '@app/routes';
 
 import TokenFormContext from './TokenFormContext';
 import { createDynamicYupSchema } from './createDynamicYupSchema';
@@ -43,7 +44,7 @@ export function TokenForm({ children }: Props): React.ReactElement<Props> | null
     validationSchema: schema,
     validateOnBlur: true,
     onSubmit: () => {
-      navigate('/my-tokens/nft');
+      navigate(ROUTE.MY_TOKENS);
     },
   });
 
