@@ -2,7 +2,7 @@ import React, { useEffect, useState, VFC } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useFee } from '@app/hooks';
 import { useExtrinsicSubmit, ViewToken } from '@app/api';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useExtrinsicStatus } from '@app/api/restApi/extrinsic/hooks/useExtrinsicStatus';
@@ -31,6 +31,39 @@ export const BurnModal: VFC<BurnModalProps> = ({
 
   const [txHash, setTxHash] = useState<string>();
   const { data: extrinsicStatus } = useExtrinsicStatus(txHash);
+  const { fee, getFee } = useFee();
+
+  const calculateFee = async () => {
+    const tx = await generateTx();
+
+    if (!tx) {
+      return;
+    }
+
+    await getFee(tx);
+  };
+
+  const generateTx = async () => {
+    if (!token || !selectedAccount?.address) {
+      return;
+    }
+
+    try {
+      return await tokenBurn({
+        address: selectedAccount.address,
+        collectionId: token.collection_id,
+        tokenId: token.token_id,
+      });
+    } catch (e) {
+      error('Burn generateTx error', {
+        name: 'Burn NFT',
+        size: 32,
+        color: 'white',
+      });
+
+      return null;
+    }
+  };
 
   const onBurn = async () => {
     if (!token || !selectedAccount?.address) {
@@ -39,14 +72,10 @@ export const BurnModal: VFC<BurnModalProps> = ({
 
     setStatus('burn-stages');
     try {
-      const tx = await tokenBurn({
-        address: selectedAccount.address,
-        collectionId: token.collection_id,
-        tokenId: token.token_id,
-      });
+      const tx = await generateTx();
+
       if (!tx) {
-        // TODO: move this message to general dictionary
-        throw new Error('Unexpected error');
+        return;
       }
 
       const signature = await signMessage(tx.signerPayloadJSON);
@@ -81,16 +110,22 @@ export const BurnModal: VFC<BurnModalProps> = ({
       return;
     }
     const { isCompleted, isError, errorMessage } = extrinsicStatus;
+
     if (isCompleted) {
       onComplete();
       info('Burn token completed successfully');
       navigate(ROUTE.MY_TOKENS);
     }
+
     if (isError) {
       error(errorMessage);
       onClose();
     }
   }, [extrinsicStatus]);
+
+  useEffect(() => {
+    void calculateFee();
+  }, []);
 
   if (!selectedAccount || !token) {
     return null;
@@ -99,6 +134,7 @@ export const BurnModal: VFC<BurnModalProps> = ({
   if (status === 'ask-burn') {
     return (
       <AskBurnModal
+        fee={fee}
         isVisible={isVisible}
         onBurn={() => {
           void onBurn();
@@ -110,5 +146,6 @@ export const BurnModal: VFC<BurnModalProps> = ({
   if (status === 'burn-stages') {
     return <BurnStagesModal />;
   }
+
   return null;
 };

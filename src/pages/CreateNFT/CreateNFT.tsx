@@ -5,7 +5,7 @@ import { Avatar, Button, Heading, Suggest, Upload } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { Alert, StatusTransactionModal } from '@app/components';
-import { useAccounts, useFee, useTokenMutation } from '@app/hooks';
+import { useAccounts, useTokenMutation } from '@app/hooks';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection, useFileUpload } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
