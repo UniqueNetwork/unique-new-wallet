@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useCalculateFee } from '@app/api';
-import { Balance } from '@app/types';
-import { UnsignedTxPayloadResponse } from '@app/types/Api';
+import { BalanceResponse, UnsignedTxPayloadResponse } from '@app/types/Api';
 
 export interface UseFeeResult {
   fee: string;
@@ -26,7 +25,7 @@ export const useFee = (): UseFeeResult => {
       });
     }
 
-    const { amount, unit } = result as Balance;
+    const { amount, unit } = result as BalanceResponse;
 
     setFee([amount.replace(/([0]+)$/, ''), unit].join(' '));
   };

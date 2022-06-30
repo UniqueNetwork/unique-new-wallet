@@ -1,14 +1,16 @@
 import { IBaseApi } from '@app/api';
-import { Balance } from '@app/types';
 import { EndpointMutation } from '@app/api/restApi/request';
-import { UnsignedTxPayloadResponse } from '@app/types/Api';
+import { BalanceResponse, UnsignedTxPayloadResponse } from '@app/types/Api';
 
 export type CalculateFeePayload = {
   api: IBaseApi;
   extrinsic: UnsignedTxPayloadResponse;
 };
 
-export class CalculateFeeMutation extends EndpointMutation<Balance, CalculateFeePayload> {
+export class CalculateFeeMutation extends EndpointMutation<
+  BalanceResponse,
+  CalculateFeePayload
+> {
   protected baseUrl;
 
   constructor() {
@@ -19,8 +21,8 @@ export class CalculateFeeMutation extends EndpointMutation<Balance, CalculateFee
     this.request = this.request.bind(this);
   }
 
-  async request(payload: CalculateFeePayload): Promise<Balance> {
-    return payload.api.post<Balance, UnsignedTxPayloadResponse>(
+  async request(payload: CalculateFeePayload): Promise<BalanceResponse> {
+    return payload.api.post<BalanceResponse, UnsignedTxPayloadResponse>(
       `${this.baseUrl}`,
       payload.extrinsic,
     );

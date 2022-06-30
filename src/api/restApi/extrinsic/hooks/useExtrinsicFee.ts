@@ -1,7 +1,6 @@
 import { useApiMutation, ExtrinsicApiService } from '@app/api';
-import { Balance } from '@app/types';
 import { useApi } from '@app/hooks';
-import { UnsignedTxPayloadResponse } from '@app/types/Api';
+import { BalanceResponse, UnsignedTxPayloadResponse } from '@app/types/Api';
 
 export const useCalculateFee = () => {
   const { api } = useApi();
@@ -12,7 +11,7 @@ export const useCalculateFee = () => {
 
   const calculateFee = async (
     extrinsic: UnsignedTxPayloadResponse,
-  ): Promise<Balance | undefined> => {
+  ): Promise<BalanceResponse | undefined> => {
     if (!api) {
       return;
     }
