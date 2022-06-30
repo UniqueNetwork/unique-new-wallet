@@ -17,26 +17,3 @@ export interface NftTokenDTO {
   owner: string;
   constData: NftTokenConstData;
 }
-
-export interface TokenCreateResponse {
-  signerPayloadJSON: {
-    address: string;
-    blockHash: string;
-    blockNumber: string;
-    era: string;
-    genesisHash: string;
-    method: string;
-    nonce: string;
-    specVersion: string;
-    tip: string;
-    transactionVersion: string;
-    signedExtensions: string[];
-    version: number;
-  };
-  signerPayloadRaw: {
-    address: string;
-    data: string;
-    type: number[];
-  };
-  signerPayloadHex: string;
-}

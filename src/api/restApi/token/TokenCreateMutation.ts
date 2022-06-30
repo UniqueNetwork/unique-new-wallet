@@ -1,7 +1,8 @@
 import { QueryClient } from 'react-query';
 
 import { EndpointMutation } from '@app/api/restApi/request';
-import { NftTokenDTO, TokenCreateResponse } from '@app/types';
+import { NftTokenDTO } from '@app/types';
+import { UnsignedTxPayloadResponse } from '@app/types/Api';
 import { IBaseApi } from '@app/api';
 
 export type TokenCreatePayload = {
@@ -10,7 +11,7 @@ export type TokenCreatePayload = {
 };
 
 export class TokenCreateMutation extends EndpointMutation<
-  TokenCreateResponse,
+  UnsignedTxPayloadResponse,
   TokenCreatePayload
 > {
   protected baseUrl;
@@ -23,8 +24,8 @@ export class TokenCreateMutation extends EndpointMutation<
     this.request = this.request.bind(this);
   }
 
-  async request(payload: TokenCreatePayload): Promise<TokenCreateResponse> {
-    return payload.api.post<TokenCreateResponse, NftTokenDTO>(
+  async request(payload: TokenCreatePayload): Promise<UnsignedTxPayloadResponse> {
+    return payload.api.post<UnsignedTxPayloadResponse, NftTokenDTO>(
       `${this.baseUrl}`,
       payload.token,
     );
@@ -32,7 +33,7 @@ export class TokenCreateMutation extends EndpointMutation<
 
   afterMutationSuccess(
     queryClient: QueryClient,
-    data: TokenCreateResponse,
+    data: UnsignedTxPayloadResponse,
     payload: TokenCreatePayload,
   ) {
     // TODO - add notification here
