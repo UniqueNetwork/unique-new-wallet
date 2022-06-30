@@ -65,25 +65,25 @@ export const useCollectionMutation = () => {
       },
     };
 
-    setSsCreatingCollection(true);
+    try {
+      const createResp = await createCollection(collectionFull);
 
-    const createResp = await createCollection(collectionFull);
+      if (!createResp?.signerPayloadJSON) {
+        return;
+      }
 
-    if (!createResp?.signerPayloadJSON) {
-      error('Create collection error', {
+      await getFee(createResp);
+
+      return createResp;
+    } catch (e) {
+      console.error(e);
+
+      error('Creating collection error', {
         name: 'Create collection',
         size: 32,
         color: 'white',
       });
-
-      setSsCreatingCollection(false);
-
-      return;
     }
-
-    await getFee(createResp);
-
-    return createResp;
   }, [
     attributes,
     createCollection,
@@ -101,34 +101,56 @@ export const useCollectionMutation = () => {
 
   // TODO - add error handler for low balance - Error. Balance too low
   const onCreateCollection = async () => {
+    setSsCreatingCollection(true);
+
     const createResp = (await generateExtrinsic()) as UnsignedTxPayloadResponse;
 
-    const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
+    if (!createResp) {
+      setSsCreatingCollection(false);
 
-    if (!signature) {
-      error('Sign transaction error', {
+      error('Create collection error', {
+        name: 'Create collection',
+        size: 32,
+        color: 'white',
+      });
+    }
+
+    try {
+      const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
+
+      if (!signature) {
+        error('Sign transaction error', {
+          name: 'Create collection',
+          size: 32,
+          color: 'white',
+        });
+
+        setSsCreatingCollection(false);
+
+        return;
+      }
+
+      await submitExtrinsic({
+        signerPayloadJSON: createResp.signerPayloadJSON,
+        signature,
+      });
+
+      info('Collection successfully created', {
         name: 'Create collection',
         size: 32,
         color: 'white',
       });
 
       setSsCreatingCollection(false);
-
-      return;
+    } catch (e) {
+      error('Sign transaction error', {
+        name: 'Create collection',
+        size: 32,
+        color: 'white',
+      });
+    } finally {
+      setSsCreatingCollection(false);
     }
-
-    await submitExtrinsic({
-      signerPayloadJSON: createResp.signerPayloadJSON,
-      signature,
-    });
-
-    info('Collection successfully created', {
-      name: 'Create collection',
-      size: 32,
-      color: 'white',
-    });
-
-    setSsCreatingCollection(false);
   };
 
   return {
