@@ -1,72 +1,37 @@
-import { Heading } from '@unique-nft/ui-kit';
-import styled from 'styled-components';
-import classNames from 'classnames';
 import { useContext } from 'react';
+import { Heading } from '@unique-nft/ui-kit';
 
-import { SidebarPreview } from '@app/components';
-import srcImg from '@app/static/icons/empty-image.svg';
 import { CollectionFormContext } from '@app/context';
+import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
+import { Card } from '@app/pages/components/Card';
 
 const attributes = ['Name', 'Gender', 'Traits'];
 
-type Props = {
-  className?: string;
-};
-
-const CollectionSidebarComponent = ({ className }: Props) => {
+export const CollectionSidebar = () => {
   const { coverImgFile, mainInformationForm } = useContext(CollectionFormContext);
   const { values } = mainInformationForm;
   const { name, description, tokenPrefix } = values;
 
   return (
-    <div className={classNames('collection-sidebar', className)}>
-      <Item className="collection-preview">
+    <WrapperSidebar>
+      <SidebarRow>
         <Heading size="3">Collection preview</Heading>
-        <SidebarPreview
-          srcImg={coverImgFile ? URL.createObjectURL(coverImgFile) : srcImg}
-          description={description || 'Description'}
+        <Card
           title={name || 'Name'}
+          description={description || 'Description'}
+          picture={coverImgFile ? URL.createObjectURL(coverImgFile) : undefined}
         />
-      </Item>
-      <Item className="nft-preview">
+      </SidebarRow>
+      <SidebarRow>
         <Heading size="3">NFT preview</Heading>
-        <SidebarPreview
-          srcImg={srcImg}
-          description="Collection name"
+        <Card
+          attributesInline={attributes}
           title={tokenPrefix || 'tokenPrefix'}
-        >
-          <AttributeName>
-            <div className="attribute-title">Attribute names</div>
-            {attributes && (
-              <span className="attributes-content">{attributes.join(', ')}</span>
-            )}
-          </AttributeName>
-        </SidebarPreview>
-      </Item>
-    </div>
+          description="Collection name"
+          geometry="square"
+          picture={undefined}
+        />
+      </SidebarRow>
+    </WrapperSidebar>
   );
 };
-
-export const CollectionSidebar = styled(CollectionSidebarComponent)`
-  .nft-preview-sidebar {
-    margin-top: 40px;
-
-    .attributes {
-      margin-top: 15px;
-    }
-  }
-`;
-
-const Item = styled.div`
-  & + div {
-    margin-top: 40px;
-  }
-`;
-
-const AttributeName = styled.div`
-  margin-top: 15px;
-
-  .attribute-title {
-    font-size: 16px;
-  }
-`;

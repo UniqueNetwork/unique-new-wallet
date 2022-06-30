@@ -1,10 +1,12 @@
 import React, { VFC } from 'react';
 import {
+  Button,
+  Icon,
   InputText,
-  TableColumnProps,
   Select,
   SelectOptionProps,
-  Button,
+  TableColumnProps,
+  Tooltip,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
@@ -27,6 +29,7 @@ interface AttributesTableProps {
 
 interface AttributesColumnsProps {
   onAttributeChange(attribute: ArtificialAttributeItemType): void;
+
   onRemoveAttributeClick(value: ArtificialAttributeItemType): void;
 }
 
@@ -48,7 +51,17 @@ const getAttributesColumns = ({
   onRemoveAttributeClick,
 }: AttributesColumnsProps): TableColumnProps[] => [
   {
-    title: 'Attribute',
+    title: (
+      <>
+        Attribute
+        <Tooltip
+          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
+          placement="bottom-start"
+        >
+          Textual traits that show up&nbsp;on&nbsp;Token
+        </Tooltip>
+      </>
+    ),
     width: '40%',
     field: 'name',
     render(name: string, attribute: ArtificialAttributeItemType) {
@@ -62,7 +75,17 @@ const getAttributesColumns = ({
     },
   },
   {
-    title: 'Type',
+    title: (
+      <>
+        Type
+        <Tooltip
+          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
+          placement="bottom-start"
+        >
+          Select type of&nbsp;information you want to&nbsp;create
+        </Tooltip>
+      </>
+    ),
     width: '25%',
     field: 'fieldType',
     render(type: ArtificialFieldType, attribute: ArtificialAttributeItemType) {
@@ -84,7 +107,17 @@ const getAttributesColumns = ({
     },
   },
   {
-    title: 'Rule',
+    title: (
+      <>
+        Rule
+        <Tooltip
+          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
+          placement="bottom-start"
+        >
+          Set a&nbsp;rule for your attribute
+        </Tooltip>
+      </>
+    ),
     width: '25%',
     field: 'rule',
     render(rule: FieldRuleType, attribute: ArtificialAttributeItemType) {
@@ -103,7 +136,17 @@ const getAttributesColumns = ({
     },
   },
   {
-    title: 'Possible values',
+    title: (
+      <>
+        Possible values
+        <Tooltip
+          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
+          placement="bottom-start"
+        >
+          Write down all the options you have
+        </Tooltip>
+      </>
+    ),
     width: '40%',
     field: 'values',
     render(values: string[], attribute: ArtificialAttributeItemType) {
@@ -119,7 +162,7 @@ const getAttributesColumns = ({
   },
   {
     title: '',
-    width: '56px',
+    width: '40px',
     field: 'id',
     render(id: number, attribute: ArtificialAttributeItemType) {
       return (
@@ -179,8 +222,9 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
 };
 
 const AddButtonWrapper = styled.div`
+  margin-top: var(--prop-gap);
+
   & > button.unique-button.ghost {
-    margin-top: var(--prop-gap);
     background-color: transparent;
     border: none;
     color: var(--color-primary-500);
@@ -189,24 +233,41 @@ const AddButtonWrapper = styled.div`
 `;
 
 export const AttributesTable = styled(AttributesTableComponent)`
-  margin-top: calc(var(--prop-gap) * 1.5);
+  margin-bottom: calc(var(--prop-gap) * 2.5);
+
   .unique-table {
-    .unique-table-data-row > div {
-      padding: calc(var(--prop-gap) / 4) calc(var(--prop-gap) / 2);
+    .unique-table-header {
+      .table-header-cell {
+        .unique-tooltip-content {
+          display: inline-block;
+          vertical-align: middle;
+          margin-top: 0.185em;
+        }
+      }
     }
+
+    .unique-table-data-row {
+      & > div {
+        padding: calc(var(--prop-gap) / 4) calc(var(--prop-gap) / 2);
+      }
+    }
+
     .unique-input-text {
-      padding: 0;
+      &,
       .input-wrapper {
         padding: 0;
       }
     }
+
     .unique-select {
-      padding: 0;
       width: 100%;
+
+      &,
       .select-wrapper {
         padding: 0;
       }
     }
+
     .unique-button {
       padding: 0;
     }
