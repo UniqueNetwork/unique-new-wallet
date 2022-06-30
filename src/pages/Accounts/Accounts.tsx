@@ -14,7 +14,6 @@ import { useAccounts } from '@app/hooks';
 import { formatKusamaBalance } from '@app/utils/textUtils';
 import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
 import { Account } from '@app/account';
-import { AccountsTotalBalance } from '@app/pages/Accounts/components/AccountsTotalBalance';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { SendFundsModal } from '@app/pages';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
@@ -147,19 +146,19 @@ export const Accounts = () => {
     void fetchAccounts();
   }, [fetchAccounts]);
 
-  const totalBalance = useMemo(
-    () =>
-      accounts.reduce<BN>(
-        (acc, account) => (account?.balance ? acc.add(new BN(account?.balance)) : acc),
-        new BN(0),
-      ),
-    [accounts],
-  );
+  // const totalBalance = useMemo(
+  //   () =>
+  //     accounts.reduce<BN>(
+  //       (acc, account) => (account?.balance ? acc.add(new BN(account?.balance)) : acc),
+  //       new BN(0),
+  //     ),
+  //   [accounts],
+  // );
 
   return (
     <PagePaperNoPadding>
       <AccountsPageHeader>
-        <AccountsTotalBalance balance={totalBalance} />
+        {/* <AccountsTotalBalance balance={totalBalance} /> */}
         <SearchInputWrapper>
           <SearchInputStyled
             placeholder="Search"
