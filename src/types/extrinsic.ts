@@ -23,8 +23,11 @@ export interface ExtrinsicDTO {
   };
 }
 
-export interface SubmittableExtrinsicDTO {
+export interface UnsignedExtrinsicDTO {
   signerPayloadJSON: SignerPayloadJSON;
+}
+
+export interface SubmittableExtrinsicDTO extends UnsignedExtrinsicDTO {
   signature: string;
 }
 

@@ -5,12 +5,8 @@ import { Heading } from '@unique-nft/ui-kit';
 import config from '@app/config';
 import { NetworkType } from '@app/types';
 import { useAccounts } from '@app/hooks';
-import { RampModal, TransferFundsModal } from '@app/pages';
-import {
-  useAccountBalanceService,
-  useBalanceTransfer,
-  useExtrinsicSubmit,
-} from '@app/api';
+import { RampModal, SendFundsModal } from '@app/pages';
+import { useAccountBalanceService } from '@app/api';
 
 import { CoinsRow } from './components';
 
@@ -23,15 +19,11 @@ const CoinsContainer = styled.div`
 `;
 
 export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
-  const { transfer } = useBalanceTransfer();
-  const { submitExtrinsic } = useExtrinsicSubmit();
-  const { selectedAccount, signMessage } = useAccounts();
-
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
 
-  // todo: repair balance after changing models
+  const { selectedAccount } = useAccounts();
 
   const { isLoading: qtzLoading, data: qtzBalance } = useAccountBalanceService(
     selectedAccount?.address,
@@ -54,53 +46,12 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     [],
   );
 
-  const confirmTransferFundsHandler = useCallback(
-    (senderAddress?: string, destinationAddress?: string, amount?: number) => {
-      if (!senderAddress || !destinationAddress || !amount) {
-        return;
-      }
-
-      const transferCoins = async () => {
-        try {
-          const tx = await transfer({
-            address: senderAddress,
-            destination: destinationAddress,
-            amount,
-          });
-
-          if (!tx) {
-            throw new Error('Unexpected error');
-          }
-
-          const signature = await signMessage(tx.signerPayloadJSON);
-
-          if (!signature) {
-            throw new Error('There is no signature');
-          }
-
-          await submitExtrinsic({
-            ...tx,
-            signature,
-          });
-        } catch (e) {
-          console.error(e);
-        } finally {
-          setFundsModalVisible(false);
-        }
-      };
-
-      transferCoins();
-    },
-    [],
-  );
-
   return (
     <>
-      <TransferFundsModal
+      <SendFundsModal
         isVisible={fundsModalVisible}
         networkType={selectedNetworkType}
         onClose={closeTransferFundsModalHandler}
-        onConfirm={confirmTransferFundsHandler}
       />
       <RampModal isVisible={rampModalVisible} onClose={closeRampModalHandler} />
       <CoinsContainer>
@@ -109,11 +60,12 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           getDisabled
           loading={qtzLoading}
           address={selectedAccount?.address}
-          balanceFull={qtzBalance?.formatted}
-          balanceTransferable={qtzBalance?.amountWithUnit}
+          balanceFull={qtzBalance?.freeBalance.amount}
+          balanceTransferable={qtzBalance?.availableBalance.amount}
+          balanceLocked={qtzBalance?.lockedBalance.amount}
           iconName="chain-quartz"
           name="Quartz"
-          symbol="QTZ"
+          symbol={qtzBalance?.freeBalance.unit}
           onSend={sendFundsHandler}
           onGet={getCoinsHandler}
         />
@@ -121,19 +73,20 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           getDisabled
           loading={opalLoading}
           address={selectedAccount?.address}
-          balanceFull={opalBalance?.formatted}
-          balanceTransferable={opalBalance?.amountWithUnit}
+          balanceFull={opalBalance?.freeBalance.amount}
+          balanceTransferable={opalBalance?.availableBalance.amount}
+          balanceLocked={opalBalance?.lockedBalance.amount}
           iconName="chain-opal"
           name="Opal"
-          symbol="OPL"
+          symbol={opalBalance?.freeBalance.unit}
           onSend={sendFundsHandler}
           onGet={getCoinsHandler}
         />
         <CoinsRow
           sendDisabled
           address={selectedAccount?.address}
-          balanceFull="0 KSM"
-          balanceTransferable="0 KSM"
+          balanceFull=""
+          balanceTransferable=""
           iconName="chain-kusama"
           name="Kusama"
           symbol="KSM"
@@ -144,8 +97,8 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           getDisabled
           sendDisabled
           address={selectedAccount?.address}
-          balanceFull="0 UNQ"
-          balanceTransferable="0 UNQ"
+          balanceFull=""
+          balanceTransferable=""
           iconName="chain-unique"
           name="Unique network"
           symbol="UNQ"

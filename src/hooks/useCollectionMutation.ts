@@ -1,10 +1,12 @@
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 
 import { convertArtificialAttributesToProtobuf, fillProtobufJson } from '@app/utils';
 import { AttributeItemType, NftCollectionDTO, ProtobufAttributeType } from '@app/types';
 import { useAccounts } from '@app/hooks/useAccounts';
 import { useCollectionCreate, useExtrinsicSubmit } from '@app/api';
+import { useFee } from '@app/hooks/useFee';
+import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 import { CollectionFormContext } from '../context/CollectionFormContext/CollectionFormContext';
 
@@ -21,9 +23,9 @@ export const useCollectionMutation = () => {
   const { createCollection } = useCollectionCreate();
   const { submitExtrinsic } = useExtrinsicSubmit();
   const { error, info } = useNotifications();
+  const { fee, getFee } = useFee();
 
-  // TODO - add error handler for low balance - Error. Balance too low
-  const onCreateCollection = async () => {
+  const generateExtrinsic = useCallback(async () => {
     const converted: AttributeItemType[] =
       convertArtificialAttributesToProtobuf(attributes);
     const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
@@ -63,8 +65,6 @@ export const useCollectionMutation = () => {
       },
     };
 
-    console.log('collectionFull', collectionFull);
-
     setSsCreatingCollection(true);
 
     const createResp = await createCollection(collectionFull);
@@ -80,6 +80,28 @@ export const useCollectionMutation = () => {
 
       return;
     }
+
+    await getFee(createResp);
+
+    return createResp;
+  }, [
+    attributes,
+    createCollection,
+    error,
+    getFee,
+    mainInformationForm.values.coverImgAddress,
+    mainInformationForm.values.description,
+    mainInformationForm.values.name,
+    mainInformationForm.values.tokenPrefix,
+    ownerCanDestroy,
+    ownerCanTransfer,
+    selectedAccount?.address,
+    tokenLimit,
+  ]);
+
+  // TODO - add error handler for low balance - Error. Balance too low
+  const onCreateCollection = async () => {
+    const createResp = (await generateExtrinsic()) as UnsignedTxPayloadResponse;
 
     const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
 
@@ -110,7 +132,9 @@ export const useCollectionMutation = () => {
   };
 
   return {
+    fee,
     isCreatingCollection,
+    generateExtrinsic,
     onCreateCollection,
   };
 };

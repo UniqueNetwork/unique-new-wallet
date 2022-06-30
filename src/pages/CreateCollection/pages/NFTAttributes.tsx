@@ -1,4 +1,4 @@
-import React, { VFC, useContext, useMemo, useState } from 'react';
+import React, { VFC, useContext, useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import {
@@ -41,6 +41,7 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
   const navigate = useNavigate();
   const { isCreatingCollection, onCreateCollection } = useCollectionMutation();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
+  const { fee, generateExtrinsic } = useCollectionMutation();
 
   const onPreviousStepClick = () => {
     navigate('/create-collection/main-information');
@@ -80,12 +81,19 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
 
   const onSetAttributes = (attributes: ArtificialAttributeItemType[]) => {
     setAttributes([...attributes, ...defaultAttributesWithTokenIpfs]);
+
+    void generateExtrinsic();
   };
 
   const attributesWithoutIpfs = useMemo(
     () => attributes.filter((attr) => attr.name !== 'ipfsJson'),
     [attributes],
   );
+
+  // !!!Only for the first render!
+  useEffect(() => {
+    void generateExtrinsic();
+  }, []);
 
   return (
     <div className={classNames('main-information', className)}>
@@ -127,8 +135,7 @@ const NFTAttributesComponent: VFC<NFTAttributesComponentProps> = ({ className })
           </AdvancedSettingsWrapper>
         </AdvancedSettingsAccordion>
         <Alert type="warning" className="alert-wrapper">
-          {/* TODO - get fee from the API */}A fee of ~ 2.073447 QTZ can be applied to the
-          transaction
+          A fee of ~ {fee} can be applied to the transaction
         </Alert>
         <div className="nft-attributes-buttons">
           <Button

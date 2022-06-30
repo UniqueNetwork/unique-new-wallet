@@ -1,3 +1,4 @@
+export * from './balance';
 export * from './common';
 export * from './extrinsic';
 export * from './network';

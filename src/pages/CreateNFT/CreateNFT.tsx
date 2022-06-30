@@ -49,7 +49,6 @@ const defaultOptions = {
 };
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
-  const { fee } = useFee();
   const { attributes, createSchema, setAttributes, setTokenImg, resetForm } =
     useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
@@ -64,7 +63,9 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     options: defaultOptions,
   });
   const { data: collection } = useCollectionQuery(selectedCollection?.id ?? 0);
-  const { isCreatingNFT, onCreateNFT } = useTokenMutation(selectedCollection?.id ?? 0);
+  const { fee, generateExtrinsic, isCreatingNFT, onCreateNFT } = useTokenMutation(
+    selectedCollection?.id ?? 0,
+  );
 
   const tokenFields = get(collection, 'properties.fields', []);
 
@@ -122,6 +123,11 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
       createSchema(tokenFields);
     }
   }, [tokenFields]);
+
+  // !!!Only for attributes change
+  useEffect(() => {
+    void generateExtrinsic();
+  }, [attributes]);
 
   // TODO - add redirect to main page here if user has no collections
   if (!collections?.length && !isCollectionsLoading) {
@@ -193,6 +199,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                   .filter((tokenField: TokenField) => tokenField.name !== 'ipfsJson')
                   .map((tokenField: TokenField, index: number) => (
                     <AttributesRow
+                      // generateExtrinsic={generateExtrinsic}
                       tokenField={tokenField}
                       key={`${tokenField.name}-${index}`}
                       maxLength={64}
@@ -200,8 +207,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                   ))}
               </Attributes>
               <Alert type="warning">
-                {/* TODO - get fee from the API */}A fee of ~ {fee} QTZ can be applied to
-                the transaction
+                A fee of ~ {fee} QTZ can be applied to the transaction
               </Alert>
               <ButtonGroup>
                 <Button
