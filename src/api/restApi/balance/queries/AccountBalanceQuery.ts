@@ -29,7 +29,7 @@ export class AccountBalanceQuery extends EndpointQuery<AllBalancesResponse, Requ
   private static sliceAmount(balance: string) {
     const arrBalance = balance.split('.');
 
-    if (balance.length === 1) {
+    if (arrBalance.length === 1) {
       return balance;
     }
     const lastElem = arrBalance.length - 1;
