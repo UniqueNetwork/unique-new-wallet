@@ -26,6 +26,11 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
     sortByTokenId,
     collectionsIds,
     searchText,
+    changeSearchText,
+    setTypesFilters,
+    changeTypesFilters,
+    changeCollectionsIds,
+    setCollectionsIds,
     changeTokensPage,
   } = useNFTsContext();
 
@@ -57,6 +62,20 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
     [collections],
   );
 
+  const contextData = {
+    defaultCollections,
+    searchText,
+    typesFilters,
+    collectionsIds,
+    page: tokensPage,
+    changeSearchText,
+    setTypesFilters,
+    changeTypesFilters,
+    changeCollectionsIds,
+    setCollectionsIds,
+    onPageChange: changeTokensPage,
+  };
+
   return (
     <div className={classNames('my-tokens--nft', className)}>
       <div className="filters-column">
@@ -68,12 +87,11 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
       </div>
       <div className="tokens-column">
         <NFTsTemplateList
+          withChips
           tokens={tokens}
           isLoading={tokensLoading}
           tokensCount={tokensCount}
-          page={tokensPage}
-          defaultCollections={defaultCollections}
-          onPageChange={changeTokensPage}
+          {...contextData}
         />
       </div>
     </div>
