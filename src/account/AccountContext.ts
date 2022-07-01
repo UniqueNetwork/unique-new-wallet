@@ -26,6 +26,7 @@ export type AccountContextProps = {
   setAccounts(accounts: Account[]): void;
   setIsLoading(loading: boolean): void;
   showSignDialog(): Promise<KeyringPair>;
+  forgetLocalAccount(addressWallet: string): void;
 };
 
 const AccountContext: Context<AccountContextProps> = createContext(

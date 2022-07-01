@@ -111,6 +111,15 @@ export const AccountWrapper: FC = ({ children }) => {
     setIsLoading(false);
   }, [getAccounts, setAccounts, setFetchAccountsError, setIsLoading]);
 
+  const forgetLocalAccount = useCallback(
+    async (forgetAddress: string) => {
+      keyring.forgetAccount(forgetAddress);
+      const accounts = await getAccounts();
+      setAccounts(accounts);
+    },
+    [getAccounts],
+  );
+
   useEffect(() => {
     if (accounts?.length) {
       const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
@@ -134,6 +143,7 @@ export const AccountWrapper: FC = ({ children }) => {
             unitBalance: balanceAccount?.availableBalance.unit ?? '',
           }
         : undefined,
+      forgetLocalAccount,
       fetchAccounts,
       fetchAccountsError,
       changeAccount,
@@ -147,6 +157,7 @@ export const AccountWrapper: FC = ({ children }) => {
       accounts,
       selectedAccount,
       balanceAccount,
+      forgetLocalAccount,
       fetchAccounts,
       fetchAccountsError,
       changeAccount,

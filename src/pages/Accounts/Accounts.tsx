@@ -9,7 +9,7 @@ import {
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
-import { Account } from '@app/account';
+import { Account, AccountSigner } from '@app/account';
 import { useAccounts } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
@@ -100,16 +100,18 @@ const getAccountsColumns = ({
             onClick={onShowSendFundsModal(rowData)}
           />
           <Button disabled title="Get" />
-          <Dropdown
-            placement="right"
-            dropdownRender={() => (
-              <AccountContextMenu
-                onForgetWalletClick={onForgetWalletClick(rowData?.address)}
-              />
-            )}
-          >
-            <Icon name="more-horiz" size={24} />
-          </Dropdown>
+          {rowData.signerType === AccountSigner.local && (
+            <Dropdown
+              placement="right"
+              dropdownRender={() => (
+                <AccountContextMenu
+                  onForgetWalletClick={onForgetWalletClick(rowData?.address)}
+                />
+              )}
+            >
+              <Icon name="more-horiz" size={24} />
+            </Dropdown>
+          )}
         </ActionsWrapper>
       );
     },
@@ -117,10 +119,10 @@ const getAccountsColumns = ({
 ];
 
 export const Accounts = () => {
-  const { accounts, fetchAccounts } = useAccounts();
+  const { accounts, fetchAccounts, forgetLocalAccount } = useAccounts();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
+  const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
 
   const { data: balancesAccounts, isLoading: isLoadingBalances } =
@@ -145,7 +147,7 @@ export const Accounts = () => {
 
   const onForgetWalletClick = useCallback(
     (address: string) => () => {
-      setIsOpenConfirm(true);
+      setForgetWalletAddress(address);
     },
     [],
   );
@@ -207,16 +209,19 @@ export const Accounts = () => {
       />
       <Confirm
         buttons={[
-          { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
+          { title: 'No, return', onClick: () => setForgetWalletAddress('') },
           {
             title: 'Yes, I am sure',
             role: 'primary',
-            onClick: () => setIsOpenConfirm(false),
+            onClick: () => {
+              forgetLocalAccount(forgetWalletAddress);
+              setForgetWalletAddress('');
+            },
           },
         ]}
-        isVisible={isOpenConfirm}
+        isVisible={Boolean(forgetWalletAddress)}
         title="Forget wallet"
-        onClose={() => setIsOpenConfirm(false)}
+        onClose={() => setForgetWalletAddress('')}
       >
         <Text>
           Are you sure you want to&nbsp;perform this action? You can always recover your
