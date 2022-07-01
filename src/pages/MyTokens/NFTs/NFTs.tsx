@@ -87,7 +87,6 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
       </div>
       <div className="tokens-column">
         <NFTsTemplateList
-          withChips
           tokens={tokens}
           isLoading={tokensLoading}
           tokensCount={tokensCount}

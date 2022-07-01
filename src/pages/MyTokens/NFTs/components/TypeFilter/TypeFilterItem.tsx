@@ -19,17 +19,11 @@ const TypeFilterItemComponent: VFC<TypeFilterItemComponentProps> = ({
   onChange,
   className,
   checked,
-}) => {
-  const [isChecked, setIsChecked] = useState(false);
-
-  useEffect(() => setIsChecked(checked), [checked]);
-
-  return (
-    <div className={classNames('type-filter-item', className)}>
-      <Checkbox checked={isChecked} label={label} onChange={() => onChange(id)} />
-    </div>
-  );
-};
+}) => (
+  <div className={classNames('type-filter-item', className)}>
+    <Checkbox checked={checked} label={label} onChange={() => onChange(id)} />
+  </div>
+);
 
 const TypeFilterItemStyled = styled(TypeFilterItemComponent)`
   &.type-filter-item {

@@ -23,7 +23,6 @@ interface NFTsListComponentProps extends Partial<NTFsContextState> {
   isLoading: boolean;
   page: number;
   defaultCollections?: Option<number>[];
-  withChips?: boolean;
   onPageChange: IPaginationProps['onPageChange'];
 }
 
@@ -99,7 +98,7 @@ const NFTsListComponent = ({
           ({ token_id, token_name, collection_name, collection_id, image_path }) => (
             <TokenLink
               key={`${collection_id}-${token_id}`}
-              image={image_path ?? getTokenIpfsUriByImagePath(image_path)}
+              image={getTokenIpfsUriByImagePath(image_path)}
               link={{
                 href: `/token/${collection_id}/${token_id}`,
                 title: `${collection_name} [id ${collection_id}]`,

@@ -21,21 +21,16 @@ const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
   label,
   checked,
   onChange,
-}) => {
-  const [isChecked, setIsChecked] = useState(false);
-  useEffect(() => setIsChecked(checked), [checked]);
-
-  return (
-    <div className={classNames('collection-filter-item', className)}>
-      <Checkbox
-        label={label}
-        checked={isChecked}
-        iconLeft={{ size: 22, file: icon }}
-        onChange={() => onChange(id)}
-      />
-    </div>
-  );
-};
+}) => (
+  <div className={classNames('collection-filter-item', className)}>
+    <Checkbox
+      label={label}
+      checked={checked}
+      iconLeft={{ size: 22, file: icon }}
+      onChange={() => onChange(id)}
+    />
+  </div>
+);
 
 const CollectionFilterItemStyled = styled(CollectionFilterItemComponent)`
   &.collection-filter-item {
