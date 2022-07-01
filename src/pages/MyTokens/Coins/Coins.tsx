@@ -63,7 +63,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           balanceFull={qtzBalance?.freeBalance.amount}
           balanceLocked={qtzBalance?.lockedBalance.amount}
           balanceTransferable={qtzBalance?.availableBalance.amount}
-          sendDisabled={qtzBalance?.availableBalance.amount === '0'}
+          sendDisabled={!Number(qtzBalance?.availableBalance.amount)}
           symbol={qtzBalance?.freeBalance.unit}
           onSend={sendFundsHandler}
           onGet={getCoinsHandler}
@@ -75,7 +75,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           balanceFull={opalBalance?.freeBalance.amount}
           balanceLocked={opalBalance?.lockedBalance.amount}
           balanceTransferable={opalBalance?.availableBalance.amount}
-          sendDisabled={opalBalance?.availableBalance.amount === '0'}
+          sendDisabled={!Number(opalBalance?.availableBalance.amount)}
           iconName="chain-opal"
           name="Opal"
           symbol={opalBalance?.freeBalance.unit}

@@ -170,7 +170,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
               placeholder="Enter the amount"
               role="decimal"
               value={formatAmount(amount, '')}
-              onChange={(value) => amountChangeHandler(value)}
+              onChange={amountChangeHandler}
             />
             <InputAmountButton
               onClick={() =>

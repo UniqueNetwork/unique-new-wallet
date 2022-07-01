@@ -92,7 +92,7 @@ const getAccountsColumns = ({
         <ActionsWrapper>
           <Button
             title="Send"
-            disabled={rowData.balance === '0'}
+            disabled={!Number(rowData.balance)}
             onClick={onShowSendFundsModal(rowData)}
           />
           <Button disabled title="Get" />
