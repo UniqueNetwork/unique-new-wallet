@@ -6,7 +6,7 @@ import { KeypairType } from '@polkadot/util-crypto/types';
 import { SignerPayloadJSONDto } from '@app/types/Api';
 
 import { getSuri, PairType } from '../utils/seedUtils';
-import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
+import AccountContext, { Account } from '../account/AccountContext';
 
 export const useAccounts = () => {
   const {
@@ -16,11 +16,10 @@ export const useAccounts = () => {
     fetchAccounts,
     fetchAccountsError,
     changeAccount,
-    setAccounts,
   } = useContext(AccountContext);
 
   const addLocalAccount = useCallback(
-    (
+    async (
       seed: string,
       derivePath: string,
       name: string,
@@ -34,27 +33,16 @@ export const useAccounts = () => {
         tags: [],
       };
 
-      const { pair } = keyring.addUri(
+      keyring.addUri(
         getSuri(seed, derivePath, pairType),
         password,
         options,
         pairType as KeypairType,
       );
 
-      const account = keyring.getAccount(pair.address);
-
-      if (account) {
-        setAccounts([
-          ...accounts,
-          {
-            address: account.address,
-            meta: account.meta,
-            signerType: AccountSigner.local,
-          } as Account,
-        ]);
-      }
+      await fetchAccounts();
     },
-    [],
+    [fetchAccounts],
   );
 
   const addAccountViaQR = useCallback(

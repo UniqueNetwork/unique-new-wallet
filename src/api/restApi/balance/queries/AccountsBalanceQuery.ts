@@ -22,7 +22,7 @@ export class AccountsBalanceQuery extends EndpointQuery<
   }
 
   getKey({ addresses }: RequestArgs): QueryKey {
-    return ['account', 'balance', ...addresses];
+    return ['account', 'balances', ...addresses];
   }
 
   request(api: IBaseApi, { addresses }: RequestArgs): Promise<AllBalancesResponse[]> {

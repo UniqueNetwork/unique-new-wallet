@@ -84,7 +84,7 @@ export const Header: VFC = () => {
           <AccountsManager
             accounts={accountsForManager}
             activeNetwork={currentChain}
-            balance={selectedAccount?.balance ?? '0'}
+            balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
             isLoading={isLoading}
             networks={networks}
             selectedAccount={{

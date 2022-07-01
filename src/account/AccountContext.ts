@@ -2,13 +2,15 @@ import { Consumer, Context, createContext, Provider } from 'react';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 
+import { AllBalancesResponse } from '@app/types/Api';
+
 export enum AccountSigner {
   extension = 'Extension',
   local = 'Local',
 }
 
 export interface Account extends InjectedAccountWithMeta {
-  balance?: string;
+  balance?: AllBalancesResponse;
   unitBalance: string;
   signerType: AccountSigner;
 }

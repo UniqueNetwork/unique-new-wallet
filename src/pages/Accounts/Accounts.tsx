@@ -96,7 +96,7 @@ const getAccountsColumns = ({
         <ActionsWrapper>
           <Button
             title="Send"
-            disabled={!Number(rowData.balance)}
+            disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}
           />
           <Button disabled title="Get" />
@@ -126,7 +126,7 @@ export const Accounts = () => {
   const { data: balancesAccounts, isLoading: isLoadingBalances } =
     useAccountsBalanceService(accounts.map(({ address }) => address));
 
-  const accountBalances = useMemo(
+  const accountBalances = useMemo<Account[]>(
     () =>
       accounts.map((account, idx) => ({
         ...account,
@@ -261,12 +261,6 @@ const SearchInputStyled = styled(InputText)`
 const AccountCellWrapper = styled.div`
   display: flex;
   padding: 20px 0;
-`;
-
-const BalancesWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  column-gap: calc(var(--prop-gap) / 2);
 `;
 
 const LinksWrapper = styled.div``;
