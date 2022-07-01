@@ -1,9 +1,7 @@
 import { UseQueryResult } from 'react-query';
 
 import { CollectionInfoResponse } from '@app/types/Api';
-import { CollectionApiService } from '@app/api';
-
-import { useApiQuery } from '../../hooks';
+import { CollectionApiService, useApiQuery } from '@app/api';
 
 export const useCollectionQuery = (
   collectionId: number,

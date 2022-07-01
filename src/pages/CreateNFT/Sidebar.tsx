@@ -6,9 +6,8 @@ import { useCollectionCover } from '@app/hooks';
 import { TokenFormContext } from '@app/context';
 import { TokenField } from '@app/types';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
-
-import { SidebarRow, WrapperSidebar } from './components';
-import { Card } from './Card';
+import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
+import { Card } from '@app/pages/components/Card';
 
 export interface TokenFieldGroup {
   group: string;

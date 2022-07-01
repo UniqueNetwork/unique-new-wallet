@@ -1,25 +1,22 @@
 import React, { memo, useCallback, VFC } from 'react';
 import classNames from 'classnames';
 import styled, { css } from 'styled-components';
-import { Button, Icon, Loader, useNotifications } from '@unique-nft/ui-kit';
+import { Button, Icon, useNotifications, Loader } from '@unique-nft/ui-kit';
 
 import { NetworkType } from '@app/types';
+import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 
-interface CoinsRowComponentProps {
+type CoinsRowComponentProps = TNetworkBalances & {
   address?: string;
-  balanceFull?: string;
-  balanceLocked?: string;
-  balanceTransferable?: string;
   loading?: boolean;
   className?: string;
   iconName: string;
   name: string;
-  symbol: NetworkType;
   sendDisabled?: boolean;
   getDisabled?: boolean;
   onSend: (network: NetworkType) => void;
   onGet: () => void;
-}
+};
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
   const {
@@ -64,25 +61,16 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           </div>
         </div>
       </NetworkAddress>
-      <NetworkBalances>
-        {loading ? (
-          <Loader />
-        ) : (
-          <>
-            <div className="balance-full">
-              {balanceFull || '0'} {symbol}
-            </div>
-            <div className="balance-transferable">
-              {balanceTransferable
-                ? `${balanceTransferable} ${symbol} transferable`
-                : 'no transferable'}
-            </div>
-            <div className="balance-locked">
-              {balanceLocked ? `${balanceLocked} ${symbol} locked` : 'no locked'}
-            </div>
-          </>
-        )}
-      </NetworkBalances>
+      {loading ? (
+        <Loader />
+      ) : (
+        <NetworkBalances
+          balanceFull={balanceFull}
+          balanceTransferable={balanceTransferable}
+          balanceLocked={balanceLocked}
+          symbol={symbol}
+        />
+      )}
       <NetworkActions>
         <Button disabled={sendDisabled} title="Send" onClick={() => onSend(symbol)} />
         <Button disabled={getDisabled} title="Get" onClick={onGet} />
@@ -127,19 +115,6 @@ const NetworkAddress = styled.div`
     img {
       cursor: pointer;
     }
-  }
-`;
-
-const NetworkBalances = styled.div`
-  .balance-full {
-    min-width: 300px;
-    ${BoldMargin4};
-  }
-
-  .balance-transferable,
-  .balance-locked {
-    color: var(--color-grey-500);
-    line-height: 22px;
   }
 `;
 

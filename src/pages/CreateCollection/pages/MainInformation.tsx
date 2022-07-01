@@ -1,20 +1,25 @@
-import React, { VFC, useContext, useCallback, useState, useEffect } from 'react';
-import classNames from 'classnames';
-import { Heading, InputText, Button, Textarea, Text, Upload } from '@unique-nft/ui-kit';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
+import { Button, Heading, InputText, Text, Textarea, Upload } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { CollectionFormContext } from '@app/context';
-import { Alert, CollectionStepper, Confirm } from '@app/components';
 import { useFileUpload } from '@app/api';
 import { useCollectionMutation } from '@app/hooks';
+import { Alert, CollectionStepper, Confirm } from '@app/components';
+import {
+  AdditionalText,
+  ButtonGroup,
+  Form,
+  FormBody,
+  FormHeader,
+  FormRow,
+  FormWrapper,
+  LabelText,
+  UploadWidget,
+} from '@app/pages/components/FormComponents';
 
-export interface MainInformationComponentProps {
-  className?: string;
-}
-
-const MainInformationComponent: VFC<MainInformationComponentProps> = ({ className }) => {
-  const { coverImgFile, mainInformationForm, setCoverImgFile } =
-    useContext(CollectionFormContext);
+const MainInformationComponent: FC = () => {
+  const { mainInformationForm, setCoverImgFile } = useContext(CollectionFormContext);
   const { fee, generateExtrinsic } = useCollectionMutation();
   const { uploadFile } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
@@ -96,70 +101,85 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
   }, [values]);
 
   return (
-    <div className={classNames('main-information', className)}>
-      <CollectionStepper activeStep={1} onClickStep={onClickStep} />
-      <Heading size="2">Main information</Heading>
-      <Text>
-        Fill fields carefully, because after signing the transaction, the data cannot be
-        changed. If you make a mistake, the object will have to be burned and recreated.
-      </Text>
-      <div>
-        <form>
-          <InputText
-            label="Name*"
-            additionalText="Max 64 symbols"
-            name="name"
-            value={values.name}
-            error={touched.name && Boolean(errors.name)}
-            statusText={touched.name ? errors.name : undefined}
-            onChange={setName}
-          />
-          <Textarea
-            label="Description"
-            additionalText="Max 256 symbols"
-            name="description"
-            rows={4}
-            value={mainInformationForm.values.description}
-            onChange={setDescription}
-          />
-          <InputText
-            label="Symbol*"
-            additionalText="Token name as displayed in Wallet (max 4 symbols)"
-            name="symbol"
-            value={mainInformationForm.values.tokenPrefix}
-            error={touched.tokenPrefix && Boolean(mainInformationForm.errors.tokenPrefix)}
-            statusText={
-              touched.tokenPrefix ? mainInformationForm.errors.tokenPrefix : undefined
-            }
-            onChange={setTokenPrefix}
-          />
-          <div className="unique-input-text">
-            <label>Upload image</label>
-            <div className="additional-text">Choose JPG, PNG, GIF (max 10 Mb)</div>
-            <Upload
-              // TODO - fix file preload, file clearing
-              // upload={coverImgFile ? URL.createObjectURL(coverImgFile) : undefined}
-              onChange={setCover}
-            />
-          </div>
-          <Alert type="warning" className="alert-wrapper">
-            A fee of ~ {fee} can be applied to the transaction
-          </Alert>
-          <div className="main-information-button">
-            <Button
-              disabled={!dirty || !isValid}
-              iconRight={{
-                color: 'var(--color-primary-400)',
-                name: 'arrow-right',
-                size: 12,
-              }}
-              title="Next step"
-              type="button"
-              onClick={onFormSubmit}
-            />
-          </div>
-        </form>
-      </div>
+    <>
+      <FormWrapper>
+        <CollectionStepper activeStep={1} onClickStep={onClickStep} />
+        <FormHeader>
+          <Heading size="2">Main information</Heading>
+          <Text>
+            Fill fields carefully, because after signing the transaction, the data cannot
+            be changed. If you make a mistake, the object will have to be burned and
+            recreated.
+          </Text>
+        </FormHeader>
+        <FormBody>
+          <Form>
+            <FormRow>
+              <InputText
+                label="Name*"
+                additionalText="Max 64 symbols"
+                name="name"
+                value={values.name}
+                error={touched.name && Boolean(errors.name)}
+                statusText={touched.name ? errors.name : undefined}
+                onChange={setName}
+              />
+            </FormRow>
+            <FormRow>
+              <Textarea
+                label="Description"
+                additionalText="Max 256 symbols"
+                name="description"
+                rows={4}
+                value={mainInformationForm.values.description}
+                onChange={setDescription}
+              />
+            </FormRow>
+            <FormRow>
+              <InputText
+                label="Symbol*"
+                additionalText="Token name as displayed in Wallet (max 4 symbols)"
+                name="symbol"
+                value={mainInformationForm.values.tokenPrefix}
+                error={
+                  touched.tokenPrefix && Boolean(mainInformationForm.errors.tokenPrefix)
+                }
+                statusText={
+                  touched.tokenPrefix ? mainInformationForm.errors.tokenPrefix : undefined
+                }
+                onChange={setTokenPrefix}
+              />
+            </FormRow>
+            <FormRow className="has_uploader">
+              <UploadWidget>
+                <LabelText>Upload image</LabelText>
+                <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
+                <Upload
+                  // TODO - fix file preload, file clearing
+                  // upload={coverImgFile ? URL.createObjectURL(coverImgFile) : undefined}
+                  onChange={setCover}
+                />
+              </UploadWidget>
+            </FormRow>
+            <Alert type="warning" className="alert-wrapper">
+              A fee of ~ {fee} can be applied to the transaction
+            </Alert>
+            <ButtonGroup>
+              <Button
+                disabled={!dirty || !isValid}
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'arrow-right',
+                  size: 12,
+                }}
+                title="Next step"
+                type="button"
+                onClick={onFormSubmit}
+              />
+            </ButtonGroup>
+          </Form>
+        </FormBody>
+      </FormWrapper>
       <Confirm
         buttons={[
           { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
@@ -178,7 +198,7 @@ const MainInformationComponent: VFC<MainInformationComponentProps> = ({ classNam
       >
         <Text>You cannot return to editing the cover in this product version.</Text>
       </Confirm>
-    </div>
+    </>
   );
 };
 
