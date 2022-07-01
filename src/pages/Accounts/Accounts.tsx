@@ -9,25 +9,27 @@ import {
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
-import { useAccounts } from '@app/hooks';
-import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
 import { Account } from '@app/account';
-import AccountCard from '@app/pages/Accounts/components/AccountCard';
-import { SendFundsModal } from '@app/pages';
-import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
-import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
-import { AllBalancesResponse } from '@app/types/Api';
-import { NetworkBalances } from '@app/pages/components/NetworkBalances';
+import { useAccounts } from '@app/hooks';
 import { NetworkType } from '@app/types';
+import { AllBalancesResponse } from '@app/types/Api';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
+import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
+import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 
 import config from '../../config';
+import { SendFunds } from '../SendFunds';
+import { NetworkBalances } from '../components/NetworkBalances';
 
 type AccountsColumnsProps = {
+  sendDisabled?: boolean;
   onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
 };
 
 const getAccountsColumns = ({
+  sendDisabled,
   onShowSendFundsModal,
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => [
@@ -92,7 +94,11 @@ const getAccountsColumns = ({
     render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <Button title="Send" onClick={onShowSendFundsModal(rowData)} />
+          <Button
+            title="Send"
+            disabled={!Number(rowData.balance)}
+            onClick={onShowSendFundsModal(rowData)}
+          />
           <Button disabled title="Get" />
           <Dropdown
             placement="right"
@@ -194,7 +200,7 @@ export const Accounts = () => {
           data={filteredAccounts}
         />
       </AccountsPageContent>
-      <SendFundsModal
+      <SendFunds
         isVisible={isOpenModal}
         senderAccount={selectedAddress}
         onClose={onChangeAccountsFinish}

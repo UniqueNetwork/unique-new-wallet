@@ -104,6 +104,7 @@ export interface UnsignedTxPayloadResponse {
   signerPayloadJSON: SignerPayloadJSONDto;
   signerPayloadRaw: SignerPayloadRawDto;
   signerPayloadHex: string;
+  fee: FeeResponse;
 }
 
 export interface BurnTokenBody {
