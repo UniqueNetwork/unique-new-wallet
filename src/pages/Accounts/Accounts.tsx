@@ -8,19 +8,19 @@ import {
   Text,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
-import { BN } from '@polkadot/util';
 
 import { useAccounts } from '@app/hooks';
-import { formatKusamaBalance } from '@app/utils/textUtils';
 import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
 import { Account } from '@app/account';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { SendFundsModal } from '@app/pages';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
+import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
+import { AllBalancesResponse } from '@app/types/Api';
+import { NetworkBalances } from '@app/pages/components/NetworkBalances';
+import { NetworkType } from '@app/types';
 
 import config from '../../config';
-
-const tokenSymbol = 'KSM';
 
 type AccountsColumnsProps = {
   onShowSendFundsModal(account: Account): () => void;
@@ -41,7 +41,11 @@ const getAccountsColumns = ({
           <AccountCard
             canCopy
             accountAddress={rowData?.address}
-            accountName={rowData?.meta.name || ''}
+            accountName={
+              `${rowData?.meta.name} ${
+                rowData?.signerType && `(${rowData.signerType.toLowerCase()})`
+              }` || ''
+            }
           />
         </AccountCellWrapper>
       );
@@ -51,15 +55,14 @@ const getAccountsColumns = ({
     title: 'Balance',
     width: '20%',
     field: 'balance',
-    render(balance) {
-      const { KSM } = balance || {};
+    render(balance?: AllBalancesResponse) {
       return (
-        <BalancesWrapper>
-          <Text>{`${formatKusamaBalance(KSM || 0)} ${tokenSymbol}`}</Text>
-          <Text color="grey-500" size="s">
-            all transferable
-          </Text>
-        </BalancesWrapper>
+        <NetworkBalances
+          balanceFull={balance?.freeBalance.amount}
+          balanceTransferable={balance?.availableBalance.amount}
+          balanceLocked={balance?.lockedBalance.amount}
+          symbol={balance?.availableBalance.unit as NetworkType}
+        />
       );
     },
   },
@@ -114,6 +117,18 @@ export const Accounts = () => {
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
   const [selectedAddress, setSelectedAddress] = useState<Account>();
 
+  const { data: balancesAccounts, isLoading: isLoadingBalances } =
+    useAccountsBalanceService(accounts.map(({ address }) => address));
+
+  const accountBalances = useMemo(
+    () =>
+      accounts.map((account, idx) => ({
+        ...account,
+        balance: balancesAccounts?.[idx],
+      })),
+    [accounts, balancesAccounts],
+  );
+
   const onSendFundsClick = useCallback(
     (account: Account) => () => {
       setIsOpenModal(true);
@@ -131,14 +146,14 @@ export const Accounts = () => {
 
   const filteredAccounts = useMemo(() => {
     if (!searchString) {
-      return accounts;
+      return accountBalances;
     }
-    return accounts?.filter(
+    return accountBalances?.filter(
       (account) =>
         account.address.toLowerCase().includes(searchString.toLowerCase()) ||
         account.meta.name?.toLowerCase().includes(searchString.toLowerCase()),
     );
-  }, [accounts, searchString]);
+  }, [accountBalances, searchString]);
 
   const onChangeAccountsFinish = useCallback(() => {
     setIsOpenModal(false);
@@ -175,6 +190,7 @@ export const Accounts = () => {
             onShowSendFundsModal: onSendFundsClick,
             onForgetWalletClick,
           })}
+          loading={isLoadingBalances}
           data={filteredAccounts}
         />
       </AccountsPageContent>
