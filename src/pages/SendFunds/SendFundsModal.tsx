@@ -17,19 +17,14 @@ import {
   Loader,
   Modal,
   Text,
-  useNotifications,
 } from '@unique-nft/ui-kit';
 import styled, { css } from 'styled-components';
 
 import { Account } from '@app/account';
-import { NetworkType, StageStatus } from '@app/types';
+import { NetworkType } from '@app/types';
 import { formatAmount, networksUrls } from '@app/utils';
-import { useAccounts, useFee } from '@app/hooks';
-import {
-  useAccountBalanceService,
-  useBalanceTransfer,
-  useExtrinsicSubmit,
-} from '@app/api';
+import { useAccounts } from '@app/hooks';
+import { useAccountBalanceService } from '@app/api';
 import {
   AdditionalText,
   ModalHeader,
@@ -40,23 +35,17 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
-import { Stages } from '@app/components';
-import { useExtrinsicStatus } from '@app/api/restApi/extrinsic/hooks/useExtrinsicStatus';
 
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
+import { SendFundsProps } from './SendFunds';
+import DefaultAvatar from '../../static/icons/default-avatar.svg';
 
-interface SendFundsModalProps {
-  isVisible: boolean;
-  networkType?: NetworkType;
-  senderAccount?: Account;
-  onClose: () => void;
-}
-
-type AskSendFundsModalProps = SendFundsModalProps & {
-  onConfirm: (
-    senderAddress?: string,
-    destinationAddress?: string,
-    amount?: number,
+export type SendFundsModalProps = SendFundsProps & {
+  fee?: string;
+  onConfirm: (senderAddress: string, destinationAddress: string, amount: number) => void;
+  onAmountChange: (
+    senderAddress: string,
+    destinationAddress: string,
+    amount: number,
   ) => void;
 };
 
@@ -72,141 +61,38 @@ const parseAmount = (amount: string) => {
   return amount.trim();
 };
 
-const stages = [
-  {
-    title: 'Transfer in progress',
-    status: StageStatus.inProgress,
-  },
-];
-
-const TransferStagesModal: VFC = () => {
-  return (
-    <Modal isVisible isClosable={false}>
-      <Stages stages={stages} />
-    </Modal>
-  );
-};
-
-export const SendFundsModal: FC<SendFundsModalProps> = (props) => {
-  const { onClose } = props;
-
-  const [txHash, setTxHash] = useState<string>();
-  const [stage, setStage] = useState(StageStatus.default);
-
-  const { info, error } = useNotifications();
-  const { transfer } = useBalanceTransfer();
-  const { submitExtrinsic } = useExtrinsicSubmit();
-  const { signMessage } = useAccounts();
-
-  const { data: extrinsicStatus } = useExtrinsicStatus(txHash);
-
-  const confirmTransferFundsHandler = useCallback(
-    (senderAddress?: string, destinationAddress?: string, amount?: number) => {
-      if (!senderAddress || !destinationAddress || !amount) {
-        return;
-      }
-
-      const transferCoins = async () => {
-        try {
-          setStage(StageStatus.inProgress);
-
-          const tx = await transfer({
-            address: senderAddress,
-            destination: destinationAddress,
-            amount,
-          });
-
-          if (!tx) {
-            throw new Error('Unexpected error');
-          }
-
-          const signature = await signMessage(tx.signerPayloadJSON);
-          if (!signature) {
-            error('Transfer error', {
-              name: 'Transfer',
-              size: 32,
-              color: 'white',
-            });
-
-            return;
-          }
-
-          const submitResult = await submitExtrinsic({
-            ...tx,
-            signature,
-          });
-
-          if (submitResult) {
-            setTxHash(submitResult.hash);
-          }
-
-          info('Transfer completed successfully');
-        } catch (e) {
-          console.error(e);
-
-          error('Transfer cancelled');
-        } finally {
-          setStage(StageStatus.default);
-          onClose();
-        }
-      };
-
-      transferCoins();
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (!extrinsicStatus) {
-      return;
-    }
-    const { isCompleted, isError, errorMessage } = extrinsicStatus;
-    if (isCompleted) {
-      info('Transfer completed successfully');
-    }
-    if (isError) {
-      error(errorMessage);
-    }
-  }, [extrinsicStatus]);
-
-  if (stage === StageStatus.inProgress) {
-    return <TransferStagesModal />;
-  }
-
-  return <AskSendFundsModal {...props} onConfirm={confirmTransferFundsHandler} />;
-};
-
-const AskSendFundsModal: FC<AskSendFundsModalProps> = ({
+export const SendFundsModal: FC<SendFundsModalProps> = ({
+  fee,
   senderAccount,
   networkType,
   isVisible,
   onClose,
   onConfirm,
+  onAmountChange,
 }) => {
-  const { fee } = useFee();
   const { accounts, selectedAccount } = useAccounts();
 
   const [sender, setSender] = useState<Account | undefined>(
     senderAccount || selectedAccount,
   );
+  const [recipient, setRecipient] = useState<Account | undefined>();
+  const [amount, setAmount] = useState<string>('');
+
   const recipientOptions: Account[] = useMemo(
     () => accounts.filter(({ address }) => address !== sender?.address),
     [accounts, sender?.address],
   );
-
-  const [recipient, setRecipient] = useState<Account | undefined>(recipientOptions[0]);
-  const { data } = useAccountBalanceService(
-    sender?.address,
-    networkType && networksUrls[networkType],
-  );
-  const [amount, setAmount] = useState<string>('');
-
   const senderOptions: Account[] = useMemo(
     () => accounts.filter(({ address }) => address !== recipient?.address),
     [accounts, recipient?.address],
   );
 
-  const onAmountChange = useCallback(
+  const { data } = useAccountBalanceService(
+    sender?.address,
+    networkType && networksUrls[networkType],
+  );
+
+  const amountChangeHandler = useCallback(
     (amount: string) => setAmount(parseAmount(amount)),
     [setAmount],
   );
@@ -222,6 +108,20 @@ const AskSendFundsModal: FC<AskSendFundsModalProps> = ({
       };
     }
   }, [isVisible]);
+
+  useEffect(() => {
+    if (sender?.address && recipient?.address && amount) {
+      onAmountChange(sender.address, recipient.address, parseInt(amount));
+    }
+  }, [sender, recipient, amount, onAmountChange]);
+
+  const confirm = () => {
+    if (!sender?.address || !recipient?.address || !amount) {
+      return;
+    }
+
+    onConfirm(sender?.address, recipient?.address, parseInt(amount));
+  };
 
   if (!accounts?.length) {
     return null;
@@ -270,7 +170,7 @@ const AskSendFundsModal: FC<AskSendFundsModalProps> = ({
               placeholder="Enter the amount"
               role="decimal"
               value={formatAmount(amount, '')}
-              onChange={(value) => onAmountChange(value)}
+              onChange={(value) => amountChangeHandler(value)}
             />
             <InputAmountButton
               onClick={() =>
@@ -284,21 +184,20 @@ const AskSendFundsModal: FC<AskSendFundsModalProps> = ({
           </InputAmount>
         </ContentRow>
         <ContentRow>
-          {/* TODO: get fee from REST https://cryptousetech.atlassian.net/browse/SDK-50 */}
           <TextWarning color="additional-warning-500" size="s">
-            A fee of ~ {fee} testUNQ can be applied to the transaction, unless the
-            transaction is sponsored
+            {recipient && amount
+              ? `A fee of ~ ${fee} ${networkType} can be applied to the transaction, unless the
+                transaction is sponsored`
+              : 'A fee will be calculated after entering the recipient and amount'}
           </TextWarning>
         </ContentRow>
       </ModalContent>
       <ModalFooter>
         <Button
-          disabled={!amount}
           role="primary"
           title="Confirm"
-          onClick={() => {
-            onConfirm(sender?.address, recipient?.address, parseInt(amount));
-          }}
+          disabled={!amount || !sender?.address || !recipient?.address}
+          onClick={confirm}
         />
       </ModalFooter>
     </Modal>

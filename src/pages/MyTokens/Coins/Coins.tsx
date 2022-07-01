@@ -3,20 +3,17 @@ import styled from 'styled-components';
 import { Heading } from '@unique-nft/ui-kit';
 
 import config from '@app/config';
+import { RampModal } from '@app/pages';
 import { NetworkType } from '@app/types';
 import { useAccounts } from '@app/hooks';
-import { RampModal, SendFundsModal } from '@app/pages';
 import { useAccountBalanceService } from '@app/api';
+import { SendFunds } from '@app/pages/SendFunds';
 
 import { CoinsRow } from './components';
 
 interface CoinsComponentProps {
   className?: string;
 }
-
-const CoinsContainer = styled.div`
-  padding: 32px;
-`;
 
 export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
@@ -48,8 +45,9 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
   return (
     <>
-      <SendFundsModal
+      <SendFunds
         isVisible={fundsModalVisible}
+        senderAccount={selectedAccount}
         networkType={selectedNetworkType}
         onClose={closeTransferFundsModalHandler}
       />
@@ -58,13 +56,14 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
         <Heading size="4">Network</Heading>
         <CoinsRow
           getDisabled
+          name="Quartz"
+          iconName="chain-quartz"
           loading={qtzLoading}
           address={selectedAccount?.address}
           balanceFull={qtzBalance?.freeBalance.amount}
-          balanceTransferable={qtzBalance?.availableBalance.amount}
           balanceLocked={qtzBalance?.lockedBalance.amount}
-          iconName="chain-quartz"
-          name="Quartz"
+          balanceTransferable={qtzBalance?.availableBalance.amount}
+          sendDisabled={qtzBalance?.availableBalance.amount === '0'}
           symbol={qtzBalance?.freeBalance.unit}
           onSend={sendFundsHandler}
           onGet={getCoinsHandler}
@@ -74,8 +73,9 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
           loading={opalLoading}
           address={selectedAccount?.address}
           balanceFull={opalBalance?.freeBalance.amount}
-          balanceTransferable={opalBalance?.availableBalance.amount}
           balanceLocked={opalBalance?.lockedBalance.amount}
+          balanceTransferable={opalBalance?.availableBalance.amount}
+          sendDisabled={opalBalance?.availableBalance.amount === '0'}
           iconName="chain-opal"
           name="Opal"
           symbol={opalBalance?.freeBalance.unit}
@@ -109,6 +109,10 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     </>
   );
 };
+
+const CoinsContainer = styled.div`
+  padding: 32px;
+`;
 
 export const Coins = styled(CoinsComponent)`
   .unique-font-heading.size-4 {

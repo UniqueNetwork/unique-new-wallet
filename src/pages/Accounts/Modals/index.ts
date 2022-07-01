@@ -7,5 +7,4 @@ export * from './Final';
 export * from './ImportViaJson';
 export * from './ImportViaQRCode';
 export * from './ImportViaSeed';
-export * from './SendFunds';
 export * from './RampModal';

@@ -8,26 +8,27 @@ import {
   Text,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
-import { BN } from '@polkadot/util';
 
+import { Account } from '@app/account';
 import { useAccounts } from '@app/hooks';
 import { formatKusamaBalance } from '@app/utils/textUtils';
-import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
-import { Account } from '@app/account';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
-import { SendFundsModal } from '@app/pages';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
+import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
 
 import config from '../../config';
+import { SendFunds } from '../SendFunds';
 
 const tokenSymbol = 'KSM';
 
 type AccountsColumnsProps = {
+  sendDisabled?: boolean;
   onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
 };
 
 const getAccountsColumns = ({
+  sendDisabled,
   onShowSendFundsModal,
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => [
@@ -89,7 +90,11 @@ const getAccountsColumns = ({
     render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <Button title="Send" onClick={onShowSendFundsModal(rowData)} />
+          <Button
+            title="Send"
+            disabled={rowData.balance === '0'}
+            onClick={onShowSendFundsModal(rowData)}
+          />
           <Button disabled title="Get" />
           <Dropdown
             placement="right"
@@ -178,7 +183,7 @@ export const Accounts = () => {
           data={filteredAccounts}
         />
       </AccountsPageContent>
-      <SendFundsModal
+      <SendFunds
         isVisible={isOpenModal}
         senderAccount={selectedAddress}
         onClose={onChangeAccountsFinish}
