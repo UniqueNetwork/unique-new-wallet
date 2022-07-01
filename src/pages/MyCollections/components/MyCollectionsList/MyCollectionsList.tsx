@@ -104,6 +104,7 @@ const Footer = styled.div`
 const List = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  grid-gap: 30px 0;
 `;
 
 export const MyCollectionsList = styled(MyCollectionsListComponent)`
