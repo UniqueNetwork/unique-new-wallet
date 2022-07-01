@@ -16,6 +16,7 @@ export const useAccounts = () => {
     fetchAccounts,
     fetchAccountsError,
     changeAccount,
+    forgetLocalAccount,
   } = useContext(AccountContext);
 
   const addLocalAccount = useCallback(
@@ -130,5 +131,6 @@ export const useAccounts = () => {
     selectedAccount,
     unlockLocalAccount,
     signMessage,
+    forgetLocalAccount,
   };
 };
