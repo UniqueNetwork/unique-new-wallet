@@ -3,8 +3,7 @@ import { InputText, Select, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
-
-import { FormRow, LabelText } from './components';
+import { FormRow, LabelText } from '@app/pages/components/FormComponents';
 
 interface AttributesRowProps {
   tokenField: TokenField;
