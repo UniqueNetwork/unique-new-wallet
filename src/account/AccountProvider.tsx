@@ -5,6 +5,7 @@ import keyring from '@polkadot/ui-keyring';
 
 import { sleep } from '@app/utils';
 import { useAccountBalanceService } from '@app/api';
+import { NetworkType } from '@app/types';
 
 import { Account, AccountProvider, AccountSigner } from './AccountContext';
 import { SignModal } from '../components/SignModal/SignModal';
@@ -140,7 +141,7 @@ export const AccountWrapper: FC = ({ children }) => {
         ? {
             ...selectedAccount,
             balance: balanceAccount,
-            unitBalance: balanceAccount?.availableBalance.unit ?? '',
+            unitBalance: (balanceAccount?.availableBalance.unit as NetworkType) ?? '',
           }
         : undefined,
       forgetLocalAccount,

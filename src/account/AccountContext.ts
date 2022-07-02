@@ -3,6 +3,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 
 import { AllBalancesResponse } from '@app/types/Api';
+import { NetworkType } from '@app/types';
 
 export enum AccountSigner {
   extension = 'Extension',
@@ -11,7 +12,7 @@ export enum AccountSigner {
 
 export interface Account extends InjectedAccountWithMeta {
   balance?: AllBalancesResponse;
-  unitBalance: string;
+  unitBalance: NetworkType;
   signerType: AccountSigner;
 }
 
