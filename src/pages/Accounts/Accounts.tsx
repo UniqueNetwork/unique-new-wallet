@@ -23,13 +23,11 @@ import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 
 type AccountsColumnsProps = {
-  sendDisabled?: boolean;
   onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
 };
 
 const getAccountsColumns = ({
-  sendDisabled,
   onShowSendFundsModal,
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => [
@@ -119,14 +117,17 @@ const getAccountsColumns = ({
 ];
 
 export const Accounts = () => {
-  const { accounts, fetchAccounts, forgetLocalAccount } = useAccounts();
+  const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
 
-  const { data: balancesAccounts, isLoading: isLoadingBalances } =
-    useAccountsBalanceService(accounts.map(({ address }) => address));
+  const {
+    data: balancesAccounts,
+    isLoading: isLoadingBalances,
+    refetch,
+  } = useAccountsBalanceService(accounts.map(({ address }) => address));
 
   const accountBalances = useMemo<Account[]>(
     () =>
@@ -205,7 +206,11 @@ export const Accounts = () => {
       <SendFunds
         isVisible={isOpenModal}
         senderAccount={selectedAddress}
+        networkType={selectedAccount?.unitBalance}
         onClose={onChangeAccountsFinish}
+        onSendSuccess={() => {
+          refetch();
+        }}
       />
       <Confirm
         buttons={[
