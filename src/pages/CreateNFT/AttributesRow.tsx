@@ -10,7 +10,7 @@ interface AttributesRowProps {
   maxLength: number;
 }
 
-interface IOption extends SelectOptionProps {
+export interface IOption extends SelectOptionProps {
   id: string;
   title: string;
 }
@@ -21,54 +21,21 @@ const createOptionsByFiled = (tokenField: TokenField): IOption[] =>
     id: index.toString(),
   })) ?? [];
 
-const createValueByField = (tokenField: TokenField, value: string): IOption | undefined =>
-  createOptionsByFiled(tokenField)?.find((item: IOption) => value === item.title);
-
-const createMultiValueByField = (tokenField: TokenField, values: string[]): IOption[] =>
-  createOptionsByFiled(tokenField)?.filter((item: IOption) =>
-    values?.includes(item.title),
-  );
-
 export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }) => {
-  const { attributes, setAttributes } = useContext(TokenFormContext);
-  const [multiSelectValue, setMultiSelectValue] = useState<IOption[]>(() =>
-    createMultiValueByField(tokenField, attributes[tokenField.name] as string[]),
-  );
-  const [selectValue, setSelectValue] = useState<IOption | undefined>(() =>
-    createValueByField(tokenField, attributes[tokenField.name] as string),
-  );
+  const { tokenForm } = useContext(TokenFormContext);
+
+  const { setFieldValue, values, errors, touched } = tokenForm;
 
   const onSetAttributeValue = (value: string) => {
-    setAttributes({
-      ...attributes,
-      [tokenField.name]: value,
-    });
-  };
-
-  const setAttributesFromSelect = (value: IOption) => {
-    setAttributes({
-      ...attributes,
-      [tokenField.name]: [value?.title],
-    });
-  };
-
-  const setAttributesFromMultiSelect = (value: IOption[]) => {
-    setAttributes({
-      ...attributes,
-      [tokenField.name]: value?.map((val) => val.title),
-    });
+    setFieldValue(tokenField.name, value);
   };
 
   const onSetMultiSelectValue = (value: IOption[]) => {
-    setMultiSelectValue(value);
-
-    setAttributesFromMultiSelect(value);
+    setFieldValue(tokenField.name, value);
   };
 
   const onSetSelectValue = (value: IOption) => {
-    setSelectValue(value);
-
-    setAttributesFromSelect(value);
+    setFieldValue(tokenField.name, [value]);
   };
 
   const options = useMemo(() => {
@@ -88,15 +55,14 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
       {tokenField.type === 'text' && (
         <>
           <LabelText>
-            {attributes.name}
-            {attributes.rule === 'required' && '*'}
+            {tokenField.name}
+            {tokenField.required && '*'}
           </LabelText>
           <InputText
+            error={touched[tokenField.name] && Boolean(errors[tokenField.name])}
             name={tokenField.name}
             maxLength={maxLength}
-            value={
-              tokenField.type === 'text' ? (attributes[tokenField.name] as string) : ''
-            }
+            value={values[tokenField.name]}
             onChange={onSetAttributeValue}
           />
         </>
@@ -110,19 +76,21 @@ export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }
           {tokenField.multi ? (
             <Select
               multi
+              error={touched[tokenField.name] && Boolean(errors[tokenField.name])}
               name={tokenField.name}
               options={options}
               optionKey="id"
               optionValue="title"
-              values={multiSelectValue?.map(({ id }) => id)}
+              values={values[tokenField.name]?.map(({ id }: { id: string }) => id)}
               onChange={(options: IOption[]) => onSetMultiSelectValue(options)}
             />
           ) : (
             <Select
+              error={touched[tokenField.name] && Boolean(errors[tokenField.name])}
               options={options}
               optionKey="id"
               optionValue="title"
-              value={selectValue?.id}
+              value={values[tokenField.name]?.[0]?.id}
               onChange={(option: IOption) => onSetSelectValue(option)}
             />
           )}

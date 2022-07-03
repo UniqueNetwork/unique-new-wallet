@@ -8,6 +8,7 @@ import { TokenField } from '@app/types';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { Card } from '@app/pages/components/Card';
+import { generateTokenFromValues } from '@app/utils';
 
 export interface TokenFieldGroup {
   group: string;
@@ -19,12 +20,14 @@ export interface SidebarProps {
 }
 
 export const Sidebar: VFC<SidebarProps> = ({ collectionId }) => {
-  const { attributes, tokenImg } = useContext(TokenFormContext);
+  const { tokenImg, tokenForm } = useContext(TokenFormContext);
   const { data: collection } = useCollectionQuery(collectionId ?? 0);
   const collectionCover = useCollectionCover(collection);
   const tokenFields = get(collection, 'properties.fields', []);
+  const { values } = tokenForm;
 
   const fieldGroups = useMemo<TokenFieldGroup[]>(() => {
+    const attributes = generateTokenFromValues(values);
     const attrs: TokenFieldGroup[] = tokenFields
       ?.filter((field: TokenField) => field.name !== 'ipfsJson')
       .map((field: TokenField) => ({
@@ -36,7 +39,7 @@ export const Sidebar: VFC<SidebarProps> = ({ collectionId }) => {
       }));
 
     return attrs;
-  }, [attributes, tokenFields]);
+  }, [tokenFields, values]);
 
   if (!collection) {
     return null;

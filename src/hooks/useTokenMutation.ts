@@ -1,16 +1,17 @@
 import { useContext, useState, useCallback } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 
-import { NftTokenDTO } from '@app/types';
+import { NftTokenDTO, TokenAttributes } from '@app/types';
 import { useAccounts } from '@app/hooks/useAccounts';
 import { useExtrinsicSubmit, useTokenCreate } from '@app/api';
 import { TokenFormContext } from '@app/context';
 import { useTxStatusCheck } from '@app/hooks/useTxStatusCheck';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 import { useFee } from '@app/hooks/useFee';
+import { generateTokenFromValues } from '@app/utils';
 
 export const useTokenMutation = (collectionId: number) => {
-  const { attributes } = useContext(TokenFormContext);
+  const { tokenForm } = useContext(TokenFormContext);
   const [isCreatingNFT, setIsCreatingNFT] = useState<boolean>(false);
   const { selectedAccount, signMessage } = useAccounts();
   const { createToken } = useTokenCreate();
@@ -18,8 +19,11 @@ export const useTokenMutation = (collectionId: number) => {
   const { error } = useNotifications();
   const { checkTxStatus } = useTxStatusCheck();
   const { fee, getFee } = useFee();
+  const { values } = tokenForm;
 
   const generateExtrinsic = useCallback(async () => {
+    const attributes: TokenAttributes = generateTokenFromValues(values);
+
     if (!collectionId || !attributes?.ipfsJson) {
       return;
     }
@@ -46,7 +50,7 @@ export const useTokenMutation = (collectionId: number) => {
     await getFee(createResp);
 
     return createResp;
-  }, [attributes, collectionId, createToken, error, getFee, selectedAccount?.address]);
+  }, [collectionId, createToken, error, getFee, selectedAccount?.address]);
 
   // TODO - add error handler for low balance - Error. Balance too low
   const onCreateNFT = async () => {
