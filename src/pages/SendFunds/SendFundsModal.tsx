@@ -1,12 +1,4 @@
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-  VFC,
-} from 'react';
+import React, { FC, useEffect, useLayoutEffect, useMemo, useState, VFC } from 'react';
 import {
   Avatar,
   Button,
@@ -92,10 +84,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
     networkType && networksUrls[networkType],
   );
 
-  const amountChangeHandler = useCallback(
-    (amount: string) => setAmount(parseAmount(amount)),
-    [setAmount],
-  );
+  const amountChangeHandler = (amount: string) => setAmount(parseAmount(amount));
 
   useLayoutEffect(() => {
     if (isVisible) {
@@ -113,7 +102,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
     if (sender?.address && recipient?.address && amount) {
       onAmountChange(sender.address, recipient.address, parseInt(amount));
     }
-  }, [sender, recipient, amount, onAmountChange]);
+  }, [sender?.address, recipient?.address, amount]);
 
   const confirm = () => {
     if (!sender?.address || !recipient?.address || !amount) {

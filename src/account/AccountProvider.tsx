@@ -5,6 +5,7 @@ import keyring from '@polkadot/ui-keyring';
 
 import { sleep } from '@app/utils';
 import { useAccountBalanceService } from '@app/api';
+import { NetworkType } from '@app/types';
 
 import { Account, AccountProvider, AccountSigner } from './AccountContext';
 import { SignModal } from '../components/SignModal/SignModal';
@@ -15,7 +16,7 @@ export const AccountWrapper: FC = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
-  const { data } = useAccountBalanceService(selectedAccount?.address);
+  const { data: balanceAccount } = useAccountBalanceService(selectedAccount?.address);
 
   const changeAccount = useCallback((account: Account) => {
     localStorage.setItem(DefaultAccountKey, account.address);
@@ -109,7 +110,16 @@ export const AccountWrapper: FC = ({ children }) => {
       setFetchAccountsError('No accounts in extension');
     }
     setIsLoading(false);
-  }, [changeAccount, getAccounts, setAccounts, setFetchAccountsError, setIsLoading]);
+  }, [getAccounts, setAccounts, setFetchAccountsError, setIsLoading]);
+
+  const forgetLocalAccount = useCallback(
+    async (forgetAddress: string) => {
+      keyring.forgetAccount(forgetAddress);
+      const accounts = await getAccounts();
+      setAccounts(accounts);
+    },
+    [getAccounts],
+  );
 
   useEffect(() => {
     if (accounts?.length) {
@@ -121,7 +131,7 @@ export const AccountWrapper: FC = ({ children }) => {
 
       changeAccount(defaultAccount ?? accounts[0]);
     }
-  }, [accounts]);
+  }, [accounts, changeAccount]);
 
   const value = useMemo(
     () => ({
@@ -130,10 +140,11 @@ export const AccountWrapper: FC = ({ children }) => {
       selectedAccount: selectedAccount
         ? {
             ...selectedAccount,
-            balance: data?.availableBalance.amount?.toString() ?? '0',
-            unitBalance: data?.availableBalance.unit ?? '',
+            balance: balanceAccount,
+            unitBalance: (balanceAccount?.availableBalance.unit as NetworkType) ?? '',
           }
         : undefined,
+      forgetLocalAccount,
       fetchAccounts,
       fetchAccountsError,
       changeAccount,
@@ -146,7 +157,8 @@ export const AccountWrapper: FC = ({ children }) => {
       isLoading,
       accounts,
       selectedAccount,
-      data?.availableBalance,
+      balanceAccount,
+      forgetLocalAccount,
       fetchAccounts,
       fetchAccountsError,
       changeAccount,

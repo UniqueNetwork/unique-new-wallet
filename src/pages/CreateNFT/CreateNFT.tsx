@@ -49,8 +49,7 @@ const defaultOptions = {
 };
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
-  const { attributes, initializeTokenForm, setTokenImg, resetForm, tokenForm } =
-    useContext(TokenFormContext);
+  const { initializeTokenForm, setTokenImg, tokenForm } = useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
   const { uploadFile } = useFileUpload();
   const navigate = useNavigate();
@@ -115,16 +114,6 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     void generateExtrinsic();
   }, [values]);
 
-  // TODO - add redirect to main page here if user has no collections
-  if (!collections?.length && !isCollectionsLoading) {
-    return null;
-  }
-
-  // TODO - add some loader here
-  if (isCollectionsLoading) {
-    return null;
-  }
-
   const disabled = !values.ipfsJson || !dirty || !isValid;
 
   return (
@@ -162,7 +151,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                       },
                     }}
                     suggestions={collectionsOptions}
-                    isLoading={false}
+                    isLoading={isCollectionsLoading}
                     getActiveSuggestOption={(option: Option, activeOption: Option) =>
                       option.id === activeOption.id
                     }

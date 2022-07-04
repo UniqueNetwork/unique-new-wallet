@@ -2,14 +2,17 @@ import { Consumer, Context, createContext, Provider } from 'react';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { KeyringPair } from '@polkadot/keyring/types';
 
+import { AllBalancesResponse } from '@app/types/Api';
+import { NetworkType } from '@app/types';
+
 export enum AccountSigner {
   extension = 'Extension',
   local = 'Local',
 }
 
 export interface Account extends InjectedAccountWithMeta {
-  balance?: string;
-  unitBalance: string;
+  balance?: AllBalancesResponse;
+  unitBalance: NetworkType;
   signerType: AccountSigner;
 }
 
@@ -24,6 +27,7 @@ export type AccountContextProps = {
   setAccounts(accounts: Account[]): void;
   setIsLoading(loading: boolean): void;
   showSignDialog(): Promise<KeyringPair>;
+  forgetLocalAccount(addressWallet: string): void;
 };
 
 const AccountContext: Context<AccountContextProps> = createContext(
