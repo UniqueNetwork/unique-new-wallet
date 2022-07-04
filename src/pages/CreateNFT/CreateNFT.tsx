@@ -129,16 +129,6 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     void generateExtrinsic();
   }, [attributes]);
 
-  // TODO - add redirect to main page here if user has no collections
-  if (!collections?.length && !isCollectionsLoading) {
-    return null;
-  }
-
-  // TODO - add some loader here
-  if (isCollectionsLoading) {
-    return null;
-  }
-
   const disabled = !attributes.ipfsJson;
 
   return (
@@ -181,7 +171,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                         },
                       }}
                       suggestions={collectionsOptions}
-                      isLoading={false}
+                      isLoading={isCollectionsLoading}
                       getActiveSuggestOption={(option: Option, activeOption: Option) =>
                         option.id === activeOption.id
                       }
