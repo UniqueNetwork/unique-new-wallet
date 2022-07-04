@@ -4,7 +4,7 @@ declare type Env = {
   SCAN_ACCOUNT_URL: string | undefined;
   NET_QUARTZ_REST_API_URL: string | undefined;
   HASURA_API_URL: string | undefined;
-};
+} & Record<string, string | undefined>;
 
 declare type Config = {
   IPFSGateway: string | undefined;
