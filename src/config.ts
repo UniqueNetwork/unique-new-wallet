@@ -1,5 +1,5 @@
 declare type Env = {
-  IPFS_GATEWAY_URL: string | undefined;
+  IPFS_GATEWAY: string | undefined;
   IMAGE_SERVER_URL: string | undefined;
   SCAN_ACCOUNT_URL: string | undefined;
   NET_QUARTZ_REST_API_URL: string | undefined;
@@ -22,7 +22,7 @@ declare global {
 
 const config: Config = {
   // defaultChain: '',
-  IPFSGateway: window.ENV?.IPFS_GATEWAY_URL || process.env.REACT_APP_IPFS_GATEWAY_URL,
+  IPFSGateway: window.ENV?.IPFS_GATEWAY || process.env.REACT_APP_IPFS_GATEWAY_URL,
   imageServerUrl: window.ENV?.IMAGE_SERVER_URL || process.env.REACT_APP_IMAGE_SERVER_URL,
   scanUrl: window.ENV?.SCAN_ACCOUNT_URL || process.env.REACT_APP_SCAN_ACCOUNT_URL,
   quartzRestApiUrl:
