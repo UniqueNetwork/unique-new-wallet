@@ -49,14 +49,11 @@ const defaultOptions = {
 };
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
-  const { attributes, createSchema, setAttributes, setTokenImg, resetForm } =
-    useContext(TokenFormContext);
+  const { initializeTokenForm, setTokenImg, tokenForm } = useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
   const { uploadFile } = useFileUpload();
   const navigate = useNavigate();
   const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
-  // TODO - remove this FAQ after uploadFile value fix and move to Formik
-  const [reloadForm, toggleReload] = useState<boolean>(false);
   // TODO - use searchOnType here
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
@@ -66,6 +63,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { fee, generateExtrinsic, isCreatingNFT, onCreateNFT } = useTokenMutation(
     selectedCollection?.id ?? 0,
   );
+  const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
 
   const tokenFields = get(collection, 'properties.fields', []);
 
@@ -80,10 +78,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const uploadImage = async (file: Blob) => {
     const response = await uploadFile(file);
 
-    setAttributes({
-      ...attributes,
-      ipfsJson: JSON.stringify({ ipfs: response?.address, type: 'image' }),
-    });
+    setFieldValue('ipfsJson', JSON.stringify({ ipfs: response?.address, type: 'image' }));
   };
 
   const setImage = (data: { url: string; file: Blob } | null) => {
@@ -97,131 +92,115 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   };
 
   const onConfirmAndClose = async () => {
+    await submitForm();
     await onCreateNFT();
 
     navigate(ROUTE.MY_TOKENS);
   };
 
-  // TODO - remove this FAQ after uploadFile value fix and move to Formik
-  const onResetForm = () => {
-    toggleReload(true);
-    resetForm();
-
-    setTimeout(() => {
-      toggleReload(false);
-    });
-  };
-
   const onConfirmAndCreateMore = async () => {
+    await submitForm();
     await onCreateNFT();
-
-    onResetForm();
   };
 
   useEffect(() => {
     if (tokenFields?.length) {
-      createSchema(tokenFields);
+      initializeTokenForm(tokenFields);
     }
   }, [tokenFields]);
 
   // !!!Only for attributes change
   useEffect(() => {
     void generateExtrinsic();
-  }, [attributes]);
+  }, [values]);
 
-  const disabled = !attributes.ipfsJson;
+  const disabled = !values.ipfsJson || !dirty || !isValid;
 
   return (
     <>
       <Heading size="1">Create a NFT</Heading>
       <MainWrapper className={classNames('create-nft-page', className)}>
         <WrapperContent>
-          {!reloadForm && (
-            <FormWrapper>
-              <FormHeader>
-                <Heading size="2">Main information</Heading>
-              </FormHeader>
-              <FormBody>
-                <Form>
-                  <FormRow>
-                    <LabelText>Collection*</LabelText>
-                    <Suggest
-                      components={{
-                        SuggestItem: ({
-                          suggestion,
-                          isActive,
-                        }: {
-                          suggestion: Option;
-                          isActive?: boolean;
-                        }) => {
-                          return (
-                            <SuggestOption
-                              className={classNames('suggestion-item', {
-                                isActive,
-                              })}
-                            >
-                              <Avatar
-                                size={24}
-                                src={suggestion.img || ''}
-                                type="circle"
-                              />
-                              {suggestion?.title} [id {suggestion?.id}]
-                            </SuggestOption>
-                          );
-                        },
-                      }}
-                      suggestions={collectionsOptions}
-                      isLoading={isCollectionsLoading}
-                      getActiveSuggestOption={(option: Option, activeOption: Option) =>
-                        option.id === activeOption.id
-                      }
-                      getSuggestionValue={({ title }: Option) => title}
-                      onChange={setSelectedCollection}
+          <FormWrapper>
+            <FormHeader>
+              <Heading size="2">Main information</Heading>
+            </FormHeader>
+            <FormBody>
+              <Form>
+                <FormRow>
+                  <LabelText>Collection*</LabelText>
+                  <Suggest
+                    components={{
+                      SuggestItem: ({
+                        suggestion,
+                        isActive,
+                      }: {
+                        suggestion: Option;
+                        isActive?: boolean;
+                      }) => {
+                        return (
+                          <SuggestOption
+                            className={classNames('suggestion-item', {
+                              isActive,
+                            })}
+                          >
+                            <Avatar size={24} src={suggestion.img || ''} type="circle" />
+                            {suggestion?.title} [id {suggestion?.id}]
+                          </SuggestOption>
+                        );
+                      },
+                    }}
+                    suggestions={collectionsOptions}
+                    isLoading={isCollectionsLoading}
+                    getActiveSuggestOption={(option: Option, activeOption: Option) =>
+                      option.id === activeOption.id
+                    }
+                    getSuggestionValue={({ title }: Option) => title}
+                    onChange={setSelectedCollection}
+                  />
+                </FormRow>
+                <FormRow className="has_uploader">
+                  <UploadWidget>
+                    <LabelText>Upload image*</LabelText>
+                    <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
+                    {/* TODO - fix UI kit Upload problems: set value as url from file, reloading */}
+                    <Upload
+                      disabled={!selectedCollection?.id}
+                      type="square"
+                      onChange={setImage}
                     />
-                  </FormRow>
-                  <FormRow className="has_uploader">
-                    <UploadWidget>
-                      <LabelText>Upload image*</LabelText>
-                      <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
-                      {/* TODO - fix value problems, name attribute */}
-                      <Upload
-                        disabled={!selectedCollection?.id}
-                        type="square"
-                        onChange={setImage}
-                      />
-                    </UploadWidget>
-                  </FormRow>
-                  <Heading size="3">Attributes</Heading>
-                  {tokenFields
-                    .filter((tokenField: TokenField) => tokenField.name !== 'ipfsJson')
-                    .map((tokenField: TokenField, index: number) => (
-                      <AttributesRow
-                        // generateExtrinsic={generateExtrinsic}
-                        tokenField={tokenField}
-                        key={`${tokenField.name}-${index}`}
-                        maxLength={64}
-                      />
-                    ))}
-                  <Alert type="warning">
-                    A fee of ~ {fee} QTZ can be applied to the transaction
-                  </Alert>
-                  <ButtonGroup>
-                    <Button
-                      disabled={!selectedCollection?.id || disabled}
-                      title="Confirm and create more"
-                      role="primary"
-                      onClick={() => void onConfirmAndCreateMore()}
+                  </UploadWidget>
+                </FormRow>
+                <Heading size="3">Attributes</Heading>
+                {tokenFields
+                  .filter((tokenField: TokenField) => tokenField.name !== 'ipfsJson')
+                  .map((tokenField: TokenField, index: number) => (
+                    <AttributesRow
+                      // generateExtrinsic={generateExtrinsic}
+                      tokenField={tokenField}
+                      key={`${tokenField.name}-${index}`}
+                      maxLength={64}
                     />
-                    <Button
-                      disabled={!selectedCollection?.id || disabled}
-                      title="Confirm and close"
-                      onClick={() => void onConfirmAndClose()}
-                    />
-                  </ButtonGroup>
-                </Form>
-              </FormBody>
-            </FormWrapper>
-          )}
+                  ))}
+                <Alert type="warning">
+                  A fee of ~ {fee} QTZ can be applied to the transaction
+                </Alert>
+                <ButtonGroup>
+                  <Button
+                    disabled={!selectedCollection?.id || disabled}
+                    title="Confirm and create more"
+                    role="primary"
+                    onClick={() => void onConfirmAndCreateMore()}
+                  />
+                  <Button
+                    disabled={!selectedCollection?.id || disabled}
+                    title="Confirm and close"
+                    onClick={() => void onConfirmAndClose()}
+                  />
+                </ButtonGroup>
+              </Form>
+            </FormBody>
+          </FormWrapper>
         </WrapperContent>
         <Sidebar collectionId={selectedCollection?.id} />
       </MainWrapper>

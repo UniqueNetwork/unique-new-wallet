@@ -9,7 +9,12 @@ export const createDynamicYupSchema = (tokenFields: TokenField[]) => {
     if (field.type === 'text') {
       schema[field.name] = Yup.string();
     } else {
-      schema[field.name] = Yup.array().of(Yup.string());
+      schema[field.name] = Yup.array().of(
+        Yup.object().shape({
+          id: Yup.string(),
+          title: Yup.string(),
+        }),
+      );
     }
 
     if (field.required) {

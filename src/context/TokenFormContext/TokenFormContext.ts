@@ -5,7 +5,7 @@ import { TokenAttributes, TokenField } from '@app/types';
 
 export interface TokenFormProps {
   attributes: TokenAttributes;
-  createSchema: (tokenFields: TokenField[]) => void;
+  initializeTokenForm: (tokenFields: TokenField[]) => void;
   tokenForm: FormikProps<any>;
   setAttributes: (attributes: TokenAttributes) => void;
   setTokenImg: (tokenImage: Blob | null) => void;
