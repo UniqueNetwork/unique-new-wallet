@@ -34,7 +34,7 @@ export interface NftCollectionLimits {
     sponsoredDataSize?: number;
     sponsoredDataRateLimit?: number;
     sponsoredMintSize?: number;
-    tokenLimit?: number;
+    tokenLimit?: number | null;
     sponsorTimeout?: number;
     ownerCanTransfer?: boolean;
     ownerCanDestroy?: boolean;
