@@ -10,8 +10,8 @@ export interface FileUploadMutationPayload {
 }
 
 export interface FileUploadMutationResponse {
-  address: string;
-  success: boolean;
+  cid: string;
+  fileUrl: string;
 }
 
 export class FileUploadMutation extends EndpointMutation<
@@ -23,7 +23,7 @@ export class FileUploadMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = `/api/images/upload`;
+    this.baseUrl = `/ipfs/upload-file`;
 
     this.request = this.request.bind(this);
   }
