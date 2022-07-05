@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
 import { ArtificialAttributeItemType, MainInformationInitialValues } from '@app/types';
+import { maxTokenLimit } from '@app/pages/constants/token';
 
 import CollectionFormContext from './CollectionFormContext';
 
@@ -32,7 +33,7 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
   const [coverImgFile, setCoverImgFile] = useState<Blob | null>(null);
   const [ownerCanTransfer, setOwnerCanTransfer] = useState<boolean>(false);
   const [ownerCanDestroy, setOwnerCanDestroy] = useState<boolean>(true);
-  const [tokenLimit, setTokenLimit] = useState<number>(0);
+  const [tokenLimit, setTokenLimit] = useState<number | null>(null);
   const [variableSchema, setVariableSchema] = useState<string>('');
 
   const mainInformationDefaultValues: MainInformationInitialValues = {
@@ -50,6 +51,12 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
       .max(4, 'Too Long!')
       .required('Required'),
     coverImgAddress: Yup.string(),
+    limits: Yup.object({
+      tokenLimit: Yup.number()
+        .min(1)
+        .max(maxTokenLimit, 'Too long number!')
+        .nullable(true),
+    }),
   });
 
   const mainInformationForm = useFormik({

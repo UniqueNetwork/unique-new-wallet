@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -28,10 +28,10 @@ import {
   FormHeader,
   FormWrapper,
 } from '@app/pages/components/FormComponents';
+import { maxTokenLimit } from '@app/pages/constants/token';
+import { ROUTE } from '@app/routes';
 
-const maxTokenLimit = 4294967295;
-
-export const NFTAttributes: FC = () => {
+export const NFTAttributes = () => {
   const {
     attributes,
     mainInformationForm,
@@ -54,7 +54,7 @@ export const NFTAttributes: FC = () => {
   const createCollection = async () => {
     await onCreateCollection();
 
-    navigate('/my-collections');
+    navigate(ROUTE.MY_COLLECTIONS);
   };
 
   const onSubmitAttributes = () => {
@@ -71,6 +71,7 @@ export const NFTAttributes: FC = () => {
 
   const onSetTokenLimit = (value: string) => {
     if (!value) {
+      setTokenLimit(null);
       return;
     }
 
@@ -174,7 +175,7 @@ export const NFTAttributes: FC = () => {
                   </>
                 }
                 additionalText="Unlimited by default"
-                value={tokenLimit.toString()}
+                value={tokenLimit ? tokenLimit.toString() : ''}
                 onChange={onSetTokenLimit}
               />
             </Row>

@@ -39,7 +39,7 @@ export const useCollectionMutation = () => {
       limits: {
         ownerCanDestroy,
         ownerCanTransfer,
-        tokenLimit: tokenLimit ?? 0,
+        tokenLimit,
       },
       metaUpdatePermission: 'ItemOwner',
       mode: 'Nft',

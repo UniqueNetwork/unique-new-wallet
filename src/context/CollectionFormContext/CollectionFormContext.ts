@@ -26,9 +26,9 @@ export interface CollectionFormProps {
   setCoverImgFile: (coverImg: Blob | null) => void;
   setOwnerCanDestroy: (ownerCanDestroy: boolean) => void;
   setOwnerCanTransfer: (ownerCanTransfer: boolean) => void;
-  setTokenLimit: (tokenLimit: number) => void;
+  setTokenLimit: (tokenLimit: number | null) => void;
   setVariableSchema: (variableSchema: string) => void;
-  tokenLimit: number;
+  tokenLimit: number | null;
   variableSchema: string;
 }
 
