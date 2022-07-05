@@ -60,7 +60,7 @@ const MainInformationComponent: FC = () => {
   const uploadCover = async (file: Blob) => {
     const response = await uploadFile(file);
 
-    setFieldValue('coverImgAddress', response?.address);
+    setFieldValue('coverImgAddress', response?.cid);
 
     await generateExtrinsic();
   };

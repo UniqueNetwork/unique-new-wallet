@@ -78,7 +78,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const uploadImage = async (file: Blob) => {
     const response = await uploadFile(file);
 
-    setFieldValue('ipfsJson', JSON.stringify({ ipfs: response?.address, type: 'image' }));
+    setFieldValue('ipfsJson', JSON.stringify({ ipfs: response?.cid, type: 'image' }));
   };
 
   const setImage = (data: { url: string; file: Blob } | null) => {

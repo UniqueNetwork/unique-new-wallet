@@ -1,22 +1,28 @@
 import { useState } from 'react';
 
-import { BaseApi, useApiMutation } from '@app/api';
 import config from '@app/config';
+import { useApi } from '@app/hooks';
+import { BaseApi, useApiMutation } from '@app/api';
 
 import { FileService } from '../FileService';
 
 export const useFileUpload = () => {
-  const [api] = useState(() => new BaseApi(config?.imageServerUrl ?? ''));
+  const { api } = useApi();
 
   const fileUpload = useApiMutation({
     endpoint: FileService.fileUpload,
   });
 
-  const uploadFile = async (file: Blob) =>
-    fileUpload.mutateAsync({
+  const uploadFile = async (file: Blob) => {
+    if (!api) {
+      return;
+    }
+
+    return fileUpload.mutateAsync({
       api,
       file,
     });
+  };
 
   return {
     uploadFile,
