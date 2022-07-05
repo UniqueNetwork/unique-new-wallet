@@ -10,6 +10,7 @@ import noCollections from '@app/static/icons/no-collections.svg';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
+import { maxTokenLimit } from '@app/pages/constants/token';
 
 interface CollectionDescriptionComponentProps {
   className?: string;
@@ -65,7 +66,10 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
             {existValue(token_limit) && (
               <Row>
                 <span>
-                  Token limit: <strong>{token_limit}</strong>
+                  Token limit:{' '}
+                  <strong>
+                    {token_limit === maxTokenLimit ? 'Unlimited' : token_limit}
+                  </strong>
                 </span>
               </Row>
             )}
