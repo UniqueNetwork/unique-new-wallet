@@ -8,22 +8,26 @@ import {
   Loader,
   Chip,
   Link,
+  IconProps,
 } from '@unique-nft/ui-kit';
 
-import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
-import { NTFsContextState } from '@app/pages/MyTokens/context';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
 import { TokenPreviewInfo } from '@app/api';
-import { Option } from '@app/types';
 
-interface NFTsListComponentProps extends Partial<NTFsContextState> {
+interface NFTsListComponentProps {
   className?: string;
   tokens?: TokenPreviewInfo[];
   tokensCount?: number;
   isLoading: boolean;
   page: number;
-  defaultCollections?: Option<number>[];
+  chips?: {
+    label: string;
+    iconLeft?: IconProps;
+    onClose?(): void;
+  }[];
   onPageChange: IPaginationProps['onPageChange'];
+  onChipsReset?(): void;
 }
 
 const NFTsListComponent = ({
@@ -32,58 +36,20 @@ const NFTsListComponent = ({
   tokensCount,
   page,
   isLoading,
-  defaultCollections,
-  searchText,
-  collectionsIds,
-  typesFilters,
+  chips,
   onPageChange,
-  changeSearchText,
-  changeCollectionsIds,
-  changeTypesFilters,
-  setTypesFilters,
-  setCollectionsIds,
+  onChipsReset,
 }: NFTsListComponentProps) => (
   <div className={classNames('nft-list', className)}>
     {isLoading && <Loader isFullPage={true} size="large" />}
     {!isNaN(Number(tokensCount)) && (
       <div className="token-size-wrapper">
         <Text size="m">{`${tokensCount} items`}</Text>
-        {!!(searchText || typesFilters?.length || collectionsIds?.length) && (
-          <>
-            {searchText && (
-              <Chip label={searchText} onClose={() => changeSearchText?.('')} />
-            )}
-            {typesFilters?.map((filter) => (
-              <Chip
-                label={Dictionary[`filter_type_${filter}`]}
-                key={filter}
-                onClose={() => changeTypesFilters?.(filter)}
-              />
-            ))}
-            {collectionsIds?.map((id) => {
-              const { label, icon } =
-                defaultCollections?.find((c) => c.id === id && c) || {};
-              return (
-                <Chip
-                  label={label!}
-                  {...(icon && {
-                    iconLeft: { size: 22, file: icon },
-                  })}
-                  key={id}
-                  onClose={() => changeCollectionsIds?.(id)}
-                />
-              );
-            })}
-            <Link
-              title="Clear all"
-              role="danger"
-              onClick={() => {
-                changeSearchText?.('');
-                setTypesFilters?.([]);
-                setCollectionsIds?.([]);
-              }}
-            />
-          </>
+        {chips?.map((item, index) => (
+          <Chip key={index} {...item} />
+        ))}
+        {!!chips?.length && (
+          <Link title="Clear all" role="danger" onClick={onChipsReset} />
         )}
       </div>
     )}

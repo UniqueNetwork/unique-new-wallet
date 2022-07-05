@@ -9,6 +9,7 @@ import {
 import AccountContext from '@app/account/AccountContext';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
 import { CollectionsFilter, TypeFilter } from '@app/pages';
+import { Dictionary } from '@app/utils';
 
 import { useNFTsContext } from '../context';
 import { defaultLimit, defaultTypesFilters } from '../constants';
@@ -62,18 +63,34 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
     [collections],
   );
 
-  const contextData = {
-    defaultCollections,
-    searchText,
-    typesFilters,
-    collectionsIds,
-    page: tokensPage,
-    changeSearchText,
-    setTypesFilters,
-    changeTypesFilters,
-    changeCollectionsIds,
-    setCollectionsIds,
-    onPageChange: changeTokensPage,
+  const chips = useMemo(() => {
+    const chips = [];
+    searchText &&
+      chips.push({
+        label: searchText,
+        onClose: () => changeSearchText(''),
+      });
+    typesFilters?.forEach((filter) =>
+      chips.push({
+        label: Dictionary[`filter_type_${filter}`],
+        onClose: () => changeTypesFilters(filter),
+      }),
+    );
+    collectionsIds?.forEach((id) => {
+      const { label, icon } = defaultCollections?.find((c) => c.id === id && c) || {};
+      chips.push({
+        label,
+        iconLeft: { size: 22, file: icon },
+        onClose: () => changeCollectionsIds(id),
+      });
+    });
+    return chips;
+  }, [searchText, typesFilters, collectionsIds]);
+
+  const handleChipsReset = () => {
+    changeSearchText('');
+    setTypesFilters([]);
+    setCollectionsIds([]);
   };
 
   return (
@@ -90,7 +107,10 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
           tokens={tokens}
           isLoading={tokensLoading}
           tokensCount={tokensCount}
-          {...contextData}
+          page={tokensPage}
+          chips={chips}
+          onChipsReset={handleChipsReset}
+          onPageChange={changeTokensPage}
         />
       </div>
     </div>
