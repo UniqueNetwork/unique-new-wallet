@@ -92,9 +92,9 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
                   title={
                     <>
                       Find out more on{' '}
-                      <Link href="https://" title="Polkadot Wiki">
+                      <TooltipLink href="https://" title="Polkadot Wiki">
                         Polkadot Wiki
-                      </Link>
+                      </TooltipLink>
                     </>
                   }
                 >
@@ -113,7 +113,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
               re-create the account and gain full access to it.
             </TextWarning>
             <Checkbox
-              label="I have saved my mnemnic seed safely"
+              label="I have saved my mnemonic seed safely"
               checked={confirmSeedSaved}
               size="m"
               onChange={setConfirmSeedSaved}
@@ -177,4 +177,9 @@ const ControlsGroup = styled.div`
   & > :last-child {
     align-self: baseline;
   }
+`;
+
+const TooltipLink = styled(Link)`
+  border-bottom: 1px solid;
+  color: inherit;
 `;

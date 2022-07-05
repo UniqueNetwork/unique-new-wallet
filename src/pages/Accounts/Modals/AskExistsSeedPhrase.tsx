@@ -71,7 +71,7 @@ export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish
         </ContentRow>
         <ContentRow>
           <Checkbox
-            label="I have saved my mnemnic seed safely"
+            label="I have saved my mnemonic seed safely"
             checked={confirmSeedSaved}
             size="m"
             onChange={setConfirmSeedSaved}
