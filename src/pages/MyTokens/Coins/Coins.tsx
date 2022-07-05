@@ -26,10 +26,6 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     selectedAccount?.address,
     config.quartzRestApiUrl,
   );
-  const { isLoading: opalLoading, data: opalBalance } = useAccountBalanceService(
-    selectedAccount?.address,
-    config.uniqueRestApiUrl,
-  );
 
   const sendFundsHandler = useCallback((networkType: NetworkType) => {
     setSelectedNetworkType(networkType);
@@ -70,15 +66,14 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
         />
         <CoinsRow
           getDisabled
-          loading={opalLoading}
+          sendDisabled
           address={selectedAccount?.address}
-          balanceFull={opalBalance?.freeBalance.amount}
-          balanceLocked={opalBalance?.lockedBalance.amount}
-          balanceTransferable={opalBalance?.availableBalance.amount}
-          sendDisabled={!Number(opalBalance?.availableBalance.amount)}
+          balanceFull=""
+          balanceLocked=""
+          balanceTransferable=""
           iconName="chain-opal"
           name="Opal"
-          symbol={opalBalance?.freeBalance.unit}
+          symbol="OPL"
           onSend={sendFundsHandler}
           onGet={getCoinsHandler}
         />
