@@ -72,6 +72,31 @@ export const UploadWidget = styled.div`
   }
 `;
 
+export const SettingsRow = styled.div`
+  &:not(:last-child) {
+    margin-bottom: calc(var(--prop-gap) * 1.5);
+  }
+
+  label {
+    font-weight: 500;
+  }
+
+  label,
+  .checkbox-label > span {
+    & > .unique-tooltip-content {
+      display: inline-block;
+      vertical-align: middle;
+      margin: -0.1em 0 0 0.3em;
+    }
+  }
+
+  .unique-input-text {
+    & + .unique-font-heading {
+      margin-top: calc(var(--prop-gap) * 0.375);
+    }
+  }
+`;
+
 export const LabelText = styled(Text).attrs({
   appearance: 'block',
   color: 'additional-dark',
