@@ -38,11 +38,7 @@ export const useCollectionMutation = () => {
         setTxHash('');
         setSsCreatingCollection(false);
 
-        if (isError) {
-          error(errorMessage);
-        } else {
-          info('Creation completed successfully');
-        }
+        isError ? error(errorMessage) : info('Creation completed successfully');
       }
     }
   }, [extrinsicStatus]);
