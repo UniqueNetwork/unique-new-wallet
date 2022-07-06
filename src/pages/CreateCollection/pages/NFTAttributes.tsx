@@ -107,7 +107,7 @@ export const NFTAttributes = () => {
       <FormWrapper>
         <CollectionStepper activeStep={2} onClickStep={onPreviousStepClick} />
         <FormHeader>
-          <Heading size="2">NFT attrubutes</Heading>
+          <Heading size="2">NFT attributes</Heading>
           <Text>
             Customize your token — define your NTF&apos;s traits: name, accessory, gender,
             background, face, body, tier, etc.
