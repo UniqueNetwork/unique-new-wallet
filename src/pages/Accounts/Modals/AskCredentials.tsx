@@ -1,9 +1,10 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Avatar, Button, InputText, Text } from '@unique-nft/ui-kit';
+import { Avatar, Button, InputText } from '@unique-nft/ui-kit';
 
 import { PasswordInput } from '@app/components';
 import {
   AdditionalText,
+  AddressText,
   AddressWrapper,
   ButtonGroup,
   LabelText,
@@ -50,7 +51,7 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
         <ContentRow>
           <AddressWrapper>
             <Avatar size={24} src={DefaultAvatar} />
-            <Text>{accountProperties?.address || ''}</Text>
+            <AddressText>{accountProperties?.address || ''}</AddressText>
           </AddressWrapper>
         </ContentRow>
         <ContentRow>

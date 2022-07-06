@@ -8,7 +8,6 @@ import {
   Icon,
   Link,
   Select,
-  Text,
   Textarea,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
@@ -16,6 +15,7 @@ import styled from 'styled-components/macro';
 import { addressFromSeed } from '@app/utils';
 import { Tooltip } from '@app/components';
 import {
+  AddressText,
   AddressWrapper,
   ButtonGroup,
   StepsTextStyled,
@@ -75,7 +75,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
         <ContentRow>
           <AddressWrapper>
             <Avatar size={24} src={DefaultAvatar} />
-            <Text>{address}</Text>
+            <AddressText>{address}</AddressText>
           </AddressWrapper>
         </ContentRow>
         <ContentRow>
