@@ -18,7 +18,7 @@ import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContex
 import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 
-import config from '../../config';
+import { config } from '../../config';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 
@@ -203,15 +203,17 @@ export const Accounts = () => {
           data={filteredAccounts}
         />
       </AccountsPageContent>
-      <SendFunds
-        isVisible={isOpenModal}
-        senderAccount={selectedAddress}
-        networkType={selectedAccount?.unitBalance}
-        onClose={onChangeAccountsFinish}
-        onSendSuccess={() => {
-          refetch();
-        }}
-      />
+      {isOpenModal && (
+        <SendFunds
+          isVisible={true}
+          senderAccount={selectedAddress}
+          networkType={selectedAccount?.unitBalance}
+          onClose={onChangeAccountsFinish}
+          onSendSuccess={() => {
+            refetch();
+          }}
+        />
+      )}
       <Confirm
         buttons={[
           { title: 'No, return', onClick: () => setForgetWalletAddress('') },

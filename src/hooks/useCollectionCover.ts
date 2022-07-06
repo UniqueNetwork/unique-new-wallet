@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import get from 'lodash/get';
 
-import config from '@app/config';
+import { config } from '@app/config';
 import { CollectionInfoResponse } from '@app/types/Api';
 
 const { IPFSGateway } = config;
