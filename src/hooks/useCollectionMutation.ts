@@ -1,10 +1,11 @@
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
+import { useQueryClient } from 'react-query';
 
 import { convertArtificialAttributesToProtobuf, fillProtobufJson } from '@app/utils';
 import { AttributeItemType, NftCollectionDTO, ProtobufAttributeType } from '@app/types';
 import { useAccounts } from '@app/hooks/useAccounts';
-import { useCollectionCreate, useExtrinsicSubmit } from '@app/api';
+import { useCollectionCreate, useExtrinsicStatus, useExtrinsicSubmit } from '@app/api';
 import { useFee } from '@app/hooks/useFee';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
@@ -18,12 +19,29 @@ export const useCollectionMutation = () => {
     ownerCanTransfer,
     tokenLimit,
   } = useContext(CollectionFormContext);
+
+  const [txHash, setTxHash] = useState<string | undefined>();
   const [isCreatingCollection, setSsCreatingCollection] = useState<boolean>(false);
+
+  const { data: extrinsicStatus } = useExtrinsicStatus(txHash);
   const { selectedAccount, signMessage } = useAccounts();
   const { createCollection } = useCollectionCreate();
   const { submitExtrinsic } = useExtrinsicSubmit();
   const { error, info } = useNotifications();
   const { fee, getFee } = useFee();
+
+  useEffect(() => {
+    if (extrinsicStatus) {
+      const { isCompleted, isError, errorMessage } = extrinsicStatus;
+
+      if (isCompleted) {
+        setTxHash('');
+        setSsCreatingCollection(false);
+
+        isError ? error(errorMessage) : info('Creation completed successfully');
+      }
+    }
+  }, [extrinsicStatus]);
 
   const generateExtrinsic = useCallback(async () => {
     const converted: AttributeItemType[] =
@@ -130,25 +148,19 @@ export const useCollectionMutation = () => {
         return;
       }
 
-      await submitExtrinsic({
+      const submitResult = await submitExtrinsic({
         signerPayloadJSON: createResp.signerPayloadJSON,
         signature,
       });
 
-      info('Collection successfully created', {
-        name: 'Create collection',
-        size: 32,
-        color: 'white',
-      });
-
-      setSsCreatingCollection(false);
+      if (submitResult) {
+        setTxHash(submitResult.hash);
+      } else {
+        error('Submit exstrinsic error');
+      }
     } catch (e) {
-      error('Sign transaction error', {
-        name: 'Create collection',
-        size: 32,
-        color: 'white',
-      });
-    } finally {
+      error('Sign transaction error');
+
       setSsCreatingCollection(false);
     }
   };
