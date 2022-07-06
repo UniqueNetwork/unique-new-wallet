@@ -1,4 +1,5 @@
 import { Chain } from '@app/types';
+import * as net from 'net';
 
 const configKeyRegexp = /NET_(?<network>[A-Z]+)_NAME$/gm;
 
@@ -72,7 +73,16 @@ export const getChainList = (
   config: Record<string, string | undefined>,
 ): Record<string, Chain> => {
   return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
-    acc[network] = getNetworkParams(config, network);
+
+    const { apiEndpoint, gqlEndpoint, ...params } = getNetworkParams(config, network);
+
+    if (apiEndpoint && gqlEndpoint) {
+      acc[network] = {
+        apiEndpoint,
+        gqlEndpoint,
+        ...params,
+      };
+    }
 
     return acc;
   }, {});
