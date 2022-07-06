@@ -73,6 +73,7 @@ export const UploadWidget = styled.div`
 `;
 
 export const LabelText = styled(Text).attrs({
+  appearance: 'block',
   color: 'additional-dark',
   size: 'm',
   weight: 'bold',
@@ -91,7 +92,11 @@ export const SuggestOption = styled.div`
   }
 `;
 
-export const AdditionalText = styled(Text).attrs({ size: 's', color: 'grey-500' })`
+export const AdditionalText = styled(Text).attrs({
+  appearance: 'block',
+  size: 's',
+  color: 'grey-500',
+})`
   margin-bottom: var(--prop-gap);
 `;
 

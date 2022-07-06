@@ -81,6 +81,7 @@ export const EnumsInput: VFC<Props> = ({ isDisabled, maxSymbols, setValues, valu
 
 const Wrapper = styled.div`
   &.enum-input {
+    box-sizing: border-box;
     border: 1px solid var(--color-grey-300);
     background: white;
     border-radius: calc(var(--gap) / 4);

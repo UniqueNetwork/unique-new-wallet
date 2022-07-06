@@ -15,37 +15,37 @@ const EnumInputItem: VFC<Props> = ({ deleteItem, enumItem }) => {
   return (
     <Wrapper className="enum-input--item">
       {enumItem}
-      <div onClick={onDeleteItem}>
-        <Icon name="close" size={12} />
-      </div>
+      <IconWrapper onClick={onDeleteItem}>
+        <Icon color="currentColor" name="close" size={10} />
+      </IconWrapper>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.div`
   &.enum-input--item {
-    font-size: 14px;
+    border-radius: var(--prop-border-radius);
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    padding: 3px 8px;
-    background-color: var(--color-primary-500);
-    border-radius: 8px;
+    padding: 1px calc(var(--prop-gap) / 2);
+    background-color: var(--color-primary-300);
     color: white;
-    grid-column-gap: 8px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 22px;
     white-space: nowrap;
-
-    svg {
-      cursor: pointer;
-      display: block !important;
-
-      path {
-        fill: white;
-      }
-    }
   }
+`;
+
+const IconWrapper = styled.button`
+  border: 0;
+  display: flex;
+  appearance: none;
+  margin-left: 0.1em;
+  margin-right: calc(var(--prop-gap) / (-4));
+  padding: calc(var(--prop-gap) / 4);
+  background: 0 none;
+  color: inherit;
+  cursor: pointer;
 `;
 
 export default EnumInputItem;
