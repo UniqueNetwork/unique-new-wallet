@@ -14,8 +14,8 @@ import styled, { css } from 'styled-components';
 
 import { Account } from '@app/account';
 import { NetworkType } from '@app/types';
-import { formatAmount, networksUrls } from '@app/utils';
-import { useAccounts } from '@app/hooks';
+import { formatAmount } from '@app/utils';
+import { useAccounts, useApi } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
 import {
   AdditionalText,
@@ -63,6 +63,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
   onAmountChange,
 }) => {
   const { accounts, selectedAccount } = useAccounts();
+  const { currentChain } = useApi();
 
   const [sender, setSender] = useState<Account | undefined>(
     senderAccount || selectedAccount,
@@ -79,10 +80,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
     [accounts, recipient?.address],
   );
 
-  const { data } = useAccountBalanceService(
-    sender?.address,
-    networkType && networksUrls[networkType],
-  );
+  const { data } = useAccountBalanceService(sender?.address, currentChain?.apiEndpoint);
 
   const amountChangeHandler = (amount: string) => setAmount(parseAmount(amount));
 
@@ -128,7 +126,6 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
               From
             </StyledAdditionalText>
             <AccountSelector
-              networkType={networkType}
               canCopy={!!senderOptions.length}
               selectOptions={senderOptions}
               selectedValue={sender}
@@ -365,14 +362,14 @@ const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boolean }> =
 
 const AccountSelector: FC<{
   canCopy?: boolean;
-  networkType?: NetworkType;
   selectOptions: any;
   selectedValue?: Account;
   onChangeAccount?(value: Account): void;
-}> = ({ canCopy = true, networkType, selectedValue, selectOptions, onChangeAccount }) => {
+}> = ({ canCopy = true, selectedValue, selectOptions, onChangeAccount }) => {
+  const { currentChain } = useApi();
   const { data } = useAccountBalanceService(
     selectedValue?.address,
-    networkType && networksUrls[networkType],
+    currentChain?.apiEndpoint,
   );
 
   return (

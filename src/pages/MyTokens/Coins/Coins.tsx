@@ -2,12 +2,12 @@ import React, { useCallback, useState, VFC } from 'react';
 import styled from 'styled-components';
 import { Heading } from '@unique-nft/ui-kit';
 
-import config from '@app/config';
 import { RampModal } from '@app/pages';
 import { NetworkType } from '@app/types';
 import { useAccounts } from '@app/hooks';
-import { useAccountBalanceService } from '@app/api';
 import { SendFunds } from '@app/pages/SendFunds';
+import { useAccountBalancesService } from '@app/api/restApi/balance/hooks/useAccountBalancesService';
+import { config } from '@app/config';
 
 import { CoinsRow } from './components';
 
@@ -22,10 +22,11 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
   const { selectedAccount } = useAccounts();
 
-  const { isLoading: qtzLoading, data: qtzBalance } = useAccountBalanceService(
-    selectedAccount?.address,
-    config.quartzRestApiUrl,
-  );
+  const { isLoading: chainsBalanceLoading, data: chainsBalance } =
+    useAccountBalancesService(
+      Object.values(config.chains).map((chain) => chain.apiEndpoint),
+      selectedAccount?.address,
+    );
 
   const sendFundsHandler = useCallback((networkType: NetworkType) => {
     setSelectedNetworkType(networkType);
@@ -41,65 +42,37 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
   return (
     <>
-      <SendFunds
-        isVisible={fundsModalVisible}
-        senderAccount={selectedAccount}
-        networkType={selectedNetworkType}
-        onClose={closeTransferFundsModalHandler}
-      />
+      {fundsModalVisible && (
+        <SendFunds
+          isVisible={true}
+          senderAccount={selectedAccount}
+          networkType={selectedNetworkType}
+          onClose={closeTransferFundsModalHandler}
+        />
+      )}
       <RampModal isVisible={rampModalVisible} onClose={closeRampModalHandler} />
       <CoinsContainer>
         <Heading size="4">Network</Heading>
-        <CoinsRow
-          getDisabled
-          name="Quartz"
-          iconName="chain-quartz"
-          loading={qtzLoading}
-          address={selectedAccount?.address}
-          balanceFull={qtzBalance?.freeBalance.amount}
-          balanceLocked={qtzBalance?.lockedBalance.amount}
-          balanceTransferable={qtzBalance?.availableBalance.amount}
-          sendDisabled={!Number(qtzBalance?.availableBalance.amount)}
-          symbol={qtzBalance?.freeBalance.unit}
-          onSend={sendFundsHandler}
-          onGet={getCoinsHandler}
-        />
-        <CoinsRow
-          getDisabled
-          sendDisabled
-          address={selectedAccount?.address}
-          balanceFull=""
-          balanceLocked=""
-          balanceTransferable=""
-          iconName="chain-opal"
-          name="Opal"
-          symbol="OPL"
-          onSend={sendFundsHandler}
-          onGet={getCoinsHandler}
-        />
-        <CoinsRow
-          sendDisabled
-          address={selectedAccount?.address}
-          balanceFull=""
-          balanceTransferable=""
-          iconName="chain-kusama"
-          name="Kusama"
-          symbol="KSM"
-          onSend={sendFundsHandler}
-          onGet={getCoinsHandler}
-        />
-        <CoinsRow
-          getDisabled
-          sendDisabled
-          address={selectedAccount?.address}
-          balanceFull=""
-          balanceTransferable=""
-          iconName="chain-unique"
-          name="Unique network"
-          symbol="UNQ"
-          onSend={sendFundsHandler}
-          onGet={getCoinsHandler}
-        />
+        {Object.values(config.chains).map((chain, idx) => {
+          const isKusamaChain = chain.network.toLowerCase() === 'kusama';
+          return (
+            <CoinsRow
+              getDisabled={!isKusamaChain}
+              key={chain.network}
+              loading={chainsBalanceLoading}
+              sendDisabled={!Number(chainsBalance?.[idx].availableBalance.amount)}
+              address={selectedAccount?.address}
+              balanceFull={chainsBalance?.[idx].freeBalance.amount}
+              balanceLocked={chainsBalance?.[idx].lockedBalance.amount}
+              balanceTransferable={chainsBalance?.[idx].availableBalance.amount}
+              iconName={`chain-${chain.network.toLowerCase()}`}
+              name={chain.name}
+              symbol={chainsBalance?.[idx].availableBalance.unit}
+              onSend={sendFundsHandler}
+              onGet={isKusamaChain ? getCoinsHandler : undefined}
+            />
+          );
+        })}
       </CoinsContainer>
     </>
   );
