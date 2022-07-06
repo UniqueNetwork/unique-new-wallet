@@ -148,8 +148,10 @@ const HeaderStyled = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  a {
-    margin-right: 24px;
+  nav {
+    & > a {
+      margin-right: 24px;
+    }
   }
 `;
 
