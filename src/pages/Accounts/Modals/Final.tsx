@@ -55,9 +55,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
             Partial seed
             <Tooltip
               content={
-                <span>
-                  <Icon name="question" size={20} color="var(--color-primary-500)" />
-                </span>
+                <Icon name="question" size={20} color="var(--color-primary-500)" />
               }
               placement="right"
             >
@@ -73,9 +71,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
             Keypair type
             <Tooltip
               content={
-                <span>
-                  <Icon name="question" size={20} color="var(--color-primary-500)" />
-                </span>
+                <Icon name="question" size={20} color="var(--color-primary-500)" />
               }
               placement="right"
             >
@@ -91,9 +87,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
             Derivation path
             <Tooltip
               content={
-                <span>
-                  <Icon name="question" size={20} color="var(--color-primary-500)" />
-                </span>
+                <Icon name="question" size={20} color="var(--color-primary-500)" />
               }
               placement="right"
             >
@@ -124,7 +118,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
         <StepsTextStyled size="m">Step 3/3</StepsTextStyled>
         <ButtonGroup>
           <Button title="Previous" onClick={onGoBack} />
-          <Button role="primary" title="Save" onClick={onSaveClick} />
+          <Button role="primary" title="Create account" onClick={onSaveClick} />
         </ButtonGroup>
       </ModalFooter>
     </>

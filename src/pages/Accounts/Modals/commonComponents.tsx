@@ -8,7 +8,6 @@ export const LabelText = styled(Text)`
     display: inline-block;
     vertical-align: middle;
     margin-left: 0.25em;
-    margin-bottom: -0.25em;
   }
 `;
 
