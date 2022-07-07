@@ -5,6 +5,7 @@ import { Accordion } from '@unique-nft/ui-kit';
 
 import { Option } from '@app/types';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 import { CollectionFilterItem } from './CollectionFilterItem';
 
@@ -27,7 +28,7 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
           <CollectionFilterItem
             key={c.id}
             id={c.id}
-            icon={c.icon}
+            icon={getTokenIpfsUriByImagePath(`${c.icon}`)}
             label={c.label}
             checked={collectionsIds.includes(c.id)}
             onChange={changeCollectionsIds}
