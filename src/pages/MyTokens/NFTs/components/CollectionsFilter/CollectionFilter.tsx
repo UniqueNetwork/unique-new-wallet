@@ -28,7 +28,7 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
           <CollectionFilterItem
             key={c.id}
             id={c.id}
-            icon={getTokenIpfsUriByImagePath(`${c.icon}`)}
+            icon={getTokenIpfsUriByImagePath(c.icon || null)}
             label={c.label}
             checked={collectionsIds.includes(c.id)}
             onChange={changeCollectionsIds}

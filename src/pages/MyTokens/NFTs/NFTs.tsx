@@ -9,7 +9,7 @@ import {
 import AccountContext from '@app/account/AccountContext';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
 import { CollectionsFilter, TypeFilter } from '@app/pages';
-import { Dictionary } from '@app/utils';
+import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
 
 import { useNFTsContext } from '../context';
 import { defaultLimit, defaultTypesFilters } from '../constants';
@@ -77,10 +77,11 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
       }),
     );
     collectionsIds?.forEach((id) => {
-      const { label, icon } = defaultCollections?.find((c) => c.id === id && c) || {};
+      const { label, icon = null } =
+        defaultCollections?.find((c) => c.id === id && c) || {};
       chips.push({
         label,
-        iconLeft: { size: 22, file: icon },
+        iconLeft: { size: 22, file: getTokenIpfsUriByImagePath(icon) },
         onClose: () => changeCollectionsIds(id),
       });
     });
