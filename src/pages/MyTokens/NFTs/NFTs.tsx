@@ -9,6 +9,7 @@ import {
 import AccountContext from '@app/account/AccountContext';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
 import { CollectionsFilter, TypeFilter } from '@app/pages';
+import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
 
 import { useNFTsContext } from '../context';
 import { defaultLimit, defaultTypesFilters } from '../constants';
@@ -26,6 +27,11 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
     sortByTokenId,
     collectionsIds,
     searchText,
+    changeSearchText,
+    setTypesFilters,
+    changeTypesFilters,
+    changeCollectionsIds,
+    setCollectionsIds,
     changeTokensPage,
   } = useNFTsContext();
 
@@ -57,6 +63,37 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
     [collections],
   );
 
+  const chips = useMemo(() => {
+    const chips = [];
+    searchText &&
+      chips.push({
+        label: searchText,
+        onClose: () => changeSearchText(''),
+      });
+    typesFilters?.forEach((filter) =>
+      chips.push({
+        label: Dictionary[`filter_type_${filter}`],
+        onClose: () => changeTypesFilters(filter),
+      }),
+    );
+    collectionsIds?.forEach((id) => {
+      const { label, icon = null } =
+        defaultCollections?.find((c) => c.id === id && c) || {};
+      chips.push({
+        label,
+        iconLeft: { size: 22, file: getTokenIpfsUriByImagePath(icon) },
+        onClose: () => changeCollectionsIds(id),
+      });
+    });
+    return chips;
+  }, [searchText, typesFilters, collectionsIds]);
+
+  const handleChipsReset = () => {
+    changeSearchText('');
+    setTypesFilters([]);
+    setCollectionsIds([]);
+  };
+
   return (
     <div className={classNames('my-tokens--nft', className)}>
       <div className="filters-column">
@@ -72,6 +109,8 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
           isLoading={tokensLoading}
           tokensCount={tokensCount}
           page={tokensPage}
+          chips={chips}
+          onChipsReset={handleChipsReset}
           onPageChange={changeTokensPage}
         />
       </div>

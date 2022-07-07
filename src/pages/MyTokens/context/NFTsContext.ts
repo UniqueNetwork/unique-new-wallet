@@ -9,8 +9,10 @@ export interface NTFsContextState {
   changeTokensPage: (page: number) => void;
   typesFilters: TypeFilter[];
   changeTypesFilters: (typeFilters: TypeFilter) => void;
+  setTypesFilters: (typeFilters: TypeFilter[]) => void;
   collectionsIds: number[];
   changeCollectionsIds: (collectionsFilters: number) => void;
+  setCollectionsIds: (collectionsFilters: number[]) => void;
   searchText: string;
   changeSearchText: (searchText: string) => void;
 }
