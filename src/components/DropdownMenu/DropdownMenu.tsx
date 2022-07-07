@@ -31,7 +31,7 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ children, ...props }) => {
     <DropdownMenuWrapper>
       <DropdownMenuButtonWrapper ref={DropdownMenuButtonRef}>
         <Button onClick={onDropdownClick} {...props} />
-        <Icon name="carret-down" size={16} />
+        <Icon name="carret-down" size={16} color="white" />
       </DropdownMenuButtonWrapper>
       <DropdownMenuDropdown isOpen={isOpen}>{children}</DropdownMenuDropdown>
     </DropdownMenuWrapper>

@@ -6,6 +6,7 @@ import {
   InputText,
   TableColumnProps,
   Text,
+  Tooltip,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
@@ -32,8 +33,21 @@ const getAccountsColumns = ({
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => [
   {
-    title: 'Account',
-    width: '40%',
+    title: (
+      <>
+        Account
+        <Tooltip
+          placement="right-start"
+          content={<Icon name="question" size={20} color="var(--color-primary-500)" />}
+        >
+          Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
+          represented by a different address character sequence, but they can be converted
+          between each other because they share the same public key. You can see all
+          transformations for any given address on Subscan.
+        </Tooltip>
+      </>
+    ),
+    width: '35%',
     field: 'accountInfo',
     render(address, rowData: Account) {
       return (
@@ -68,7 +82,7 @@ const getAccountsColumns = ({
   },
   {
     title: 'Block explorer',
-    width: '15%',
+    width: '23%',
     field: 'explorer',
     render(address, rowData: Account) {
       return (
@@ -76,10 +90,18 @@ const getAccountsColumns = ({
           <LinkStyled
             target="_blank"
             rel="noreferrer"
-            href={`${config.scanUrl}account/${rowData?.address}`}
+            href={`${config.scanUrl}${rowData?.address}`}
+          >
+            <Text color="primary-500">Subscan</Text>
+            <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
+          </LinkStyled>
+          <LinkStyled
+            target="_blank"
+            rel="noreferrer"
+            href={`${config.scanUrl}${rowData?.address}`}
           >
             <Text color="primary-500">UniqueScan</Text>
-            <Icon size={16} name="arrow-up-right" />
+            <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
           </LinkStyled>
         </LinksWrapper>
       );
@@ -87,7 +109,7 @@ const getAccountsColumns = ({
   },
   {
     title: 'Actions',
-    width: '25%',
+    width: '22%',
     field: 'actions',
     render(address, rowData: Account) {
       return (
@@ -278,7 +300,7 @@ const LinksWrapper = styled.div``;
 const LinkStyled = styled.a`
   display: flex;
   align-items: center;
-  column-gap: calc(var(--prop-gap) / 2);
+  column-gap: 4px;
 `;
 
 const ActionsWrapper = styled.div`
