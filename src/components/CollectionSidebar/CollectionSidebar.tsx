@@ -1,16 +1,20 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { Heading } from '@unique-nft/ui-kit';
 
 import { CollectionFormContext } from '@app/context';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { Card } from '@app/pages/components/Card';
 
-const attributes = ['Name', 'Gender', 'Traits'];
-
 export const CollectionSidebar = () => {
-  const { coverImgFile, mainInformationForm } = useContext(CollectionFormContext);
+  const { attributes, coverImgFile, mainInformationForm } =
+    useContext(CollectionFormContext);
   const { values } = mainInformationForm;
   const { name, description, tokenPrefix } = values;
+
+  const tags = useMemo(
+    () => attributes.filter((attr) => attr.name !== 'ipfsJson').map(({ name }) => name),
+    [attributes],
+  );
 
   return (
     <WrapperSidebar>
@@ -25,7 +29,7 @@ export const CollectionSidebar = () => {
       <SidebarRow>
         <Heading size="3">NFT preview</Heading>
         <Card
-          attributesInline={attributes}
+          attributesInline={tags}
           title={tokenPrefix || 'tokenPrefix'}
           description="Collection name"
           geometry="square"

@@ -61,9 +61,7 @@ export const PreviewCardAttributes = styled.div`
 `;
 
 export const AttributesGroup = styled.div`
-  & {
-    overflow: hidden;
-  }
+  overflow: hidden;
 
   &:not(:first-of-type),
   & > * {
@@ -104,7 +102,9 @@ export const Card: VFC<IPreviewCard> = ({
         <PreviewCardAttributes>
           <Text size="m">{attributesInline ? 'Attribute names' : 'Attributes'}</Text>
           {attributesInline && (
-            <PreviewCardDescription>{attributesInline.join(', ')}</PreviewCardDescription>
+            <PreviewCardDescription>
+              {attributesInline?.join(', ')}
+            </PreviewCardDescription>
           )}
           {attributes?.map((item, i) => {
             return (
