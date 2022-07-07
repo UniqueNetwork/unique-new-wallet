@@ -1,13 +1,16 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
-import { useQueryClient } from 'react-query';
 
 import { convertArtificialAttributesToProtobuf, fillProtobufJson } from '@app/utils';
 import { AttributeItemType, NftCollectionDTO, ProtobufAttributeType } from '@app/types';
-import { useAccounts } from '@app/hooks/useAccounts';
-import { useCollectionCreate, useExtrinsicStatus, useExtrinsicSubmit } from '@app/api';
-import { useFee } from '@app/hooks/useFee';
+import {
+  CollectionApiService,
+  useCollectionCreate,
+  useSignAndSubmitExtrinsic,
+} from '@app/api';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
+import { useAccounts } from '@app/hooks/useAccounts';
+import { useFee } from '@app/hooks/useFee';
 
 import { CollectionFormContext } from '../context/CollectionFormContext/CollectionFormContext';
 
@@ -20,30 +23,38 @@ export const useCollectionMutation = () => {
     tokenLimit,
   } = useContext(CollectionFormContext);
 
-  const [txHash, setTxHash] = useState<string | undefined>();
   const [isCreatingCollection, setSsCreatingCollection] = useState<boolean>(false);
 
-  const { data: extrinsicStatus } = useExtrinsicStatus(txHash);
-  const { selectedAccount, signMessage } = useAccounts();
+  const {
+    status,
+    error: errorMessage,
+    signAndSubmitExtrinsic,
+  } = useSignAndSubmitExtrinsic(CollectionApiService.collectionCreateMutation);
+  const { selectedAccount } = useAccounts();
   const { createCollection } = useCollectionCreate();
-  const { submitExtrinsic } = useExtrinsicSubmit();
   const { error, info } = useNotifications();
   const { fee, getFee } = useFee();
 
   useEffect(() => {
-    if (extrinsicStatus) {
-      const { isCompleted, isError, errorMessage } = extrinsicStatus;
-
-      if (isCompleted) {
-        setTxHash('');
-        setSsCreatingCollection(false);
-
-        isError ? error(errorMessage) : info('Creation completed successfully');
-      }
+    if (isCreatingCollection) {
+      const collectionFull = generateCollectionFull();
+      // signAndSubmitExtrinsic(collectionFull);
     }
-  }, [extrinsicStatus]);
+  }, [isCreatingCollection]);
 
-  const generateExtrinsic = useCallback(async () => {
+  useEffect(() => {
+    if (status === 'success') {
+      setSsCreatingCollection(false);
+      info('Collection created successfully');
+    }
+
+    if (status === 'error') {
+      setSsCreatingCollection(false);
+      error(errorMessage);
+    }
+  }, [status]);
+
+  const generateCollectionFull = () => {
     const converted: AttributeItemType[] =
       convertArtificialAttributesToProtobuf(attributes);
     const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
@@ -83,7 +94,12 @@ export const useCollectionMutation = () => {
       },
     };
 
+    return collectionFull;
+  };
+
+  const generateExtrinsic = useCallback(async () => {
     try {
+      const collectionFull = generateCollectionFull();
       const createResp = await createCollection(collectionFull);
 
       if (!createResp?.signerPayloadJSON) {
@@ -121,52 +137,16 @@ export const useCollectionMutation = () => {
   const onCreateCollection = async () => {
     setSsCreatingCollection(true);
 
-    const createResp = (await generateExtrinsic()) as UnsignedTxPayloadResponse;
-
-    if (!createResp) {
+    const createResult = (await generateExtrinsic()) as UnsignedTxPayloadResponse;
+    if (!createResult) {
       setSsCreatingCollection(false);
-
-      error('Create collection error', {
-        name: 'Create collection',
-        size: 32,
-        color: 'white',
-      });
-    }
-
-    try {
-      const signature = await signMessage(createResp.signerPayloadJSON, selectedAccount);
-
-      if (!signature) {
-        error('Sign transaction error', {
-          name: 'Create collection',
-          size: 32,
-          color: 'white',
-        });
-
-        setSsCreatingCollection(false);
-
-        return;
-      }
-
-      const submitResult = await submitExtrinsic({
-        signerPayloadJSON: createResp.signerPayloadJSON,
-        signature,
-      });
-
-      if (submitResult) {
-        setTxHash(submitResult.hash);
-      } else {
-        error('Submit exstrinsic error');
-      }
-    } catch (e) {
-      error('Sign transaction error');
-
-      setSsCreatingCollection(false);
+      error('Unsigned payload response is not define');
     }
   };
 
   return {
     fee,
+    status,
     isCreatingCollection,
     generateExtrinsic,
     onCreateCollection,

@@ -1,16 +1,17 @@
 import React from 'react';
 import { FormikProps } from 'formik';
 
-import { TokenAttributes, TokenField } from '@app/types';
+import { NftTokenDTO, TokenAttributes, TokenField } from '@app/types';
 
 export interface TokenFormProps {
-  attributes: TokenAttributes;
-  initializeTokenForm: (tokenFields: TokenField[]) => void;
-  tokenForm: FormikProps<any>;
-  setAttributes: (attributes: TokenAttributes) => void;
-  setTokenImg: (tokenImage: Blob | null) => void;
   tokenImg: Blob | null;
+  tokenForm: FormikProps<any>;
+  attributes: TokenAttributes;
   resetForm: () => void;
+  setTokenImg: (tokenImage: Blob | null) => void;
+  setAttributes: (attributes: TokenAttributes) => void;
+  initializeTokenForm: (tokenFields: TokenField[]) => void;
+  mapFormToTokenDto: (collectionId: number, address: string) => NftTokenDTO | null;
 }
 
 export const TokenFormContext: React.Context<TokenFormProps> = React.createContext(

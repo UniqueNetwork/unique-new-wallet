@@ -5,7 +5,7 @@ import { useApi } from '@app/hooks';
 import { ExtrinsicResultResponse } from '@app/types';
 
 export const useExtrinsicStatus = (
-  hash?: string,
+  hash?: string | null,
 ): UseQueryResult<ExtrinsicResultResponse> => {
   const { api } = useApi();
   const queryClient = useQueryClient();
@@ -18,7 +18,7 @@ export const useExtrinsicStatus = (
     },
     options: {
       enabled: !!hash,
-      refetchInterval: 1000,
+      refetchInterval: 2000,
       onSuccess: (data) => {
         const { isCompleted, isError } = data;
 
