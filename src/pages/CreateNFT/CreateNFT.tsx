@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, VFC } from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
-import { Avatar, Button, Heading, Suggest, Upload } from '@unique-nft/ui-kit';
+import { Avatar, Button, Heading, Suggest, Text, Upload } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { Alert, StatusTransactionModal } from '@app/components';
@@ -23,6 +23,7 @@ import {
   FormBody,
   FormHeader,
   FormRow,
+  FormRowEmpty,
   FormWrapper,
   LabelText,
   SuggestOption,
@@ -172,16 +173,24 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                   </UploadWidget>
                 </FormRow>
                 <Heading size="3">Attributes</Heading>
-                {tokenFields
-                  .filter((tokenField: TokenField) => tokenField.name !== 'ipfsJson')
-                  .map((tokenField: TokenField, index: number) => (
-                    <AttributesRow
-                      // generateExtrinsic={generateExtrinsic}
-                      tokenField={tokenField}
-                      key={`${tokenField.name}-${index}`}
-                      maxLength={64}
-                    />
-                  ))}
+                {selectedCollection ? (
+                  tokenFields
+                    .filter((tokenField: TokenField) => tokenField.name !== 'ipfsJson')
+                    .map((tokenField: TokenField, index: number) => (
+                      <AttributesRow
+                        // generateExtrinsic={generateExtrinsic}
+                        tokenField={tokenField}
+                        key={`${tokenField.name}-${index}`}
+                        maxLength={64}
+                      />
+                    ))
+                ) : (
+                  <FormRowEmpty>
+                    <Text color="grey-500" size="s">
+                      Will become available after selecting a collection
+                    </Text>
+                  </FormRowEmpty>
+                )}
                 <Alert type="warning">
                   A fee of ~ {fee} QTZ can be applied to the transaction
                 </Alert>

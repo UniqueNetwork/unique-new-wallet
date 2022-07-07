@@ -64,6 +64,10 @@ export const FormRow = styled.div`
   }
 `;
 
+export const FormRowEmpty = styled.div`
+  margin-bottom: calc(var(--prop-gap) * 5.65);
+`;
+
 export const UploadWidget = styled.div`
   .unique-text {
     &:first-of-type {
