@@ -13,7 +13,6 @@ import {
 import styled, { css } from 'styled-components';
 
 import { Account } from '@app/account';
-import { NetworkType } from '@app/types';
 import { formatAmount } from '@app/utils';
 import { useAccounts, useApi } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';

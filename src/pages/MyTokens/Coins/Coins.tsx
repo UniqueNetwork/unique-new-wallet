@@ -1,4 +1,4 @@
-import React, { useCallback, useState, VFC } from 'react';
+import React, { useCallback, useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
 import { Heading } from '@unique-nft/ui-kit';
 
@@ -22,11 +22,18 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
   const { selectedAccount } = useAccounts();
 
-  const { isLoading: chainsBalanceLoading, data: chainsBalance } =
-    useAccountBalancesService(
-      Object.values(config.chains).map((chain) => chain.apiEndpoint),
-      selectedAccount?.address,
-    );
+  const {
+    isLoading: chainsBalanceLoading,
+    data: chainsBalance,
+    refetch: refetchChainsBalance,
+  } = useAccountBalancesService(
+    Object.values(config.chains).map((chain) => chain.apiEndpoint),
+    selectedAccount?.address,
+  );
+
+  useEffect(() => {
+    refetchChainsBalance();
+  }, [refetchChainsBalance, selectedAccount]);
 
   const sendFundsHandler = useCallback((networkType: NetworkType) => {
     setSelectedNetworkType(networkType);
