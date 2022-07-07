@@ -42,10 +42,6 @@ export const useApiExtrinsicFee = <
   }, []);
 
   useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-
     if (payload) {
       const execute = () => getFeeAsync(payload);
 

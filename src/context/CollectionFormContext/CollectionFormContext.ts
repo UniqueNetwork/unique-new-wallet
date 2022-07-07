@@ -7,6 +7,7 @@ import { FormikProps } from 'formik';
 import type {
   ArtificialAttributeItemType,
   MainInformationInitialValues,
+  NftCollectionDTO,
 } from '@app/types';
 
 export type AttributesCallBackType = (
@@ -30,6 +31,7 @@ export interface CollectionFormProps {
   setVariableSchema: (variableSchema: string) => void;
   tokenLimit: number | null;
   variableSchema: string;
+  mapFormToCollectionDto: (address: string) => NftCollectionDTO;
 }
 
 export const CollectionFormContext: React.Context<CollectionFormProps> =

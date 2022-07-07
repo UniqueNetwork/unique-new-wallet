@@ -2,9 +2,9 @@ import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { Button, Heading, InputText, Text, Textarea, Upload } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
+import { useAccounts } from '@app/hooks';
 import { CollectionFormContext } from '@app/context';
-import { useFileUpload } from '@app/api';
-import { useCollectionMutation } from '@app/hooks';
+import { CollectionApiService, useFileUpload } from '@app/api';
 import { Alert, CollectionStepper, Confirm } from '@app/components';
 import {
   AdditionalText,
@@ -17,10 +17,15 @@ import {
   LabelText,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
+import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
 
 const MainInformationComponent: FC = () => {
-  const { mainInformationForm, setCoverImgFile } = useContext(CollectionFormContext);
-  const { fee, generateExtrinsic } = useCollectionMutation();
+  const { selectedAccount } = useAccounts();
+  const { mainInformationForm, setCoverImgFile, mapFormToCollectionDto } =
+    useContext(CollectionFormContext);
+  const { fee, getFee } = useApiExtrinsicFee(
+    CollectionApiService.collectionCreateMutation,
+  );
   const { uploadFile } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
@@ -62,7 +67,7 @@ const MainInformationComponent: FC = () => {
 
     setFieldValue('coverImgAddress', response?.cid);
 
-    await generateExtrinsic();
+    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
   };
 
   const setCover = (data: { url: string; file: Blob } | null) => {
@@ -97,7 +102,7 @@ const MainInformationComponent: FC = () => {
 
   // !Only for values!
   useEffect(() => {
-    void generateExtrinsic();
+    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
   }, [values]);
 
   return (
