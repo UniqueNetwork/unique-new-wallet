@@ -11,6 +11,7 @@ import { networks } from '@app/utils';
 import { ChainPropertiesContext } from '@app/context';
 import { ROUTE } from '@app/routes';
 import { config } from '@app/config';
+import { defaultChainKey } from '@app/utils/configParser';
 
 import MenuLink from './MenuLink';
 
@@ -65,6 +66,8 @@ export const Header: VFC = () => {
   const handleChangeNetwork = (val: INetwork) => {
     setActiveNetwork(val);
     setCurrentChain(config.chains[val.id]);
+
+    localStorage.setItem(defaultChainKey, config.chains[val.id].network);
   };
 
   return (

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import styled, { css } from 'styled-components';
 import { Button, Icon, useNotifications, Loader } from '@unique-nft/ui-kit';
 
-import { NetworkType } from '@app/types';
+import { Chain, NetworkType } from '@app/types';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 
 type CoinsRowComponentProps = TNetworkBalances & {
@@ -14,8 +14,9 @@ type CoinsRowComponentProps = TNetworkBalances & {
   name: string;
   sendDisabled?: boolean;
   getDisabled?: boolean;
-  onSend: (network: NetworkType) => void;
+  onSend: (network: NetworkType, chain: Chain) => void;
   onGet: () => void;
+  chain: Chain;
 };
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
@@ -33,6 +34,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     getDisabled,
     onSend,
     onGet,
+    chain,
   } = props;
 
   const { info, error } = useNotifications();
@@ -72,7 +74,11 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         />
       )}
       <NetworkActions>
-        <Button disabled={sendDisabled} title="Send" onClick={() => onSend(symbol)} />
+        <Button
+          disabled={sendDisabled}
+          title="Send"
+          onClick={() => onSend(symbol, chain)}
+        />
         <Button disabled={getDisabled} title="Get" onClick={onGet} />
       </NetworkActions>
     </div>
