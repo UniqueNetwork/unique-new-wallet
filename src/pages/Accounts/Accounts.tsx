@@ -90,7 +90,7 @@ const getAccountsColumns = ({
           <LinkStyled
             target="_blank"
             rel="noreferrer"
-            href={`${config.scanUrl}${rowData?.address}`}
+            href={`${config.subScanUrl}${rowData?.address}`}
           >
             <Text color="primary-500">Subscan</Text>
             <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
@@ -98,7 +98,7 @@ const getAccountsColumns = ({
           <LinkStyled
             target="_blank"
             rel="noreferrer"
-            href={`${config.scanUrl}${rowData?.address}`}
+            href={`${config.uniqueScanUrl}${rowData?.address}`}
           >
             <Text color="primary-500">UniqueScan</Text>
             <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
