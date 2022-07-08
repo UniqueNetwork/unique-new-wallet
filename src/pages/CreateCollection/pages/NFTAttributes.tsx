@@ -22,6 +22,7 @@ import {
   Confirm,
   StatusTransactionModal,
 } from '@app/components';
+import { ROUTE } from '@app/routes';
 import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
 import {
   ButtonGroup,
@@ -30,9 +31,8 @@ import {
   FormWrapper,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
-import { ROUTE } from '@app/routes';
+import { CollectionApiService, useExtrinsicFlow } from '@app/api';
 import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
-import { CollectionApiService, useSignAndSubmitExtrinsic } from '@app/api';
 
 export const NFTAttributes = () => {
   const {
@@ -54,7 +54,7 @@ export const NFTAttributes = () => {
     status,
     error: errorMessage,
     isLoading,
-  } = useSignAndSubmitExtrinsic(CollectionApiService.collectionCreateMutation);
+  } = useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
   const {
     error: feeError,
     isError: isFeeError,
@@ -65,15 +65,14 @@ export const NFTAttributes = () => {
 
   useEffect(() => {
     if (status === 'success') {
-      // info('Collection created successfully');
+      info('Collection created successfully');
 
       navigate(ROUTE.MY_COLLECTIONS);
     }
-
     if (status === 'error') {
-      // error(errorMessage);
+      error(errorMessage?.message);
     }
-  }, [status, errorMessage]);
+  }, [status]);
 
   useEffect(() => {
     if (isFeeError && feeError) {

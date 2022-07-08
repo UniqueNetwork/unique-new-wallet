@@ -6,9 +6,8 @@ import {
   AskTransferModal,
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { useExtrinsicSubmit, useSignAndSubmitExtrinsic, ViewToken } from '@app/api';
-import { TokenApiService, useTokenTransfer } from '@app/api/restApi/token';
-import { useExtrinsicStatus } from '@app/api/restApi/extrinsic/hooks/useExtrinsicStatus';
+import { useExtrinsicFlow, ViewToken } from '@app/api';
+import { TokenApiService } from '@app/api/restApi/token';
 import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
 
 interface TransferModalProps {
@@ -34,7 +33,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
     error: errorMessage,
     isLoading,
     signAndSubmitExtrinsic,
-  } = useSignAndSubmitExtrinsic(TokenApiService.transferMutation);
+  } = useExtrinsicFlow(TokenApiService.transferMutation);
 
   const transferHandler = () => {
     if (!token || !recipient || !selectedAccount?.address) {
@@ -76,7 +75,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
       error(errorMessage?.message);
       onClose();
     }
-  }, [status, errorMessage]);
+  }, [status]);
 
   if (!selectedAccount || !token) {
     return null;

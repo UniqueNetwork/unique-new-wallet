@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ROUTE } from '@app/routes';
 import { useAccounts } from '@app/hooks';
-import { TokenApiService, useSignAndSubmitExtrinsic, ViewToken } from '@app/api';
+import { TokenApiService, useExtrinsicFlow, ViewToken } from '@app/api';
 import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 
@@ -26,7 +26,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     isLoading,
     error: errorMessage,
     signAndSubmitExtrinsic,
-  } = useSignAndSubmitExtrinsic(TokenApiService.burnMutation);
+  } = useExtrinsicFlow(TokenApiService.burnMutation);
 
   useEffect(() => {
     if (status === 'success') {
@@ -36,9 +36,9 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     }
 
     if (status === 'error') {
-      // error(errorMessage);
+      error(errorMessage?.message);
     }
-  }, [status, errorMessage]);
+  }, [status]);
 
   useEffect(() => {
     if (!token || !selectedAccount?.address) {

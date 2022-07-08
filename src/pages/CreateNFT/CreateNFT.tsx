@@ -22,12 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAccounts } from '@app/hooks';
 import { Alert, StatusTransactionModal } from '@app/components';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import {
-  Collection,
-  TokenApiService,
-  useFileUpload,
-  useSignAndSubmitExtrinsic,
-} from '@app/api';
+import { Collection, TokenApiService, useFileUpload, useExtrinsicFlow } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { ROUTE } from '@app/routes';
 import { TokenField } from '@app/types';
@@ -99,7 +94,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     status,
     error: errorMessage,
     isLoading,
-  } = useSignAndSubmitExtrinsic(TokenApiService.tokenCreateMutation);
+  } = useExtrinsicFlow(TokenApiService.tokenCreateMutation);
   const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
 
   const collectionsOptions = useMemo(
@@ -136,15 +131,15 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   useEffect(() => {
     if (status === 'success') {
-      // info('Collection created successfully');
+      info('Collection created successfully');
 
       closable && navigate(ROUTE.MY_TOKENS);
     }
 
     if (status === 'error') {
-      // error(errorMessage);
+      error(errorMessage?.message);
     }
-  }, [status, errorMessage]);
+  }, [status]);
 
   useEffect(() => {
     if (isFeeError && feeError) {

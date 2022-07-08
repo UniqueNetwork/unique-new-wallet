@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
+import { AxiosError } from 'axios';
 
 import { useAccounts, useApi } from '@app/hooks';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
-import { useExtrinsicStatus, useExtrinsicSubmit } from '../extrinsic';
-import { useApiMutation } from './useApiMutation';
-import { EndpointMutation } from '../request';
+import { EndpointMutation } from '../../request';
+import { useApiMutation } from '../useApiMutation';
+import { useExtrinsicStatus, useExtrinsicSubmit } from '../../extrinsic';
+import { extrinsicFlowReducer } from './extrinsicFlowReducer';
 
 type SignAndSubmitExtrinsicStatus =
   | 'idle'
@@ -16,7 +18,15 @@ type SignAndSubmitExtrinsicStatus =
   | 'success'
   | 'error';
 
-export const useSignAndSubmitExtrinsic = <
+const isAxiosError = (e: unknown): e is AxiosError => {
+  return Object.hasOwn(e as AxiosError, 'response');
+};
+
+const isCustomError = (e: unknown): e is Error => {
+  return Object.hasOwn(e as Error, 'message');
+};
+
+export const useExtrinsicFlow = <
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
     Parameters<ConcreteEndpointMutation['request']>[0]
@@ -24,11 +34,7 @@ export const useSignAndSubmitExtrinsic = <
 >(
   endpoint: ConcreteEndpointMutation,
 ) => {
-  const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>();
   const [txHash, setTxHash] = useState<string | null | undefined>();
-  const [status, setStatus] = useState<SignAndSubmitExtrinsicStatus>('idle');
   const [payload, setPayload] = useState<Omit<
     Parameters<ConcreteEndpointMutation['request']>[0],
     'api'
@@ -41,6 +47,14 @@ export const useSignAndSubmitExtrinsic = <
   const { mutateAsync } = useApiMutation({
     endpoint,
   });
+
+  const [extrinsicFlowState, setExtrinsicFlowState] = useReducer(extrinsicFlowReducer, {
+    isError: false,
+    isLoading: false,
+    error: undefined,
+    status: 'idle',
+  });
+  const { isError, isLoading, status, error } = extrinsicFlowState;
 
   useEffect(() => {
     if (isLoading) {
@@ -64,15 +78,17 @@ export const useSignAndSubmitExtrinsic = <
     if (isCompleted) {
       setTxHash(null);
       setPayload(null);
-      setStatus('success');
 
       if (isError) {
-        setError(new Error(errorMessage));
-        setStatus('error');
-        setIsError(true);
+        setExtrinsicFlowState({
+          type: 'error',
+          payload: {
+            error: new Error(errorMessage),
+          },
+        });
+      } else {
+        setExtrinsicFlowState({ type: 'success' });
       }
-
-      setIsLoading(false);
     }
   }, [data]);
 
@@ -85,12 +101,10 @@ export const useSignAndSubmitExtrinsic = <
   const signAndSubmitExtrinsicAsync = async (
     payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
   ) => {
-    setError(null);
-    setIsError(false);
-    setIsLoading(true);
+    setExtrinsicFlowState({ type: 'startflow' });
 
     try {
-      setStatus('obtaining');
+      setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'obtaining' } });
 
       const unsignedResult = await mutateAsync({ ...payload, api });
       if (!unsignedResult) {
@@ -100,14 +114,14 @@ export const useSignAndSubmitExtrinsic = <
       const signerPayloadJSON = (unsignedResult as UnsignedTxPayloadResponse)
         .signerPayloadJSON;
 
-      setStatus('signing');
+      setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'signing' } });
 
       const signResult = await signMessage(signerPayloadJSON);
       if (!signResult) {
         throw new Error('Signing result is not define');
       }
 
-      setStatus('submitting');
+      setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'submitting' } });
 
       const submitResult = await submitExtrinsic({
         signerPayloadJSON,
@@ -117,23 +131,28 @@ export const useSignAndSubmitExtrinsic = <
         throw new Error('Submit result is not define');
       }
 
-      setStatus('checking');
+      setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'checking' } });
       setTxHash(submitResult.hash);
 
       return submitResult.hash;
     } catch (e) {
-      setStatus('error');
-      setError(e as Error);
-      setIsError(true);
-      setIsLoading(false);
+      let error: Error | undefined;
+
+      if (isAxiosError(e)) {
+        error = e?.response?.data.error;
+      } else if (isCustomError(e)) {
+        error = e;
+      }
+
+      setExtrinsicFlowState({ type: 'error', payload: { error } });
     }
   };
 
   return {
     error,
-    isError,
     status,
-    isLoading,
+    isError: isError ?? false,
+    isLoading: isLoading ?? false,
     signAndSubmitExtrinsic,
   };
 };
