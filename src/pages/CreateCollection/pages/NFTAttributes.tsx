@@ -31,8 +31,7 @@ import {
   FormWrapper,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
-import { CollectionApiService, useExtrinsicFlow } from '@app/api';
-import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
+import { CollectionApiService, useExtrinsicFlow, useExtrinsicFee } from '@app/api';
 
 export const NFTAttributes = () => {
   const {
@@ -60,7 +59,7 @@ export const NFTAttributes = () => {
     isError: isFeeError,
     getFee,
     fee,
-  } = useApiExtrinsicFee(CollectionApiService.collectionCreateMutation);
+  } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
   const [address, setAddress] = useState<string>('');
 
   useEffect(() => {

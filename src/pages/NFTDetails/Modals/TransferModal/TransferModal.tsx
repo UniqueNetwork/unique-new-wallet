@@ -6,9 +6,8 @@ import {
   AskTransferModal,
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { useExtrinsicFlow, ViewToken } from '@app/api';
+import { useExtrinsicFlow, useExtrinsicFee, ViewToken } from '@app/api';
 import { TokenApiService } from '@app/api/restApi/token';
-import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
 
 interface TransferModalProps {
   isVisible: boolean;
@@ -27,7 +26,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
 
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
-  const { fee, getFee } = useApiExtrinsicFee(TokenApiService.transferMutation);
+  const { fee, getFee } = useExtrinsicFee(TokenApiService.transferMutation);
   const {
     status,
     error: errorMessage,

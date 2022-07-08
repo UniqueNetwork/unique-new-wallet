@@ -1,10 +1,18 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { Button, Heading, InputText, Text, Textarea, Upload } from '@unique-nft/ui-kit';
+import {
+  Button,
+  Heading,
+  InputText,
+  Text,
+  Textarea,
+  Upload,
+  useNotifications,
+} from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { useAccounts } from '@app/hooks';
 import { CollectionFormContext } from '@app/context';
-import { CollectionApiService, useFileUpload } from '@app/api';
+import { CollectionApiService, useExtrinsicFee, useFileUpload } from '@app/api';
 import { Alert, CollectionStepper, Confirm } from '@app/components';
 import {
   AdditionalText,
@@ -17,15 +25,18 @@ import {
   LabelText,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
-import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
 
 const MainInformationComponent: FC = () => {
   const { selectedAccount } = useAccounts();
+  const { error } = useNotifications();
   const { mainInformationForm, setCoverImgFile, mapFormToCollectionDto } =
     useContext(CollectionFormContext);
-  const { fee, getFee } = useApiExtrinsicFee(
-    CollectionApiService.collectionCreateMutation,
-  );
+  const {
+    isError: isFeeError,
+    error: feeError,
+    fee,
+    getFee,
+  } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
   const { uploadFile } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
@@ -100,7 +111,12 @@ const MainInformationComponent: FC = () => {
     }
   };
 
-  // !Only for values!
+  useEffect(() => {
+    if (isFeeError) {
+      error(feeError?.message);
+    }
+  }, [isFeeError]);
+
   useEffect(() => {
     getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
   }, [values]);

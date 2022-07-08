@@ -18,7 +18,7 @@ export const useExtrinsicStatus = (
     },
     options: {
       enabled: !!hash,
-      refetchInterval: 2000,
+      refetchInterval: 3000,
       onSuccess: (data) => {
         const { isCompleted, isError } = data;
 

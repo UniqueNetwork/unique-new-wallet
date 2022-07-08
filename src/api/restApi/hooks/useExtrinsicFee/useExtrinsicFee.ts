@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 import { useApi } from '@app/hooks';
+import { isAxiosError, isNativeError } from '@app/utils';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
-import { EndpointMutation } from '../request';
-import { useApiMutation } from './useApiMutation';
-import { ExtrinsicApiService } from '../extrinsic';
+import { EndpointMutation } from '../../request';
+import { useApiMutation } from '../useApiMutation';
+import { ExtrinsicApiService } from '../../extrinsic';
+import { extrinsicFeeReducer } from './extrinsicFeeReducer';
 
-export const useApiExtrinsicFee = <
+export const useExtrinsicFee = <
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
     Parameters<ConcreteEndpointMutation['request']>[0]
@@ -16,10 +18,6 @@ export const useApiExtrinsicFee = <
   endpoint: ConcreteEndpointMutation,
   defaultPayload?: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
 ) => {
-  const [fee, setFee] = useState<string>();
-  const [isError, setIsError] = useState(false);
-  const [error, setError] = useState<Error | null>();
-  const [isLoading, setIsLoading] = useState(false);
   const [payload, setPayload] = useState<Omit<
     Parameters<ConcreteEndpointMutation['request']>[0],
     'api'
@@ -30,10 +28,18 @@ export const useApiExtrinsicFee = <
   const { mutateAsync: obtainExtrinsic } = useApiMutation({
     endpoint,
   });
-
   const { mutateAsync: obtainFee } = useApiMutation({
     endpoint: ExtrinsicApiService.calculateFee,
   });
+
+  const [extrinsicFeeState, setExtrinsicFeeState] = useReducer(extrinsicFeeReducer, {
+    fee: undefined,
+    error: undefined,
+    isError: false,
+    isLoading: false,
+  });
+
+  const { error, fee, isError, isLoading } = extrinsicFeeState;
 
   useEffect(() => {
     if (defaultPayload) {
@@ -58,9 +64,7 @@ export const useApiExtrinsicFee = <
   const getFeeAsync = async (
     payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
   ) => {
-    setError(null);
-    setIsError(false);
-    setIsLoading(true);
+    setExtrinsicFeeState({ type: 'loading' });
 
     try {
       if (!api) {
@@ -80,13 +84,20 @@ export const useApiExtrinsicFee = <
         throw new Error('Fee is not define');
       }
 
-      setFee([fee.amount.replace(/([0]+)$/, ''), fee.unit].join(' '));
+      setExtrinsicFeeState({
+        type: 'success',
+        payload: { fee: [fee.amount.replace(/([0]+)$/, ''), fee.unit].join(' ') },
+      });
     } catch (e) {
-      setIsError(true);
-      setError(e as Error);
-    } finally {
-      setPayload(null);
-      setIsLoading(false);
+      let error: Error | undefined;
+
+      if (isAxiosError(e)) {
+        error = e?.response?.data.error;
+      } else if (isNativeError(e)) {
+        error = e;
+      }
+
+      setExtrinsicFeeState({ type: 'error', payload: { error } });
     }
   };
 

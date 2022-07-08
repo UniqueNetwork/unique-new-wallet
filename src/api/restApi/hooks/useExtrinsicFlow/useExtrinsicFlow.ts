@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from 'react';
-import { AxiosError } from 'axios';
 
 import { useAccounts, useApi } from '@app/hooks';
+import { isAxiosError, isNativeError } from '@app/utils';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 import { EndpointMutation } from '../../request';
@@ -17,14 +17,6 @@ type SignAndSubmitExtrinsicStatus =
   | 'checking'
   | 'success'
   | 'error';
-
-const isAxiosError = (e: unknown): e is AxiosError => {
-  return Object.hasOwn(e as AxiosError, 'response');
-};
-
-const isCustomError = (e: unknown): e is Error => {
-  return Object.hasOwn(e as Error, 'message');
-};
 
 export const useExtrinsicFlow = <
   ConcreteEndpointMutation extends EndpointMutation<
@@ -140,7 +132,7 @@ export const useExtrinsicFlow = <
 
       if (isAxiosError(e)) {
         error = e?.response?.data.error;
-      } else if (isCustomError(e)) {
+      } else if (isNativeError(e)) {
         error = e;
       }
 

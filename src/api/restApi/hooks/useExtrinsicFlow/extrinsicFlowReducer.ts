@@ -11,7 +11,7 @@ type SignAndSubmitExtrinsicStatus =
 
 type ExtrinsicFlowState = {
   isError?: boolean;
-  error?: Error | AxiosError | null;
+  error?: Error | null;
   isLoading?: boolean;
   status?: SignAndSubmitExtrinsicStatus;
 };

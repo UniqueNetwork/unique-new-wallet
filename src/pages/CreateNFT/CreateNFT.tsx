@@ -22,7 +22,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAccounts } from '@app/hooks';
 import { Alert, StatusTransactionModal } from '@app/components';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { Collection, TokenApiService, useFileUpload, useExtrinsicFlow } from '@app/api';
+import {
+  Collection,
+  TokenApiService,
+  useFileUpload,
+  useExtrinsicFlow,
+  useExtrinsicFee,
+} from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { ROUTE } from '@app/routes';
 import { TokenField } from '@app/types';
@@ -43,7 +49,6 @@ import {
   SuggestOption,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
-import { useApiExtrinsicFee } from '@app/api/restApi/hooks/useApiExtrinsicFee';
 
 interface Option {
   id: number;
@@ -88,7 +93,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     fee,
     error: feeError,
     isError: isFeeError,
-  } = useApiExtrinsicFee(TokenApiService.tokenCreateMutation);
+  } = useExtrinsicFee(TokenApiService.tokenCreateMutation);
   const {
     signAndSubmitExtrinsic,
     status,
@@ -142,10 +147,10 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   }, [status]);
 
   useEffect(() => {
-    if (isFeeError && feeError) {
-      // waiting notifications fix
+    if (isFeeError) {
+      error(feeError?.message);
     }
-  }, [feeError, isFeeError]);
+  }, [isFeeError]);
 
   const uploadImage = async (file: Blob) => {
     const response = await uploadFile(file);
