@@ -5,7 +5,7 @@ import { IBaseApi } from '@app/api';
 
 export type ApiContextProps = {
   api: IBaseApi | undefined;
-  currentChain: Chain | undefined;
+  currentChain: Chain;
   setCurrentChain: (chain: Chain) => void;
 };
 

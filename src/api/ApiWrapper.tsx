@@ -3,7 +3,6 @@ import { ApolloProvider } from '@apollo/client';
 
 import { Chain } from '@app/types';
 import { BaseApi, IBaseApi } from '@app/api';
-import { defaultChainKey } from '@app/utils/configParser';
 
 import { GqlClient } from './graphQL/gqlClient';
 import { ApiContextProps, ApiProvider } from './ApiContext';
@@ -33,8 +32,6 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
     if (currentChain) {
       setApiInstance(new BaseApi(currentChain.apiEndpoint));
       setGqlClient(new GqlClient(currentChain.gqlEndpoint));
-
-      localStorage.setItem(defaultChainKey, currentChain.network);
     }
   }, [currentChain]);
 

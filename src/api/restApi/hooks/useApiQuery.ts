@@ -1,8 +1,7 @@
 import { useQuery, UseQueryResult, QueryKey } from 'react-query';
-import { useEffect, useRef } from 'react';
 
 import { useApi } from '@app/hooks';
-import { BaseApi, IBaseApi } from '@app/api';
+import { BaseApi } from '@app/api';
 
 import { EndpointQuery, HttpError } from '../request';
 import { UseEndpointQueryOptions } from './types';
@@ -30,7 +29,6 @@ export const useApiQuery = <
   queryConfig: ApiQueryConfig<ConcreteEndpointQuery, DataModel>,
 ): UseQueryResult<DataModel, HttpError> => {
   const { api } = useApi();
-  const apiRef = useRef<IBaseApi>();
   const endpointOptions = queryConfig.endpoint.getMeta();
   const baseUrl = queryConfig.baseURL ?? api?.baseURL;
   const baseApi = queryConfig.baseURL ? new BaseApi(queryConfig.baseURL) : api;
@@ -47,19 +45,9 @@ export const useApiQuery = <
     queryKey.push(baseUrl);
   }
 
-  const reactQueryObject: any = useQuery(
+  return useQuery(
     queryKey,
     ({ signal }) => queryConfig.endpoint.request(baseApi, queryConfig.payload, signal),
     combinedQueryOptions as any,
   );
-
-  useEffect(() => {
-    if (apiRef.current && apiRef.current !== api) {
-      void reactQueryObject.refetch();
-    }
-
-    apiRef.current = api;
-  }, [api, reactQueryObject]);
-
-  return reactQueryObject;
 };
