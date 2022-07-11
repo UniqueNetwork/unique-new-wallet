@@ -5,7 +5,7 @@ import { Avatar, Button, Heading, Suggest, Text, Upload } from '@unique-nft/ui-k
 import { useNavigate } from 'react-router-dom';
 
 import { Alert, StatusTransactionModal } from '@app/components';
-import { useAccounts, useTokenMutation } from '@app/hooks';
+import { useAccounts, useApi, useTokenMutation } from '@app/hooks';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection, useFileUpload } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -50,6 +50,7 @@ const defaultOptions = {
 };
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
+  const { currentChain } = useApi();
   const { initializeTokenForm, setTokenImg, tokenForm } = useContext(TokenFormContext);
   const { selectedAccount } = useAccounts();
   const { uploadFile } = useFileUpload();
@@ -96,7 +97,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     await submitForm();
     await onCreateNFT();
 
-    navigate(ROUTE.MY_TOKENS);
+    navigate(`${currentChain?.network}/${ROUTE.MY_TOKENS}`);
   };
 
   const onConfirmAndCreateMore = async () => {

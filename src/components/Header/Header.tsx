@@ -1,5 +1,5 @@
 import { VFC, useCallback, useState, useContext, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 import { AccountsManager, Button, Icon, INetwork } from '@unique-nft/ui-kit';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -22,6 +22,7 @@ interface IAccount {
 
 export const Header: VFC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentChain, setCurrentChain } = useApi();
   const { chainProperties } = useContext(ChainPropertiesContext);
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
@@ -54,6 +55,13 @@ export const Header: VFC = () => {
     cryptoWaitReady().then(() => {
       keyring.loadAll({});
     });
+
+    const partsUrl = location.pathname.split('/');
+    const networkFromUrl = networks.find(({ id }) => id === partsUrl[1].toUpperCase());
+    if (networkFromUrl) {
+      setActiveNetwork(networkFromUrl);
+      setCurrentChain(config.chains[networkFromUrl.id]);
+    }
   }, []);
 
   useEffect(() => {
@@ -65,6 +73,10 @@ export const Header: VFC = () => {
   const handleChangeNetwork = (val: INetwork) => {
     setActiveNetwork(val);
     setCurrentChain(config.chains[val.id]);
+    const partsUrl = location.pathname.split('/');
+    partsUrl[1] = val.id;
+    const newlink = partsUrl.join('/');
+    navigate(newlink);
   };
 
   return (
@@ -81,10 +93,16 @@ export const Header: VFC = () => {
 
         {!showMobileMenu && (
           <nav>
-            <MenuLink name="My tokens" path={ROUTE.MY_TOKENS} />
-            <MenuLink name="My collections" path={ROUTE.MY_COLLECTIONS} />
-            <MenuLink name="My accounts" path={ROUTE.ACCOUNTS} />
-            <MenuLink name="FAQ" path={ROUTE.FAQ} />
+            <MenuLink name="My tokens" path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`} />
+            <MenuLink
+              name="My collections"
+              path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
+            />
+            <MenuLink
+              name="My accounts"
+              path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
+            />
+            <MenuLink name="FAQ" path={`${activeNetwork?.id}/${ROUTE.FAQ}`} />
           </nav>
         )}
       </LeftSideColumn>
@@ -118,22 +136,22 @@ export const Header: VFC = () => {
         <MobileMenu>
           <MobileMenuLink
             name="My tokens"
-            path={ROUTE.MY_TOKENS}
+            path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="My collections"
-            path={ROUTE.MY_COLLECTIONS}
+            path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="My accounts"
-            path={ROUTE.ACCOUNTS}
+            path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="FAQ"
-            path={ROUTE.FAQ}
+            path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
             mobileMenuToggle={mobileMenuToggle}
           />
         </MobileMenu>

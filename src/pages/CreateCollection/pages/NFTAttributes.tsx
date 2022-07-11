@@ -14,7 +14,7 @@ import {
 
 import { ArtificialAttributeItemType } from '@app/types';
 import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
-import { useCollectionMutation } from '@app/hooks';
+import { useApi, useCollectionMutation } from '@app/hooks';
 import {
   Alert,
   CollectionStepper,
@@ -44,19 +44,20 @@ export const NFTAttributes = () => {
     setOwnerCanDestroy,
   } = useContext(CollectionFormContext);
   const navigate = useNavigate();
+  const { currentChain } = useApi();
   const { isCreatingCollection, onCreateCollection } = useCollectionMutation();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
   const { fee, generateExtrinsic } = useCollectionMutation();
   const [address, setAddress] = useState<string>('');
 
   const onPreviousStepClick = () => {
-    navigate('/create-collection/main-information');
+    navigate(`/${currentChain?.network}/create-collection/main-information`);
   };
 
   const createCollection = async () => {
     await onCreateCollection();
 
-    navigate(ROUTE.MY_COLLECTIONS);
+    navigate(`/${currentChain?.network}/ROUTE.MY_COLLECTIONS`);
   };
 
   const onSubmitAttributes = () => {

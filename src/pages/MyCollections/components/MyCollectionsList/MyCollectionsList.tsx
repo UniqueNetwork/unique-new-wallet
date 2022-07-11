@@ -17,6 +17,7 @@ import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { LisFooter, PaddedBlock } from '@app/styles/styledVariables';
 import { NotFoundCoins } from '@app/components';
 import noCoverImage from '@app/static/icons/empty-image.svg';
+import { useApi } from '@app/hooks';
 
 interface MyCollectionsListComponentProps {
   className?: string;
@@ -34,6 +35,7 @@ const MyCollectionsListComponent = ({
   onPageChange,
 }: MyCollectionsListComponentProps) => {
   const navigate = useNavigate();
+  const { currentChain } = useApi();
   const { selectedAccount } = useContext(AccountContext);
 
   const { collections, collectionsCount, isCollectionsLoading } =
@@ -63,7 +65,9 @@ const MyCollectionsListComponent = ({
                 className={classNames({ '_no-cover': !collection.collection_cover })}
                 onClick={(e) => {
                   e.preventDefault();
-                  navigate(`/my-collections/${collection.collection_id}/nft`);
+                  navigate(
+                    `/${currentChain?.network}/my-collections/${collection.collection_id}/nft`,
+                  );
                 }}
               >
                 <CollectionLink

@@ -8,6 +8,7 @@ import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { ROUTE } from '@app/routes';
+import { useApi } from '@app/hooks';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -27,6 +28,7 @@ const sortOptions: Option[] = [
 ];
 
 const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
+  const { currentChain } = useApi();
   const navigate = useNavigate();
   const { sortByTokenId, searchText, changeSortByTokenId, changeSearchText } =
     useNFTsContext();
@@ -66,7 +68,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
         }}
         title="Create an NFT"
         role="primary"
-        onClick={() => navigate(ROUTE.CREATE_NFT)}
+        onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
       />
     </div>
   );

@@ -18,6 +18,7 @@ import {
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import { Direction } from '@app/api/graphQL/tokens';
 import { ROUTE } from '@app/routes';
+import { useApi } from '@app/hooks';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -59,6 +60,7 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
   className,
 }) => {
   const navigate = useNavigate();
+  const { currentChain } = useApi();
   const [search, setSearch] = useState('');
   const { direction, onChangeSearch, onChangeDirection, onChangeType } =
     useNftFilterContext();
@@ -96,7 +98,7 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         }}
         title="Create an NFT"
         role="primary"
-        onClick={() => navigate(ROUTE.CREATE_NFT)}
+        onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { ArtificialAttributeItemType, MainInformationInitialValues } from '@app/types';
 import { maxTokenLimit } from '@app/pages/constants/token';
+import { useApi } from '@app/hooks';
 
 import CollectionFormContext from './CollectionFormContext';
 
@@ -27,6 +28,7 @@ export const defaultAttributesWithTokenIpfs: ArtificialAttributeItemType[] = [
 
 export function CollectionForm({ children }: Props): React.ReactElement<Props> | null {
   const navigate = useNavigate();
+  const { currentChain } = useApi();
   const [attributes, setAttributes] = useState<ArtificialAttributeItemType[]>(
     defaultAttributesWithTokenIpfs,
   );
@@ -64,7 +66,7 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
     validationSchema: schema,
     validateOnBlur: true,
     onSubmit: () => {
-      navigate('/create-collection/nft-attributes');
+      navigate(`/${currentChain?.network}/create-collection/nft-attributes`);
     },
   });
 

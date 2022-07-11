@@ -14,6 +14,7 @@ import {
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
 import { TokenPreviewInfo } from '@app/api';
+import { useApi } from '@app/hooks';
 
 interface NFTsListComponentProps {
   className?: string;
@@ -39,55 +40,59 @@ const NFTsListComponent = ({
   chips,
   onPageChange,
   onChipsReset,
-}: NFTsListComponentProps) => (
-  <div className={classNames('nft-list', className)}>
-    {isLoading && <Loader isFullPage={true} size="large" />}
-    {!isNaN(Number(tokensCount)) && (
-      <div className="token-size-wrapper">
-        <Text size="m">{`${tokensCount} items`}</Text>
-        {chips?.map((item, index) => (
-          <Chip key={index} {...item} />
-        ))}
-        {!!chips?.length && (
-          <Link title="Clear all" role="danger" onClick={onChipsReset} />
-        )}
-      </div>
-    )}
+}: NFTsListComponentProps) => {
+  const { currentChain } = useApi();
 
-    {tokensCount === 0 ? (
-      <div className="nft-list--empty">
-        <NFTsNotFound />
-      </div>
-    ) : (
-      <div className="nft-list--content">
-        {tokens.map(
-          ({ token_id, token_name, collection_name, collection_id, image_path }) => (
-            <TokenLink
-              key={`${collection_id}-${token_id}`}
-              image={getTokenIpfsUriByImagePath(image_path)}
-              link={{
-                href: `/token/${collection_id}/${token_id}`,
-                title: `${collection_name} [id ${collection_id}]`,
-              }}
-              title={token_name}
-            />
-          ),
-        )}
-      </div>
-    )}
-    {!!tokensCount && (
-      <div className="nft-list--footer">
-        <Text size="m">{`${tokensCount} items`}</Text>
-        <Pagination
-          withIcons={true}
-          current={page}
-          size={tokensCount}
-          onPageChange={onPageChange}
-        />
-      </div>
-    )}
-  </div>
-);
+  return (
+    <div className={classNames('nft-list', className)}>
+      {isLoading && <Loader isFullPage={true} size="large" />}
+      {!isNaN(Number(tokensCount)) && (
+        <div className="token-size-wrapper">
+          <Text size="m">{`${tokensCount} items`}</Text>
+          {chips?.map((item, index) => (
+            <Chip key={index} {...item} />
+          ))}
+          {!!chips?.length && (
+            <Link title="Clear all" role="danger" onClick={onChipsReset} />
+          )}
+        </div>
+      )}
+
+      {tokensCount === 0 ? (
+        <div className="nft-list--empty">
+          <NFTsNotFound />
+        </div>
+      ) : (
+        <div className="nft-list--content">
+          {tokens.map(
+            ({ token_id, token_name, collection_name, collection_id, image_path }) => (
+              <TokenLink
+                key={`${collection_id}-${token_id}`}
+                image={getTokenIpfsUriByImagePath(image_path)}
+                link={{
+                  href: `/${currentChain?.network}/token/${collection_id}/${token_id}`,
+                  title: `${collection_name} [id ${collection_id}]`,
+                }}
+                title={token_name}
+              />
+            ),
+          )}
+        </div>
+      )}
+      {!!tokensCount && (
+        <div className="nft-list--footer">
+          <Text size="m">{`${tokensCount} items`}</Text>
+          <Pagination
+            withIcons={true}
+            current={page}
+            size={tokensCount}
+            onPageChange={onPageChange}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const NFTsTemplateList = styled(NFTsListComponent)`
   height: 100%;
