@@ -106,6 +106,7 @@ export const AccountSelectWrapper = styled(AccountContainer)`
 export const AccountSelect = styled.div`
   .unique-dropdown {
     width: 100%;
+    z-index: 100;
 
     .dropdown-options,
     .dropdown-option {
