@@ -92,7 +92,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   const {
     getFee,
-    amountFormatted,
+    feeFormatted,
     error: feeError,
     isError: isFeeError,
   } = useExtrinsicFee(TokenApiService.tokenCreateMutation);
@@ -275,7 +275,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                   </FormRowEmpty>
                 )}
                 <Alert type="warning">
-                  A fee of ~ {amountFormatted} QTZ can be applied to the transaction
+                  A fee of ~ {feeFormatted} QTZ can be applied to the transaction
                 </Alert>
                 <ButtonGroup>
                   <Button

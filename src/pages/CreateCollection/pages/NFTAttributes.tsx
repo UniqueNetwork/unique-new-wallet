@@ -60,7 +60,7 @@ export const NFTAttributes = () => {
     error: feeError,
     isError: isFeeError,
     getFee,
-    amountFormatted,
+    feeFormatted,
   } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
   const [address, setAddress] = useState<string>('');
 
@@ -254,7 +254,7 @@ export const NFTAttributes = () => {
             </SettingsRow>
           </AdvancedSettingsAccordion>
           <Alert type="warning" className="alert-wrapper">
-            A fee of ~ {amountFormatted} can be applied to the transaction
+            A fee of ~ {feeFormatted} can be applied to the transaction
           </Alert>
           <ButtonGroup>
             <Button

@@ -33,14 +33,14 @@ export const useExtrinsicFee = <
   });
 
   const [extrinsicFeeState, setExtrinsicFeeState] = useReducer(extrinsicFeeReducer, {
-    amount: undefined,
-    amountFormatted: undefined,
+    fee: undefined,
+    feeFormatted: undefined,
     error: undefined,
     isError: false,
     isLoading: false,
   });
 
-  const { error, amount, amountFormatted, isError, isLoading } = extrinsicFeeState;
+  const { error, fee, feeFormatted, isError, isLoading } = extrinsicFeeState;
 
   useEffect(() => {
     if (defaultPayload) {
@@ -88,8 +88,8 @@ export const useExtrinsicFee = <
       setExtrinsicFeeState({
         type: 'success',
         payload: {
-          amount: fee.amount,
-          amountFormatted: [fee.amount.replace(/([0]+)$/, ''), fee.unit].join(' '),
+          fee: fee.amount,
+          feeFormatted: [fee.amount.replace(/([0]+)$/, ''), fee.unit].join(' '),
         },
       });
     } catch (e) {
@@ -106,8 +106,8 @@ export const useExtrinsicFee = <
   };
 
   return {
-    amount,
-    amountFormatted,
+    fee,
+    feeFormatted,
     getFee,
     isLoading,
     isError,
