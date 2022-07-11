@@ -1,5 +1,6 @@
 import { Suggest, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
+import classNames from 'classnames';
 
 import { RecipientAddressType } from '@app/pages/SendFunds/SendFundsModal';
 import { AccountInfo } from '@app/pages/SendFunds/components/AccountInfo';
@@ -39,13 +40,19 @@ export const AccountSuggest = ({
           }
           value={recipient || undefined}
           components={{
-            SuggestItem: ({ suggestion }) => {
+            SuggestItem: ({ suggestion, isActive }) => {
               return (
-                <AccountInfo
-                  address={suggestion.address}
-                  key={suggestion.address}
-                  name={suggestion.name}
-                />
+                <SuggestItem
+                  className={classNames('suggestion-item', {
+                    isActive,
+                  })}
+                >
+                  <AccountInfo
+                    address={suggestion.address}
+                    key={suggestion.address}
+                    name={suggestion.name}
+                  />
+                </SuggestItem>
               );
             },
           }}
@@ -59,6 +66,12 @@ export const AccountSuggest = ({
     </>
   );
 };
+
+const SuggestItem = styled.div`
+  & > div {
+    padding: 0;
+  }
+`;
 
 const SuggestWrapper = styled.div`
   .unique-suggestion,
