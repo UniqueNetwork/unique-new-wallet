@@ -26,7 +26,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
 
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
-  const { fee, getFee } = useExtrinsicFee(TokenApiService.transferMutation);
+  const { amountFormatted, getFee } = useExtrinsicFee(TokenApiService.transferMutation);
   const {
     status,
     error: errorMessage,
@@ -86,7 +86,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
 
   return (
     <AskTransferModal
-      fee={fee}
+      fee={amountFormatted}
       isVisible={isVisible}
       recipient={recipient}
       onClose={onClose}

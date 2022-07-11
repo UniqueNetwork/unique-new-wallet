@@ -19,7 +19,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
 
-  const { fee, getFee } = useExtrinsicFee(TokenApiService.burnMutation);
+  const { amountFormatted, getFee } = useExtrinsicFee(TokenApiService.burnMutation);
   const {
     status,
     isLoading,
@@ -77,7 +77,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
 
   return (
     <AskBurnModal
-      fee={fee ?? ''}
+      fee={amountFormatted ?? ''}
       isVisible={isVisible}
       onBurn={burnHandler}
       onClose={onClose}

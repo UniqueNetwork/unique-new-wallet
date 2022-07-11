@@ -34,7 +34,7 @@ const MainInformationComponent: FC = () => {
   const {
     isError: isFeeError,
     error: feeError,
-    fee,
+    amountFormatted,
     getFee,
   } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
   const { uploadFile } = useFileUpload();
@@ -183,7 +183,7 @@ const MainInformationComponent: FC = () => {
               </UploadWidget>
             </FormRow>
             <Alert type="warning" className="alert-wrapper">
-              A fee of ~ {fee} can be applied to the transaction
+              A fee of ~ {amountFormatted} can be applied to the transaction
             </Alert>
             <ButtonGroup>
               <Button
