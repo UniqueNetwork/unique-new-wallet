@@ -64,6 +64,10 @@ export const FormRow = styled.div`
   }
 `;
 
+export const FormRowEmpty = styled.div`
+  margin-bottom: calc(var(--prop-gap) * 5.65);
+`;
+
 export const UploadWidget = styled.div`
   .unique-text {
     &:first-of-type {
@@ -72,7 +76,33 @@ export const UploadWidget = styled.div`
   }
 `;
 
+export const SettingsRow = styled.div`
+  &:not(:last-child) {
+    margin-bottom: calc(var(--prop-gap) * 1.5);
+  }
+
+  label {
+    font-weight: 500;
+  }
+
+  label,
+  .checkbox-label > span {
+    & > .unique-tooltip-content {
+      display: inline-block;
+      vertical-align: middle;
+      margin: -0.1em 0 0 0.3em;
+    }
+  }
+
+  .unique-input-text {
+    & + .unique-font-heading {
+      margin-top: calc(var(--prop-gap) * 0.375);
+    }
+  }
+`;
+
 export const LabelText = styled(Text).attrs({
+  appearance: 'block',
   color: 'additional-dark',
   size: 'm',
   weight: 'bold',
@@ -91,7 +121,11 @@ export const SuggestOption = styled.div`
   }
 `;
 
-export const AdditionalText = styled(Text).attrs({ size: 's', color: 'grey-500' })`
+export const AdditionalText = styled(Text).attrs({
+  appearance: 'block',
+  size: 's',
+  color: 'grey-500',
+})`
   margin-bottom: var(--prop-gap);
 `;
 

@@ -8,7 +8,6 @@ export const LabelText = styled(Text)`
     display: inline-block;
     vertical-align: middle;
     margin-left: 0.25em;
-    margin-bottom: -0.25em;
   }
 `;
 
@@ -35,7 +34,16 @@ export const AddressWrapper = styled.div`
   border-radius: var(--prop-border-radius);
   display: flex;
   column-gap: calc(var(--prop-gap) / 2);
+  min-height: 24px;
   padding: 20px var(--prop-gap);
+  color: var(--color-grey-400);
+`;
+
+export const AddressText = styled(Text).attrs({ size: 's' })`
+  &.unique-text {
+    color: inherit;
+    line-height: 24px;
+  }
 `;
 
 export const StepsTextStyled = styled(Text)`

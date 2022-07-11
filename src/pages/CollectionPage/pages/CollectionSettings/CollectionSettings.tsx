@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import { Heading, Text, InputText, Checkbox, Button, Loader } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
+import {
+  Button,
+  Checkbox,
+  Heading,
+  Icon,
+  InputText,
+  Loader,
+  Text,
+  Tooltip,
+} from '@unique-nft/ui-kit';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +17,16 @@ import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionCon
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts } from '@app/hooks';
+import {
+  ButtonGroup,
+  Form,
+  FormBody,
+  FormHeader,
+  FormRow,
+  FormWrapper,
+  SettingsRow,
+} from '@app/pages/components/FormComponents';
+import { maxTokenLimit } from '@app/pages/constants/token';
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
@@ -65,74 +83,152 @@ const CollectionSettings = () => {
     }
   };
 
+  const handleTokenLimit = (value: string) => {
+    if (!value) {
+      form.setFieldValue('limit', '');
+      return;
+    }
+
+    const numVal = Number(value);
+
+    if (numVal > maxTokenLimit || numVal < 0) {
+      return;
+    }
+
+    form.setFieldValue('limit', numVal);
+  };
+
   return (
     <PagePaper>
-      <SettingsContainer>
+      <FormWrapper>
         {isCollectionFetching ? (
           <Loader />
         ) : (
-          <form onSubmit={form.handleSubmit}>
-            <Heading size="3">Advanced settings</Heading>
-            <Text>
-              These settings are intended for users who want to place their collection on
-              the marketplace.
-            </Text>
-
-            <SettingsInput
-              // TODO: icon tooltip
-              label="Collection sponsor address"
-              additionalText="The designated sponsor should approve the request"
-              id="address"
-              value={form.values.address}
-              onChange={(value) => {
-                form.setFieldValue('address', value);
-              }}
-            />
-
-            <Heading size="4">One-time install options</Heading>
-            <Text>
-              Please note that once installed, these settings cannot be changed later. If
-              you do not change them now, you can change them once on the Settings tab in
-              the collection detail card.
-            </Text>
-
-            <SettingsInput
-              // TODO: icon tooltip
-              label="Token limit"
-              additionalText="Unlimited by default"
-              id="limit"
-              value={form.values.limit.toString()}
-              role="number"
-              onChange={(value) => {
-                form.setFieldValue('limit', value);
-              }}
-            />
-
-            <Checkbox
-              checked={form.values.ownerCanDestroy}
-              // TODO: icon tooltip
-              label="Owner can burn collection"
-              disabled={!ownerCanDestroy}
-              onChange={(value) => {
-                form.setFieldValue('ownerCanDestroy', value);
-              }}
-            />
-
-            <ButtonsWrapper>
-              <Button title="Save changes" disabled={true} type="submit" />
-              {/* TODO: WAL-343
-              {ownerCanDestroy && (
-                <Button
-                  title="Burn collection"
-                  iconLeft={{ size: 15, name: 'burn', color: 'var(--color-coral-500)' }}
-                  role="ghost"
-                  onClick={() => setVisibleConfirmModal(true)}
-                />
-              )} */}
-            </ButtonsWrapper>
-          </form>
+          <>
+            <FormHeader>
+              <Heading size="3">Advanced settings</Heading>
+              <Text>
+                These settings are intended for users who want to place their collection
+                on the marketplace.
+              </Text>
+            </FormHeader>
+            <FormBody>
+              <Form onSubmit={form.handleSubmit}>
+                <SettingsRow>
+                  <InputText
+                    label={
+                      <>
+                        Collection sponsor address
+                        <Tooltip
+                          content={
+                            <Icon
+                              name="question"
+                              size={22}
+                              color="var(--color-primary-500)"
+                            />
+                          }
+                          placement="right-start"
+                        >
+                          The collection sponsor pays for all transactions related
+                          to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
+                          a&nbsp;regular account or&nbsp;a&nbsp;market contract. The
+                          sponsor will need to&nbsp;confirm the sponsorship before the
+                          sponsoring begins
+                        </Tooltip>
+                      </>
+                    }
+                    additionalText="The designated sponsor should approve the request"
+                    id="address"
+                    maxLength={48}
+                    value={form.values.address}
+                    onChange={(value) => {
+                      form.setFieldValue('address', value);
+                    }}
+                  />
+                </SettingsRow>
+                <FormRow>
+                  <Heading size="4">One-time install options</Heading>
+                  <Text>
+                    Please note that once installed, these settings cannot be changed
+                    later. If you do not change them now, you can change them once on the
+                    Settings tab in the collection detail card.
+                  </Text>
+                </FormRow>
+                <SettingsRow>
+                  <InputText
+                    label={
+                      <>
+                        Token limit
+                        <Tooltip
+                          content={
+                            <Icon
+                              name="question"
+                              size={22}
+                              color="var(--color-primary-500)"
+                            />
+                          }
+                          placement="right-start"
+                        >
+                          The token limit (collection size) is&nbsp;a&nbsp;mandatory
+                          parameter if&nbsp;you want to&nbsp;list your collection
+                          on&nbsp;a&nbsp;marketplace.
+                        </Tooltip>
+                      </>
+                    }
+                    additionalText="Unlimited by default"
+                    id="limit"
+                    value={form.values.limit.toString()}
+                    role="number"
+                    onChange={handleTokenLimit}
+                  />
+                </SettingsRow>
+                <SettingsRow>
+                  <Checkbox
+                    checked={form.values.ownerCanDestroy}
+                    label={
+                      <>
+                        Owner can burn collection
+                        <Tooltip
+                          content={
+                            <Icon
+                              name="question"
+                              size={22}
+                              color="var(--color-primary-500)"
+                            />
+                          }
+                          placement="right-start"
+                        >
+                          Should you decide to&nbsp;keep the right to&nbsp;destroy the
+                          collection, a&nbsp;marketplace could reject it&nbsp;depending
+                          on&nbsp;its policies as&nbsp;it&nbsp;gives the author the power
+                          to&nbsp;arbitrarily destroy a&nbsp;collection at&nbsp;any moment
+                          in&nbsp;the future
+                        </Tooltip>
+                      </>
+                    }
+                    disabled={!ownerCanDestroy}
+                    onChange={(value) => {
+                      form.setFieldValue('ownerCanDestroy', value);
+                    }}
+                  />
+                </SettingsRow>
+                <ButtonGroup>
+                  <Button title="Save changes" disabled={true} type="submit" />
+                  {/* TODO: WAL-343
+                  {ownerCanDestroy && (
+                    <Button
+                      title="Burn collection"
+                      iconLeft={{ size: 15, name: 'burn', color: 'var(--color-coral-500)' }}
+                      role="ghost"
+                      onClick={() => setVisibleConfirmModal(true)}
+                    />
+                  )} */}
+                </ButtonGroup>
+              </Form>
+            </FormBody>
+          </>
         )}
-      </SettingsContainer>
+      </FormWrapper>
       <StatusTransactionModal
         isVisible={isLoadingBurnCollection}
         description="Burning collection"
@@ -140,7 +236,6 @@ const CollectionSettings = () => {
 
       <BurnCollectionModal
         isVisible={isVisibleConfirmModal}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onConfirm={handleBurnCollection}
         onClose={() => setVisibleConfirmModal(false)}
       />
@@ -148,32 +243,12 @@ const CollectionSettings = () => {
   );
 };
 
-const SettingsContainer = styled.div`
-  max-width: 756px;
-
+/* TODO: WAL-343
+const SettingsButtonGroup = styled(ButtonGroup)`
   .unique-button.ghost {
-    color: var(--color-coral-500);
     padding: 0;
+    color: var(--color-coral-500);
   }
-
-  .unique-font-heading.size-3 {
-    margin-bottom: 5px;
-  }
-`;
-
-const SettingsInput = styled(InputText)`
-  width: 100%;
-  margin: 25px 0;
-
-  label {
-    font-weight: 500;
-  }
-`;
-
-const ButtonsWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 50px;
-`;
+`; */
 
 export default CollectionSettings;

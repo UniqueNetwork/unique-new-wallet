@@ -52,7 +52,7 @@ const getAttributesColumns = ({
 }: AttributesColumnsProps): TableColumnProps[] => [
   {
     title: (
-      <>
+      <span>
         Attribute
         <Tooltip
           content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
@@ -60,9 +60,9 @@ const getAttributesColumns = ({
         >
           Textual traits that show up&nbsp;on&nbsp;Token
         </Tooltip>
-      </>
+      </span>
     ),
-    width: '40%',
+    width: '21%',
     field: 'name',
     render(name: string, attribute: ArtificialAttributeItemType) {
       return (
@@ -76,7 +76,7 @@ const getAttributesColumns = ({
   },
   {
     title: (
-      <>
+      <span>
         Type
         <Tooltip
           content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
@@ -84,9 +84,9 @@ const getAttributesColumns = ({
         >
           Select type of&nbsp;information you want to&nbsp;create
         </Tooltip>
-      </>
+      </span>
     ),
-    width: '25%',
+    width: '17%',
     field: 'fieldType',
     render(type: ArtificialFieldType, attribute: ArtificialAttributeItemType) {
       return (
@@ -108,7 +108,7 @@ const getAttributesColumns = ({
   },
   {
     title: (
-      <>
+      <span>
         Rule
         <Tooltip
           content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
@@ -116,9 +116,9 @@ const getAttributesColumns = ({
         >
           Set a&nbsp;rule for your attribute
         </Tooltip>
-      </>
+      </span>
     ),
-    width: '25%',
+    width: '17%',
     field: 'rule',
     render(rule: FieldRuleType, attribute: ArtificialAttributeItemType) {
       return (
@@ -137,7 +137,7 @@ const getAttributesColumns = ({
   },
   {
     title: (
-      <>
+      <span>
         Possible values
         <Tooltip
           content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
@@ -145,7 +145,7 @@ const getAttributesColumns = ({
         >
           Write down all the options you have
         </Tooltip>
-      </>
+      </span>
     ),
     width: '40%',
     field: 'values',
@@ -162,7 +162,7 @@ const getAttributesColumns = ({
   },
   {
     title: '',
-    width: '40px',
+    width: '5%',
     field: 'id',
     render(id: number, attribute: ArtificialAttributeItemType) {
       return (
@@ -205,6 +205,7 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
 
   return (
     <div className={className}>
+      {/* TODO: @future: add new table cellPadding=8 from next uikit ver. */}
       <Table
         columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
         data={value}
@@ -238,17 +239,22 @@ export const AttributesTable = styled(AttributesTableComponent)`
   .unique-table {
     .unique-table-header {
       .table-header-cell {
+        & > span {
+          flex: 1 1 auto;
+        }
+
         .unique-tooltip-content {
           display: inline-block;
           vertical-align: middle;
-          margin-top: 0.185em;
+          margin-left: 0.2em;
         }
       }
     }
 
     .unique-table-data-row {
       & > div {
-        padding: calc(var(--prop-gap) / 4) calc(var(--prop-gap) / 2);
+        padding-top: calc(var(--prop-gap) / 4);
+        padding-bottom: calc(var(--prop-gap) / 4);
       }
     }
 

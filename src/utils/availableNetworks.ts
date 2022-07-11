@@ -1,21 +1,14 @@
-import config from '@app/config';
-import { Chain, NetworkType } from '@app/types';
+import { INetwork } from '@unique-nft/ui-kit';
 
-export const networksUrls: Record<NetworkType, string | undefined> = {
-  QTZ: config.quartzRestApiUrl,
-  OPL: '',
-  KSM: '',
-  UNQ: '',
-};
+import { config } from '@app/config';
 
-export const networks: Chain[] = [
-  {
-    apiEndpoint: networksUrls.QTZ || '',
-    id: 'quartz',
-    name: 'Quartz',
+export const networks: INetwork[] = Object.values(config.chains).map(
+  ({ name, network }) => ({
     icon: {
-      name: 'chain-quartz',
-      size: 40,
+      name: `chain-${network.toLowerCase()}`,
+      size: 16,
     },
-  },
-];
+    id: network,
+    name,
+  }),
+);

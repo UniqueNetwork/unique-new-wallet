@@ -8,7 +8,6 @@ import {
   Icon,
   Link,
   Select,
-  Text,
   Textarea,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
@@ -16,6 +15,7 @@ import styled from 'styled-components/macro';
 import { addressFromSeed } from '@app/utils';
 import { Tooltip } from '@app/components';
 import {
+  AddressText,
   AddressWrapper,
   ButtonGroup,
   StepsTextStyled,
@@ -75,7 +75,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
         <ContentRow>
           <AddressWrapper>
             <Avatar size={24} src={DefaultAvatar} />
-            <Text>{address}</Text>
+            <AddressText>{address}</AddressText>
           </AddressWrapper>
         </ContentRow>
         <ContentRow>
@@ -92,9 +92,9 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
                   title={
                     <>
                       Find out more on{' '}
-                      <Link href="https://" title="Polkadot Wiki">
+                      <TooltipLink href="https://" title="Polkadot Wiki">
                         Polkadot Wiki
-                      </Link>
+                      </TooltipLink>
                     </>
                   }
                 >
@@ -113,7 +113,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
               re-create the account and gain full access to it.
             </TextWarning>
             <Checkbox
-              label="I have saved my mnemnic seed safely"
+              label="I have saved my mnemonic seed safely"
               checked={confirmSeedSaved}
               size="m"
               onChange={setConfirmSeedSaved}
@@ -177,4 +177,9 @@ const ControlsGroup = styled.div`
   & > :last-child {
     align-self: baseline;
   }
+`;
+
+const TooltipLink = styled(Link)`
+  border-bottom: 1px solid;
+  color: inherit;
 `;

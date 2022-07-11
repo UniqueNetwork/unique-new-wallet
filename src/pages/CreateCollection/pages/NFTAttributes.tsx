@@ -28,7 +28,9 @@ import {
   ButtonGroup,
   FormBody,
   FormHeader,
+  FormRow,
   FormWrapper,
+  SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
 import { CollectionApiService, useExtrinsicFlow, useExtrinsicFee } from '@app/api';
@@ -147,7 +149,7 @@ export const NFTAttributes = () => {
       <FormWrapper>
         <CollectionStepper activeStep={2} onClickStep={onPreviousStepClick} />
         <FormHeader>
-          <Heading size="2">NFT attrubutes</Heading>
+          <Heading size="2">NFT attributes</Heading>
           <Text>
             Customize your token — define your NTF&apos;s traits: name, accessory, gender,
             background, face, body, tier, etc.
@@ -156,10 +158,10 @@ export const NFTAttributes = () => {
         <FormBody>
           <AttributesTable value={attributesWithoutIpfs} onChange={onSetAttributes} />
           <AdvancedSettingsAccordion title="Advanced settings">
-            <Row>
+            <SettingsRow>
               <Text>This section contains marketplace related settings.</Text>
-            </Row>
-            <Row>
+            </SettingsRow>
+            <SettingsRow>
               <InputText
                 label={
                   <>
@@ -168,7 +170,7 @@ export const NFTAttributes = () => {
                       content={
                         <Icon
                           name="question"
-                          size={24}
+                          size={22}
                           color="var(--color-primary-500)"
                         />
                       }
@@ -187,6 +189,8 @@ export const NFTAttributes = () => {
                 value={address}
                 onChange={setAddress}
               />
+            </SettingsRow>
+            <FormRow>
               <Heading size="4">One-time install options</Heading>
               <Text>
                 One-time options cannot be changed once set. They are &apos;baked-in&apos;
@@ -194,8 +198,8 @@ export const NFTAttributes = () => {
                 settings page, but the final parameters should be set/reviewed in the
                 &apos;Settings&apos; tab in the collection detail panel.
               </Text>
-            </Row>
-            <Row>
+            </FormRow>
+            <SettingsRow>
               <InputText
                 label={
                   <>
@@ -204,7 +208,7 @@ export const NFTAttributes = () => {
                       content={
                         <Icon
                           name="question"
-                          size={24}
+                          size={22}
                           color="var(--color-primary-500)"
                         />
                       }
@@ -220,27 +224,34 @@ export const NFTAttributes = () => {
                 value={tokenLimit ? tokenLimit.toString() : ''}
                 onChange={onSetTokenLimit}
               />
-            </Row>
-            <Row>
-              <CheckboxWrapper>
-                <Checkbox
-                  label="Owner can burn collection"
-                  checked={ownerCanDestroy}
-                  onChange={setOwnerCanDestroy}
-                />
-                <Tooltip
-                  content={
-                    <Icon name="question" size={24} color="var(--color-primary-500)" />
-                  }
-                  placement="right-start"
-                >
-                  Should you decide to&nbsp;keep the right to&nbsp;destroy the collection,
-                  a&nbsp;marketplace could reject it&nbsp;depending on&nbsp;its policies
-                  as&nbsp;it&nbsp;gives the author the power to&nbsp;arbitrarily destroy
-                  a&nbsp;collection at&nbsp;any moment in&nbsp;the future
-                </Tooltip>
-              </CheckboxWrapper>
-            </Row>
+            </SettingsRow>
+            <SettingsRow>
+              <Checkbox
+                label={
+                  <>
+                    Owner can burn collection
+                    <Tooltip
+                      content={
+                        <Icon
+                          name="question"
+                          size={22}
+                          color="var(--color-primary-500)"
+                        />
+                      }
+                      placement="right-start"
+                    >
+                      Should you decide to&nbsp;keep the right to&nbsp;destroy the
+                      collection, a&nbsp;marketplace could reject it&nbsp;depending
+                      on&nbsp;its policies as&nbsp;it&nbsp;gives the author the power
+                      to&nbsp;arbitrarily destroy a&nbsp;collection at&nbsp;any moment
+                      in&nbsp;the future
+                    </Tooltip>
+                  </>
+                }
+                checked={ownerCanDestroy}
+                onChange={setOwnerCanDestroy}
+              />
+            </SettingsRow>
           </AdvancedSettingsAccordion>
           <Alert type="warning" className="alert-wrapper">
             A fee of ~ {fee} can be applied to the transaction
@@ -297,39 +308,5 @@ const AdvancedSettingsAccordion = styled(Accordion)`
 
   &.expanded .unique-accordion-content {
     padding: calc(var(--prop-gap) / 2) 0 0;
-  }
-`;
-
-const CheckboxWrapper = styled.div`
-  white-space: nowrap;
-
-  .unique-checkbox-wrapper {
-    display: inline-block;
-    vertical-align: middle;
-  }
-`;
-
-const Row = styled.div`
-  &:not(:last-child) {
-    margin-bottom: calc(var(--prop-gap) * 1.5);
-  }
-
-  label {
-    font-weight: 500;
-  }
-
-  label,
-  ${CheckboxWrapper} {
-    & > .unique-tooltip-content {
-      display: inline-block;
-      vertical-align: middle;
-      margin: -0.1em 0 0 0.25em;
-    }
-  }
-
-  .unique-input-text {
-    & + .unique-font-heading {
-      margin-top: calc(var(--prop-gap) * 0.375);
-    }
   }
 `;

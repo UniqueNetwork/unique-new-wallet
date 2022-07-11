@@ -1,7 +1,7 @@
 import { VFC, useCallback, useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager, Button, Icon } from '@unique-nft/ui-kit';
+import { AccountsManager, Button, Icon, INetwork } from '@unique-nft/ui-kit';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 import keyring from '@polkadot/ui-keyring';
 
@@ -10,6 +10,8 @@ import MobileMenuLink from '@app/components/Header/MobileMenuLink';
 import { networks } from '@app/utils';
 import { ChainPropertiesContext } from '@app/context';
 import { ROUTE } from '@app/routes';
+import { config } from '@app/config';
+import { defaultChainKey } from '@app/utils/configParser';
 
 import MenuLink from './MenuLink';
 
@@ -26,6 +28,9 @@ export const Header: VFC = () => {
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
+  const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
+    networks.find(({ id }) => id === currentChain?.network),
+  );
 
   const mobileMenuToggle = useCallback(() => {
     toggleMobileMenu((prevState) => !prevState);
@@ -58,6 +63,13 @@ export const Header: VFC = () => {
 
   const createOrConnectAccountHandler = () => navigate(ROUTE.ACCOUNTS);
 
+  const handleChangeNetwork = (val: INetwork) => {
+    setActiveNetwork(val);
+    setCurrentChain(config.chains[val.id]);
+
+    localStorage.setItem(defaultChainKey, config.chains[val.id].network);
+  };
+
   return (
     <HeaderStyled>
       <LeftSideColumn>
@@ -83,7 +95,7 @@ export const Header: VFC = () => {
         {!isLoading && !!accounts.length && (
           <AccountsManager
             accounts={accountsForManager}
-            activeNetwork={currentChain}
+            activeNetwork={activeNetwork}
             balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
             isLoading={isLoading}
             networks={networks}
@@ -92,7 +104,7 @@ export const Header: VFC = () => {
               name: selectedAccount?.meta.name,
             }}
             symbol={selectedAccount?.unitBalance ?? ''}
-            onNetworkChange={setCurrentChain}
+            onNetworkChange={handleChangeNetwork}
             onAccountChange={onAccountChange}
           />
         )}
@@ -139,8 +151,10 @@ const HeaderStyled = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  a {
-    margin-right: 24px;
+  nav {
+    & > a {
+      margin-right: 24px;
+    }
   }
 `;
 

@@ -6,10 +6,10 @@ import { useAccounts } from '@app/hooks';
 import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 
 import {
-  TCreateAccountModalProps,
   CreateAccountModalStages,
   TAccountProperties,
   TCreateAccountBodyModalProps,
+  TCreateAccountModalProps,
 } from './types';
 import { FinalModal } from './Final';
 
@@ -76,15 +76,18 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
   }
 
   return (
-    <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-      <ModalHeader>
-        <Heading size="2">Add an account via seed phrase</Heading>
-      </ModalHeader>
-      <ModalBodyComponent
-        accountProperties={accountProperties}
-        onFinish={onStageFinish}
-        onGoBack={onGoBack}
-      />
-    </Modal>
+    // TODO: [UI-109] resolve zIndex for all popping elements
+    <div style={{ zIndex: 40 }}>
+      <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
+        <ModalHeader>
+          <Heading size="2">Create substrate account</Heading>
+        </ModalHeader>
+        <ModalBodyComponent
+          accountProperties={accountProperties}
+          onFinish={onStageFinish}
+          onGoBack={onGoBack}
+        />
+      </Modal>
+    </div>
   );
 };

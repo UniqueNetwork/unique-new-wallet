@@ -1,7 +1,8 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import { Avatar, Button, Icon, InputText, Text, Tooltip } from '@unique-nft/ui-kit';
+import { Avatar, Button, Icon, InputText, Tooltip } from '@unique-nft/ui-kit';
 
 import {
+  AddressText,
   AddressWrapper,
   ButtonGroup,
   LabelText,
@@ -46,7 +47,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
         <ContentRow>
           <AddressWrapper>
             <Avatar size={24} src={DefaultAvatar} />
-            <Text>{accountProperties?.address || ''}</Text>
+            <AddressText>{accountProperties?.address || ''}</AddressText>
           </AddressWrapper>
         </ContentRow>
         <ContentRow>
@@ -55,9 +56,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
             Partial seed
             <Tooltip
               content={
-                <span>
-                  <Icon name="question" size={20} color="var(--color-primary-500)" />
-                </span>
+                <Icon name="question" size={20} color="var(--color-primary-500)" />
               }
               placement="right"
             >
@@ -73,9 +72,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
             Keypair type
             <Tooltip
               content={
-                <span>
-                  <Icon name="question" size={20} color="var(--color-primary-500)" />
-                </span>
+                <Icon name="question" size={20} color="var(--color-primary-500)" />
               }
               placement="right"
             >
@@ -91,9 +88,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
             Derivation path
             <Tooltip
               content={
-                <span>
-                  <Icon name="question" size={20} color="var(--color-primary-500)" />
-                </span>
+                <Icon name="question" size={20} color="var(--color-primary-500)" />
               }
               placement="right"
             >
@@ -112,19 +107,12 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
             version.
           </TextWarning>
         </ContentRow>
-        <ContentRow>
-          <TextWarning color="additional-warning-500" size="s">
-            You will be provided with a generated backup file after your account is
-            created. Please make sure to save this file in a secure location as it is
-            required, together with your password, to restore your account.
-          </TextWarning>
-        </ContentRow>
       </ModalContent>
       <ModalFooter>
         <StepsTextStyled size="m">Step 3/3</StepsTextStyled>
         <ButtonGroup>
           <Button title="Previous" onClick={onGoBack} />
-          <Button role="primary" title="Save" onClick={onSaveClick} />
+          <Button role="primary" title="Create account" onClick={onSaveClick} />
         </ButtonGroup>
       </ModalFooter>
     </>

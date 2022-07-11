@@ -2,7 +2,7 @@ import { Chain } from '@app/types';
 
 const configKeyRegexp = /NET_(?<network>[A-Z]+)_NAME$/gm;
 
-export const defaultChainKey = 'block-explorer_chain';
+export const defaultChainKey = 'new-wallet_chain';
 
 const findNetworkParamByName = (
   config: Record<string, string | undefined>,
@@ -22,7 +22,7 @@ const findNetworkParamByName = (
 
 export const getNetworkList = (config: Record<string, string | undefined>): string[] => {
   return Object.keys(config).reduce<string[]>((acc, key) => {
-    if (!key.includes('NET_')) {
+    if (!key.includes('NET_') || key.includes('NET_DEFAULT')) {
       return acc;
     }
 
@@ -36,35 +36,52 @@ export const getNetworkList = (config: Record<string, string | undefined>): stri
   }, []);
 };
 
-/* export const getChainList = (
-  config: Record<string, string | undefined>,
-): Record<string, Chain> => {
-  return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
-    acc[network] = getNetworkParams(config, network);
-
-    return acc;
-  }, {});
-}; */
-
 export const getDefaultChain = (config: Record<string, string | undefined>) => {
+  const storedChain = localStorage.getItem(defaultChainKey);
   const networkList = getNetworkList(config);
-  if (!networkList?.length) {
-    throw new Error(
-      'No chains provided in env, please make sure to provide correct APP_NET_YOUR-CHAIN_* in config',
-    );
+
+  // make sure that we are trying to use an config-existing chain, otherwise go with default one
+  if (storedChain) {
+    const isExist = !!networkList.find((network) => network === storedChain);
+
+    if (isExist) {
+      return storedChain;
+    }
   }
 
-  return networkList[0];
+  const newChain = config.REACT_APP_NET_DEFAULT || getNetworkList(config)[0];
+
+  localStorage.setItem(defaultChainKey, newChain);
+
+  return newChain;
 };
 
-/* export const getNetworkParams = (
+export const getNetworkParams = (
   config: Record<string, string | undefined>,
   network: string,
 ): Chain => {
-  const chain: Chain = {
-    apiEndpoint: findNetworkParamByName(config, network, 'API'),
+  return {
+    gqlEndpoint: findNetworkParamByName(config, network, 'GQL'),
     name: findNetworkParamByName(config, network, 'NAME'),
+    apiEndpoint: findNetworkParamByName(config, network, 'API'),
+    network,
   };
+};
 
-  return chain;
-}; */
+export const getChainList = (
+  config: Record<string, string | undefined>,
+): Record<string, Chain> => {
+  return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
+    const { apiEndpoint, gqlEndpoint, ...params } = getNetworkParams(config, network);
+
+    if (apiEndpoint && gqlEndpoint) {
+      acc[network] = {
+        apiEndpoint,
+        gqlEndpoint,
+        ...params,
+      };
+    }
+
+    return acc;
+  }, {});
+};

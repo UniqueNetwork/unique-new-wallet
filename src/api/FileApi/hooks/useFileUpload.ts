@@ -1,8 +1,5 @@
-import { useState } from 'react';
-
-import config from '@app/config';
 import { useApi } from '@app/hooks';
-import { BaseApi, useApiMutation } from '@app/api';
+import { useApiMutation } from '@app/api';
 
 import { FileService } from '../FileService';
 

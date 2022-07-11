@@ -1,21 +1,22 @@
 import React, { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Avatar, Button, Checkbox, Text } from '@unique-nft/ui-kit';
+import { Avatar, Button } from '@unique-nft/ui-kit';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { addressFromSeed } from '@app/utils';
 import {
+  AddressText,
   AddressWrapper,
   ButtonGroup,
   StepsTextStyled,
-  TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { LabelText } from '@app/pages/components/FormComponents';
 
 import { TCreateAccountBodyModalProps } from './types';
 import { defaultPairType, derivePath } from './CreateAccount';
@@ -24,7 +25,6 @@ import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
   const [seed, setSeed] = useState<string>('');
   const [address, setAddress] = useState<string>('');
-  const [confirmSeedSaved, setConfirmSeedSaved] = useState<boolean>(false);
 
   useEffect(() => {
     cryptoWaitReady().then(() => {
@@ -56,37 +56,23 @@ export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish
       <ModalContent>
         <ContentRow>
           <AddressWrapper>
-            <Avatar size={24} src={DefaultAvatar} />
-            <Text>{address}</Text>
+            {seed && <Avatar size={24} src={DefaultAvatar} />}
+            <AddressText>
+              {seed
+                ? address
+                : 'The account address will appear while entering the secret seed value'}
+            </AddressText>
           </AddressWrapper>
         </ContentRow>
         <ContentRow>
-          <SeedInput value={seed} onChange={onSeedChange} />
-        </ContentRow>
-        <ContentRow>
-          <TextWarning color="additional-warning-500" size="s">
-            Ensure that you keep this seed in a safe place. Anyone with access to it can
-            re-create the account and gain full access to it.
-          </TextWarning>
-        </ContentRow>
-        <ContentRow>
-          <Checkbox
-            label="I have saved my mnemnic seed safely"
-            checked={confirmSeedSaved}
-            size="m"
-            onChange={setConfirmSeedSaved}
-          />
+          <LabelText>The secret seed value</LabelText>
+          <SeedInput value={seed} rows={1} onChange={onSeedChange} />
         </ContentRow>
       </ModalContent>
       <ModalFooter>
         <StepsTextStyled size="m">Step 1/3</StepsTextStyled>
         <ButtonGroup>
-          <Button
-            disabled={!address || !confirmSeedSaved}
-            role="primary"
-            title="Next"
-            onClick={onNextClick}
-          />
+          <Button disabled={!address} role="primary" title="Next" onClick={onNextClick} />
         </ButtonGroup>
       </ModalFooter>
     </>
@@ -101,6 +87,7 @@ const SeedInput = styled.textarea`
   height: auto;
   padding: var(--prop-gap);
   outline: none;
+  font: inherit;
   resize: none;
 
   &:focus {

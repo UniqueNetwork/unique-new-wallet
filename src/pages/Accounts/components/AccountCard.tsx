@@ -32,7 +32,13 @@ const AccountCard = ({
     <>
       <Avatar size={24} src={DefaultAvatar} />
       <AccountInfoWrapper>
-        <Text>{accountName}</Text>
+        <Text>
+          {accountName}
+          {/* TODO: no functionality 
+           <EditIconWrapper>
+            <Icon name="pencil" size={16} />
+          </EditIconWrapper> */}
+        </Text>
         {!hideAddress && (
           <AddressRow>
             <Text size="s" color="grey-500">
@@ -75,6 +81,19 @@ const CopyIconWrapper = styled.div`
     cursor: copy;
   }
 `;
+
+// TODO: no functionality
+// const EditIconWrapper = styled.div`
+//   && {
+//     width: 24px;
+//     height: 24px;
+//     color: var(--color-grey-400);
+//     padding: 0;
+//     margin-left: calc(var(--prop-gap) / 2);
+//     cursor: pointer;
+//     display: inline-block;
+//   }
+// `;
 
 const AddressRow = styled.div`
   && {
