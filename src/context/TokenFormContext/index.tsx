@@ -5,7 +5,9 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { TokenAttributes, TokenField } from '@app/types';
+import { NftTokenDTO, TokenAttributes, TokenField } from '@app/types';
+import { generateTokenFromValues } from '@app/utils';
+import { Account } from '@app/account';
 
 import TokenFormContext from './TokenFormContext';
 import { createDynamicYupSchema } from './createDynamicYupSchema';
@@ -45,6 +47,22 @@ export function TokenForm({ children }: Props): React.ReactElement<Props> | null
     createInitialValues(tokenFields);
   };
 
+  const mapFormToTokenDto = (collectionId: number, address: string) => {
+    const attributes: TokenAttributes = generateTokenFromValues(tokenForm.values);
+    if (!attributes?.ipfsJson) {
+      return null;
+    }
+
+    const tokenFull: NftTokenDTO = {
+      address,
+      collectionId,
+      owner: address,
+      constData: attributes,
+    };
+
+    return tokenFull;
+  };
+
   const resetForm = useCallback(() => {
     setAttributes({});
     setTokenImg(null);
@@ -59,15 +77,16 @@ export function TokenForm({ children }: Props): React.ReactElement<Props> | null
 
   const value = useMemo(
     () => ({
-      attributes,
-      initializeTokenForm,
-      tokenForm,
-      setAttributes,
-      setTokenImg,
       tokenImg,
+      tokenForm,
+      attributes,
       resetForm,
+      setTokenImg,
+      setAttributes,
+      mapFormToTokenDto,
+      initializeTokenForm,
     }),
-    [attributes, initializeTokenForm, tokenForm, tokenImg, resetForm],
+    [tokenForm, tokenImg, attributes, resetForm, mapFormToTokenDto, initializeTokenForm],
   );
 
   return <TokenFormContext.Provider value={value}>{children}</TokenFormContext.Provider>;
