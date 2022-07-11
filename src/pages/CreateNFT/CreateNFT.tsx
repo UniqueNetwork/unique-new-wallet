@@ -248,7 +248,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                     <LabelText>Upload image*</LabelText>
                     <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
                     {/* TODO - fix UI kit Upload problems: set value as url from file, reloading */}
-                    <UploadMemo
+                    <Upload
                       disabled={!selectedCollection?.id}
                       type="square"
                       onChange={setImage}
@@ -300,5 +300,3 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     </>
   );
 };
-
-const UploadMemo = memo(Upload);
