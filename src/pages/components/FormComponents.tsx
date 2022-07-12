@@ -133,7 +133,7 @@ export const ButtonGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
 
-  & > .unique-button {
+  .unique-button {
     flex: 1 1 100%;
 
     @media screen and (min-width: 1024px) {

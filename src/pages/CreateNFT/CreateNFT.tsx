@@ -1,17 +1,8 @@
-import React, {
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  VFC,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import {
   Avatar,
-  Button,
   Heading,
   Suggest,
   Text,
@@ -21,7 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
-import { Alert, StatusTransactionModal } from '@app/components';
+import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import {
   Collection,
@@ -275,16 +266,16 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                   </FormRowEmpty>
                 )}
                 <Alert type="warning">
-                  A fee of ~ {feeFormatted} QTZ can be applied to the transaction
+                  A fee of ~ {feeFormatted} can be applied to the transaction
                 </Alert>
                 <ButtonGroup>
-                  <Button
+                  <MintingBtn
                     role="primary"
                     title="Confirm and create more"
                     disabled={!selectedCollection?.id || disabled}
                     onClick={() => confirmFormHandler()}
                   />
-                  <Button
+                  <MintingBtn
                     title="Confirm and close"
                     disabled={!selectedCollection?.id || disabled}
                     onClick={() => confirmFormHandler(true)}

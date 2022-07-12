@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import {
-  Button,
   Heading,
   InputText,
   Text,
@@ -13,7 +12,7 @@ import styled from 'styled-components';
 import { useAccounts } from '@app/hooks';
 import { CollectionFormContext } from '@app/context';
 import { CollectionApiService, useExtrinsicFee, useFileUpload } from '@app/api';
-import { Alert, CollectionStepper, Confirm } from '@app/components';
+import { Alert, CollectionStepper, Confirm, MintingBtn } from '@app/components';
 import {
   AdditionalText,
   ButtonGroup,
@@ -186,7 +185,7 @@ const MainInformationComponent: FC = () => {
               A fee of ~ {feeFormatted} can be applied to the transaction
             </Alert>
             <ButtonGroup>
-              <Button
+              <MintingBtn
                 disabled={!dirty || !isValid}
                 iconRight={{
                   color: 'currentColor',
