@@ -1,21 +1,37 @@
-import React, { useContext, useEffect, useState, VFC } from 'react';
+import {
+  Avatar,
+  Button,
+  Heading,
+  Suggest,
+  Text,
+  Upload,
+  useNotifications,
+} from '@unique-nft/ui-kit';
 import classNames from 'classnames';
 import get from 'lodash/get';
-import { Avatar, Button, Heading, Suggest, Text, Upload } from '@unique-nft/ui-kit';
+import React, {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  VFC,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Alert, StatusTransactionModal } from '@app/components';
-import { useAccounts, useApi, useTokenMutation } from '@app/hooks';
+import {
+  Collection,
+  TokenApiService,
+  useExtrinsicFee,
+  useExtrinsicFlow,
+  useFileUpload,
+} from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { Collection, useFileUpload } from '@app/api';
-import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { ROUTE } from '@app/routes';
-import { TokenField } from '@app/types';
-import { TokenFormContext } from '@app/context';
-import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
-import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
-import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import { Alert, StatusTransactionModal } from '@app/components';
+import { TokenFormContext } from '@app/context';
+import { useAccounts, useApi } from '@app/hooks';
 import {
   AdditionalText,
   ButtonGroup,
@@ -29,6 +45,12 @@ import {
   SuggestOption,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
+import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
+import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
+import { ROUTE } from '@app/routes';
+import { TokenField } from '@app/types';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 interface Option {
   id: number;
@@ -51,59 +73,50 @@ const defaultOptions = {
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const { currentChain } = useApi();
-  const { initializeTokenForm, setTokenImg, tokenForm } = useContext(TokenFormContext);
-  const { selectedAccount } = useAccounts();
-  const { uploadFile } = useFileUpload();
-  const navigate = useNavigate();
+  const [closable, setClosable] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
+
+  const navigate = useNavigate();
+  const { uploadFile } = useFileUpload();
+  const { selectedAccount } = useAccounts();
+  const { error, info } = useNotifications();
+  const { initializeTokenForm, setTokenImg, tokenForm, mapFormToTokenDto } =
+    useContext(TokenFormContext);
+
   // TODO - use searchOnType here
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
   });
+
   const { data: collection } = useCollectionQuery(selectedCollection?.id ?? 0);
-  const { fee, generateExtrinsic, isCreatingNFT, onCreateNFT } = useTokenMutation(
-    selectedCollection?.id ?? 0,
-  );
+
+  const {
+    getFee,
+    feeFormatted,
+    error: feeError,
+    isError: isFeeError,
+  } = useExtrinsicFee(TokenApiService.tokenCreateMutation);
+  const {
+    signAndSubmitExtrinsic,
+    status,
+    error: errorMessage,
+    isLoading,
+  } = useExtrinsicFlow(TokenApiService.tokenCreateMutation);
   const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
 
+  const collectionsOptions = useMemo(
+    () =>
+      collections?.map<Option>((collection: Collection) => ({
+        id: collection.collection_id,
+        title: collection.name,
+        description: collection.description,
+        img: getTokenIpfsUriByImagePath(collection.collection_cover),
+      })) ?? [],
+    [collections],
+  );
+
   const tokenFields = get(collection, 'properties.fields', []);
-
-  const collectionsOptions: Option[] =
-    collections?.map((collection: Collection) => ({
-      id: collection.collection_id,
-      title: collection.name,
-      description: collection.description,
-      img: getTokenIpfsUriByImagePath(collection.collection_cover),
-    })) ?? [];
-
-  const uploadImage = async (file: Blob) => {
-    const response = await uploadFile(file);
-
-    setFieldValue('ipfsJson', JSON.stringify({ ipfs: response?.cid, type: 'image' }));
-  };
-
-  const setImage = (data: { url: string; file: Blob } | null) => {
-    if (data?.file) {
-      const file: Blob = data?.file;
-
-      setTokenImg(file);
-
-      void uploadImage(file);
-    }
-  };
-
-  const onConfirmAndClose = async () => {
-    await submitForm();
-    await onCreateNFT();
-
-    navigate(`${currentChain?.network}/${ROUTE.MY_TOKENS}`);
-  };
-
-  const onConfirmAndCreateMore = async () => {
-    await submitForm();
-    await onCreateNFT();
-  };
 
   useEffect(() => {
     if (tokenFields?.length) {
@@ -111,10 +124,80 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     }
   }, [tokenFields]);
 
-  // !!!Only for attributes change
   useEffect(() => {
-    void generateExtrinsic();
+    if (!selectedCollection || !selectedAccount) {
+      return;
+    }
+
+    const tokenDTO = mapFormToTokenDto(selectedCollection.id, selectedAccount?.address);
+    if (!tokenDTO) {
+      return;
+    }
+
+    getFee({ token: tokenDTO });
   }, [values]);
+
+  useEffect(() => {
+    if (status === 'success') {
+      info('Collection created successfully');
+
+      closable && navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+    }
+
+    if (status === 'error') {
+      error(errorMessage?.message);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (isFeeError) {
+      error(feeError?.message);
+    }
+  }, [isFeeError]);
+
+  const uploadImage = async (file: Blob) => {
+    const response = await uploadFile(file);
+
+    setFieldValue('ipfsJson', JSON.stringify({ ipfs: response?.cid, type: 'image' }));
+  };
+
+  const setImage = useCallback((data: { url: string; file: Blob } | null) => {
+    if (data?.file) {
+      const file: Blob = data?.file;
+
+      setTokenImg(file);
+
+      void uploadImage(file);
+    }
+  }, []);
+
+  const confirmFormHandler = (closable?: boolean) => {
+    if (!selectedCollection) {
+      error('Collection is not chosen');
+
+      return;
+    }
+    if (!selectedAccount) {
+      error('Account is not found');
+
+      return;
+    }
+
+    const tokenDTO = mapFormToTokenDto(selectedCollection.id, selectedAccount?.address);
+    if (!tokenDTO) {
+      error('Token wasnt formed');
+
+      return;
+    }
+
+    setClosable(!!closable);
+
+    submitForm().then(() =>
+      signAndSubmitExtrinsic({
+        token: tokenDTO,
+      }),
+    );
+  };
 
   const disabled = !values.ipfsJson || !dirty || !isValid;
 
@@ -152,8 +235,8 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                         );
                       },
                     }}
-                    suggestions={collectionsOptions}
                     isLoading={isCollectionsLoading}
+                    suggestions={collectionsOptions}
                     getActiveSuggestOption={(option: Option, activeOption: Option) =>
                       option.id === activeOption.id
                     }
@@ -193,19 +276,19 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                   </FormRowEmpty>
                 )}
                 <Alert type="warning">
-                  A fee of ~ {fee} QTZ can be applied to the transaction
+                  A fee of ~ {feeFormatted} QTZ can be applied to the transaction
                 </Alert>
                 <ButtonGroup>
                   <Button
-                    disabled={!selectedCollection?.id || disabled}
-                    title="Confirm and create more"
                     role="primary"
-                    onClick={() => void onConfirmAndCreateMore()}
+                    title="Confirm and create more"
+                    disabled={!selectedCollection?.id || disabled}
+                    onClick={() => confirmFormHandler()}
                   />
                   <Button
-                    disabled={!selectedCollection?.id || disabled}
                     title="Confirm and close"
-                    onClick={() => void onConfirmAndClose()}
+                    disabled={!selectedCollection?.id || disabled}
+                    onClick={() => confirmFormHandler(true)}
                   />
                 </ButtonGroup>
               </Form>
@@ -214,7 +297,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
         </WrapperContent>
         <Sidebar collectionId={selectedCollection?.id} />
       </MainWrapper>
-      <StatusTransactionModal isVisible={isCreatingNFT} description="Creating NFT" />
+      <StatusTransactionModal isVisible={isLoading} description="Creating NFT" />
     </>
   );
 };

@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import { Heading } from '@unique-nft/ui-kit';
 
 import { RampModal } from '@app/pages';
-import { NetworkType } from '@app/types';
+import { Chain, NetworkType } from '@app/types';
 import { useAccounts } from '@app/hooks';
 import { SendFunds } from '@app/pages/SendFunds';
 import { useAccountBalancesService } from '@app/api/restApi/balance/hooks/useAccountBalancesService';
 import { config } from '@app/config';
+import { ApiWrapper } from '@app/api';
 
 import { CoinsRow } from './components';
 
@@ -19,6 +20,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
+  const [selectedChain, setSelectedChain] = useState<Chain>(config.defaultChain);
 
   const { selectedAccount } = useAccounts();
 
@@ -33,10 +35,11 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
 
   useEffect(() => {
     refetchChainsBalance();
-  }, [refetchChainsBalance, selectedAccount]);
+  }, [refetchChainsBalance, selectedAccount?.address]);
 
-  const sendFundsHandler = useCallback((networkType: NetworkType) => {
+  const sendFundsHandler = useCallback((networkType: NetworkType, chain: Chain) => {
     setSelectedNetworkType(networkType);
+    setSelectedChain(chain);
     setFundsModalVisible(true);
   }, []);
 
@@ -50,12 +53,15 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   return (
     <>
       {fundsModalVisible && (
-        <SendFunds
-          isVisible={true}
-          senderAccount={selectedAccount}
-          networkType={selectedNetworkType}
-          onClose={closeTransferFundsModalHandler}
-        />
+        <ApiWrapper>
+          <SendFunds
+            isVisible={true}
+            senderAccount={selectedAccount}
+            networkType={selectedNetworkType}
+            chain={selectedChain}
+            onClose={closeTransferFundsModalHandler}
+          />
+        </ApiWrapper>
       )}
       <RampModal isVisible={rampModalVisible} onClose={closeRampModalHandler} />
       <CoinsContainer>
@@ -75,6 +81,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
               iconName={`chain-${chain.network.toLowerCase()}`}
               name={chain.name}
               symbol={chainsBalance?.[idx].availableBalance.unit}
+              chain={chain}
               onSend={sendFundsHandler}
               onGet={isKusamaChain ? getCoinsHandler : undefined}
             />

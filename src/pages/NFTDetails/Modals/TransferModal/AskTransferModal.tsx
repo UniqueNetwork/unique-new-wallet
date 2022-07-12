@@ -5,28 +5,22 @@ import styled from 'styled-components';
 import { AdditionalWarning100 } from '@app/styles/colors';
 
 interface AskTransferModalProps {
+  fee?: string;
   isVisible: boolean;
-  onTransfer(receiver: string): void;
-  onClose(): void;
+  recipient?: string;
+  onClose: () => void;
+  onConfirm: () => void;
+  onRecipientChange: (recipient: string) => void;
 }
 
 export const AskTransferModal: VFC<AskTransferModalProps> = ({
+  fee,
   isVisible,
-  onTransfer,
+  recipient,
   onClose,
+  onConfirm,
+  onRecipientChange,
 }) => {
-  const [address, setAddress] = useState<string>('');
-  const onAddressInputChange = (value: string) => {
-    setAddress(value);
-  };
-
-  const onConfirmTransferClick = () => {
-    if (!address) {
-      return;
-    }
-    onTransfer(address);
-  };
-
   return (
     <Modal isClosable isVisible={isVisible} onClose={onClose}>
       <HeadingWrapper>
@@ -34,9 +28,12 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
       </HeadingWrapper>
       <InputWrapper
         label="Please enter the address you wish to send the NFT to"
-        value={address}
-        onChange={onAddressInputChange}
+        value={recipient}
+        onChange={onRecipientChange}
       />
+      <TextStyled color="additional-warning-500" size="s">
+        A fee of ~ {fee} can be applied to the transaction
+      </TextStyled>
       <TextStyled color="additional-warning-500" size="s">
         Proceed with caution, once confirmed the transaction cannot be reverted.
       </TextStyled>
@@ -48,10 +45,10 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
       </TextStyled>
       <ButtonWrapper>
         <Button
-          disabled={!address}
           role="primary"
           title="Confirm"
-          onClick={onConfirmTransferClick}
+          disabled={!recipient}
+          onClick={onConfirm}
         />
       </ButtonWrapper>
     </Modal>

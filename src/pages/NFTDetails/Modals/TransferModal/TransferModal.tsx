@@ -6,9 +6,8 @@ import {
   AskTransferModal,
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { useExtrinsicSubmit, ViewToken } from '@app/api';
-import { useTokenTransfer } from '@app/api/restApi/token';
-import { useExtrinsicStatus } from '@app/api/restApi/extrinsic/hooks/useExtrinsicStatus';
+import { useExtrinsicFlow, useExtrinsicFee, ViewToken } from '@app/api';
+import { TokenApiService } from '@app/api/restApi/token';
 
 interface TransferModalProps {
   isVisible: boolean;
@@ -23,97 +22,76 @@ export const TransferModal: VFC<TransferModalProps> = ({
   onComplete,
   onClose,
 }) => {
-  const { selectedAccount, signMessage } = useAccounts();
-  const { tokenTransfer } = useTokenTransfer();
-  const { submitExtrinsic } = useExtrinsicSubmit();
+  const [recipient, setRecipient] = useState<string | undefined>();
+
+  const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
-  const [status, setStatus] = useState<'ask-transfer' | 'transfer-stages'>(
-    'ask-transfer',
-  );
+  const { feeFormatted, getFee } = useExtrinsicFee(TokenApiService.transferMutation);
+  const {
+    status,
+    error: errorMessage,
+    isLoading,
+    signAndSubmitExtrinsic,
+  } = useExtrinsicFlow(TokenApiService.transferMutation);
 
-  const [txHash, setTxHash] = useState<string>();
-  const { data: extrinsicStatus } = useExtrinsicStatus(txHash);
-
-  const onTransfer = useCallback(
-    async (_recipient: string) => {
-      if (!token || !selectedAccount?.address) {
-        return;
-      }
-
-      setStatus('transfer-stages');
-      try {
-        const tx = await tokenTransfer({
-          from: selectedAccount.address,
-          to: _recipient,
-          collectionId: token.collection_id,
-          tokenId: token.token_id,
-        });
-        if (!tx) {
-          // TODO: move this message to general dictionary
-          throw new Error('Unexpected error');
-        }
-
-        const signature = await signMessage(tx.signerPayloadJSON);
-
-        if (!signature) {
-          error('Transfer error', {
-            name: 'Transfer',
-            size: 32,
-            color: 'white',
-          });
-
-          return;
-        }
-
-        const submitResult = await submitExtrinsic({
-          ...tx,
-          signature,
-        });
-
-        if (submitResult) {
-          setTxHash(submitResult.hash);
-        }
-      } catch (e) {
-        // TODO: move this message to general dictionary
-        error('Transfer cancelled');
-        onClose();
-      }
-    },
-    [setStatus],
-  );
-
-  useEffect(() => {
-    if (!extrinsicStatus) {
+  const transferHandler = () => {
+    if (!token || !recipient || !selectedAccount?.address) {
       return;
     }
-    const { isCompleted, isError, errorMessage } = extrinsicStatus;
-    if (isCompleted) {
-      onComplete();
-      info('Transfer completed successfully');
+
+    signAndSubmitExtrinsic({
+      body: {
+        to: recipient,
+        from: selectedAccount.address,
+        collectionId: token.collection_id,
+        tokenId: token.token_id,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (!token || !recipient || !selectedAccount?.address) {
+      return;
     }
-    if (isError) {
-      error(errorMessage);
+
+    getFee({
+      body: {
+        to: recipient,
+        from: selectedAccount.address,
+        collectionId: token.collection_id,
+        tokenId: token.token_id,
+      },
+    });
+  }, [recipient]);
+
+  useEffect(() => {
+    if (status === 'success') {
+      info('Transfer completed successfully');
+      onComplete();
+    }
+
+    if (status === 'error') {
+      error(errorMessage?.message);
       onClose();
     }
-  }, [extrinsicStatus]);
+  }, [status]);
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (status === 'ask-transfer') {
-    return (
-      <AskTransferModal
-        isVisible={isVisible}
-        onTransfer={(receiver) => {
-          void onTransfer(receiver);
-        }}
-        onClose={onClose}
-      />
-    );
-  }
-  if (status === 'transfer-stages') {
+  if (isLoading) {
     return <TransferStagesModal />;
   }
-  return null;
+
+  return (
+    <AskTransferModal
+      fee={feeFormatted}
+      isVisible={isVisible}
+      recipient={recipient}
+      onClose={onClose}
+      onRecipientChange={setRecipient}
+      onConfirm={transferHandler}
+    />
+  );
 };

@@ -10,17 +10,19 @@ import {
   InputText,
   Text,
   Tooltip,
+  useNotifications,
 } from '@unique-nft/ui-kit';
 
+import { useAccounts, useApi } from '@app/hooks';
 import { ArtificialAttributeItemType } from '@app/types';
 import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
-import { useApi, useCollectionMutation } from '@app/hooks';
 import {
   Alert,
   CollectionStepper,
   Confirm,
   StatusTransactionModal,
 } from '@app/components';
+import { ROUTE } from '@app/routes';
 import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
 import {
   ButtonGroup,
@@ -31,7 +33,7 @@ import {
   SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
-import { ROUTE } from '@app/routes';
+import { CollectionApiService, useExtrinsicFlow, useExtrinsicFee } from '@app/api';
 
 export const NFTAttributes = () => {
   const {
@@ -42,22 +44,65 @@ export const NFTAttributes = () => {
     setTokenLimit,
     ownerCanDestroy,
     setOwnerCanDestroy,
+    mapFormToCollectionDto,
   } = useContext(CollectionFormContext);
+  const { selectedAccount } = useAccounts();
   const navigate = useNavigate();
   const { currentChain } = useApi();
-  const { isCreatingCollection, onCreateCollection } = useCollectionMutation();
+  const { info, error } = useNotifications();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
-  const { fee, generateExtrinsic } = useCollectionMutation();
+  const {
+    signAndSubmitExtrinsic,
+    status,
+    error: errorMessage,
+    isLoading,
+  } = useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
+  const {
+    error: feeError,
+    isError: isFeeError,
+    getFee,
+    feeFormatted,
+  } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
   const [address, setAddress] = useState<string>('');
+
+  useEffect(() => {
+    if (status === 'success') {
+      info('Collection created successfully');
+
+      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
+    }
+    if (status === 'error') {
+      error(errorMessage?.message);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    if (isFeeError && feeError) {
+      // waiting notifications fix
+    }
+  }, [feeError, isFeeError]);
 
   const onPreviousStepClick = () => {
     navigate(`/${currentChain?.network}/create-collection/main-information`);
   };
 
-  const createCollection = async () => {
-    await onCreateCollection();
+  const createCollectionHanler = () => {
+    if (!selectedAccount) {
+      error('Account is not found');
 
-    navigate(`/${currentChain?.network}/ROUTE.MY_COLLECTIONS`);
+      return;
+    }
+
+    const collection = mapFormToCollectionDto(selectedAccount?.address);
+    if (!collection) {
+      error('Collection was not formed');
+
+      return;
+    }
+
+    signAndSubmitExtrinsic({
+      collection,
+    });
   };
 
   const onSubmitAttributes = () => {
@@ -67,7 +112,7 @@ export const NFTAttributes = () => {
       if (attributes?.length < 2) {
         setIsOpenConfirm(true);
       } else {
-        void createCollection();
+        createCollectionHanler();
       }
     }
   };
@@ -89,8 +134,6 @@ export const NFTAttributes = () => {
 
   const onSetAttributes = (attributes: ArtificialAttributeItemType[]) => {
     setAttributes([...attributes, ...defaultAttributesWithTokenIpfs]);
-
-    void generateExtrinsic();
   };
 
   const attributesWithoutIpfs = useMemo(
@@ -98,10 +141,9 @@ export const NFTAttributes = () => {
     [attributes],
   );
 
-  // !!!Only for the first render!
   useEffect(() => {
-    void generateExtrinsic();
-  }, []);
+    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
+  }, [attributes]);
 
   return (
     <>
@@ -213,7 +255,7 @@ export const NFTAttributes = () => {
             </SettingsRow>
           </AdvancedSettingsAccordion>
           <Alert type="warning" className="alert-wrapper">
-            A fee of ~ {fee} can be applied to the transaction
+            A fee of ~ {feeFormatted} can be applied to the transaction
           </Alert>
           <ButtonGroup>
             <Button
@@ -242,7 +284,7 @@ export const NFTAttributes = () => {
             role: 'primary',
             onClick: () => {
               setIsOpenConfirm(false);
-              void onCreateCollection();
+              createCollectionHanler();
             },
           },
         ]}
@@ -252,10 +294,7 @@ export const NFTAttributes = () => {
       >
         <Text>You cannot return to editing the attributes in this product version.</Text>
       </Confirm>
-      <StatusTransactionModal
-        isVisible={isCreatingCollection}
-        description="Creating collection"
-      />
+      <StatusTransactionModal isVisible={isLoading} description="Creating collection" />
     </>
   );
 };

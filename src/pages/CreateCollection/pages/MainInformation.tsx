@@ -1,10 +1,18 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { Button, Heading, InputText, Text, Textarea, Upload } from '@unique-nft/ui-kit';
+import {
+  Button,
+  Heading,
+  InputText,
+  Text,
+  Textarea,
+  Upload,
+  useNotifications,
+} from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
+import { useAccounts } from '@app/hooks';
 import { CollectionFormContext } from '@app/context';
-import { useFileUpload } from '@app/api';
-import { useCollectionMutation } from '@app/hooks';
+import { CollectionApiService, useExtrinsicFee, useFileUpload } from '@app/api';
 import { Alert, CollectionStepper, Confirm } from '@app/components';
 import {
   AdditionalText,
@@ -19,8 +27,16 @@ import {
 } from '@app/pages/components/FormComponents';
 
 const MainInformationComponent: FC = () => {
-  const { mainInformationForm, setCoverImgFile } = useContext(CollectionFormContext);
-  const { fee, generateExtrinsic } = useCollectionMutation();
+  const { selectedAccount } = useAccounts();
+  const { error } = useNotifications();
+  const { mainInformationForm, setCoverImgFile, mapFormToCollectionDto } =
+    useContext(CollectionFormContext);
+  const {
+    isError: isFeeError,
+    error: feeError,
+    feeFormatted,
+    getFee,
+  } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
   const { uploadFile } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
@@ -62,7 +78,7 @@ const MainInformationComponent: FC = () => {
 
     setFieldValue('coverImgAddress', response?.cid);
 
-    await generateExtrinsic();
+    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
   };
 
   const setCover = (data: { url: string; file: Blob } | null) => {
@@ -95,9 +111,14 @@ const MainInformationComponent: FC = () => {
     }
   };
 
-  // !Only for values!
   useEffect(() => {
-    void generateExtrinsic();
+    if (isFeeError) {
+      error(feeError?.message);
+    }
+  }, [isFeeError]);
+
+  useEffect(() => {
+    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
   }, [values]);
 
   return (
@@ -162,7 +183,7 @@ const MainInformationComponent: FC = () => {
               </UploadWidget>
             </FormRow>
             <Alert type="warning" className="alert-wrapper">
-              A fee of ~ {fee} can be applied to the transaction
+              A fee of ~ {feeFormatted} can be applied to the transaction
             </Alert>
             <ButtonGroup>
               <Button

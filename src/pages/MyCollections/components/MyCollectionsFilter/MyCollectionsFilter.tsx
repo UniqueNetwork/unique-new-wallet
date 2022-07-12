@@ -107,18 +107,34 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
 };
 
 export const LeftColumn = styled.div`
+  flex: 1 1 100%;
   display: grid;
-  grid-template-columns: 502px 268px;
-  grid-column-gap: calc(var(--prop-gap) * 2);
+  gap: var(--prop-gap);
+  margin-bottom: var(--prop-gap);
+
+  @media screen and (min-width: 768px) {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  @media screen and (min-width: 1024px) {
+    max-width: 786px;
+    margin-bottom: 0;
+    margin-right: var(--prop-gap);
+  }
 `;
 
 export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
   &.my-collections-filter {
-    ${PaddedBlock};
+    border-bottom: 1px solid var(--color-grey-300);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--color-grey-300);
+    flex-wrap: wrap;
+    padding-bottom: var(--prop-gap);
+
+    @media screen and (min-width: 1024px) {
+      flex-wrap: nowrap;
+      ${PaddedBlock};
+    }
 
     .unique-input-text,
     .unique-select {
@@ -129,6 +145,11 @@ export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
       .select-value {
         grid-column-gap: 7px;
       }
+    }
+
+    & > .unique-button {
+      flex: 0 0 auto;
+      margin-left: auto;
     }
   }
 `;

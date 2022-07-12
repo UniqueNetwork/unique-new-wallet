@@ -6,9 +6,16 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
-import { ArtificialAttributeItemType, MainInformationInitialValues } from '@app/types';
+import {
+  ArtificialAttributeItemType,
+  AttributeItemType,
+  MainInformationInitialValues,
+  NftCollectionDTO,
+  ProtobufAttributeType,
+} from '@app/types';
 import { maxTokenLimit } from '@app/pages/constants/token';
 import { useApi } from '@app/hooks';
+import { convertArtificialAttributesToProtobuf, fillProtobufJson } from '@app/utils';
 
 import CollectionFormContext from './CollectionFormContext';
 
@@ -70,10 +77,55 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
     },
   });
 
+  const mapFormToCollectionDto = (address: string) => {
+    const converted: AttributeItemType[] =
+      convertArtificialAttributesToProtobuf(attributes);
+    const protobufJson: ProtobufAttributeType = fillProtobufJson(converted);
+    const varDataWithImage = {
+      collectionCover: mainInformationForm.values.coverImgAddress,
+    };
+
+    const collectionFull: NftCollectionDTO = {
+      address,
+      description: mainInformationForm.values.description ?? '',
+      limits: {
+        ownerCanDestroy,
+        ownerCanTransfer,
+        tokenLimit,
+      },
+      metaUpdatePermission: 'ItemOwner',
+      mode: 'Nft',
+      name: mainInformationForm.values.name ?? '',
+      properties: {
+        offchainSchema: '',
+        schemaVersion: 'Unique',
+        variableOnChainSchema: JSON.stringify(varDataWithImage),
+        constOnChainSchema: protobufJson,
+      },
+      tokenPrefix: mainInformationForm.values.tokenPrefix ?? '',
+      permissions: {
+        access: 'Normal',
+        mintMode: true,
+        nesting: 'Disabled',
+      },
+      tokenPropertyPermissions: {
+        constData: {
+          mutable: true,
+          collectionAdmin: true,
+          tokenOwner: true,
+        },
+      },
+    };
+
+    return collectionFull;
+  };
+
   const value = useMemo(
     () => ({
       attributes,
+      tokenLimit,
       coverImgFile,
+      variableSchema,
       mainInformationForm,
       ownerCanDestroy,
       ownerCanTransfer,
@@ -83,8 +135,7 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
       setOwnerCanTransfer,
       setTokenLimit,
       setVariableSchema,
-      tokenLimit,
-      variableSchema,
+      mapFormToCollectionDto,
     }),
     [
       attributes,
@@ -94,6 +145,7 @@ export function CollectionForm({ children }: Props): React.ReactElement<Props> |
       ownerCanTransfer,
       tokenLimit,
       variableSchema,
+      mapFormToCollectionDto,
     ],
   );
 

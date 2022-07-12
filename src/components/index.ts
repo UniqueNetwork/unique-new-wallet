@@ -4,7 +4,6 @@ export * from './Alert';
 export * from './CollectionScanLink';
 export * from './CollectionSidebar';
 export * from './CollectionStepper';
-export * from './Filters';
 export * from './Header';
 export * from './NotFoundCoins';
 export * from './PageLayout';
