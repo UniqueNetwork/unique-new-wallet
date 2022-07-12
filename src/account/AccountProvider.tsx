@@ -4,12 +4,13 @@ import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 
 import { sleep } from '@app/utils';
-import { useAccountBalanceService } from '@app/api';
 import { NetworkType } from '@app/types';
+import { useAccountBalanceService } from '@app/api';
+import { useGraphQlAccountCommonInfo } from '@app/api/graphQL/account';
 
-import { Account, AccountProvider, AccountSigner } from './AccountContext';
-import { SignModal } from '../components/SignModal/SignModal';
 import { DefaultAccountKey } from './constants';
+import { SignModal } from '../components/SignModal/SignModal';
+import { Account, AccountProvider, AccountSigner } from './AccountContext';
 
 export const AccountWrapper: FC = ({ children }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -17,6 +18,9 @@ export const AccountWrapper: FC = ({ children }) => {
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
   const { data: balanceAccount } = useAccountBalanceService(selectedAccount?.address);
+  const { collectionsTotal, tokensTotal } = useGraphQlAccountCommonInfo(
+    selectedAccount?.address,
+  );
 
   const changeAccount = useCallback((account: Account) => {
     localStorage.setItem(DefaultAccountKey, account.address);
@@ -140,6 +144,8 @@ export const AccountWrapper: FC = ({ children }) => {
       selectedAccount: selectedAccount
         ? {
             ...selectedAccount,
+            tokensTotal,
+            collectionsTotal,
             balance: balanceAccount,
             unitBalance: (balanceAccount?.availableBalance.unit as NetworkType) ?? '',
           }
@@ -157,6 +163,8 @@ export const AccountWrapper: FC = ({ children }) => {
       isLoading,
       accounts,
       selectedAccount,
+      collectionsTotal,
+      tokensTotal,
       balanceAccount,
       forgetLocalAccount,
       fetchAccounts,
