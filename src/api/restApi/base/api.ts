@@ -24,7 +24,7 @@ export class BaseApi implements IBaseApi {
     });
   }
 
-  async get<T = any, R = AxiosResponse<T>, D = any>(
+  async get<T = any, R = AxiosResponse<T>['data'], D = any>(
     url: string,
     config?: AxiosRequestConfig<D>,
   ): Promise<R> {
