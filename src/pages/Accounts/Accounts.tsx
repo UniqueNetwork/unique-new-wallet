@@ -11,12 +11,13 @@ import {
 import styled from 'styled-components/macro';
 
 import { Account, AccountSigner } from '@app/account';
-import { useAccounts } from '@app/hooks';
-import { NetworkType } from '@app/types';
+import { useAccounts, useApi } from '@app/hooks';
+import { Chain, NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
 import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
+import { ChainNetworks } from '@app/account/constants';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 
 import { config } from '../../config';
@@ -24,119 +25,130 @@ import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 
 type AccountsColumnsProps = {
+  currentChain?: Chain;
   onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
 };
 
 const getAccountsColumns = ({
+  currentChain,
   onShowSendFundsModal,
   onForgetWalletClick,
-}: AccountsColumnsProps): TableColumnProps[] => [
-  {
-    title: (
-      <>
-        Account
-        <Tooltip
-          placement="right-start"
-          content={<Icon name="question" size={20} color="var(--color-primary-500)" />}
-        >
-          Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
-          represented by a different address character sequence, but they can be converted
-          between each other because they share the same public key. You can see all
-          transformations for any given address on Subscan.
-        </Tooltip>
-      </>
-    ),
-    width: '35%',
-    field: 'accountInfo',
-    render(address, rowData: Account) {
-      return (
-        <AccountCellWrapper>
-          <AccountCard
-            canCopy
-            accountAddress={rowData?.address}
-            accountName={
-              `${rowData?.meta.name} ${
-                rowData?.signerType && `(${rowData.signerType.toLowerCase()})`
-              }` || ''
-            }
-          />
-        </AccountCellWrapper>
-      );
-    },
-  },
-  {
-    title: 'Balance',
-    width: '20%',
-    field: 'balance',
-    render(balance?: AllBalancesResponse) {
-      return (
-        <NetworkBalances
-          balanceFull={balance?.freeBalance.amount}
-          balanceTransferable={balance?.availableBalance.amount}
-          balanceLocked={balance?.lockedBalance.amount}
-          symbol={balance?.availableBalance.unit as NetworkType}
-        />
-      );
-    },
-  },
-  {
-    title: 'Block explorer',
-    width: '23%',
-    field: 'explorer',
-    render(address, rowData: Account) {
-      return (
-        <LinksWrapper>
-          <LinkStyled
-            target="_blank"
-            rel="noreferrer"
-            href={`${config.subScanUrl}${rowData?.address}`}
+}: AccountsColumnsProps): TableColumnProps[] => {
+  const { network } = currentChain || {};
+  return [
+    {
+      title: (
+        <>
+          Account
+          <Tooltip
+            placement="right-start"
+            content={<Icon name="question" size={20} color="var(--color-primary-500)" />}
           >
-            <Text color="primary-500">Subscan</Text>
-            <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-          </LinkStyled>
-          <LinkStyled
-            target="_blank"
-            rel="noreferrer"
-            href={`${config.uniqueScanUrl}${rowData?.address}`}
-          >
-            <Text color="primary-500">UniqueScan</Text>
-            <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-          </LinkStyled>
-        </LinksWrapper>
-      );
+            Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
+            represented by a different address character sequence, but they can be
+            converted between each other because they share the same public key. You can
+            see all transformations for any given address on Subscan.
+          </Tooltip>
+        </>
+      ),
+      width: '35%',
+      field: 'accountInfo',
+      render(address, rowData: Account) {
+        return (
+          <AccountCellWrapper>
+            <AccountCard
+              canCopy
+              accountAddress={rowData?.address}
+              accountName={
+                `${rowData?.meta.name} ${
+                  rowData?.signerType && `(${rowData.signerType.toLowerCase()})`
+                }` || ''
+              }
+            />
+          </AccountCellWrapper>
+        );
+      },
     },
-  },
-  {
-    title: 'Actions',
-    width: '22%',
-    field: 'actions',
-    render(address, rowData: Account) {
-      return (
-        <ActionsWrapper>
-          <Button
-            title="Send"
-            disabled={!Number(rowData.balance?.availableBalance.amount)}
-            onClick={onShowSendFundsModal(rowData)}
+    {
+      title: 'Balance',
+      width: '20%',
+      field: 'balance',
+      render(balance?: AllBalancesResponse) {
+        return (
+          <NetworkBalances
+            balanceFull={balance?.freeBalance.amount}
+            balanceTransferable={balance?.availableBalance.amount}
+            balanceLocked={balance?.lockedBalance.amount}
+            symbol={balance?.availableBalance.unit as NetworkType}
           />
-          <Button disabled title="Get" />
-          {rowData.signerType === AccountSigner.local && (
-            <Dropdown
-              placement="right"
-              dropdownRender={() => (
-                <AccountContextMenu
-                  onForgetWalletClick={onForgetWalletClick(rowData?.address)}
-                />
-              )}
+        );
+      },
+    },
+    {
+      title: 'Block explorer',
+      width: '23%',
+      field: 'explorer',
+      render(address, rowData: Account) {
+        return (
+          <LinksWrapper>
+            {network !== ChainNetworks.opal && (
+              <LinkStyled
+                target="_blank"
+                rel="noreferrer"
+                href={`${
+                  network === ChainNetworks.quartz
+                    ? config.quartzSubscanUrl
+                    : config.uniqueSubscanUrl
+                }${rowData?.address}`}
+              >
+                <Text color="primary-500">Subscan</Text>
+                <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
+              </LinkStyled>
+            )}
+            <LinkStyled
+              target="_blank"
+              rel="noreferrer"
+              href={`${config.uniqueScanUrl}${network}/account/${rowData?.address}`}
             >
-              <Icon name="more-horiz" size={24} />
-            </Dropdown>
-          )}
-        </ActionsWrapper>
-      );
+              <Text color="primary-500">UniqueScan</Text>
+              <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
+            </LinkStyled>
+          </LinksWrapper>
+        );
+      },
     },
-  },
-];
+    {
+      title: 'Actions',
+      width: '22%',
+      field: 'actions',
+      render(address, rowData: Account) {
+        return (
+          <ActionsWrapper>
+            <Button
+              title="Send"
+              disabled={!Number(rowData.balance?.availableBalance.amount)}
+              onClick={onShowSendFundsModal(rowData)}
+            />
+            <Button disabled title="Get" />
+            {rowData.signerType === AccountSigner.local && (
+              <Dropdown
+                placement="right"
+                dropdownRender={() => (
+                  <AccountContextMenu
+                    onForgetWalletClick={onForgetWalletClick(rowData?.address)}
+                  />
+                )}
+              >
+                <Icon name="more-horiz" size={24} />
+              </Dropdown>
+            )}
+          </ActionsWrapper>
+        );
+      },
+    },
+  ];
+};
 
 export const Accounts = () => {
   const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
@@ -201,6 +213,8 @@ export const Accounts = () => {
   //   [accounts],
   // );
 
+  const { currentChain } = useApi();
+
   return (
     <PagePaperNoPadding>
       <AccountsPageHeader>
@@ -218,6 +232,7 @@ export const Accounts = () => {
       <AccountsPageContent>
         <Table
           columns={getAccountsColumns({
+            currentChain,
             onShowSendFundsModal: onSendFundsClick,
             onForgetWalletClick,
           })}
