@@ -1,4 +1,5 @@
 import { useQueryClient, UseQueryResult } from 'react-query';
+import { useApolloClient } from '@apollo/client';
 
 import { useApiQuery, ExtrinsicApiService } from '@app/api';
 import { useApi } from '@app/hooks';
@@ -9,6 +10,7 @@ export const useExtrinsicStatus = (
 ): UseQueryResult<ExtrinsicResultResponse> => {
   const { api } = useApi();
   const queryClient = useQueryClient();
+  const apolloClient = useApolloClient();
 
   return useApiQuery({
     baseURL: api?.baseURL,
@@ -25,6 +27,9 @@ export const useExtrinsicStatus = (
         if (isCompleted && !isError) {
           queryClient.invalidateQueries({
             predicate: (query) => query.queryKey.includes('balance'),
+          });
+          apolloClient.refetchQueries({
+            include: ['getAccountCommonInfo'],
           });
         }
       },
