@@ -152,6 +152,7 @@ const getAccountsColumns = ({
 
 export const Accounts = () => {
   const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
+  const { currentChain } = useApi();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
@@ -242,6 +243,7 @@ export const Accounts = () => {
       </AccountsPageContent>
       {isOpenModal && (
         <SendFunds
+          chain={currentChain}
           isVisible={true}
           senderAccount={selectedAddress}
           networkType={selectedAccount?.unitBalance}

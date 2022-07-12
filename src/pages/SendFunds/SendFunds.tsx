@@ -4,7 +4,8 @@ import { Modal, useNotifications } from '@unique-nft/ui-kit';
 import { Account } from '@app/account';
 import { Stages } from '@app/components';
 import { useBalanceTransfer } from '@app/api';
-import { NetworkType, StageStatus } from '@app/types';
+import { Chain, NetworkType, StageStatus } from '@app/types';
+import { useApi } from '@app/hooks';
 
 import { SendFundsModal } from './SendFundsModal';
 
@@ -14,6 +15,7 @@ export interface SendFundsProps {
   senderAccount?: Account;
   onClose: () => void;
   onSendSuccess?(): void;
+  chain: Chain;
 }
 
 const stages = [
@@ -32,10 +34,15 @@ const TransferStagesModal: VFC = () => {
 };
 
 export const SendFunds: FC<SendFundsProps> = (props) => {
-  const { onClose, senderAccount, onSendSuccess } = props;
+  const { onClose, senderAccount, onSendSuccess, chain } = props;
 
   const { error, info } = useNotifications();
+  const { setCurrentChain } = useApi();
   const { stage, fee, calculateFee, signTransferAndSubmit } = useBalanceTransfer();
+
+  useEffect(() => {
+    setCurrentChain(chain);
+  }, [chain, setCurrentChain]);
 
   const amountChangeHandler = (
     senderAddress: string,

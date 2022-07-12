@@ -12,7 +12,7 @@ interface CombinedContext {
   optionsContext?: unknown;
 }
 
-interface ApiMutationConfig<
+export interface ApiMutationConfig<
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
     Parameters<ConcreteEndpointMutation['request']>[0]
