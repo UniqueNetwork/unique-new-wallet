@@ -214,8 +214,6 @@ export const Accounts = () => {
   //   [accounts],
   // );
 
-  const { currentChain } = useApi();
-
   return (
     <PagePaperNoPadding>
       <AccountsPageHeader>
