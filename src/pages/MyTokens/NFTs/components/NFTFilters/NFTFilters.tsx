@@ -2,12 +2,13 @@ import React, { VFC, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, InputText, Select } from '@unique-nft/ui-kit';
+import { InputText, Select } from '@unique-nft/ui-kit';
 
 import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { ROUTE } from '@app/routes';
+import { MintingBtn } from '@app/components';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -58,7 +59,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
         value={sortByTokenId}
         onChange={sortByTokenIdHandler}
       />
-      <Button
+      <MintingBtn
         iconLeft={{
           name: 'plus',
           size: 12,

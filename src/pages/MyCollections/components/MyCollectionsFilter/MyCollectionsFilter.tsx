@@ -1,7 +1,7 @@
 import React, { useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, IconProps, InputText, Select } from '@unique-nft/ui-kit';
+import { IconProps, InputText, Select } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
@@ -9,6 +9,7 @@ import { iconDown, iconUp, Option } from '@app/utils';
 import { PaddedBlock } from '@app/styles/styledVariables';
 import { Direction } from '@app/api/graphQL/tokens';
 import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
+import { MintingBtn } from '@app/components';
 
 type SelectOption = {
   id: string;
@@ -90,7 +91,7 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
         />
         <Select options={sortOptions} value={sort} onChange={onChange} />
       </LeftColumn>
-      <Button
+      <MintingBtn
         iconLeft={{
           name: 'plus',
           size: 12,
