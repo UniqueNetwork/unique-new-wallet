@@ -31,7 +31,7 @@ export const CollectionSidebar = () => {
         <Card
           attributesInline={tags}
           title={tokenPrefix || 'Symbol'}
-          description="Collection name"
+          description={name || 'Collection name'}
           geometry="square"
           picture={undefined}
         />
