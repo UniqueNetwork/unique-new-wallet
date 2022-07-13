@@ -1,11 +1,11 @@
 import React, { FC, useEffect, VFC } from 'react';
 import { Modal, useNotifications } from '@unique-nft/ui-kit';
 
+import { useApi } from '@app/hooks';
 import { Account } from '@app/account';
 import { Stages } from '@app/components';
-import { useBalanceTransfer } from '@app/api';
 import { Chain, NetworkType, StageStatus } from '@app/types';
-import { useApi } from '@app/hooks';
+import { AccountApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 
 import { SendFundsModal } from './SendFundsModal';
 
@@ -36,9 +36,21 @@ const TransferStagesModal: VFC = () => {
 export const SendFunds: FC<SendFundsProps> = (props) => {
   const { onClose, senderAccount, onSendSuccess, chain } = props;
 
-  const { error, info } = useNotifications();
   const { setCurrentChain } = useApi();
-  const { stage, fee, calculateFee, signTransferAndSubmit } = useBalanceTransfer();
+  const { error, info } = useNotifications();
+
+  const {
+    isLoading,
+    error: errorMessage,
+    signAndSubmitExtrinsic,
+    status,
+  } = useExtrinsicFlow(AccountApiService.balanceTransfer);
+  const {
+    isError: isFeeError,
+    error: feeError,
+    feeFormatted,
+    getFee,
+  } = useExtrinsicFee(AccountApiService.balanceTransfer);
 
   useEffect(() => {
     setCurrentChain(chain);
@@ -49,46 +61,53 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     destinationAddress: string,
     amount: number,
   ) => {
-    calculateFee({ address: senderAddress, destination: destinationAddress, amount });
+    getFee({
+      balanceTransfer: {
+        address: senderAddress,
+        destination: destinationAddress,
+        amount,
+      },
+    });
   };
 
   useEffect(() => {
-    if (stage.status === StageStatus.success) {
+    if (status === 'success') {
+      info('Transfer completed successfully');
       onSendSuccess?.();
+      onClose();
+    } else if (status === 'error') {
+      error(errorMessage?.message);
     }
-  }, [stage.status]);
+  }, [status]);
+
+  useEffect(() => {
+    if (isFeeError) {
+      error(feeError?.message);
+    }
+  }, [isFeeError]);
 
   const confirmHandler = (
     senderAddress: string,
     destinationAddress: string,
     amount: number,
   ) => {
-    signTransferAndSubmit({
-      address: senderAddress,
-      destination: destinationAddress,
-      amount,
+    signAndSubmitExtrinsic({
+      balanceTransfer: {
+        address: senderAddress,
+        destination: destinationAddress,
+        amount,
+      },
     });
   };
 
-  useEffect(() => {
-    if (stage.status === StageStatus.success) {
-      info(stage.title);
-
-      onClose();
-    }
-    if (stage.status === StageStatus.error) {
-      error(stage.title);
-    }
-  }, [stage]);
-
   return (
     <>
-      {stage.status === StageStatus.inProgress ? (
+      {isLoading ? (
         <TransferStagesModal />
       ) : (
         <SendFundsModal
           {...props}
-          fee={fee}
+          fee={feeFormatted}
           senderAccount={senderAccount}
           onConfirm={confirmHandler}
           onAmountChange={amountChangeHandler}
