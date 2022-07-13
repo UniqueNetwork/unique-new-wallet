@@ -1,4 +1,12 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
@@ -7,12 +15,14 @@ import { sleep } from '@app/utils';
 import { NetworkType } from '@app/types';
 import { useAccountBalanceService } from '@app/api';
 import { useGraphQlAccountCommonInfo } from '@app/api/graphQL/account';
+import { ChainPropertiesContext } from '@app/context';
 
 import { DefaultAccountKey } from './constants';
 import { SignModal } from '../components/SignModal/SignModal';
 import { Account, AccountProvider, AccountSigner } from './AccountContext';
 
 export const AccountWrapper: FC = ({ children }) => {
+  const { chainProperties } = useContext(ChainPropertiesContext);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
@@ -102,8 +112,14 @@ export const AccountWrapper: FC = ({ children }) => {
     const extensionAccounts = await getExtensionAccounts();
     const localAccounts = getLocalAccounts();
 
-    return [...extensionAccounts, ...localAccounts];
-  }, [getExtensionAccounts, getLocalAccounts]);
+    return [...extensionAccounts, ...localAccounts].map((account) => ({
+      ...account,
+      address: keyring.encodeAddress(
+        keyring.decodeAddress(account.address),
+        chainProperties?.SS58Prefix,
+      ),
+    }));
+  }, [chainProperties?.SS58Prefix, getExtensionAccounts, getLocalAccounts]);
 
   const fetchAccounts = useCallback(async () => {
     const allAccounts = await getAccounts();
