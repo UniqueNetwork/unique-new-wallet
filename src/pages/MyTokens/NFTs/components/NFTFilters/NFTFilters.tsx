@@ -4,11 +4,12 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { InputText, Select } from '@unique-nft/ui-kit';
 
+import { ROUTE } from '@app/routes';
+import { useAccounts } from '@app/hooks';
+import { MintingBtn } from '@app/components';
 import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
-import { ROUTE } from '@app/routes';
-import { MintingBtn } from '@app/components';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -28,22 +29,24 @@ const sortOptions: Option[] = [
 ];
 
 const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
+  const [search, setSearch] = useState<string>('');
+
   const navigate = useNavigate();
   const { sortByTokenId, searchText, changeSortByTokenId, changeSearchText } =
     useNFTsContext();
-  const [search, setSearch] = useState<string>('');
+  const { selectedAccount } = useAccounts();
 
   const sortByTokenIdHandler = useCallback(({ id }: Option) => {
     changeSortByTokenId(id as Direction);
   }, []);
+
+  useEffect(() => setSearch(searchText), [searchText]);
 
   const searchHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
       changeSearchText(search.trim());
     }
   };
-
-  useEffect(() => setSearch(searchText), [searchText]);
 
   return (
     <div className={classNames('nft-filters', className)}>
@@ -66,7 +69,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
           color: 'var(--color-additional-light)',
         }}
         title="Create an NFT"
-        role="primary"
+        disabled={!Number(selectedAccount?.collectionsTotal)}
         onClick={() => navigate(ROUTE.CREATE_NFT)}
       />
     </div>

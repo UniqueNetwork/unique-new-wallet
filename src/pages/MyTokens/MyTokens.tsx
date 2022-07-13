@@ -24,6 +24,13 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === basePath) {
+      navigate(tabUrls[activeTab]);
+    }
+  }, [activeTab, basePath, location.pathname, navigate, tabUrls]);
+
   const currentTabIndex = tabUrls.findIndex(
     (tab) => `${basePath}/${tab}` === location.pathname,
   );
@@ -31,12 +38,6 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);
   };
-
-  useEffect(() => {
-    if (location.pathname === basePath) {
-      navigate(tabUrls[activeTab]);
-    }
-  }, [activeTab, basePath, location.pathname, navigate, tabUrls]);
 
   return (
     <NFTsWrapper>
