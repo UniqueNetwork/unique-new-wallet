@@ -53,6 +53,10 @@ const LayoutStyled = styled.div`
     display: flex;
     flex-direction: column;
     row-gap: calc(var(--prop-gap) * 1.5);
+
+    & > .unique-font-heading {
+      margin-bottom: 0;
+    }
   }
 
   main {

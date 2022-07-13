@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Dropdown,
+  Heading,
   Icon,
   InputText,
   TableColumnProps,
@@ -209,63 +210,66 @@ export const Accounts = () => {
   // );
 
   return (
-    <PagePaperNoPadding>
-      <AccountsPageHeader>
-        {/* <AccountsTotalBalance balance={totalBalance} /> */}
-        <SearchInputWrapper>
-          <SearchInputStyled
-            placeholder="Search"
-            iconLeft={{ name: 'magnify', size: 18 }}
-            value={searchString}
-            onChange={setSearchString}
+    <>
+      <Heading size="1">My accounts</Heading>
+      <PagePaperNoPadding>
+        <AccountsPageHeader>
+          {/* <AccountsTotalBalance balance={totalBalance} /> */}
+          <SearchInputWrapper>
+            <SearchInputStyled
+              placeholder="Search"
+              iconLeft={{ name: 'magnify', size: 18 }}
+              value={searchString}
+              onChange={setSearchString}
+            />
+          </SearchInputWrapper>
+          <AccountsGroupButton />
+        </AccountsPageHeader>
+        <AccountsPageContent>
+          <Table
+            columns={getAccountsColumns({
+              onShowSendFundsModal: onSendFundsClick,
+              onForgetWalletClick,
+            })}
+            loading={isLoadingBalances}
+            data={filteredAccounts}
           />
-        </SearchInputWrapper>
-        <AccountsGroupButton />
-      </AccountsPageHeader>
-      <AccountsPageContent>
-        <Table
-          columns={getAccountsColumns({
-            onShowSendFundsModal: onSendFundsClick,
-            onForgetWalletClick,
-          })}
-          loading={isLoadingBalances}
-          data={filteredAccounts}
-        />
-      </AccountsPageContent>
-      {isOpenModal && (
-        <SendFunds
-          chain={currentChain}
-          isVisible={true}
-          senderAccount={selectedAddress}
-          networkType={selectedAccount?.unitBalance}
-          onClose={onChangeAccountsFinish}
-          onSendSuccess={() => {
-            refetch();
-          }}
-        />
-      )}
-      <Confirm
-        buttons={[
-          { title: 'No, return', onClick: () => setForgetWalletAddress('') },
-          {
-            title: 'Yes, I am sure',
-            role: 'primary',
-            onClick: () => {
-              forgetLocalAccount(forgetWalletAddress);
-              setForgetWalletAddress('');
+        </AccountsPageContent>
+        {isOpenModal && (
+          <SendFunds
+            chain={currentChain}
+            isVisible={true}
+            senderAccount={selectedAddress}
+            networkType={selectedAccount?.unitBalance}
+            onClose={onChangeAccountsFinish}
+            onSendSuccess={() => {
+              refetch();
+            }}
+          />
+        )}
+        <Confirm
+          buttons={[
+            { title: 'No, return', onClick: () => setForgetWalletAddress('') },
+            {
+              title: 'Yes, I am sure',
+              role: 'primary',
+              onClick: () => {
+                forgetLocalAccount(forgetWalletAddress);
+                setForgetWalletAddress('');
+              },
             },
-          },
-        ]}
-        isVisible={Boolean(forgetWalletAddress)}
-        title="Forget wallet"
-        onClose={() => setForgetWalletAddress('')}
-      >
-        <Text>
-          Are you sure you want to&nbsp;perform this action? You can always recover your
-          wallet with your seed password using the &rsquo;Add account via&rsquo; button
-        </Text>
-      </Confirm>
-    </PagePaperNoPadding>
+          ]}
+          isVisible={Boolean(forgetWalletAddress)}
+          title="Forget wallet"
+          onClose={() => setForgetWalletAddress('')}
+        >
+          <Text>
+            Are you sure you want to&nbsp;perform this action? You can always recover your
+            wallet with your seed password using the &rsquo;Add account via&rsquo; button
+          </Text>
+        </Confirm>
+      </PagePaperNoPadding>
+    </>
   );
 };
 

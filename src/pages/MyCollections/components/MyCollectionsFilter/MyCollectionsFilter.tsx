@@ -126,6 +126,7 @@ export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
   &.my-collections-filter {
     border-bottom: 1px solid var(--color-grey-300);
     display: flex;
+    justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     padding-bottom: var(--prop-gap);
