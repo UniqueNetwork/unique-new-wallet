@@ -126,9 +126,8 @@ export const MainInformation: FC = () => {
         <FormHeader>
           <Heading size="2">Main information</Heading>
           <Text>
-            Fill fields carefully, because after signing the transaction, the data cannot
-            be changed. If you make a mistake, the object will have to be burned and
-            recreated.
+            The core collection information cannot be&nbsp;modified once approved/signed.
+            For any changes the collection will need to&nbsp;be&nbsp;burned and re-created
           </Text>
         </FormHeader>
         <FormBody>
