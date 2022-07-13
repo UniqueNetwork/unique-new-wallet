@@ -3,8 +3,7 @@ import { Consumer, Context, createContext, Provider } from 'react';
 import { ChainPropertiesResponse } from '@app/types/Api';
 
 export type ChainPropertiesContextProps = {
-  chainProperties?: ChainPropertiesResponse;
-  isLoading: boolean;
+  chainProperties: ChainPropertiesResponse;
 };
 
 export const ChainPropertiesContext: Context<ChainPropertiesContextProps> = createContext(
