@@ -1,15 +1,10 @@
-import { memo, useMemo, VFC } from 'react';
+import { memo, ReactNode, useMemo, VFC } from 'react';
 import styled from 'styled-components';
-import {
-  Button,
-  Dropdown,
-  Heading,
-  Text,
-  SelectOptionProps,
-  Icon,
-} from '@unique-nft/ui-kit';
+import { Dropdown, Heading, Text, SelectOptionProps, Icon } from '@unique-nft/ui-kit';
 
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
+import { BurnBtn, TransferBtn } from '@app/components';
+import { useApi } from '@app/hooks';
 
 interface NFTDetailsHeaderProps {
   title?: string;
@@ -54,6 +49,19 @@ const MenuOption = (option: SelectOptionProps) => {
   );
 };
 
+const MenuBtnOption = (option: SelectOptionProps & { children: ReactNode }) => {
+  return (
+    <MenuOptionContainer>
+      <Icon
+        size={16}
+        color={(option.color as string) ?? ''}
+        name={(option.icon as any).name ?? ''}
+      />
+      {option.children}
+    </MenuOptionContainer>
+  );
+};
+
 const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   title = '',
   ownerAddress,
@@ -61,6 +69,7 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   className,
   onShowModal,
 }) => {
+  const { currentChain } = useApi();
   const options = useMemo(() => {
     const items: SelectOptionProps[] = [
       {
@@ -105,7 +114,7 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
           )}
         </Text>
         {isCurrentAccountOwner && (
-          <Button
+          <TransferBtn
             className="transfer-btn"
             title="Transfer"
             role="outlined"
@@ -116,14 +125,44 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
       <Dropdown
         placement="right"
         options={options}
-        optionRender={(opt) => <MenuOption {...(opt as MenuOptionItem)} />}
-        onChange={(opt) => onShowModal((opt as MenuOptionItem).id)}
+        optionRender={(opt) => {
+          if (opt.id === 'burn') {
+            return (
+              <BurnButtonWrapper disabled={!currentChain.burnEnabled}>
+                <MenuBtnOption {...opt}>
+                  <BurnBtn title={opt.title as string} role="ghost" />
+                </MenuBtnOption>
+              </BurnButtonWrapper>
+            );
+          }
+          return <MenuOption {...(opt as MenuOptionItem)} />;
+        }}
+        onChange={(opt) => {
+          if (opt.id === 'burn' && !currentChain.burnEnabled) {
+            return;
+          }
+          onShowModal((opt as MenuOptionItem).id);
+        }}
       >
         <Icon size={40} name="rounded-rectangle-more" />
       </Dropdown>
     </HeaderContainer>
   );
 };
+
+const BurnButtonWrapper = styled.div<{ disabled: boolean }>`
+  svg {
+    fill: ${(props) =>
+      props.disabled ? 'var(--color-blue-grey-300)' : 'var(--color-coral-500)'};
+  }
+
+  .unique-button {
+    background: none;
+    padding: 0;
+    color: ${(props) =>
+      props.disabled ? 'var(--color-blue-grey-300)' : 'var(--color-coral-500)'}}
+  }
+`;
 
 export const NFTDetailsHeader = memo(styled(NFTDetailsHeaderComponent)`
   .transfer-btn {

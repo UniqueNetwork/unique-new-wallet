@@ -1,4 +1,4 @@
-import React, { useCallback, useState, VFC } from 'react';
+import { VFC } from 'react';
 import { Button, Heading, InputText, Modal, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
@@ -28,16 +28,19 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
       </HeadingWrapper>
       <InputWrapper
         label="Please enter the address you wish to send the NFT to"
+        maxLength={48}
         value={recipient}
         onChange={onRecipientChange}
       />
-      <TextStyled color="additional-warning-500" size="s">
-        A fee of ~ {fee} can be applied to the transaction
-      </TextStyled>
-      <TextStyled color="additional-warning-500" size="s">
+      {fee && (
+        <TextStyled appearance="block" color="additional-warning-500" size="s">
+          A fee of ~ {fee} can be applied to the transaction
+        </TextStyled>
+      )}
+      <TextStyled appearance="block" color="additional-warning-500" size="s">
         Proceed with caution, once confirmed the transaction cannot be reverted.
       </TextStyled>
-      <TextStyled color="additional-warning-500" size="s">
+      <TextStyled appearance="block" color="additional-warning-500" size="s">
         Make sure to use a Substrate address created with a Polkadot.&#123;js&#125;
         wallet. There is no guarantee that third-party wallets, exchanges or hardware
         wallets can successfully sign and process your transfer which will result in a

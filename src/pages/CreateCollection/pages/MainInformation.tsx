@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import {
-  Button,
   Heading,
   InputText,
   Text,
@@ -8,12 +7,11 @@ import {
   Upload,
   useNotifications,
 } from '@unique-nft/ui-kit';
-import styled from 'styled-components';
 
 import { useAccounts } from '@app/hooks';
 import { CollectionFormContext } from '@app/context';
 import { CollectionApiService, useExtrinsicFee, useFileUpload } from '@app/api';
-import { Alert, CollectionStepper, Confirm } from '@app/components';
+import { Alert, CollectionStepper, Confirm, MintingBtn } from '@app/components';
 import {
   AdditionalText,
   ButtonGroup,
@@ -26,7 +24,7 @@ import {
   UploadWidget,
 } from '@app/pages/components/FormComponents';
 
-const MainInformationComponent: FC = () => {
+export const MainInformation: FC = () => {
   const { selectedAccount } = useAccounts();
   const { error } = useNotifications();
   const { mainInformationForm, setCoverImgFile, mapFormToCollectionDto } =
@@ -128,9 +126,8 @@ const MainInformationComponent: FC = () => {
         <FormHeader>
           <Heading size="2">Main information</Heading>
           <Text>
-            Fill fields carefully, because after signing the transaction, the data cannot
-            be changed. If you make a mistake, the object will have to be burned and
-            recreated.
+            The core collection information cannot be&nbsp;modified once approved/signed.
+            For any changes the collection will need to&nbsp;be&nbsp;burned and re-created
           </Text>
         </FormHeader>
         <FormBody>
@@ -182,11 +179,13 @@ const MainInformationComponent: FC = () => {
                 />
               </UploadWidget>
             </FormRow>
-            <Alert type="warning" className="alert-wrapper">
-              A fee of ~ {feeFormatted} can be applied to the transaction
-            </Alert>
+            {feeFormatted && (
+              <Alert type="warning">
+                A fee of ~ {feeFormatted} can be applied to the transaction
+              </Alert>
+            )}
             <ButtonGroup>
-              <Button
+              <MintingBtn
                 disabled={!dirty || !isValid}
                 iconRight={{
                   color: 'currentColor',
@@ -222,17 +221,3 @@ const MainInformationComponent: FC = () => {
     </>
   );
 };
-
-export const MainInformation = styled(MainInformationComponent)`
-  .main-information-button {
-    display: flex;
-    margin-top: 25px;
-    .exit {
-      margin-right: 15px;
-    }
-  }
-
-  .alert-wrapper {
-    margin-top: 40px;
-  }
-`;

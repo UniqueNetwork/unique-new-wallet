@@ -5,6 +5,7 @@ import { Button, Icon, useNotifications, Loader } from '@unique-nft/ui-kit';
 
 import { Chain, NetworkType } from '@app/types';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
+import { TransferBtn } from '@app/components';
 
 type CoinsRowComponentProps = TNetworkBalances & {
   address?: string;
@@ -74,7 +75,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         />
       )}
       <NetworkActions>
-        <Button
+        <TransferBtn
           disabled={sendDisabled}
           title="Send"
           onClick={() => onSend(symbol, chain)}

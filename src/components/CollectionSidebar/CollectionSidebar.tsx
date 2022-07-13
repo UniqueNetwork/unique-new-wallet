@@ -30,7 +30,7 @@ export const CollectionSidebar = () => {
         <Heading size="3">NFT preview</Heading>
         <Card
           attributesInline={tags}
-          title={tokenPrefix || 'tokenPrefix'}
+          title={tokenPrefix || 'Symbol'}
           description="Collection name"
           geometry="square"
           picture={undefined}

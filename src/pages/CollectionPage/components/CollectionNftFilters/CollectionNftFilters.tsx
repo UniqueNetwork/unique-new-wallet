@@ -2,7 +2,6 @@ import { VFC, useState, KeyboardEvent } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
-  Button,
   IconProps,
   InputText,
   RadioGroup,
@@ -18,6 +17,7 @@ import {
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import { Direction } from '@app/api/graphQL/tokens';
 import { ROUTE } from '@app/routes';
+import { MintingBtn } from '@app/components';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -88,7 +88,7 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         onChange={setSearch}
       />
       <Select options={sortOptions} value={direction} onChange={handleChangeDirection} />
-      <Button
+      <MintingBtn
         iconLeft={{
           name: 'plus',
           size: 12,

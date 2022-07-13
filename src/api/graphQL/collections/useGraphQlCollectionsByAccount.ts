@@ -59,6 +59,7 @@ export const useGraphQlCollectionsByAccount = ({
           { owner_normalized: { _eq: accountAddress } },
         ],
         ...getConditionBySearchText('name', search),
+        type: { _eq: '{"nft":null}' },
       },
     },
   });

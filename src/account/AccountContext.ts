@@ -14,6 +14,8 @@ export interface Account extends InjectedAccountWithMeta {
   balance?: AllBalancesResponse;
   unitBalance: NetworkType;
   signerType: AccountSigner;
+  collectionsTotal?: number;
+  tokensTotal?: number;
 }
 
 export type AccountContextProps = {

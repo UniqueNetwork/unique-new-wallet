@@ -16,16 +16,22 @@ import { Chain, NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
-import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
-import { ChainNetworks } from '@app/account/constants';
+import {
+  AccountsGroupButton,
+  Confirm,
+  PagePaperNoPadding,
+  Table,
+  TransferBtn,
+} from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 
 import { config } from '../../config';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
+import { ChainNetworks } from '@app/account/constants';
 
 type AccountsColumnsProps = {
-  currentChain?: Chain;
+  currentChain: Chain;
   onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
 };
@@ -36,6 +42,7 @@ const getAccountsColumns = ({
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => {
   const { network } = currentChain || {};
+
   return [
     {
       title: (
@@ -125,7 +132,7 @@ const getAccountsColumns = ({
       render(address, rowData: Account) {
         return (
           <ActionsWrapper>
-            <Button
+            <TransferBtn
               title="Send"
               disabled={!Number(rowData.balance?.availableBalance.amount)}
               onClick={onShowSendFundsModal(rowData)}
@@ -290,7 +297,6 @@ const AccountsPageContent = styled.div`
   margin-top: calc(var(--prop-gap) * 2);
   padding: 0 calc(var(--prop-gap) * 2);
   min-height: 679px;
-
   & > div {
     width: 100%;
   }
@@ -324,7 +330,6 @@ const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
   column-gap: var(--prop-gap);
-
   .unique-dropdown {
     .dropdown-wrapper,
     .dropdown-options {
