@@ -18,3 +18,4 @@ export * from './StatusTransactionModal';
 export * from './Confirm';
 export * from './Stages';
 export * from './ActionBtn';
+export * from './TooltipWrapper';

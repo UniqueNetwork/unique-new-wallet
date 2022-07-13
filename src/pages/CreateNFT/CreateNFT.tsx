@@ -1,8 +1,9 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
 import classNames from 'classnames';
 import get from 'lodash/get';
 import {
   Avatar,
+  Button,
   Heading,
   Suggest,
   Text,
@@ -11,15 +12,20 @@ import {
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { useAccounts } from '@app/hooks';
-import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
+import { useAccounts, useBalanceInsufficient } from '@app/hooks';
+import {
+  Alert,
+  MintingBtn,
+  StatusTransactionModal,
+  TooltipButtonWrapper,
+} from '@app/components';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import {
   Collection,
   TokenApiService,
-  useFileUpload,
-  useExtrinsicFlow,
   useExtrinsicFee,
+  useExtrinsicFlow,
+  useFileUpload,
 } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { ROUTE } from '@app/routes';
@@ -27,6 +33,7 @@ import { TokenField } from '@app/types';
 import { TokenFormContext } from '@app/context';
 import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
+import { NO_BALANCE_MESSAGE } from '@app/pages';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import {
@@ -83,6 +90,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   const {
     getFee,
+    fee,
     feeFormatted,
     error: feeError,
     isError: isFeeError,
@@ -94,6 +102,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     isLoading,
   } = useExtrinsicFlow(TokenApiService.tokenCreateMutation);
   const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
+  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   const collectionsOptions = useMemo(
     () =>
@@ -189,7 +198,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     );
   };
 
-  const disabled = !values.ipfsJson || !dirty || !isValid;
+  const disabled = !values.ipfsJson || !dirty || !isValid || isBalanceInsufficient;
 
   return (
     <>
@@ -265,21 +274,47 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                     </Text>
                   </FormRowEmpty>
                 )}
-                <Alert type="warning">
-                  A fee of ~ {feeFormatted} can be applied to the transaction
-                </Alert>
+                {feeFormatted && (
+                  <Alert type="warning">
+                    A fee of ~ {feeFormatted} can be applied to the transaction
+                  </Alert>
+                )}
                 <ButtonGroup>
-                  <MintingBtn
-                    role="primary"
-                    title="Confirm and create more"
-                    disabled={!selectedCollection?.id || disabled}
-                    onClick={() => confirmFormHandler()}
-                  />
-                  <MintingBtn
-                    title="Confirm and close"
-                    disabled={!selectedCollection?.id || disabled}
-                    onClick={() => confirmFormHandler(true)}
-                  />
+                  {isBalanceInsufficient ? (
+                    <>
+                      <TooltipButtonWrapper
+                        placement="right-start"
+                        message={NO_BALANCE_MESSAGE}
+                      >
+                        <Button
+                          role="primary"
+                          title="Confirm and create more"
+                          type="button"
+                          disabled={true}
+                        />
+                      </TooltipButtonWrapper>
+                      <TooltipButtonWrapper
+                        placement="right-start"
+                        message={NO_BALANCE_MESSAGE}
+                      >
+                        <Button title="Confirm and close" type="button" disabled={true} />
+                      </TooltipButtonWrapper>
+                    </>
+                  ) : (
+                    <>
+                      <MintingBtn
+                        role="primary"
+                        title="Confirm and create more"
+                        disabled={!selectedCollection?.id || disabled}
+                        onClick={() => confirmFormHandler()}
+                      />
+                      <MintingBtn
+                        title="Confirm and close"
+                        disabled={!selectedCollection?.id || disabled}
+                        onClick={() => confirmFormHandler(true)}
+                      />
+                    </>
+                  )}
                 </ButtonGroup>
               </Form>
             </FormBody>

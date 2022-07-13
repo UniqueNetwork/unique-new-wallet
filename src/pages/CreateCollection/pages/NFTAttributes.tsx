@@ -13,7 +13,7 @@ import {
   useNotifications,
 } from '@unique-nft/ui-kit';
 
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useBalanceInsufficient } from '@app/hooks';
 import { ArtificialAttributeItemType } from '@app/types';
 import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
 import {
@@ -21,7 +21,9 @@ import {
   CollectionStepper,
   Confirm,
   StatusTransactionModal,
+  TooltipButtonWrapper,
 } from '@app/components';
+import { NO_BALANCE_MESSAGE } from '@app/pages';
 import { ROUTE } from '@app/routes';
 import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
 import {
@@ -33,7 +35,7 @@ import {
   SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
-import { CollectionApiService, useExtrinsicFlow, useExtrinsicFee } from '@app/api';
+import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 
 export const NFTAttributes = () => {
   const {
@@ -60,9 +62,11 @@ export const NFTAttributes = () => {
     error: feeError,
     isError: isFeeError,
     getFee,
+    fee,
     feeFormatted,
   } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
   const [address, setAddress] = useState<string>('');
+  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   useEffect(() => {
     if (status === 'success') {
@@ -85,7 +89,7 @@ export const NFTAttributes = () => {
     navigate('/create-collection/main-information');
   };
 
-  const createCollectionHanler = () => {
+  const createCollectionHandler = () => {
     if (!selectedAccount) {
       error('Account is not found');
 
@@ -111,7 +115,7 @@ export const NFTAttributes = () => {
       if (attributes?.length < 2) {
         setIsOpenConfirm(true);
       } else {
-        createCollectionHanler();
+        createCollectionHandler();
       }
     }
   };
@@ -139,6 +143,8 @@ export const NFTAttributes = () => {
     () => attributes.filter((attr) => attr.name !== 'ipfsJson'),
     [attributes],
   );
+
+  console.log(isBalanceInsufficient);
 
   useEffect(() => {
     getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
@@ -253,9 +259,11 @@ export const NFTAttributes = () => {
               />
             </SettingsRow>
           </AdvancedSettingsAccordion>
-          <Alert type="warning" className="alert-wrapper">
-            A fee of ~ {feeFormatted} can be applied to the transaction
-          </Alert>
+          {feeFormatted && (
+            <Alert type="warning">
+              A fee of ~ {feeFormatted} can be applied to the transaction
+            </Alert>
+          )}
           <ButtonGroup>
             <Button
               iconLeft={{
@@ -266,12 +274,23 @@ export const NFTAttributes = () => {
               title="Previous step"
               onClick={onPreviousStepClick}
             />
-            <Button
-              title="Create a collection"
-              type="button"
-              role="primary"
-              onClick={onSubmitAttributes}
-            />
+            {isBalanceInsufficient ? (
+              <TooltipButtonWrapper placement="right-start" message={NO_BALANCE_MESSAGE}>
+                <Button
+                  disabled={true}
+                  title="Create a collection"
+                  type="button"
+                  role="primary"
+                />
+              </TooltipButtonWrapper>
+            ) : (
+              <Button
+                title="Create a collection"
+                type="button"
+                role="primary"
+                onClick={onSubmitAttributes}
+              />
+            )}
           </ButtonGroup>
         </FormBody>
       </FormWrapper>
@@ -283,7 +302,7 @@ export const NFTAttributes = () => {
             role: 'primary',
             onClick: () => {
               setIsOpenConfirm(false);
-              createCollectionHanler();
+              createCollectionHandler();
             },
           },
         ]}

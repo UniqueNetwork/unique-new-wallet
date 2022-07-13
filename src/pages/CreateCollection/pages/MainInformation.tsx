@@ -7,7 +7,6 @@ import {
   Upload,
   useNotifications,
 } from '@unique-nft/ui-kit';
-import styled from 'styled-components';
 
 import { useAccounts } from '@app/hooks';
 import { CollectionFormContext } from '@app/context';
@@ -25,7 +24,7 @@ import {
   UploadWidget,
 } from '@app/pages/components/FormComponents';
 
-const MainInformationComponent: FC = () => {
+export const MainInformation: FC = () => {
   const { selectedAccount } = useAccounts();
   const { error } = useNotifications();
   const { mainInformationForm, setCoverImgFile, mapFormToCollectionDto } =
@@ -181,9 +180,11 @@ const MainInformationComponent: FC = () => {
                 />
               </UploadWidget>
             </FormRow>
-            <Alert type="warning" className="alert-wrapper">
-              A fee of ~ {feeFormatted} can be applied to the transaction
-            </Alert>
+            {feeFormatted && (
+              <Alert type="warning">
+                A fee of ~ {feeFormatted} can be applied to the transaction
+              </Alert>
+            )}
             <ButtonGroup>
               <MintingBtn
                 disabled={!dirty || !isValid}
@@ -221,17 +222,3 @@ const MainInformationComponent: FC = () => {
     </>
   );
 };
-
-export const MainInformation = styled(MainInformationComponent)`
-  .main-information-button {
-    display: flex;
-    margin-top: 25px;
-    .exit {
-      margin-right: 15px;
-    }
-  }
-
-  .alert-wrapper {
-    margin-top: 40px;
-  }
-`;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, VFC } from 'react';
+import { useEffect, useState, VFC } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
@@ -6,7 +6,7 @@ import {
   AskTransferModal,
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { useExtrinsicFlow, useExtrinsicFee, ViewToken } from '@app/api';
+import { useExtrinsicFee, useExtrinsicFlow, ViewToken } from '@app/api';
 import { TokenApiService } from '@app/api/restApi/token';
 
 interface TransferModalProps {
