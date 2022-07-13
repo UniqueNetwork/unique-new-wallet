@@ -33,7 +33,7 @@ export const useExtrinsicFee = <
   });
 
   const [extrinsicFeeState, setExtrinsicFeeState] = useReducer(extrinsicFeeReducer, {
-    fee: undefined,
+    fee: '',
     feeFormatted: undefined,
     error: undefined,
     isError: false,
@@ -101,7 +101,7 @@ export const useExtrinsicFee = <
         error = e;
       }
 
-      setExtrinsicFeeState({ type: 'error', payload: { error } });
+      setExtrinsicFeeState({ type: 'error', payload: { error, fee } });
     }
   };
 

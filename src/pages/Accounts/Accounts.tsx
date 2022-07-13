@@ -16,7 +16,13 @@ import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
-import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
+import {
+  AccountsGroupButton,
+  Confirm,
+  PagePaperNoPadding,
+  Table,
+  TransferBtn,
+} from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 
 import { config } from '../../config';
@@ -114,7 +120,7 @@ const getAccountsColumns = ({
     render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <Button
+          <TransferBtn
             title="Send"
             disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}

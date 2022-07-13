@@ -12,4 +12,7 @@ export interface Chain {
   gqlEndpoint: string;
   network: string;
   name: string;
+  mintingEnabled: boolean;
+  transfersEnabled: boolean;
+  burnEnabled: boolean;
 }
