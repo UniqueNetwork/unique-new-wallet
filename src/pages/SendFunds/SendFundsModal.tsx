@@ -56,7 +56,6 @@ const parseAmount = (amount: string) => {
 export const SendFundsModal: FC<SendFundsModalProps> = ({
   fee,
   senderAccount,
-  networkType,
   isVisible,
   onClose,
   onConfirm,
@@ -220,9 +219,8 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
         </ContentRow>
         <ContentRow>
           <TextWarning color="additional-warning-500" size="s">
-            {recipient && amount
-              ? `A fee of ~ ${fee} ${networkType} can be applied to the transaction, unless the
-                transaction is sponsored`
+            {recipient && amount && fee
+              ? `A fee of ~ ${fee} can be applied to the transaction, unless the transaction is sponsored`
               : 'A fee will be calculated after entering the recipient and amount'}
           </TextWarning>
         </ContentRow>
