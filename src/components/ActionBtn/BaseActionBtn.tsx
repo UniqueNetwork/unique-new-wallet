@@ -21,13 +21,13 @@ export const BaseActionBtn = ({
       {!tooltip ? (
         <Button {...props} />
       ) : (
-        <Tooltip title={<Text color="#fff">{tooltip}</Text>}>
+        <Tooltip title={<Text color="var(--color-additional-light)">{tooltip}</Text>}>
           <Button {...props} />
         </Tooltip>
       )}
     </>
   ) : (
-    <Tooltip title={<Text color="#fff">{actionText}</Text>}>
+    <Tooltip title={<Text color="var(--color-additional-light)">{actionText}</Text>}>
       <Button
         className={props.className}
         title={props.title}
