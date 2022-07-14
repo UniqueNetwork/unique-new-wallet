@@ -16,6 +16,12 @@ export interface Account extends InjectedAccountWithMeta {
   signerType: AccountSigner;
   collectionsTotal?: number;
   tokensTotal?: number;
+  /*
+   * При смене чейна у нас меняется address.
+   * Необходимо добавить статический адрес, который не меняется
+   * К примеру, при смене чейна, у нас ранее скидывался аккаунт на дефолтный ввиду того, что менялся его address
+   * */
+  normalizedAddress: string;
 }
 
 export type AccountContextProps = {

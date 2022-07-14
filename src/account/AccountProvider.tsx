@@ -16,6 +16,7 @@ import { NetworkType } from '@app/types';
 import { useAccountBalanceService } from '@app/api';
 import { useGraphQlAccountCommonInfo } from '@app/api/graphQL/account';
 import { ChainPropertiesContext } from '@app/context';
+import { AccountUtils } from '@app/account/AccountUtils';
 
 import { DefaultAccountKey } from './constants';
 import { SignModal } from '../components/SignModal/SignModal';
@@ -33,7 +34,7 @@ export const AccountWrapper: FC = ({ children }) => {
   );
 
   const changeAccount = useCallback((account: Account) => {
-    localStorage.setItem(DefaultAccountKey, account.address);
+    localStorage.setItem(DefaultAccountKey, account.normalizedAddress);
 
     setSelectedAccount(account);
   }, []);
@@ -114,10 +115,8 @@ export const AccountWrapper: FC = ({ children }) => {
 
     return [...extensionAccounts, ...localAccounts].map((account) => ({
       ...account,
-      address: keyring.encodeAddress(
-        keyring.decodeAddress(account.address),
-        chainProperties?.SS58Prefix,
-      ),
+      normalizedAddress: AccountUtils.normalizedAddressAccount(account.address),
+      address: AccountUtils.encodeAddress(account.address, chainProperties.SS58Prefix),
     }));
   }, [chainProperties?.SS58Prefix, getExtensionAccounts, getLocalAccounts]);
 
@@ -142,15 +141,17 @@ export const AccountWrapper: FC = ({ children }) => {
   );
 
   useEffect(() => {
-    if (accounts?.length) {
-      const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
-
-      const defaultAccount = accounts.find(
-        (item) => item.address === defaultAccountAddress,
-      );
-
-      changeAccount(defaultAccount ?? accounts[0]);
+    if (!accounts?.length) {
+      return;
     }
+
+    const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
+
+    const defaultAccount = accounts.find(
+      (item) => item.normalizedAddress === defaultAccountAddress,
+    );
+
+    changeAccount(defaultAccount ?? accounts[0]);
   }, [accounts, changeAccount]);
 
   const value = useMemo(
