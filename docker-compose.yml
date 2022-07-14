@@ -1,0 +1,27 @@
+networks:
+  minter:
+    external:
+      name: minter
+
+version: '2'
+
+services:
+  unique-minter:
+    container_name: uniq-minter-client
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile
+    networks:
+      - minter
+
+  dafc-minter:
+    container_name: dafc-minter-client
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile
+    volumes:
+      - ./dafc/footer.html:/usr/share/nginx/html/footer.html:ro
+      - ./dafc/logo.svg:/usr/share/nginx/html/logos/logo.svg:ro
+      - ./dafc/variables.css:/usr/share/nginx/html/variables.css:ro
+    networks:
+      - minter
