@@ -26,7 +26,11 @@ export const useExtrinsicStatus = (
 
         if (isCompleted && !isError) {
           queryClient.invalidateQueries({
-            predicate: (query) => query.queryKey.includes('balance'),
+            predicate: (query) =>
+              query.queryKey.includes('balance') || query.queryKey.includes('balances'),
+          });
+          apolloClient.refetchQueries({
+            include: ['getAccountCommonInfo'],
           });
           apolloClient.refetchQueries({
             include: ['getAccountCommonInfo'],

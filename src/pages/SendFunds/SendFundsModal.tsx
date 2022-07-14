@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { Button, Heading, InputText, Loader, Modal } from '@unique-nft/ui-kit';
+import { Heading, InputText, Loader, Modal } from '@unique-nft/ui-kit';
 import { keyring } from '@polkadot/ui-keyring';
 
 import { Account } from '@app/account';
@@ -21,6 +21,7 @@ import {
 import { AccountSelector } from '@app/pages/SendFunds/components/AccountSelector';
 import { AccountSuggest } from '@app/pages/SendFunds/components/AccountSuggest';
 import { ChainPropertiesContext } from '@app/context';
+import { TransferBtn } from '@app/components';
 
 import { SendFundsProps } from './SendFunds';
 
@@ -226,7 +227,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
         </ContentRow>
       </ModalContent>
       <ModalFooter>
-        <Button
+        <TransferBtn
           role="primary"
           title="Confirm"
           disabled={!amount || !sender?.address || !recipient?.address}
