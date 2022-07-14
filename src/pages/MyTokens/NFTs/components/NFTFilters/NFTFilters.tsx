@@ -66,9 +66,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
         iconLeft={{
           name: 'plus',
           size: 12,
-          color: !Number(selectedAccount?.collectionsTotal)
-            ? undefined
-            : 'var(--color-additional-light)',
+          color: 'currentColor',
         }}
         role="primary"
         title="Create an NFT"

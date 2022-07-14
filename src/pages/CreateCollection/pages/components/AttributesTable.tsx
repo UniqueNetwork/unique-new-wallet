@@ -1,4 +1,4 @@
-import React, { VFC } from 'react';
+import React, { createRef, VFC } from 'react';
 import {
   Button,
   Icon,
@@ -46,22 +46,81 @@ const fieldRuleOptions: FieldRuleOption[] = [
   { key: 'required', value: 'Required' },
 ];
 
+const attributeTooltip = createRef<HTMLDivElement>();
+const typeTooltip = createRef<HTMLDivElement>();
+const ruleTooltip = createRef<HTMLDivElement>();
+const valuesTooltip = createRef<HTMLDivElement>();
+
+const AttributeTitle = () => {
+  return (
+    <span>
+      Attribute
+      <Tooltip targetRef={attributeTooltip}>
+        Textual traits that show up&nbsp;on&nbsp;Token
+      </Tooltip>
+      <Icon
+        ref={attributeTooltip}
+        name="question"
+        size={18}
+        color="var(--color-primary-500)"
+      />
+    </span>
+  );
+};
+
+const TypeTitle = () => {
+  return (
+    <span>
+      Type
+      <Tooltip targetRef={typeTooltip}>
+        Select type of&nbsp;information you want to&nbsp;create
+      </Tooltip>
+      <Icon
+        ref={typeTooltip}
+        name="question"
+        size={18}
+        color="var(--color-primary-500)"
+      />
+    </span>
+  );
+};
+
+const RuleTitle = () => {
+  return (
+    <span>
+      Rule
+      <Tooltip targetRef={ruleTooltip}>Set a&nbsp;rule for your attribute</Tooltip>
+      <Icon
+        ref={ruleTooltip}
+        name="question"
+        size={18}
+        color="var(--color-primary-500)"
+      />
+    </span>
+  );
+};
+
+const ValuesTitle = () => {
+  return (
+    <span>
+      Possible values
+      <Tooltip targetRef={valuesTooltip}>Write down all the options you have</Tooltip>
+      <Icon
+        ref={valuesTooltip}
+        name="question"
+        size={18}
+        color="var(--color-primary-500)"
+      />
+    </span>
+  );
+};
+
 const getAttributesColumns = ({
   onAttributeChange,
   onRemoveAttributeClick,
 }: AttributesColumnsProps): TableColumnProps[] => [
   {
-    title: (
-      <span>
-        Attribute
-        <Tooltip
-          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
-          placement="bottom-start"
-        >
-          Textual traits that show up&nbsp;on&nbsp;Token
-        </Tooltip>
-      </span>
-    ),
+    title: AttributeTitle(),
     width: '21%',
     field: 'name',
     render(name: string, attribute: ArtificialAttributeItemType) {
@@ -75,17 +134,7 @@ const getAttributesColumns = ({
     },
   },
   {
-    title: (
-      <span>
-        Type
-        <Tooltip
-          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
-          placement="bottom-start"
-        >
-          Select type of&nbsp;information you want to&nbsp;create
-        </Tooltip>
-      </span>
-    ),
+    title: TypeTitle(),
     width: '17%',
     field: 'fieldType',
     render(type: ArtificialFieldType, attribute: ArtificialAttributeItemType) {
@@ -107,17 +156,7 @@ const getAttributesColumns = ({
     },
   },
   {
-    title: (
-      <span>
-        Rule
-        <Tooltip
-          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
-          placement="bottom-start"
-        >
-          Set a&nbsp;rule for your attribute
-        </Tooltip>
-      </span>
-    ),
+    title: RuleTitle(),
     width: '17%',
     field: 'rule',
     render(rule: FieldRuleType, attribute: ArtificialAttributeItemType) {
@@ -136,17 +175,7 @@ const getAttributesColumns = ({
     },
   },
   {
-    title: (
-      <span>
-        Possible values
-        <Tooltip
-          content={<Icon name="question" size={18} color="var(--color-primary-500)" />}
-          placement="bottom-start"
-        >
-          Write down all the options you have
-        </Tooltip>
-      </span>
-    ),
+    title: ValuesTitle(),
     width: '40%',
     field: 'values',
     render(values: string[], attribute: ArtificialAttributeItemType) {
@@ -241,12 +270,12 @@ export const AttributesTable = styled(AttributesTableComponent)`
       .table-header-cell {
         & > span {
           flex: 1 1 auto;
-        }
 
-        .unique-tooltip-content {
-          display: inline-block;
-          vertical-align: middle;
-          margin-left: 0.2em;
+          .icon {
+            display: inline-block;
+            vertical-align: middle;
+            margin: -0.125em 0 0 0.2em;
+          }
         }
       }
     }
