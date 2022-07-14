@@ -129,6 +129,7 @@ export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
     align-items: center;
     flex-wrap: wrap;
     padding-bottom: var(--prop-gap);
+    justify-content: space-between;
 
     @media screen and (min-width: 1024px) {
       flex-wrap: nowrap;
@@ -144,11 +145,6 @@ export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
       .select-value {
         grid-column-gap: 7px;
       }
-    }
-
-    & > .unique-button {
-      flex: 0 0 auto;
-      margin-left: auto;
     }
   }
 `;

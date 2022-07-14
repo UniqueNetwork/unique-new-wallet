@@ -22,6 +22,7 @@ import { AccountSelector } from '@app/pages/SendFunds/components/AccountSelector
 import { AccountSuggest } from '@app/pages/SendFunds/components/AccountSuggest';
 import { ChainPropertiesContext } from '@app/context';
 import { TransferBtn } from '@app/components';
+import { AccountUtils } from '@app/account/AccountUtils';
 
 import { SendFundsProps } from './SendFunds';
 
@@ -131,8 +132,8 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
         return;
       }
 
-      const transformAddressForCurrentChain = keyring.encodeAddress(
-        keyring.decodeAddress(address),
+      const transformAddressForCurrentChain = AccountUtils.encodeAddress(
+        address,
         chainProperties.SS58Prefix,
       );
       const addressIsExist = recipientOptions.find(
