@@ -10,10 +10,29 @@ const Wrapper = styled.span`
 export const BaseActionBtn = ({
   actionEnabled,
   actionText,
+  tooltip,
   ...props
-}: ButtonProps & { actionEnabled: boolean; actionText: string }) => {
+}: ButtonProps & {
+  actionEnabled: boolean;
+  actionText: string;
+  tooltip?: string | null;
+}) => {
   return actionEnabled ? (
-    <Button {...props} />
+    <>
+      {!tooltip ? (
+        <Button {...props} />
+      ) : (
+        <Tooltip
+          content={
+            <Wrapper>
+              <Button {...props} />
+            </Wrapper>
+          }
+        >
+          {tooltip}
+        </Tooltip>
+      )}
+    </>
   ) : (
     <Tooltip
       content={
