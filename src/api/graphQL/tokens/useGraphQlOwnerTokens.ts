@@ -53,24 +53,21 @@ const getConditionByTypesFilters = (
   owner: string | undefined,
   filtersTypes: TypeFilter[] | undefined,
 ) => {
+  const baseFilter = {
+    _or: [{ owner: { _eq: owner } }, { owner_normalized: { _eq: owner } }],
+  };
+
   const filters: Record<TypeFilter, OperationVariables> = {
     purchased: {
-      _and: [
-        { _or: [{ owner: { _eq: owner } }, { owner_normalized: { _eq: owner } }] },
-        { is_sold: { _eq: true } },
-      ],
+      _and: [baseFilter, { is_sold: { _eq: true } }],
     },
     createdByMe: {
-      _or: [
-        { collection_owner: { _eq: owner } },
-        { collection_owner_normalized: { _eq: owner } },
-      ],
+      _and: [baseFilter, { is_sold: { _eq: false } }],
     },
   };
-  const defaultFilter = { _or: [filters.purchased, filters.createdByMe] };
 
-  if (!filtersTypes || filtersTypes.length === 0) {
-    return defaultFilter;
+  if (!Number(filtersTypes?.length)) {
+    return baseFilter;
   }
 
   return { _or: filtersTypes?.map((ft) => filters[ft]) };
