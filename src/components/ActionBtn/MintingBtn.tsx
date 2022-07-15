@@ -3,7 +3,7 @@ import { ButtonProps } from '@unique-nft/ui-kit';
 import { useApi } from '@app/hooks';
 import { BaseActionBtn } from '@app/components/ActionBtn/BaseActionBtn';
 
-export const MintingBtn = (props: ButtonProps) => {
+export const MintingBtn = (props: ButtonProps & { tooltip?: string | null }) => {
   const { currentChain } = useApi();
   return (
     <BaseActionBtn

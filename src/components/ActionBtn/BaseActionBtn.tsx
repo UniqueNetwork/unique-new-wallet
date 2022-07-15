@@ -1,39 +1,41 @@
-import { Button, ButtonProps, Tooltip, Text, IconProps } from '@unique-nft/ui-kit';
-import styled from 'styled-components';
+import { Button, Text, ButtonProps, IconProps } from '@unique-nft/ui-kit';
 
-const Wrapper = styled.span`
-  & > .unique-button {
-    pointer-events: none;
-  }
-`;
+import { Tooltip } from '../Tooltip';
 
 export const BaseActionBtn = ({
   actionEnabled,
   actionText,
+  tooltip,
   ...props
-}: ButtonProps & { actionEnabled: boolean; actionText: string }) => {
+}: ButtonProps & {
+  actionEnabled: boolean;
+  actionText: string;
+  tooltip?: string | null;
+}) => {
   const iconRender = (icon?: IconProps) => {
     return icon ? { ...icon, color: 'var(--color-blue-grey-300)' } : undefined;
   };
 
   return actionEnabled ? (
-    <Button {...props} />
+    <>
+      {!tooltip ? (
+        <Button {...props} />
+      ) : (
+        <Tooltip title={<Text color="var(--color-additional-light)">{tooltip}</Text>}>
+          <Button {...props} />
+        </Tooltip>
+      )}
+    </>
   ) : (
-    <Tooltip
-      content={
-        <Wrapper>
-          <Button
-            className={props.className}
-            title={props.title}
-            role={props.role}
-            iconLeft={iconRender(props.iconLeft)}
-            iconRight={iconRender(props.iconRight)}
-            disabled={true}
-          />
-        </Wrapper>
-      }
-    >
-      <Text color="#fff">{actionText}</Text>
+    <Tooltip title={<Text color="var(--color-additional-light)">{actionText}</Text>}>
+      <Button
+        className={props.className}
+        title={props.title}
+        role={props.role}
+        iconLeft={iconRender(props.iconLeft)}
+        iconRight={iconRender(props.iconRight)}
+        disabled={true}
+      />
     </Tooltip>
   );
 };
