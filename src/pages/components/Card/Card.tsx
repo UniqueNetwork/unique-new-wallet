@@ -32,6 +32,7 @@ export const PreviewCard = styled.div`
 export const PreviewCardInfo = styled.div`
   flex: 1 1 auto;
   padding-left: var(--prop-gap);
+  word-break: break-word;
 `;
 
 export const PreviewCardTitle = styled.h5`
