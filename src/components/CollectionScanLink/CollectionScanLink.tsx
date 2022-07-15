@@ -7,22 +7,33 @@ interface CollectionScanLinkProps {
   collectionId: string;
 }
 
-// todo - get link to scan from the env
-export const CollectionScanLink: VFC<CollectionScanLinkProps> = styled(
-  ({ className, collectionId }: CollectionScanLinkProps) => (
-    <div className={className}>
-      <a href={`https://uniquescan.io/QUARTZ/collections/${collectionId}`}>
-        View collection on Scan <Icon name="arrow-up-right" size={80} />
-      </a>
-    </div>
-  ),
-)`
-  a {
+const Wrapper = styled.div`
+  .scan-external-link {
     color: var(--color-primary-500);
-    font-size: 14px;
-    line-height: 22px;
-    display: flex;
-    align-items: center;
-    grid-column-gap: calc(var(--prop-gap) / 2);
+    line-height: 1.5;
+
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 0.35em;
+    }
   }
 `;
+
+// todo - get link to scan from the env
+export const CollectionScanLink: VFC<CollectionScanLinkProps> = ({
+  className,
+  collectionId,
+}: CollectionScanLinkProps) => (
+  <Wrapper className={className}>
+    <a
+      className="scan-external-link"
+      href={`https://uniquescan.io/QUARTZ/collections/${collectionId}`}
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      View collection on Scan
+      <Icon color="currentColor" name="arrow-up-right" size={16} />
+    </a>
+  </Wrapper>
+);
