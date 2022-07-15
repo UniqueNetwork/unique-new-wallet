@@ -39,18 +39,11 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   const { setCurrentChain } = useApi();
   const { error, info } = useNotifications();
 
-  const {
-    isLoading,
-    error: errorMessage,
-    signAndSubmitExtrinsic,
-    status,
-  } = useExtrinsicFlow(AccountApiService.balanceTransfer);
-  const {
-    isError: isFeeError,
-    error: feeError,
-    feeFormatted,
-    getFee,
-  } = useExtrinsicFee(AccountApiService.balanceTransfer);
+  const { isFlowLoading, flowError, flowStatus, signAndSubmitExtrinsic } =
+    useExtrinsicFlow(AccountApiService.balanceTransfer);
+  const { isFeeError, feeError, feeFormatted, getFee } = useExtrinsicFee(
+    AccountApiService.balanceTransfer,
+  );
 
   useEffect(() => {
     setCurrentChain(chain);
@@ -71,14 +64,14 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   };
 
   useEffect(() => {
-    if (status === 'success') {
+    if (flowStatus === 'success') {
       info('Transfer completed successfully');
       onSendSuccess?.();
       onClose();
-    } else if (status === 'error') {
-      error(errorMessage?.message);
+    } else if (flowStatus === 'error') {
+      error(flowError?.message);
     }
-  }, [status]);
+  }, [flowStatus]);
 
   useEffect(() => {
     if (isFeeError) {
@@ -102,7 +95,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
 
   return (
     <>
-      {isLoading ? (
+      {isFlowLoading ? (
         <TransferStagesModal />
       ) : (
         <SendFundsModal

@@ -29,12 +29,9 @@ export const MainInformation: FC = () => {
   const { error } = useNotifications();
   const { mainInformationForm, setCoverImgFile, mapFormToCollectionDto } =
     useContext(CollectionFormContext);
-  const {
-    isError: isFeeError,
-    error: feeError,
-    feeFormatted,
-    getFee,
-  } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
+  const { feeError, isFeeError, feeFormatted, getFee } = useExtrinsicFee(
+    CollectionApiService.collectionCreateMutation,
+  );
   const { uploadFile } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 

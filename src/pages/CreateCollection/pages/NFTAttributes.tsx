@@ -52,32 +52,24 @@ export const NFTAttributes = () => {
   const navigate = useNavigate();
   const { info, error } = useNotifications();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
-  const {
-    signAndSubmitExtrinsic,
-    status,
-    error: errorMessage,
-    isLoading,
-  } = useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
-  const {
-    error: feeError,
-    isError: isFeeError,
-    getFee,
-    fee,
-    feeFormatted,
-  } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
+  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
+    useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
+  const { feeError, isFeeError, getFee, fee, feeFormatted } = useExtrinsicFee(
+    CollectionApiService.collectionCreateMutation,
+  );
   const [address, setAddress] = useState<string>('');
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (flowStatus === 'success') {
       info('Collection created successfully');
 
       navigate(ROUTE.MY_COLLECTIONS);
     }
-    if (status === 'error') {
-      error(errorMessage?.message);
+    if (flowStatus === 'error') {
+      error(flowError?.message);
     }
-  }, [status]);
+  }, [flowStatus]);
 
   useEffect(() => {
     if (isFeeError && feeError) {
@@ -312,7 +304,10 @@ export const NFTAttributes = () => {
       >
         <Text>You cannot return to editing the attributes in this product version.</Text>
       </Confirm>
-      <StatusTransactionModal isVisible={isLoading} description="Creating collection" />
+      <StatusTransactionModal
+        isVisible={isFlowLoading}
+        description="Creating collection"
+      />
     </>
   );
 };
