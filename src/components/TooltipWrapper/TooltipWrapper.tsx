@@ -1,27 +1,19 @@
-import { ReactNode, VFC } from 'react';
-import styled from 'styled-components';
-import { Tooltip } from '@unique-nft/ui-kit';
+import { createRef, ReactNode, VFC } from 'react';
+import { Tooltip, TooltipAlign } from '@unique-nft/ui-kit';
 
 interface TooltipWrapperProps {
-  message: ReactNode | string;
-  placement?: 'bottom' | 'top' | 'left-start' | 'right-start';
+  align?: TooltipAlign;
   children?: ReactNode | undefined;
+  message: ReactNode | string;
 }
 
-const Wrapper = styled.span`
-  & > .unique-button {
-    pointer-events: none;
-  }
-`;
+const tooltipRef = createRef<HTMLDivElement>();
 
-export const TooltipButtonWrapper: VFC<TooltipWrapperProps> = ({
-  children,
-  message,
-  placement,
-}) => {
+export const TooltipButtonWrapper: VFC<TooltipWrapperProps> = ({ children, message }) => {
   return (
-    <Tooltip content={<Wrapper>{children}</Wrapper>} placement={placement}>
-      {message}
-    </Tooltip>
+    <>
+      <Tooltip targetRef={tooltipRef}>{message}</Tooltip>
+      <span ref={tooltipRef}>{children}</span>
+    </>
   );
 };

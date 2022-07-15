@@ -87,10 +87,10 @@ export const SettingsRow = styled.div`
 
   label,
   .checkbox-label > span {
-    & > .unique-tooltip-content {
+    & > .icon {
       display: inline-block;
       vertical-align: middle;
-      margin: -0.1em 0 0 0.3em;
+      margin: -0.125em 0 0 0.3em;
     }
   }
 

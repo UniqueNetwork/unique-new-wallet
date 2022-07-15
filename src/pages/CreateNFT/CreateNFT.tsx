@@ -274,10 +274,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                 <ButtonGroup>
                   {isBalanceInsufficient ? (
                     <>
-                      <TooltipButtonWrapper
-                        placement="right-start"
-                        message={NO_BALANCE_MESSAGE}
-                      >
+                      <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
                         <Button
                           role="primary"
                           title="Confirm and create more"
@@ -285,10 +282,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                           disabled={true}
                         />
                       </TooltipButtonWrapper>
-                      <TooltipButtonWrapper
-                        placement="right-start"
-                        message={NO_BALANCE_MESSAGE}
-                      >
+                      <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
                         <Button title="Confirm and close" type="button" disabled={true} />
                       </TooltipButtonWrapper>
                     </>

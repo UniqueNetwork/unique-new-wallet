@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { createRef, useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Dropdown,
@@ -35,25 +35,28 @@ type AccountsColumnsProps = {
   onForgetWalletClick(address: string): () => void;
 };
 
+const AccountTitle = () => {
+  const tooltipRef = createRef<HTMLDivElement>();
+  return (
+    <>
+      Account
+      <Tooltip targetRef={tooltipRef}>
+        Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may
+        be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
+        can be&nbsp;converted between each other because they share the same public key.
+        You can see all transformations for any given address on&nbsp;Subscan.
+      </Tooltip>
+      <Icon ref={tooltipRef} name="question" size={20} color="var(--color-primary-500)" />
+    </>
+  );
+};
+
 const getAccountsColumns = ({
   onShowSendFundsModal,
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => [
   {
-    title: (
-      <>
-        Account
-        <Tooltip
-          placement="right-start"
-          content={<Icon name="question" size={20} color="var(--color-primary-500)" />}
-        >
-          Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
-          represented by a different address character sequence, but they can be converted
-          between each other because they share the same public key. You can see all
-          transformations for any given address on Subscan.
-        </Tooltip>
-      </>
-    ),
+    title: <AccountTitle />,
     width: '35%',
     field: 'accountInfo',
     render(address, rowData: Account) {
