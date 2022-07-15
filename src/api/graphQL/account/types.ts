@@ -1,12 +1,8 @@
 export type AccountCommonInfoResponse = {
-  view_collections_aggregate?: {
-    aggregate: {
-      count: number;
-    };
+  tokens?: {
+    count: number;
   };
-  view_tokens_aggregate?: {
-    aggregate: {
-      count: number;
-    };
+  collections?: {
+    count: number;
   };
 };
