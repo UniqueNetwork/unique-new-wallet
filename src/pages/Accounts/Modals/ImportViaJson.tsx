@@ -1,7 +1,6 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { Button, Heading, Modal } from '@unique-nft/ui-kit';
 import { KeyringPair } from '@polkadot/keyring/types';
-import keyring from '@polkadot/ui-keyring';
 
 import { PasswordInput, Upload } from '@app/components';
 import {
@@ -15,6 +14,9 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { convertToU8a, keyringFromFile } from '@app/utils';
+import { ChainPropertiesContext } from '@app/context';
+import { useAccounts } from '@app/hooks';
 
 import { TCreateAccountModalProps } from './types';
 
@@ -24,32 +26,39 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
 }) => {
   const [pair, setPair] = useState<KeyringPair | null>(null);
   const [password, setPassword] = useState<string>('');
+  const { chainProperties } = useContext(ChainPropertiesContext);
+  const { restoreJSONAccount } = useAccounts();
 
-  // todo - rawRpcApi.genesisHash.toHex() change to value from the API /chain/properties genesisHash
-  const onUploadChange = useCallback((file: File) => {
-    /*  const reader = new FileReader();
-       reader.onload = ({ target }: ProgressEvent<FileReader>): void => {
-         if (target && target.result) {
-           const data = convertToU8a(target.result as ArrayBuffer);
-           setPair(keyringFromFile(data, rawRpcApi.genesisHash.toHex()));
-         }
-       };
+  useEffect(() => {
+    if (isVisible) {
+      return;
+    }
+    setPassword('');
+    setPair(null);
+  }, [isVisible]);
 
-       reader.readAsArrayBuffer(file);
-     }, */
-  }, []);
+  const onUploadChange = useCallback(
+    (file: File) => {
+      const reader = new FileReader();
+      reader.onload = ({ target }: ProgressEvent<FileReader>): void => {
+        if (target?.result) {
+          const data = convertToU8a(target.result as ArrayBuffer);
+          setPair(keyringFromFile(data, chainProperties.genesisHash));
+        }
+      };
 
-  const onRestoreClick = useCallback(() => {
+      reader.readAsArrayBuffer(file);
+    },
+    [chainProperties.genesisHash],
+  );
+
+  const onRestoreClick = useCallback(async () => {
     if (!pair || !password) {
       return;
     }
-    try {
-      keyring.addPair(pair, password);
-    } catch (error) {
-      console.error(error);
-    }
+    await restoreJSONAccount(pair, password);
     onFinish();
-  }, [pair, password, onFinish]);
+  }, [onFinish, pair, password, restoreJSONAccount]);
 
   return (
     <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
@@ -86,7 +95,9 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
           disabled={!password || !pair}
           role="primary"
           title="Restore"
-          onClick={onRestoreClick}
+          onClick={() => {
+            onRestoreClick();
+          }}
         />
       </ModalFooter>
     </Modal>

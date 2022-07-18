@@ -2,13 +2,16 @@ import { useCallback, useContext } from 'react';
 import { web3FromSource } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { KeypairType } from '@polkadot/util-crypto/types';
+import { KeyringPair } from '@polkadot/keyring/types';
 
 import { SignerPayloadJSONDto } from '@app/types/Api';
+import { useMessage } from '@app/hooks/useMessage';
 
 import { getSuri, PairType } from '../utils/seedUtils';
 import AccountContext, { Account } from '../account/AccountContext';
 
 export const useAccounts = () => {
+  const { showError } = useMessage();
   const {
     accounts,
     selectedAccount,
@@ -69,6 +72,21 @@ export const useAccounts = () => {
       }
     },
     [],
+  );
+
+  const restoreJSONAccount = useCallback(
+    async (pair: KeyringPair, password: string) => {
+      try {
+        keyring.addPair(pair, password);
+        await fetchAccounts();
+      } catch (e: any) {
+        showError({
+          name: 'warning',
+          text: e.message || 'An error occurred while restoring your account',
+        });
+      }
+    },
+    [fetchAccounts, showError],
   );
 
   const unlockLocalAccount = useCallback(
@@ -132,5 +150,6 @@ export const useAccounts = () => {
     unlockLocalAccount,
     signMessage,
     forgetLocalAccount,
+    restoreJSONAccount,
   };
 };

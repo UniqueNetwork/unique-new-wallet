@@ -2,7 +2,6 @@ import { VFC, useState, KeyboardEvent } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
-  Button,
   IconProps,
   InputText,
   RadioGroup,
@@ -19,6 +18,7 @@ import {
 import { Direction } from '@app/api/graphQL/tokens';
 import { ROUTE } from '@app/routes';
 import { useApi } from '@app/hooks';
+import { MintingBtn } from '@app/components';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -90,11 +90,11 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         onChange={setSearch}
       />
       <Select options={sortOptions} value={direction} onChange={handleChangeDirection} />
-      <Button
+      <MintingBtn
         iconLeft={{
           name: 'plus',
           size: 12,
-          color: 'var(--color-additional-light)',
+          color: 'currentColor',
         }}
         title="Create an NFT"
         role="primary"

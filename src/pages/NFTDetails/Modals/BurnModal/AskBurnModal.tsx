@@ -26,9 +26,11 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
       onClose={onClose}
     >
       <Text size="m">You will not be able to undo this action.</Text>
-      <TextStyled color="additional-warning-500" size="s">
-        A fee of ~ {fee} can be applied to the transaction
-      </TextStyled>
+      {fee && (
+        <TextStyled color="additional-warning-500" size="s">
+          A fee of ~ {fee} can be applied to the transaction
+        </TextStyled>
+      )}
     </Confirm>
   );
 };

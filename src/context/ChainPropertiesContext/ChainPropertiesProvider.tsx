@@ -1,30 +1,20 @@
-import { FC, useEffect, useMemo, useRef } from 'react';
+import { FC, useMemo } from 'react';
 
-import { IBaseApi, usePropertiesService } from '@app/api';
-import { useApi } from '@app/hooks';
+import { usePropertiesService } from '@app/api';
+import { ChainPropertiesResponse } from '@app/types/Api';
 
 import { ChainPropertiesProvider } from './ChainPropertiesContext';
 
-export const ChainPropertiesWrapper: FC = ({ children }) => {
-  const { api } = useApi();
-  const apiRef = useRef<IBaseApi>();
-  const { data, isFetching, refetch } = usePropertiesService();
+export const ChainPropertiesWrapper: FC<{
+  initialProperties: ChainPropertiesResponse;
+}> = ({ children, initialProperties }) => {
+  const { data } = usePropertiesService();
 
-  const value = useMemo(
-    () => ({
-      chainProperties: data,
-      isLoading: isFetching,
-    }),
-    [data, isFetching],
-  );
-
-  useEffect(() => {
-    if (apiRef.current && apiRef.current !== api) {
-      // void refetch();
-    }
-
-    apiRef.current = api;
-  }, [api, refetch]);
+  const value = useMemo(() => {
+    return {
+      chainProperties: data || initialProperties,
+    };
+  }, [data, initialProperties]);
 
   return <ChainPropertiesProvider value={value}>{children}</ChainPropertiesProvider>;
 };

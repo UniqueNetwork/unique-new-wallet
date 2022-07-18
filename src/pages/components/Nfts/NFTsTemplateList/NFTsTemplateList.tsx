@@ -95,10 +95,7 @@ const NFTsListComponent = ({
 };
 
 export const NFTsTemplateList = styled(NFTsListComponent)`
-  height: 100%;
-  display: block;
   padding: calc(var(--prop-gap) * 2);
-  box-sizing: border-box;
 
   .token-size-wrapper {
     margin-bottom: 25px;
@@ -107,16 +104,6 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
     flex-flow: wrap;
     align-items: center;
     gap: 10px;
-  }
-
-  .unique-token-link {
-    width: 18%;
-
-    img {
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-    }
   }
 
   .nft-list {

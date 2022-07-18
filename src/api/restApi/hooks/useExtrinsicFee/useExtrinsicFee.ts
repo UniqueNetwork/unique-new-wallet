@@ -1,13 +1,14 @@
 import { useEffect, useReducer, useState } from 'react';
+import axios from 'axios';
 
 import { useApi } from '@app/hooks';
-import { isAxiosError, isNativeError } from '@app/utils';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 import { EndpointMutation } from '../../request';
 import { useApiMutation } from '../useApiMutation';
 import { ExtrinsicApiService } from '../../extrinsic';
 import { extrinsicFeeReducer } from './extrinsicFeeReducer';
+import { UNKNOWN_ERROR_MSG } from '../constants';
 
 export const useExtrinsicFee = <
   ConcreteEndpointMutation extends EndpointMutation<
@@ -33,7 +34,7 @@ export const useExtrinsicFee = <
   });
 
   const [extrinsicFeeState, setExtrinsicFeeState] = useReducer(extrinsicFeeReducer, {
-    fee: undefined,
+    fee: '',
     feeFormatted: undefined,
     error: undefined,
     isError: false,
@@ -93,24 +94,28 @@ export const useExtrinsicFee = <
         },
       });
     } catch (e) {
-      let error: Error | undefined;
+      let error: Error;
 
-      if (isAxiosError(e)) {
+      if (axios.isAxiosError(e)) {
         error = e?.response?.data.error;
-      } else if (isNativeError(e)) {
+      } else if (e instanceof Error) {
         error = e;
+      } else {
+        error = new Error();
       }
 
-      setExtrinsicFeeState({ type: 'error', payload: { error } });
+      error.message = error.message || UNKNOWN_ERROR_MSG;
+
+      setExtrinsicFeeState({ type: 'error', payload: { error, fee } });
     }
   };
 
   return {
     fee,
     feeFormatted,
+    feeError: error,
+    isFeeError: isError ?? false,
+    isFeeLoading: isLoading ?? false,
     getFee,
-    isLoading,
-    isError,
-    error,
   };
 };

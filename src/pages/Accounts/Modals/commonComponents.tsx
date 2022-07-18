@@ -1,17 +1,24 @@
 import styled from 'styled-components/macro';
 import { Text } from '@unique-nft/ui-kit';
 
-export const LabelText = styled(Text)`
+export const LabelText = styled(Text).attrs({
+  appearance: 'block',
+})`
   margin-bottom: calc(var(--prop-gap) / 4);
 
-  .unique-tooltip-content {
-    display: inline-block;
-    vertical-align: middle;
+  &[class*='appearance-block'] {
+    display: flex;
+    align-items: center;
+  }
+
+  .icon {
     margin-left: 0.25em;
   }
 `;
 
-export const AdditionalText = styled(Text)`
+export const AdditionalText = styled(Text).attrs({
+  appearance: 'block',
+})`
   margin-bottom: var(--prop-gap);
 `;
 
@@ -23,7 +30,9 @@ export const ModalHeader = styled.div`
   }
 `;
 
-export const TextWarning = styled(Text)`
+export const TextWarning = styled(Text).attrs({
+  appearance: 'block',
+})`
   border-radius: var(--prop-border-radius);
   padding: calc(var(--prop-gap) / 2) var(--prop-gap);
   background-color: var(--color-additional-warning-100);
@@ -39,7 +48,7 @@ export const AddressWrapper = styled.div`
   color: var(--color-grey-400);
 `;
 
-export const AddressText = styled(Text).attrs({ size: 's' })`
+export const AddressText = styled(Text).attrs({ appearance: 'block', size: 's' })`
   &.unique-text {
     color: inherit;
     line-height: 24px;

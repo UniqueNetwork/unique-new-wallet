@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { createRef, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -8,6 +8,7 @@ import {
   Loader,
   Text,
   Tooltip,
+  TooltipAlign,
 } from '@unique-nft/ui-kit';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +28,15 @@ import {
   SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
+
+const addressTooltip = createRef<HTMLDivElement>();
+const destroyTooltip = createRef<HTMLDivElement>();
+const tokenTooltip = createRef<HTMLDivElement>();
+const tooltipAlign: TooltipAlign = {
+  appearance: 'horizontal',
+  horizontal: 'right',
+  vertical: 'top',
+};
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
@@ -119,22 +129,19 @@ const CollectionSettings = () => {
                     label={
                       <>
                         Collection sponsor address
-                        <Tooltip
-                          content={
-                            <Icon
-                              name="question"
-                              size={22}
-                              color="var(--color-primary-500)"
-                            />
-                          }
-                          placement="right-start"
-                        >
+                        <Tooltip align={tooltipAlign} targetRef={addressTooltip}>
                           The collection sponsor pays for all transactions related
                           to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
                           a&nbsp;regular account or&nbsp;a&nbsp;market contract. The
                           sponsor will need to&nbsp;confirm the sponsorship before the
                           sponsoring begins
                         </Tooltip>
+                        <Icon
+                          ref={addressTooltip}
+                          name="question"
+                          size={22}
+                          color="var(--color-primary-500)"
+                        />
                       </>
                     }
                     additionalText="The designated sponsor should approve the request"
@@ -159,20 +166,17 @@ const CollectionSettings = () => {
                     label={
                       <>
                         Token limit
-                        <Tooltip
-                          content={
-                            <Icon
-                              name="question"
-                              size={22}
-                              color="var(--color-primary-500)"
-                            />
-                          }
-                          placement="right-start"
-                        >
+                        <Tooltip align={tooltipAlign} targetRef={tokenTooltip}>
                           The token limit (collection size) is&nbsp;a&nbsp;mandatory
                           parameter if&nbsp;you want to&nbsp;list your collection
                           on&nbsp;a&nbsp;marketplace.
                         </Tooltip>
+                        <Icon
+                          ref={tokenTooltip}
+                          name="question"
+                          size={22}
+                          color="var(--color-primary-500)"
+                        />
                       </>
                     }
                     additionalText="Unlimited by default"
@@ -188,22 +192,19 @@ const CollectionSettings = () => {
                     label={
                       <>
                         Owner can burn collection
-                        <Tooltip
-                          content={
-                            <Icon
-                              name="question"
-                              size={22}
-                              color="var(--color-primary-500)"
-                            />
-                          }
-                          placement="right-start"
-                        >
+                        <Tooltip align={tooltipAlign} targetRef={destroyTooltip}>
                           Should you decide to&nbsp;keep the right to&nbsp;destroy the
                           collection, a&nbsp;marketplace could reject it&nbsp;depending
                           on&nbsp;its policies as&nbsp;it&nbsp;gives the author the power
                           to&nbsp;arbitrarily destroy a&nbsp;collection at&nbsp;any moment
                           in&nbsp;the future
                         </Tooltip>
+                        <Icon
+                          ref={destroyTooltip}
+                          name="question"
+                          size={22}
+                          color="var(--color-primary-500)"
+                        />
                       </>
                     }
                     disabled={!ownerCanDestroy}

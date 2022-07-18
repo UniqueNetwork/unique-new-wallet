@@ -19,6 +19,6 @@ export class PropertiesQuery extends EndpointQuery<ChainPropertiesResponse> {
   }
 
   request(api: IBaseApi): Promise<ChainPropertiesResponse> {
-    return api.get<ChainPropertiesResponse>(`${this.baseUrl}`);
+    return api.get<ChainPropertiesResponse>(this.baseUrl);
   }
 }

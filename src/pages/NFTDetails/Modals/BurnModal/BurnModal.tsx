@@ -21,24 +21,20 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
   const { info, error } = useNotifications();
 
   const { feeFormatted, getFee } = useExtrinsicFee(TokenApiService.burnMutation);
-  const {
-    status,
-    isLoading,
-    error: errorMessage,
-    signAndSubmitExtrinsic,
-  } = useExtrinsicFlow(TokenApiService.burnMutation);
+  const { flowStatus, isFlowLoading, flowError, signAndSubmitExtrinsic } =
+    useExtrinsicFlow(TokenApiService.burnMutation);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (flowStatus === 'success') {
       info('Collection created successfully');
 
       navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
     }
 
-    if (status === 'error') {
-      error(errorMessage?.message);
+    if (flowStatus === 'error') {
+      error(flowError?.message);
     }
-  }, [status]);
+  }, [flowStatus]);
 
   useEffect(() => {
     if (!token || !selectedAccount?.address) {
@@ -72,7 +68,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     return null;
   }
 
-  if (isLoading) {
+  if (isFlowLoading) {
     return <BurnStagesModal />;
   }
 

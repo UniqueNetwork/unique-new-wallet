@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Tabs } from '@unique-nft/ui-kit';
+import { Heading, Tabs } from '@unique-nft/ui-kit';
 import React, { useEffect, VFC } from 'react';
 import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -38,6 +38,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 
   return (
     <NFTsWrapper>
+      <Heading size="1">My tokens</Heading>
       <PagePaperNoPadding>
         <div className={classNames('my-tokens', className)}>
           <div className="tabs-header">
