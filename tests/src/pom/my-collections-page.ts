@@ -1,6 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 import { BasePage } from './base-page';
 import {PolkadotjsExtensionPage} from "./polkadotjs-extension-page";
+import { expect } from '@playwright/test';
 
 
 export class MyCollectionsPage extends BasePage {
@@ -10,6 +11,8 @@ export class MyCollectionsPage extends BasePage {
     readonly symbolInputSelector: Locator;
     readonly nextStepButton: Locator;
     readonly yesModalButton: Locator;
+    readonly createACollectionButton: Locator;
+    readonly collectionLink: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -19,6 +22,8 @@ export class MyCollectionsPage extends BasePage {
         this.symbolInputSelector = page.locator('input[name="symbol"]');
         this.nextStepButton = page.locator('//button[text()="Next step"]');
         this.yesModalButton = page.locator('//button[text()="Yes, I am sure"]');
+        this.createACollectionButton = page.locator('//button[text()="Create a collection"]');
+        this.collectionLink = page.locator('.my-collections-list a.unique-collection-link')
     }
 
     async navigate() {
@@ -39,12 +44,12 @@ export class MyCollectionsPage extends BasePage {
         await this.createCollectionButton.click();
         await this.nameInputSelector.fill(nameCol);
         await this.symbolInputSelector.fill(symbolCol);
-        await this.descriptionInputSelector.fill(description);
+        // await this.descriptionInputSelector.fill(description);
         await this.nextStepButton.click();
         await this.yesModalButton.click();
 
         // step2
-        await this.createCollectionButton.click();
+        await this.createACollectionButton.click();
         await this.yesModalButton.click();
 
         const polkdotExtensionPage = new PolkadotjsExtensionPage(await context.newPage());
@@ -52,6 +57,10 @@ export class MyCollectionsPage extends BasePage {
         await polkdotExtensionPage.navigate();
         await polkdotExtensionPage.fillPassword(password);
         await polkdotExtensionPage.close();
+
+        // check notification
+        await this.successNotification.waitFor({state: "visible"});
+        await expect(this.successNotification).toHaveText('Collection created successfully');
     }
 
 }

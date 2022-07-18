@@ -20,7 +20,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@unique-nft/ui-kit": "^0.0.27",
+    "@unique-nft/ui-kit": "^0.0.30",
     "axios": "^0.24.0",
     "date-fns": "^2.28.0",
     "eslint": "^8.11.0",
@@ -38,10 +38,7 @@
     "socket.io-client": "^4.4.1",
     "web-vitals": "^1.0.1",
     "web3": "^1.7.0",
-    "yup": "^0.32.11",
-    "@playwright/test": "^1.22.1",
-    "playwright": "^1.21.0",
-    "chai": "4.3.6"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@polkadot/dev": "^0.65.35",
@@ -86,8 +83,7 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "eslint": "eslint src --fix",
-    "stylelint": "stylelint '**/*.tsx'",
-    "test:ui": "npx playwright test --workers=1 .*.ui.test.ts"
+    "stylelint": "stylelint '**/*.tsx'"
   },
   "eslintConfig": {
     "extends": [

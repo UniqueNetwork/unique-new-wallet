@@ -1,13 +1,17 @@
-import { test as base, chromium } from '@playwright/test';
+import {test as base, chromium} from '@playwright/test';
 import 'dotenv/config';
 import path from 'path';
-import { initApiContext } from '../api/base-api';
 
 
 const extensionPath = path.join(__dirname, '../../extensions');
 
-base.beforeAll(async ({ playwright }) => {
-    await initApiContext(playwright);
+base.beforeAll(async ({playwright}) => {
+    await playwright.request.newContext({
+        extraHTTPHeaders: {
+            accept: 'application/json',
+            'Content-Type': 'application/json'
+        }
+    });
 });
 
 const baseUiTest = base.extend({
@@ -22,4 +26,4 @@ const baseUiTest = base.extend({
     }
 });
 
-export { baseUiTest };
+export {baseUiTest};
