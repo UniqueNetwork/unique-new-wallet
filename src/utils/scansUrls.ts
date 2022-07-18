@@ -1,4 +1,4 @@
-export const getSubscanAddress = (
+export const getScanAddresses = (
   network: string,
 ): { urlSubscan: string; urlUniquescan: string } => {
   switch (network) {
