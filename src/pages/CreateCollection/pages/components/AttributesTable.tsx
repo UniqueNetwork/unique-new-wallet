@@ -271,6 +271,8 @@ export const AttributesTable = styled(AttributesTableComponent)`
       .table-header-cell {
         & > span {
           flex: 1 1 auto;
+          padding-left: calc(var(--prop-gap) / 2);
+          padding-right: calc(var(--prop-gap) / 2);
 
           .icon {
             display: inline-block;
