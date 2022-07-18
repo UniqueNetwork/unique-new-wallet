@@ -9,6 +9,7 @@ import { ApiWrapper, BaseApi } from '@app/api';
 import { ChainPropertiesWrapper } from '@app/context';
 import { config } from '@app/config';
 import { ChainPropertiesResponse } from '@app/types/Api';
+import { defaultPairType } from '@app/pages';
 
 import AppRoutes from './AppRoutes';
 import { GlobalStyle } from './styles';
@@ -32,6 +33,7 @@ http
       keyring.loadAll({
         ss58Format: properties.SS58Prefix,
         genesisHash: properties.genesisHash,
+        type: defaultPairType,
       });
 
       ReactDOM.render(

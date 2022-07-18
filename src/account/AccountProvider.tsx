@@ -10,6 +10,7 @@ import React, {
 import { KeyringPair } from '@polkadot/keyring/types';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
+import { u8aToHex } from '@polkadot/util';
 
 import { sleep } from '@app/utils';
 import { NetworkType } from '@app/types';
@@ -117,6 +118,7 @@ export const AccountWrapper: FC = ({ children }) => {
       ...account,
       normalizedAddress: AccountUtils.normalizedAddressAccount(account.address),
       address: AccountUtils.encodeAddress(account.address, chainProperties.SS58Prefix),
+      publicKey: u8aToHex(keyring.decodeAddress(account.address, undefined, 7391)),
     }));
   }, [chainProperties?.SS58Prefix, getExtensionAccounts, getLocalAccounts]);
 

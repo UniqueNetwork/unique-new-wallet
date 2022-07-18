@@ -3,12 +3,13 @@ import { web3FromSource } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { KeypairType } from '@polkadot/util-crypto/types';
 import { KeyringPair } from '@polkadot/keyring/types';
+import { stringToHex, u8aToHex, stringToU8a } from '@polkadot/util';
 
 import { SignerPayloadJSONDto } from '@app/types/Api';
 import { useMessage } from '@app/hooks/useMessage';
 
 import { getSuri, PairType } from '../utils/seedUtils';
-import AccountContext, { Account } from '../account/AccountContext';
+import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
 
 export const useAccounts = () => {
   const { showError } = useMessage();
@@ -20,7 +21,10 @@ export const useAccounts = () => {
     fetchAccountsError,
     changeAccount,
     forgetLocalAccount,
+    showSignDialog,
   } = useContext(AccountContext);
+
+  console.log(accounts);
 
   const addLocalAccount = useCallback(
     async (
@@ -112,30 +116,49 @@ export const useAccounts = () => {
       if (!_account) {
         throw new Error('Account was not provided');
       }
-      // TODO: добавить проверку на локальные аккаунты. Задача https://cryptousetech.atlassian.net/browse/WMS-914
+      if (_account.signerType === AccountSigner.local && selectedAccount) {
+        const pair = await showSignDialog();
 
-      const injector = await web3FromSource(_account.meta.source);
+        const message = stringToU8a(JSON.stringify(signerPayloadJSON));
+        const signature = pair.sign(message);
+        console.log(u8aToHex(signature));
 
-      if (!injector.signer.signPayload) {
-        throw new Error('Web3 not available');
+        const isValid = pair.verify(
+          message,
+          signature,
+          keyring.decodeAddress(selectedAccount?.address),
+        );
+
+        console.log(isValid);
+
+        if (pair) {
+          return Promise.resolve(u8aToHex(signature));
+        }
+        return Promise.resolve(null);
+      } else {
+        const injector = await web3FromSource(_account.meta.source);
+
+        if (!injector.signer.signPayload) {
+          throw new Error('Web3 not available');
+        }
+
+        return injector.signer
+          .signPayload(signerPayloadJSON)
+          .then(({ signature }) => {
+            if (!signature) {
+              throw new Error('Signing failed');
+            }
+
+            return signature;
+          })
+          .catch((err) => {
+            console.log('err', err);
+
+            return null;
+          });
       }
-
-      return injector.signer
-        .signPayload(signerPayloadJSON)
-        .then(({ signature }) => {
-          if (!signature) {
-            throw new Error('Signing failed');
-          }
-
-          return signature;
-        })
-        .catch((err) => {
-          console.log('err', err);
-
-          return null;
-        });
     },
-    [selectedAccount],
+    [selectedAccount, showSignDialog],
   );
 
   return {
