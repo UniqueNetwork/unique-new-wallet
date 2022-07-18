@@ -118,7 +118,7 @@ export const AccountWrapper: FC = ({ children }) => {
       ...account,
       normalizedAddress: AccountUtils.normalizedAddressAccount(account.address),
       address: AccountUtils.encodeAddress(account.address, chainProperties.SS58Prefix),
-      publicKey: u8aToHex(keyring.decodeAddress(account.address, undefined, 7391)),
+      publicKey: u8aToHex(keyring.decodeAddress(account.address)),
     }));
   }, [chainProperties?.SS58Prefix, getExtensionAccounts, getLocalAccounts]);
 
