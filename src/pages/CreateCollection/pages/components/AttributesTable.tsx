@@ -236,8 +236,9 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
     <div className={className}>
       {/* TODO: @future: add new table cellPadding=8 from next uikit ver. */}
       <Table
-        columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
         data={value}
+        columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
+        noDataMessage={null}
       />
       <AddButtonWrapper>
         <Button
