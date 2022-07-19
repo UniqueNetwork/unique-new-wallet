@@ -1,4 +1,4 @@
-import { VFC, useCallback, useState } from 'react';
+import { VFC, useCallback, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 import { AccountsManager, Button, Icon, INetwork } from '@unique-nft/ui-kit';
@@ -28,6 +28,11 @@ export const Header: VFC = () => {
   const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
     networks.find(({ id }) => id === currentChain?.network),
   );
+
+  useEffect(() => {
+    const active = networks.find(({ id }) => id === currentChain?.network);
+    setActiveNetwork(active);
+  }, [currentChain]);
 
   const mobileMenuToggle = useCallback(() => {
     toggleMobileMenu((prevState) => !prevState);
@@ -101,7 +106,7 @@ export const Header: VFC = () => {
               name: selectedAccount?.meta.name,
             }}
             symbol={selectedAccount?.unitBalance ?? ''}
-            onNetworkChange={handleChangeNetwork}
+            onNetworkChange={(val) => handleChangeNetwork(val)}
             onAccountChange={onAccountChange}
           />
         )}
