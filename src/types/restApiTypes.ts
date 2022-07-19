@@ -16,4 +16,6 @@ export interface Chain {
   transfersEnabled: boolean;
   burnEnabled: boolean;
   switchingEnabled: boolean;
+  subscanAddress: string;
+  uniquescanAddress: string;
 }

@@ -73,6 +73,8 @@ export const getNetworkParams = (
     burnEnabled: findNetworkParamByName(config, network, 'BURN_ENABLED'),
     switchingEnabled: findNetworkParamByName(config, network, 'SWITCHING_ENABLED'),
     network,
+    subscanAddress: findNetworkParamByName(config, network, 'SUBSCAN_ADDRESS'),
+    uniquescanAddress: findNetworkParamByName(config, network, 'UNIQUESCAN_ADDRESS'),
   };
 };
 
