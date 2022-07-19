@@ -95,7 +95,7 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
         iconLeft={{
           name: 'plus',
           size: 12,
-          color: 'var(--color-additional-light)',
+          color: 'currentColor',
         }}
         title="Create collection"
         role="primary"
@@ -126,6 +126,7 @@ export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
   &.my-collections-filter {
     border-bottom: 1px solid var(--color-grey-300);
     display: flex;
+    justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     padding-bottom: var(--prop-gap);

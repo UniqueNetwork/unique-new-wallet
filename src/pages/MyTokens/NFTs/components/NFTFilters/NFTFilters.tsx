@@ -66,10 +66,16 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
         iconLeft={{
           name: 'plus',
           size: 12,
-          color: 'var(--color-additional-light)',
+          color: 'currentColor',
         }}
+        role="primary"
         title="Create an NFT"
         disabled={!Number(selectedAccount?.collectionsTotal)}
+        tooltip={
+          !Number(selectedAccount?.collectionsTotal)
+            ? 'Please create a collection first'
+            : null
+        }
         onClick={() => navigate(ROUTE.CREATE_NFT)}
       />
     </div>

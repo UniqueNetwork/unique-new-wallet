@@ -1,7 +1,7 @@
-import { VFC, useCallback, useState } from 'react';
+import { useCallback, useState, VFC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager, Button, Icon, INetwork } from '@unique-nft/ui-kit';
+import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 
 import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
 import MobileMenuLink from '@app/components/Header/MobileMenuLink';
@@ -11,12 +11,6 @@ import { config } from '@app/config';
 import { defaultChainKey } from '@app/utils/configParser';
 
 import MenuLink from './MenuLink';
-
-// TODO - share IAccount from the UI kit
-interface IAccount {
-  address?: string;
-  name?: string;
-}
 
 export const Header: VFC = () => {
   const navigate = useNavigate();
@@ -139,7 +133,7 @@ const HeaderStyled = styled.div`
 
   nav {
     & > a {
-      margin-right: 24px;
+      margin-right: calc(var(--prop-gap) / 1.5);
     }
   }
 `;
@@ -152,11 +146,11 @@ const LeftSideColumn = styled.div`
 const MenuIcon = styled.div`
   width: 32px;
   height: 32px;
-  margin-right: 8px;
+  margin-right: calc(var(--prop-gap) / 2);
 `;
 
 const LogoIcon = styled.img`
-  margin-right: 32px;
+  margin-right: calc(var(--prop-gap) * 2);
 `;
 
 const RightSide = styled.div`
@@ -174,6 +168,6 @@ const MobileMenu = styled.div`
   box-shadow: inset 0 2px 8px rgb(0 0 0 / 6%);
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: var(--prop-gap);
   z-index: 9;
 `;

@@ -32,6 +32,9 @@ export const useExtrinsicStatus = (
           apolloClient.refetchQueries({
             include: ['getAccountCommonInfo'],
           });
+          apolloClient.refetchQueries({
+            include: ['getAccountCommonInfo'],
+          });
         }
       },
     },

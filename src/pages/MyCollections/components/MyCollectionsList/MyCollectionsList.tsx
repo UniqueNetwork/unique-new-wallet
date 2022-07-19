@@ -8,7 +8,6 @@ import {
   Pagination,
   Text,
 } from '@unique-nft/ui-kit';
-import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -34,7 +33,6 @@ export const MyCollectionsList = ({
   search,
   onPageChange,
 }: MyCollectionsListProps) => {
-  const navigate = useNavigate();
   const deviceSize = useDeviceSize();
   const { selectedAccount } = useContext(AccountContext);
 
@@ -72,25 +70,19 @@ export const MyCollectionsList = ({
         <>
           <List>
             {collections?.map((collection) => (
-              /* TODO: div wrapper change onClick to href prop */
-              <CollectionItem
-                className={classNames({ '_no-cover': !collection.collection_cover })}
+              <CollectionLink
+                count={collection.tokens_count || 0}
+                image={
+                  collection.collection_cover
+                    ? getTokenIpfsUriByImagePath(collection.collection_cover)
+                    : noCoverImage
+                }
                 key={collection.collection_id}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(`/my-collections/${collection.collection_id}/nft`);
+                link={{
+                  title: `${collection.name} [${collection.collection_id}]`,
+                  href: `/my-collections/${collection.collection_id}/nft`,
                 }}
-              >
-                <CollectionLink
-                  count={collection.tokens_count || 0}
-                  image={
-                    collection.collection_cover
-                      ? getTokenIpfsUriByImagePath(collection.collection_cover)
-                      : noCoverImage
-                  }
-                  title={`${collection.name} [${collection.collection_id}]`}
-                />
-              </CollectionItem>
+              />
             ))}
           </List>
           <Footer>
@@ -144,21 +136,5 @@ const List = styled.div`
 
   @media screen and (min-width: 1600px) {
     grid-template-columns: repeat(5, 1fr);
-  }
-`;
-
-const CollectionItem = styled.div`
-  &._no-cover {
-    & > .unique-collection-link {
-      & > .unique-avatar {
-        object-fit: none;
-        background-color: var(--color-blue-grey-100);
-      }
-    }
-  }
-
-  & > * {
-    margin-left: auto;
-    margin-right: auto;
   }
 `;

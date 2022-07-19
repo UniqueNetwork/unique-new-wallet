@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { createRef, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
@@ -10,6 +10,7 @@ import {
   InputText,
   Text,
   Tooltip,
+  TooltipAlign,
   useNotifications,
 } from '@unique-nft/ui-kit';
 
@@ -37,6 +38,15 @@ import {
 import { maxTokenLimit } from '@app/pages/constants/token';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 
+const addressTooltip = createRef<HTMLDivElement>();
+const burnTooltip = createRef<HTMLDivElement>();
+const limitTooltip = createRef<HTMLDivElement>();
+const tooltipAlign: TooltipAlign = {
+  appearance: 'horizontal',
+  horizontal: 'right',
+  vertical: 'top',
+};
+
 export const NFTAttributes = () => {
   const {
     attributes,
@@ -52,32 +62,24 @@ export const NFTAttributes = () => {
   const navigate = useNavigate();
   const { info, error } = useNotifications();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
-  const {
-    signAndSubmitExtrinsic,
-    status,
-    error: errorMessage,
-    isLoading,
-  } = useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
-  const {
-    error: feeError,
-    isError: isFeeError,
-    getFee,
-    fee,
-    feeFormatted,
-  } = useExtrinsicFee(CollectionApiService.collectionCreateMutation);
+  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
+    useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
+  const { feeError, isFeeError, getFee, fee, feeFormatted } = useExtrinsicFee(
+    CollectionApiService.collectionCreateMutation,
+  );
   const [address, setAddress] = useState<string>('');
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (flowStatus === 'success') {
       info('Collection created successfully');
 
       navigate(ROUTE.MY_COLLECTIONS);
     }
-    if (status === 'error') {
-      error(errorMessage?.message);
+    if (flowStatus === 'error') {
+      error(flowError?.message);
     }
-  }, [status]);
+  }, [flowStatus]);
 
   useEffect(() => {
     if (isFeeError && feeError) {
@@ -144,8 +146,6 @@ export const NFTAttributes = () => {
     [attributes],
   );
 
-  console.log(isBalanceInsufficient);
-
   useEffect(() => {
     getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
   }, [attributes]);
@@ -172,22 +172,19 @@ export const NFTAttributes = () => {
                 label={
                   <>
                     Collection sponsor address
-                    <Tooltip
-                      content={
-                        <Icon
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
-                      }
-                      placement="right-start"
-                    >
+                    <Tooltip align={tooltipAlign} targetRef={addressTooltip}>
                       The collection sponsor pays for all transactions related
                       to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
                       a&nbsp;regular account or&nbsp;a&nbsp;market contract. The sponsor
                       will need to&nbsp;confirm the sponsorship before the sponsoring
                       begins
                     </Tooltip>
+                    <Icon
+                      ref={addressTooltip}
+                      name="question"
+                      size={22}
+                      color="var(--color-primary-500)"
+                    />
                   </>
                 }
                 additionalText="The designated sponsor should approve the request"
@@ -210,20 +207,17 @@ export const NFTAttributes = () => {
                 label={
                   <>
                     Token limit
-                    <Tooltip
-                      content={
-                        <Icon
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
-                      }
-                      placement="right-start"
-                    >
+                    <Tooltip align={tooltipAlign} targetRef={limitTooltip}>
                       The token limit (collection size) is&nbsp;a&nbsp;mandatory parameter
                       if&nbsp;you want to&nbsp;list your collection
                       on&nbsp;a&nbsp;marketplace.
                     </Tooltip>
+                    <Icon
+                      ref={limitTooltip}
+                      name="question"
+                      size={22}
+                      color="var(--color-primary-500)"
+                    />
                   </>
                 }
                 additionalText="Unlimited by default"
@@ -236,22 +230,19 @@ export const NFTAttributes = () => {
                 label={
                   <>
                     Owner can burn collection
-                    <Tooltip
-                      content={
-                        <Icon
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
-                      }
-                      placement="right-start"
-                    >
+                    <Tooltip align={tooltipAlign} targetRef={burnTooltip}>
                       Should you decide to&nbsp;keep the right to&nbsp;destroy the
                       collection, a&nbsp;marketplace could reject it&nbsp;depending
                       on&nbsp;its policies as&nbsp;it&nbsp;gives the author the power
                       to&nbsp;arbitrarily destroy a&nbsp;collection at&nbsp;any moment
                       in&nbsp;the future
                     </Tooltip>
+                    <Icon
+                      ref={burnTooltip}
+                      name="question"
+                      size={22}
+                      color="var(--color-primary-500)"
+                    />
                   </>
                 }
                 checked={ownerCanDestroy}
@@ -275,7 +266,7 @@ export const NFTAttributes = () => {
               onClick={onPreviousStepClick}
             />
             {isBalanceInsufficient ? (
-              <TooltipButtonWrapper placement="right-start" message={NO_BALANCE_MESSAGE}>
+              <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
                 <Button
                   disabled={true}
                   title="Create a collection"
@@ -312,7 +303,10 @@ export const NFTAttributes = () => {
       >
         <Text>You cannot return to editing the attributes in this product version.</Text>
       </Confirm>
-      <StatusTransactionModal isVisible={isLoading} description="Creating collection" />
+      <StatusTransactionModal
+        isVisible={isFlowLoading}
+        description="Creating collection"
+      />
     </>
   );
 };

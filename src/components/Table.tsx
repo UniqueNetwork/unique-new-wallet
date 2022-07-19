@@ -11,17 +11,29 @@ interface TableProps {
   columns: TableColumnProps[];
   data?: any[];
   loading?: boolean;
+  noDataMessage?: string | null;
   onSort?(sorting: SortQuery): void;
 }
 
-export const Table: FC<TableProps> = ({ columns, data, loading, onSort }) => {
+export const Table: FC<TableProps> = ({
+  columns,
+  data,
+  loading,
+  noDataMessage,
+  onSort,
+}) => {
   const deviceSize = useDeviceSize();
 
   return (
     <TableWrapper>
       {deviceSize > DeviceSize.sm && (
         <>
-          <UITable columns={columns} data={data || []} onSort={onSort} />
+          <UITable
+            noDataMessage={noDataMessage}
+            columns={columns}
+            data={data || []}
+            onSort={onSort}
+          />
           {loading && <TableLoading />}
         </>
       )}

@@ -3,7 +3,7 @@
   align-items: center;
 
   .create-account-btn {
-    margin-right: 16px;
+    margin-right: var(--prop-gap);
   }
   .account-group-btn-medium-font {
     font-weight: 500;
@@ -13,10 +13,13 @@
 @media (max-width: 600px) {
   .btn-container {
     display: block;
+
     .create-account-btn {
       margin-right: 0;
       margin-bottom: 15px;
     }
+
+    & > *,
     button {
       width: 100%;
     }

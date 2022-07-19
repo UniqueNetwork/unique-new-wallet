@@ -88,19 +88,11 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   const { data: collection } = useCollectionQuery(selectedCollection?.id ?? 0);
 
-  const {
-    getFee,
-    fee,
-    feeFormatted,
-    error: feeError,
-    isError: isFeeError,
-  } = useExtrinsicFee(TokenApiService.tokenCreateMutation);
-  const {
-    signAndSubmitExtrinsic,
-    status,
-    error: errorMessage,
-    isLoading,
-  } = useExtrinsicFlow(TokenApiService.tokenCreateMutation);
+  const { getFee, fee, feeFormatted, feeError, isFeeError } = useExtrinsicFee(
+    TokenApiService.tokenCreateMutation,
+  );
+  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
+    useExtrinsicFlow(TokenApiService.tokenCreateMutation);
   const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
@@ -137,16 +129,16 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   }, [values]);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (flowStatus === 'success') {
       info('Collection created successfully');
 
       closable && navigate(ROUTE.MY_TOKENS);
     }
 
-    if (status === 'error') {
-      error(errorMessage?.message);
+    if (flowStatus === 'error') {
+      error(flowError?.message);
     }
-  }, [status]);
+  }, [flowStatus]);
 
   useEffect(() => {
     if (isFeeError) {
@@ -282,10 +274,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                 <ButtonGroup>
                   {isBalanceInsufficient ? (
                     <>
-                      <TooltipButtonWrapper
-                        placement="right-start"
-                        message={NO_BALANCE_MESSAGE}
-                      >
+                      <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
                         <Button
                           role="primary"
                           title="Confirm and create more"
@@ -293,10 +282,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                           disabled={true}
                         />
                       </TooltipButtonWrapper>
-                      <TooltipButtonWrapper
-                        placement="right-start"
-                        message={NO_BALANCE_MESSAGE}
-                      >
+                      <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
                         <Button title="Confirm and close" type="button" disabled={true} />
                       </TooltipButtonWrapper>
                     </>
@@ -322,7 +308,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
         </WrapperContent>
         <Sidebar collectionId={selectedCollection?.id} />
       </MainWrapper>
-      <StatusTransactionModal isVisible={isLoading} description="Creating NFT" />
+      <StatusTransactionModal isVisible={isFlowLoading} description="Creating NFT" />
     </>
   );
 };
