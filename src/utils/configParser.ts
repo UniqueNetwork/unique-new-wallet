@@ -8,16 +8,20 @@ const findNetworkParamByName = (
   config: Record<string, string | undefined>,
   network: string,
   name: string,
-): string => {
+) => {
   const envKey = Object.keys(config).find((key) =>
     key.includes(`NET_${network}_${name}`),
   );
 
-  if (envKey) {
-    return config[envKey] || '';
+  if (!envKey) {
+    return '';
   }
 
-  return '';
+  try {
+    return JSON.parse(config[envKey] || '');
+  } catch {
+    return config[envKey] || '';
+  }
 };
 
 export const getNetworkList = (config: Record<string, string | undefined>): string[] => {
@@ -64,13 +68,10 @@ export const getNetworkParams = (
     gqlEndpoint: findNetworkParamByName(config, network, 'GQL'),
     name: findNetworkParamByName(config, network, 'NAME'),
     apiEndpoint: findNetworkParamByName(config, network, 'API'),
-    mintingEnabled: JSON.parse(
-      findNetworkParamByName(config, network, 'MINTING_ENABLED'),
-    ),
-    transfersEnabled: JSON.parse(
-      findNetworkParamByName(config, network, 'TRANSFERS_ENABLED'),
-    ),
-    burnEnabled: JSON.parse(findNetworkParamByName(config, network, 'BURN_ENABLED')),
+    mintingEnabled: findNetworkParamByName(config, network, 'MINTING_ENABLED'),
+    transfersEnabled: findNetworkParamByName(config, network, 'TRANSFERS_ENABLED'),
+    burnEnabled: findNetworkParamByName(config, network, 'BURN_ENABLED'),
+    switchingEnabled: findNetworkParamByName(config, network, 'SWITCHING_ENABLED'),
     network,
   };
 };
@@ -79,9 +80,10 @@ export const getChainList = (
   config: Record<string, string | undefined>,
 ): Record<string, Chain> => {
   return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
+    console.log(network);
     const { apiEndpoint, gqlEndpoint, ...params } = getNetworkParams(config, network);
 
-    if (apiEndpoint && gqlEndpoint) {
+    if (apiEndpoint) {
       acc[network] = {
         apiEndpoint,
         gqlEndpoint,

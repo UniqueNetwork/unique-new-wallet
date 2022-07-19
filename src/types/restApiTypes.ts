@@ -15,4 +15,5 @@ export interface Chain {
   mintingEnabled: boolean;
   transfersEnabled: boolean;
   burnEnabled: boolean;
+  switchingEnabled: boolean;
 }
