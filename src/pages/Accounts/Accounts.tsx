@@ -26,7 +26,6 @@ import {
 } from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 
-import { config } from '../../config';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 
@@ -34,9 +33,6 @@ type AccountsColumnsProps = {
   onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
 };
-
-let urlSubscan = '';
-let urlUniquescan = '';
 
 const AccountTitle = () => {
   const tooltipRef = createRef<HTMLDivElement>();
@@ -51,6 +47,34 @@ const AccountTitle = () => {
       </Tooltip>
       <Icon ref={tooltipRef} name="question" size={20} color="var(--color-primary-500)" />
     </>
+  );
+};
+
+const BlockExplorer = ({ account }: { account: Account }) => {
+  const { currentChain } = useApi();
+  return (
+    <LinksWrapper>
+      {currentChain.subscanAddress && (
+        <LinkStyled
+          target="_blank"
+          rel="noreferrer"
+          href={`${currentChain.subscanAddress}/${account?.address}`}
+        >
+          <Text color="primary-500">Subscan</Text>
+          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
+        </LinkStyled>
+      )}
+      {currentChain.uniquescanAddress && (
+        <LinkStyled
+          target="_blank"
+          rel="noreferrer"
+          href={`${currentChain.uniquescanAddress}/${account?.address}`}
+        >
+          <Text color="primary-500">UniqueScan</Text>
+          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
+        </LinkStyled>
+      )}
+    </LinksWrapper>
   );
 };
 
@@ -97,32 +121,7 @@ const getAccountsColumns = ({
     title: 'Block explorer',
     width: '23%',
     field: 'explorer',
-    render(address, rowData: Account) {
-      return (
-        <LinksWrapper>
-          {urlSubscan.length > 0 && (
-            <LinkStyled
-              target="_blank"
-              rel="noreferrer"
-              href={`${urlSubscan}${rowData?.address}`}
-            >
-              <Text color="primary-500">Subscan</Text>
-              <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-            </LinkStyled>
-          )}
-          {urlUniquescan.length > 0 && (
-            <LinkStyled
-              target="_blank"
-              rel="noreferrer"
-              href={`${urlUniquescan}${rowData?.address}`}
-            >
-              <Text color="primary-500">UniqueScan</Text>
-              <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-            </LinkStyled>
-          )}
-        </LinksWrapper>
-      );
-    },
+    render: (_, account: Account) => <BlockExplorer account={account} />,
   },
   {
     title: 'Actions',
@@ -162,9 +161,6 @@ export const Accounts = () => {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
-
-  urlSubscan = config.chains[`${currentChain.network}`].subscanAddress;
-  urlUniquescan = config.chains[`${currentChain.network}`].uniquescanAddress;
 
   const {
     data: balancesAccounts,
