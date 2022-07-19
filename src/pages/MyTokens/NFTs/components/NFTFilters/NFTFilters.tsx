@@ -74,7 +74,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
         disabled={!Number(selectedAccount?.collectionsTotal)}
         tooltip={
           !Number(selectedAccount?.collectionsTotal)
-            ? 'You need to create first collection before creating NFTs'
+            ? 'Please create a collection first'
             : null
         }
         onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}

@@ -50,7 +50,7 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
             </Row>
             <Row>
               <span>
-                items: <strong>{tokens_count}</strong>
+                Items: <strong>{tokens_count}</strong>
               </span>
               <span>
                 Symbol: <strong>{token_prefix}</strong>
@@ -118,6 +118,8 @@ const Description = styled.div`
   padding: var(--prop-gap) 0;
   border-top: 1px dashed var(--color-grey-300);
   border-bottom: 1px dashed var(--color-grey-300);
+  color: var(--color-grey-500);
+  word-break: break-all;
 `;
 
 export const Badge = styled.div`

@@ -236,8 +236,9 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
     <div className={className}>
       {/* TODO: @future: add new table cellPadding=8 from next uikit ver. */}
       <Table
-        columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
         data={value}
+        columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
+        noDataMessage={null}
       />
       <AddButtonWrapper>
         <Button
@@ -270,6 +271,8 @@ export const AttributesTable = styled(AttributesTableComponent)`
       .table-header-cell {
         & > span {
           flex: 1 1 auto;
+          padding-left: calc(var(--prop-gap) / 2);
+          padding-right: calc(var(--prop-gap) / 2);
 
           .icon {
             display: inline-block;

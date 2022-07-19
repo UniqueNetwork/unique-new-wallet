@@ -72,6 +72,8 @@ export const getNetworkParams = (
     ),
     burnEnabled: JSON.parse(findNetworkParamByName(config, network, 'BURN_ENABLED')),
     network,
+    subscanAddress: findNetworkParamByName(config, network, 'SUBSCAN_ADDRESS'),
+    uniquescanAddress: findNetworkParamByName(config, network, 'UNIQUESCAN_ADDRESS'),
   };
 };
 
