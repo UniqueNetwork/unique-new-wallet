@@ -15,4 +15,6 @@ export interface Chain {
   mintingEnabled: boolean;
   transfersEnabled: boolean;
   burnEnabled: boolean;
+  subscanAddress: string;
+  uniquescanAddress: string;
 }

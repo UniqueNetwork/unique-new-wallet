@@ -25,8 +25,8 @@ import {
   TransferBtn,
 } from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
-import { getScanAddresses } from '@app/utils/scansUrls';
 
+import { config } from '../../config';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 
@@ -163,9 +163,8 @@ export const Accounts = () => {
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
 
-  const urls = getScanAddresses(currentChain.network);
-  urlSubscan = urls.urlSubscan;
-  urlUniquescan = urls.urlUniquescan;
+  urlSubscan = config.chains[`${currentChain.network}`].subscanAddress;
+  urlUniquescan = config.chains[`${currentChain.network}`].uniquescanAddress;
 
   const {
     data: balancesAccounts,
