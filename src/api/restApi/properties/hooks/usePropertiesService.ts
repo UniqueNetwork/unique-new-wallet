@@ -8,5 +8,7 @@ import { PropertiesApiService } from '../PropertiesApiService';
 export const usePropertiesService = (): UseQueryResult<ChainPropertiesResponse> =>
   useApiQuery({
     endpoint: PropertiesApiService.propertiesQuery,
-    payload: undefined,
+    options: {
+      enabled: true,
+    },
   });

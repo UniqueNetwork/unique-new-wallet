@@ -1,5 +1,12 @@
-import React, { FC, useCallback, useMemo } from 'react';
-import { Avatar, Button, Icon, InputText, Tooltip } from '@unique-nft/ui-kit';
+import { createRef, FC, useCallback, useMemo } from 'react';
+import {
+  Avatar,
+  Button,
+  Icon,
+  InputText,
+  Tooltip,
+  TooltipAlign,
+} from '@unique-nft/ui-kit';
 
 import {
   AddressText,
@@ -18,6 +25,15 @@ import {
 import { defaultPairType, derivePath } from './CreateAccount';
 import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import { TCreateAccountBodyModalProps } from './types';
+
+const keypairTooltip = createRef<HTMLDivElement>();
+const pathTooltip = createRef<HTMLDivElement>();
+const seedTooltip = createRef<HTMLDivElement>();
+const tooltipAlign: TooltipAlign = {
+  appearance: 'horizontal',
+  horizontal: 'right',
+  vertical: 'top',
+};
 
 export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
   accountProperties,
@@ -54,15 +70,17 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Partial seed
-            <Tooltip
-              content={
-                <Icon name="question" size={20} color="var(--color-primary-500)" />
-              }
-              placement="right"
-            >
-              The seed is your key to the account. Knowing the seed allows you, or anyone
-              else who knows the seed, to re-generate and control this account.
+            <Tooltip align={tooltipAlign} targetRef={seedTooltip}>
+              The seed is&nbsp;your key to&nbsp;the account. Knowing the seed allows you,
+              or&nbsp;anyone else who knows the seed, to&nbsp;re-generate and control this
+              account.
             </Tooltip>
+            <Icon
+              ref={seedTooltip}
+              name="question"
+              size={20}
+              color="var(--color-primary-500)"
+            />
           </LabelText>
           <InputText value={shortSeed} disabled={true} />
         </ContentRow>
@@ -70,15 +88,17 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Keypair type
-            <Tooltip
-              content={
-                <Icon name="question" size={20} color="var(--color-primary-500)" />
-              }
-              placement="right"
-            >
-              Substrate supports a number of different crypto mechanisms. As such the
-              keyring allows for the creation and management of different types of crypto.
+            <Tooltip align={tooltipAlign} targetRef={keypairTooltip}>
+              Substrate supports a&nbsp;number of&nbsp;different crypto mechanisms.
+              As&nbsp;such the keyring allows for the creation and management
+              of&nbsp;different types of&nbsp;crypto.
             </Tooltip>
+            <Icon
+              ref={keypairTooltip}
+              name="question"
+              size={20}
+              color="var(--color-primary-500)"
+            />
           </LabelText>
           <InputText value={defaultPairType} disabled={true} />
         </ContentRow>
@@ -86,25 +106,26 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Derivation path
-            <Tooltip
-              content={
-                <Icon name="question" size={20} color="var(--color-primary-500)" />
-              }
-              placement="right"
-            >
-              If you would like to create and manage several accounts on the network using
-              the same seed, you can use derivation paths.
+            <Tooltip align={tooltipAlign} targetRef={pathTooltip}>
+              If&nbsp;you would like to&nbsp;create and manage several accounts
+              on&nbsp;the network using the same seed, you can use derivation paths.
             </Tooltip>
+            <Icon
+              ref={pathTooltip}
+              name="question"
+              size={20}
+              color="var(--color-primary-500)"
+            />
           </LabelText>
           <InputText value={derivePath || 'None provided'} disabled={true} />
         </ContentRow>
         <ContentRow>
           <TextWarning color="additional-warning-500" size="s">
-            Consider storing your account in a signer such as a browser extension,
-            hardware device, QR-capable phone wallet (non-connected) or desktop
-            application for optimal account security. Future versions of the web-only
-            interface will drop support for non-external accounts, much like the IPFS
-            version.
+            Consider storing your account in&nbsp;a&nbsp;signer such
+            as&nbsp;a&nbsp;browser extension, hardware device, QR-capable phone wallet
+            (non-connected) or&nbsp;desktop application for optimal account security.
+            Future versions of&nbsp;the web-only interface will drop support for
+            non-external accounts, much like the IPFS version.
           </TextWarning>
         </ContentRow>
       </ModalContent>

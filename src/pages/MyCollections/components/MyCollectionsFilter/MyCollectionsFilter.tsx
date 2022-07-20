@@ -1,7 +1,7 @@
 import React, { useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, IconProps, InputText, Select } from '@unique-nft/ui-kit';
+import { IconProps, InputText, Select } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
@@ -9,6 +9,7 @@ import { iconDown, iconUp, Option } from '@app/utils';
 import { PaddedBlock } from '@app/styles/styledVariables';
 import { Direction } from '@app/api/graphQL/tokens';
 import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
+import { MintingBtn } from '@app/components';
 
 type SelectOption = {
   id: string;
@@ -90,11 +91,11 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
         />
         <Select options={sortOptions} value={sort} onChange={onChange} />
       </LeftColumn>
-      <Button
+      <MintingBtn
         iconLeft={{
           name: 'plus',
           size: 12,
-          color: 'var(--color-additional-light)',
+          color: 'currentColor',
         }}
         title="Create collection"
         role="primary"
@@ -105,18 +106,36 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
 };
 
 export const LeftColumn = styled.div`
+  flex: 1 1 100%;
   display: grid;
-  grid-template-columns: 502px 268px;
-  grid-column-gap: calc(var(--prop-gap) * 2);
+  gap: var(--prop-gap);
+  margin-bottom: var(--prop-gap);
+
+  @media screen and (min-width: 768px) {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  @media screen and (min-width: 1024px) {
+    max-width: 786px;
+    margin-bottom: 0;
+    margin-right: var(--prop-gap);
+  }
 `;
 
 export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
   &.my-collections-filter {
-    ${PaddedBlock};
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     border-bottom: 1px solid var(--color-grey-300);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-bottom: var(--prop-gap);
+    justify-content: space-between;
+
+    @media screen and (min-width: 1024px) {
+      flex-wrap: nowrap;
+      ${PaddedBlock};
+    }
 
     .unique-input-text,
     .unique-select {

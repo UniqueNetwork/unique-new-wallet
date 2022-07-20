@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { createRef, useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Dropdown,
+  Heading,
   Icon,
   InputText,
   TableColumnProps,
@@ -16,10 +17,15 @@ import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
-import { AccountsGroupButton, Confirm, PagePaperNoPadding, Table } from '@app/components';
+import {
+  AccountsGroupButton,
+  Confirm,
+  PagePaperNoPadding,
+  Table,
+  TransferBtn,
+} from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 
-import { config } from '../../config';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 
@@ -28,25 +34,56 @@ type AccountsColumnsProps = {
   onForgetWalletClick(address: string): () => void;
 };
 
+const AccountTitle = () => {
+  const tooltipRef = createRef<HTMLDivElement>();
+  return (
+    <>
+      Account
+      <Tooltip targetRef={tooltipRef}>
+        Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may
+        be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
+        can be&nbsp;converted between each other because they share the same public key.
+        You can see all transformations for any given address on&nbsp;Subscan.
+      </Tooltip>
+      <Icon ref={tooltipRef} name="question" size={20} color="var(--color-primary-500)" />
+    </>
+  );
+};
+
+const BlockExplorer = ({ account }: { account: Account }) => {
+  const { currentChain } = useApi();
+  return (
+    <LinksWrapper>
+      {currentChain.subscanAddress && (
+        <LinkStyled
+          target="_blank"
+          rel="noreferrer"
+          href={`${currentChain.subscanAddress}/${account?.address}`}
+        >
+          <Text color="primary-500">Subscan</Text>
+          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
+        </LinkStyled>
+      )}
+      {currentChain.uniquescanAddress && (
+        <LinkStyled
+          target="_blank"
+          rel="noreferrer"
+          href={`${currentChain.uniquescanAddress}/${account?.address}`}
+        >
+          <Text color="primary-500">UniqueScan</Text>
+          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
+        </LinkStyled>
+      )}
+    </LinksWrapper>
+  );
+};
+
 const getAccountsColumns = ({
   onShowSendFundsModal,
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => [
   {
-    title: (
-      <>
-        Account
-        <Tooltip
-          placement="right-start"
-          content={<Icon name="question" size={20} color="var(--color-primary-500)" />}
-        >
-          Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
-          represented by a different address character sequence, but they can be converted
-          between each other because they share the same public key. You can see all
-          transformations for any given address on Subscan.
-        </Tooltip>
-      </>
-    ),
+    title: <AccountTitle />,
     width: '35%',
     field: 'accountInfo',
     render(address, rowData: Account) {
@@ -84,28 +121,7 @@ const getAccountsColumns = ({
     title: 'Block explorer',
     width: '23%',
     field: 'explorer',
-    render(address, rowData: Account) {
-      return (
-        <LinksWrapper>
-          <LinkStyled
-            target="_blank"
-            rel="noreferrer"
-            href={`${config.scanUrl}${rowData?.address}`}
-          >
-            <Text color="primary-500">Subscan</Text>
-            <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-          </LinkStyled>
-          <LinkStyled
-            target="_blank"
-            rel="noreferrer"
-            href={`${config.scanUrl}${rowData?.address}`}
-          >
-            <Text color="primary-500">UniqueScan</Text>
-            <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-          </LinkStyled>
-        </LinksWrapper>
-      );
-    },
+    render: (_, account: Account) => <BlockExplorer account={account} />,
   },
   {
     title: 'Actions',
@@ -114,7 +130,7 @@ const getAccountsColumns = ({
     render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <Button
+          <TransferBtn
             title="Send"
             disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}
@@ -203,63 +219,66 @@ export const Accounts = () => {
   // );
 
   return (
-    <PagePaperNoPadding>
-      <AccountsPageHeader>
-        {/* <AccountsTotalBalance balance={totalBalance} /> */}
-        <SearchInputWrapper>
-          <SearchInputStyled
-            placeholder="Search"
-            iconLeft={{ name: 'magnify', size: 18 }}
-            value={searchString}
-            onChange={setSearchString}
+    <>
+      <Heading size="1">My accounts</Heading>
+      <PagePaperNoPadding>
+        <AccountsPageHeader>
+          {/* <AccountsTotalBalance balance={totalBalance} /> */}
+          <SearchInputWrapper>
+            <SearchInputStyled
+              placeholder="Search"
+              iconLeft={{ name: 'magnify', size: 18 }}
+              value={searchString}
+              onChange={setSearchString}
+            />
+          </SearchInputWrapper>
+          <AccountsGroupButton />
+        </AccountsPageHeader>
+        <AccountsPageContent>
+          <Table
+            columns={getAccountsColumns({
+              onShowSendFundsModal: onSendFundsClick,
+              onForgetWalletClick,
+            })}
+            loading={isLoadingBalances}
+            data={filteredAccounts}
           />
-        </SearchInputWrapper>
-        <AccountsGroupButton />
-      </AccountsPageHeader>
-      <AccountsPageContent>
-        <Table
-          columns={getAccountsColumns({
-            onShowSendFundsModal: onSendFundsClick,
-            onForgetWalletClick,
-          })}
-          loading={isLoadingBalances}
-          data={filteredAccounts}
-        />
-      </AccountsPageContent>
-      {isOpenModal && (
-        <SendFunds
-          chain={currentChain}
-          isVisible={true}
-          senderAccount={selectedAddress}
-          networkType={selectedAccount?.unitBalance}
-          onClose={onChangeAccountsFinish}
-          onSendSuccess={() => {
-            refetch();
-          }}
-        />
-      )}
-      <Confirm
-        buttons={[
-          { title: 'No, return', onClick: () => setForgetWalletAddress('') },
-          {
-            title: 'Yes, I am sure',
-            role: 'primary',
-            onClick: () => {
-              forgetLocalAccount(forgetWalletAddress);
-              setForgetWalletAddress('');
+        </AccountsPageContent>
+        {isOpenModal && (
+          <SendFunds
+            chain={currentChain}
+            isVisible={true}
+            senderAccount={selectedAddress}
+            networkType={selectedAccount?.unitBalance}
+            onClose={onChangeAccountsFinish}
+            onSendSuccess={() => {
+              refetch();
+            }}
+          />
+        )}
+        <Confirm
+          buttons={[
+            { title: 'No, return', onClick: () => setForgetWalletAddress('') },
+            {
+              title: 'Yes, I am sure',
+              role: 'primary',
+              onClick: () => {
+                forgetLocalAccount(forgetWalletAddress);
+                setForgetWalletAddress('');
+              },
             },
-          },
-        ]}
-        isVisible={Boolean(forgetWalletAddress)}
-        title="Forget wallet"
-        onClose={() => setForgetWalletAddress('')}
-      >
-        <Text>
-          Are you sure you want to&nbsp;perform this action? You can always recover your
-          wallet with your seed password using the &rsquo;Add account via&rsquo; button
-        </Text>
-      </Confirm>
-    </PagePaperNoPadding>
+          ]}
+          isVisible={Boolean(forgetWalletAddress)}
+          title="Forget wallet"
+          onClose={() => setForgetWalletAddress('')}
+        >
+          <Text>
+            Are you sure you want to&nbsp;perform this action? You can always recover your
+            wallet with your seed password using the &rsquo;Add account via&rsquo; button
+          </Text>
+        </Confirm>
+      </PagePaperNoPadding>
+    </>
   );
 };
 

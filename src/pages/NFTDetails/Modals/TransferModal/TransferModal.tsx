@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, VFC } from 'react';
+import { useEffect, useState, VFC } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
@@ -6,7 +6,7 @@ import {
   AskTransferModal,
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { useExtrinsicFlow, useExtrinsicFee, ViewToken } from '@app/api';
+import { useExtrinsicFee, useExtrinsicFlow, ViewToken } from '@app/api';
 import { TokenApiService } from '@app/api/restApi/token';
 
 interface TransferModalProps {
@@ -27,12 +27,8 @@ export const TransferModal: VFC<TransferModalProps> = ({
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
   const { feeFormatted, getFee } = useExtrinsicFee(TokenApiService.transferMutation);
-  const {
-    status,
-    error: errorMessage,
-    isLoading,
-    signAndSubmitExtrinsic,
-  } = useExtrinsicFlow(TokenApiService.transferMutation);
+  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
+    useExtrinsicFlow(TokenApiService.transferMutation);
 
   const transferHandler = () => {
     if (!token || !recipient || !selectedAccount?.address) {
@@ -65,22 +61,22 @@ export const TransferModal: VFC<TransferModalProps> = ({
   }, [recipient]);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (flowStatus === 'success') {
       info('Transfer completed successfully');
       onComplete();
     }
 
-    if (status === 'error') {
-      error(errorMessage?.message);
+    if (flowStatus === 'error') {
+      error(flowError?.message);
       onClose();
     }
-  }, [status]);
+  }, [flowStatus]);
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isLoading) {
+  if (isFlowLoading) {
     return <TransferStagesModal />;
   }
 

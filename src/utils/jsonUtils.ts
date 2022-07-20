@@ -27,7 +27,7 @@ export const convertToU8a = (result: ArrayBuffer): Uint8Array => {
 
 export const keyringFromFile = (
   file: Uint8Array,
-  genesisHash?: string | null,
+  genesisHash: string | null,
 ): KeyringPair | null => {
   try {
     return keyring.createFromJson(JSON.parse(u8aToString(file)) as KeyringPair$Json, {

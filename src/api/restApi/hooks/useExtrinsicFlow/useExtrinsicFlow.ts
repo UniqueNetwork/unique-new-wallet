@@ -1,22 +1,14 @@
 import { useEffect, useReducer, useState } from 'react';
+import axios from 'axios';
 
 import { useAccounts, useApi } from '@app/hooks';
-import { isAxiosError, isNativeError } from '@app/utils';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 import { EndpointMutation } from '../../request';
+import { UNKNOWN_ERROR_MSG } from '../constants';
 import { useApiMutation } from '../useApiMutation';
-import { useExtrinsicStatus, useExtrinsicSubmit } from '../../extrinsic';
 import { extrinsicFlowReducer } from './extrinsicFlowReducer';
-
-type SignAndSubmitExtrinsicStatus =
-  | 'idle'
-  | 'obtaining'
-  | 'signing'
-  | 'submitting'
-  | 'checking'
-  | 'success'
-  | 'error';
+import { useExtrinsicStatus, useExtrinsicSubmit } from '../../extrinsic';
 
 export const useExtrinsicFlow = <
   ConcreteEndpointMutation extends EndpointMutation<
@@ -75,7 +67,7 @@ export const useExtrinsicFlow = <
         setExtrinsicFlowState({
           type: 'error',
           payload: {
-            error: new Error(errorMessage),
+            error: new Error(errorMessage ?? UNKNOWN_ERROR_MSG),
           },
         });
       } else {
@@ -128,23 +120,30 @@ export const useExtrinsicFlow = <
 
       return submitResult.hash;
     } catch (e) {
-      let error: Error | undefined;
+      let error: Error;
 
-      if (isAxiosError(e)) {
+      if (axios.isAxiosError(e)) {
         error = e?.response?.data.error;
-      } else if (isNativeError(e)) {
+      } else if (e instanceof Error) {
         error = e;
+      } else {
+        error = new Error();
       }
 
-      setExtrinsicFlowState({ type: 'error', payload: { error } });
+      error.message = error.message || UNKNOWN_ERROR_MSG;
+
+      setExtrinsicFlowState({
+        type: 'error',
+        payload: { error },
+      });
     }
   };
 
   return {
-    error,
-    status,
-    isError: isError ?? false,
-    isLoading: isLoading ?? false,
+    flowError: error,
+    flowStatus: status,
+    isFlowError: isError ?? false,
+    isFlowLoading: isLoading ?? false,
     signAndSubmitExtrinsic,
   };
 };

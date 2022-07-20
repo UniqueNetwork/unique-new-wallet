@@ -64,7 +64,16 @@ export const getNetworkParams = (
     gqlEndpoint: findNetworkParamByName(config, network, 'GQL'),
     name: findNetworkParamByName(config, network, 'NAME'),
     apiEndpoint: findNetworkParamByName(config, network, 'API'),
+    mintingEnabled: JSON.parse(
+      findNetworkParamByName(config, network, 'MINTING_ENABLED'),
+    ),
+    transfersEnabled: JSON.parse(
+      findNetworkParamByName(config, network, 'TRANSFERS_ENABLED'),
+    ),
+    burnEnabled: JSON.parse(findNetworkParamByName(config, network, 'BURN_ENABLED')),
     network,
+    subscanAddress: findNetworkParamByName(config, network, 'SUBSCAN_ADDRESS'),
+    uniquescanAddress: findNetworkParamByName(config, network, 'UNIQUESCAN_ADDRESS'),
   };
 };
 

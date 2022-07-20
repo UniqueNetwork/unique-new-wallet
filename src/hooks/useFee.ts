@@ -4,8 +4,9 @@ import { useNotifications } from '@unique-nft/ui-kit';
 import { useCalculateFee } from '@app/api';
 import { BalanceResponse, UnsignedTxPayloadResponse } from '@app/types/Api';
 
-export interface UseFeeResult {
+interface UseFeeResult {
   fee: string;
+  feeAmount: string;
   getFee: (extrinsic: UnsignedTxPayloadResponse) => Promise<void>;
 }
 
@@ -13,6 +14,7 @@ export const useFee = (): UseFeeResult => {
   const { calculateFee } = useCalculateFee();
   const { error } = useNotifications();
   const [fee, setFee] = useState<string>('');
+  const [feeAmount, setFeeAmount] = useState<string>('');
 
   const getFee = async (unsignedTx: UnsignedTxPayloadResponse) => {
     const result = await calculateFee(unsignedTx);
@@ -26,12 +28,15 @@ export const useFee = (): UseFeeResult => {
     }
 
     const { amount, unit } = result as BalanceResponse;
+    const amountFormatted = amount.replace(/([0]+)$/, '');
 
-    setFee([amount.replace(/([0]+)$/, ''), unit].join(' '));
+    setFeeAmount(amountFormatted);
+    setFee([amountFormatted, unit].join('\u00a0'));
   };
 
   return {
-    getFee,
     fee,
+    feeAmount,
+    getFee,
   };
 };

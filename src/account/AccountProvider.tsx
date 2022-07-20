@@ -1,25 +1,40 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { KeyringPair } from '@polkadot/keyring/types';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 
 import { sleep } from '@app/utils';
-import { useAccountBalanceService } from '@app/api';
 import { NetworkType } from '@app/types';
+import { useAccountBalanceService } from '@app/api';
+import { useGraphQlAccountCommonInfo } from '@app/api/graphQL/account';
+import { ChainPropertiesContext } from '@app/context';
+import { AccountUtils } from '@app/account/AccountUtils';
 
-import { Account, AccountProvider, AccountSigner } from './AccountContext';
-import { SignModal } from '../components/SignModal/SignModal';
 import { DefaultAccountKey } from './constants';
+import { SignModal } from '../components/SignModal/SignModal';
+import { Account, AccountProvider, AccountSigner } from './AccountContext';
 
 export const AccountWrapper: FC = ({ children }) => {
+  const { chainProperties } = useContext(ChainPropertiesContext);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
   const { data: balanceAccount } = useAccountBalanceService(selectedAccount?.address);
+  const { collectionsTotal, tokensTotal } = useGraphQlAccountCommonInfo(
+    selectedAccount?.address,
+  );
 
   const changeAccount = useCallback((account: Account) => {
-    localStorage.setItem(DefaultAccountKey, account.address);
+    localStorage.setItem(DefaultAccountKey, account.normalizedAddress);
 
     setSelectedAccount(account);
   }, []);
@@ -98,8 +113,12 @@ export const AccountWrapper: FC = ({ children }) => {
     const extensionAccounts = await getExtensionAccounts();
     const localAccounts = getLocalAccounts();
 
-    return [...extensionAccounts, ...localAccounts];
-  }, [getExtensionAccounts, getLocalAccounts]);
+    return [...extensionAccounts, ...localAccounts].map((account) => ({
+      ...account,
+      normalizedAddress: AccountUtils.normalizedAddressAccount(account.address),
+      address: AccountUtils.encodeAddress(account.address, chainProperties.SS58Prefix),
+    }));
+  }, [chainProperties?.SS58Prefix, getExtensionAccounts, getLocalAccounts]);
 
   const fetchAccounts = useCallback(async () => {
     const allAccounts = await getAccounts();
@@ -122,15 +141,17 @@ export const AccountWrapper: FC = ({ children }) => {
   );
 
   useEffect(() => {
-    if (accounts?.length) {
-      const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
-
-      const defaultAccount = accounts.find(
-        (item) => item.address === defaultAccountAddress,
-      );
-
-      changeAccount(defaultAccount ?? accounts[0]);
+    if (!accounts?.length) {
+      return;
     }
+
+    const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
+
+    const defaultAccount = accounts.find(
+      (item) => item.normalizedAddress === defaultAccountAddress,
+    );
+
+    changeAccount(defaultAccount ?? accounts[0]);
   }, [accounts, changeAccount]);
 
   const value = useMemo(
@@ -140,6 +161,8 @@ export const AccountWrapper: FC = ({ children }) => {
       selectedAccount: selectedAccount
         ? {
             ...selectedAccount,
+            tokensTotal,
+            collectionsTotal,
             balance: balanceAccount,
             unitBalance: (balanceAccount?.availableBalance.unit as NetworkType) ?? '',
           }
@@ -157,6 +180,8 @@ export const AccountWrapper: FC = ({ children }) => {
       isLoading,
       accounts,
       selectedAccount,
+      collectionsTotal,
+      tokensTotal,
       balanceAccount,
       forgetLocalAccount,
       fetchAccounts,
