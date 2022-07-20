@@ -24,8 +24,8 @@ const chains = getChainList(window.ENV || process.env);
 
 export const config: Config = {
   IPFSGateway: window.ENV?.IPFS_GATEWAY_URL || process.env.REACT_APP_IPFS_GATEWAY_URL,
-  chains,
   defaultChain: chains[getDefaultChain(window.ENV || process.env)],
+  chains,
 };
 
 console.log(config);
