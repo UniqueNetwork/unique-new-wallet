@@ -82,7 +82,6 @@ export const getChainList = (
   config: Record<string, string | undefined>,
 ): Record<string, Chain> => {
   return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
-    console.log(network);
     const { apiEndpoint, gqlEndpoint, ...params } = getNetworkParams(config, network);
 
     if (apiEndpoint) {
