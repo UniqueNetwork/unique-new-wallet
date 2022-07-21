@@ -220,7 +220,9 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
         <ContentRow>
           <TextWarning color="additional-warning-500" size="s">
             {recipient && amount && fee
-              ? `A fee of ~ ${fee} can be applied to the transaction, unless the transaction is sponsored`
+              ? `A fee of ~ ${
+                  Number(fee) < 1 ? fee.replace(/0*$/, '') : fee
+                } can be applied to the transaction, unless the transaction is sponsored`
               : 'A fee will be calculated after entering the recipient and amount'}
           </TextWarning>
         </ContentRow>
