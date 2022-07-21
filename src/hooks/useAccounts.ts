@@ -1,14 +1,15 @@
 import { useCallback, useContext } from 'react';
-import { web3FromSource } from '@polkadot/extension-dapp';
+import { u8aToHex } from '@polkadot/util';
 import keyring from '@polkadot/ui-keyring';
-import { KeypairType } from '@polkadot/util-crypto/types';
 import { KeyringPair } from '@polkadot/keyring/types';
+import { web3FromSource } from '@polkadot/extension-dapp';
+import { KeypairType } from '@polkadot/util-crypto/types';
 
-import { SignerPayloadJSONDto } from '@app/types/Api';
 import { useMessage } from '@app/hooks/useMessage';
+import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 import { getSuri, PairType } from '../utils/seedUtils';
-import AccountContext, { Account } from '../account/AccountContext';
+import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
 
 export const useAccounts = () => {
   const { showError } = useMessage();
@@ -20,6 +21,7 @@ export const useAccounts = () => {
     fetchAccountsError,
     changeAccount,
     forgetLocalAccount,
+    showSignDialog,
   } = useContext(AccountContext);
 
   const addLocalAccount = useCallback(
@@ -104,38 +106,46 @@ export const useAccounts = () => {
   );
 
   const signMessage = useCallback(
-    async (
-      signerPayloadJSON: SignerPayloadJSONDto,
-      account?: Account,
-    ): Promise<string | null> => {
+    async (unsignedTxPayload: UnsignedTxPayloadResponse, account?: Account) => {
       const _account = account || selectedAccount;
       if (!_account) {
         throw new Error('Account was not provided');
       }
-      // TODO: добавить проверку на локальные аккаунты. Задача https://cryptousetech.atlassian.net/browse/WMS-914
-
-      const injector = await web3FromSource(_account.meta.source);
-
-      if (!injector.signer.signPayload) {
-        throw new Error('Web3 not available');
+      if (!unsignedTxPayload) {
+        throw new Error('Payload was not found');
       }
 
-      return injector.signer
-        .signPayload(signerPayloadJSON)
-        .then(({ signature }) => {
-          if (!signature) {
-            throw new Error('Signing failed');
-          }
+      let signature: string | undefined;
 
-          return signature;
-        })
-        .catch((err) => {
-          console.log('err', err);
+      if (_account.signerType === AccountSigner.local) {
+        const { signerPayloadHex } = unsignedTxPayload;
+        const pair = await showSignDialog();
 
-          return null;
-        });
+        signature = u8aToHex(
+          pair.sign(signerPayloadHex, {
+            withType: true,
+          }),
+        );
+      } else {
+        const injector = await web3FromSource(_account.meta.source);
+        if (!injector.signer.signPayload) {
+          throw new Error('Web3 not available');
+        }
+
+        const result = await injector.signer.signPayload(
+          unsignedTxPayload?.signerPayloadJSON,
+        );
+
+        signature = result.signature;
+      }
+
+      if (!signature) {
+        throw new Error('Signing failed');
+      }
+
+      return signature;
     },
-    [selectedAccount],
+    [selectedAccount, showSignDialog],
   );
 
   return {
