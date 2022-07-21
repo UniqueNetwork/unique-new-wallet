@@ -25,8 +25,8 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
       buttons={[{ title: 'Confirm', role: 'primary', onClick: onBurn }]}
       onClose={onClose}
     >
-      <TextWrapper>
-        <Text size="m">You will not be able to undo this action.</Text>
+      <TextWrapper size="m" appearance="block">
+        You will not be able to undo this action.
       </TextWrapper>
       {fee && (
         <TextStyled color="additional-warning-500" size="s">
@@ -37,7 +37,7 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
   );
 };
 
-const TextWrapper = styled.div`
+const TextWrapper = styled(Text)`
   margin-bottom: calc(var(--prop-gap) / 2);
 `;
 
