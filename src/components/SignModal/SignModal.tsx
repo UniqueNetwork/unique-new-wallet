@@ -18,10 +18,10 @@ export type TSignModalProps = {
 export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose }) => {
   const [password, setPassword] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string | undefined>();
-  const { selectedAccount, unlockLocalAccount } = useAccounts();
+  const { signer, unlockLocalAccount } = useAccounts();
 
   const onSignClick = useCallback(() => {
-    if (!selectedAccount || selectedAccount.signerType !== AccountSigner.local) {
+    if (signer?.signerType !== AccountSigner.local) {
       return;
     }
 
@@ -36,9 +36,9 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
     }
 
     setPassword('');
-  }, [selectedAccount, unlockLocalAccount, password, onFinish]);
+  }, [signer, unlockLocalAccount, password, onFinish]);
 
-  if (!selectedAccount) {
+  if (!signer) {
     return null;
   }
 
@@ -49,7 +49,7 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
       </Content>
       <AddressWrapper>
         <Avatar size={24} src={DefaultAvatar} />
-        <Text>{selectedAccount.address || ''}</Text>
+        <Text>{signer.address || ''}</Text>
       </AddressWrapper>
       <CredentialsWrapper>
         <PasswordInput placeholder="Password" value={password} onChange={setPassword} />

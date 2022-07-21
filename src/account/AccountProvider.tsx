@@ -28,6 +28,7 @@ export const AccountWrapper: FC = ({ children }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
+  const [signer, setSigner] = useState<Account>();
   const { data: balanceAccount } = useAccountBalanceService(selectedAccount?.address);
   const { collectionsTotal, tokensTotal } = useGraphQlAccountCommonInfo(
     selectedAccount?.address,
@@ -43,8 +44,10 @@ export const AccountWrapper: FC = ({ children }) => {
 
   const onSignCallback = useRef<(signature?: KeyringPair) => void | undefined>();
 
-  const showSignDialog = useCallback(() => {
+  const showSignDialog = useCallback((signer: Account) => {
+    setSigner(signer);
     setIsSignModalVisible(true);
+
     return new Promise<KeyringPair>((resolve, reject) => {
       onSignCallback.current = (signature?: KeyringPair) => {
         if (signature) {
@@ -157,6 +160,7 @@ export const AccountWrapper: FC = ({ children }) => {
   const value = useMemo(
     () => ({
       isLoading,
+      signer,
       accounts,
       selectedAccount: selectedAccount
         ? {
@@ -178,6 +182,7 @@ export const AccountWrapper: FC = ({ children }) => {
     }),
     [
       isLoading,
+      signer,
       accounts,
       selectedAccount,
       collectionsTotal,
