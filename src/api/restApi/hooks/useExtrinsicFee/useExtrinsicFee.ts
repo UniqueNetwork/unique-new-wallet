@@ -90,7 +90,7 @@ export const useExtrinsicFee = <
         type: 'success',
         payload: {
           fee: fee.amount,
-          feeFormatted: [fee.amount.replace(/([0]+)$/, ''), fee.unit].join(' '),
+          feeFormatted: [Number(fee.amount).toFixed(4), fee.unit].join(' '),
         },
       });
     } catch (e) {
