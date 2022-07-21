@@ -1,7 +1,7 @@
-import React, { VFC } from 'react';
-import classNames from 'classnames';
-import styled from 'styled-components';
 import { Icon } from '@unique-nft/ui-kit';
+import classNames from 'classnames';
+import React, { VFC } from 'react';
+import styled from 'styled-components';
 
 interface NotFoundCoinsProps {
   className?: string;
@@ -21,7 +21,12 @@ export const NotFoundCoins = styled(NotFoundCoinsComponent)`
     align-items: center;
     justify-content: center;
     color: var(--color-blue-grey-500);
-    min-height: 600px;
     grid-row-gap: var(--prop-gap);
+    font-size: 16px;
+    font-weight: 400;
+    min-height: 400px;
+    @media screen and (max-width: 1024px) {
+      min-height: 200px;
+    }
   }
 `;
