@@ -90,17 +90,17 @@ export const useExtrinsicFlow = <
     try {
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'obtaining' } });
 
-      const unsignedResult = await mutateAsync({ ...payload, api });
+      const unsignedResult: UnsignedTxPayloadResponse = await mutateAsync({
+        ...payload,
+        api,
+      });
       if (!unsignedResult) {
         throw new Error('Getting extrinsic error');
       }
 
-      const signerPayloadJSON = (unsignedResult as UnsignedTxPayloadResponse)
-        .signerPayloadJSON;
-
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'signing' } });
 
-      const signResult = await signMessage(signerPayloadJSON);
+      const signResult = await signMessage(unsignedResult);
       if (!signResult) {
         throw new Error('Signing result is not define');
       }
@@ -108,7 +108,7 @@ export const useExtrinsicFlow = <
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'submitting' } });
 
       const submitResult = await submitExtrinsic({
-        signerPayloadJSON,
+        signerPayloadJSON: unsignedResult.signerPayloadJSON,
         signature: signResult,
       });
       if (!submitResult) {
