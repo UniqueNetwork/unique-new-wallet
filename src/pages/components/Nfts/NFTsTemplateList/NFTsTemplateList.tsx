@@ -44,10 +44,6 @@ const NFTsListComponent = ({
   onChipsReset,
 }: NFTsListComponentProps) => {
   const navigate = useNavigate();
-  const tokenClickHandler = useCallback(
-    (collectionId, tokenId) => navigate(`/token/${collectionId}/${tokenId}`),
-    [],
-  );
 
   return (
     <div className={classNames('nft-list', className)}>
@@ -78,7 +74,7 @@ const NFTsListComponent = ({
                 image={getTokenIpfsUriByImagePath(image_path)}
                 link={`${collection_name} [id ${collection_id}]`}
                 onTokenClick={() => navigate(`/token/${collection_id}/${token_id}`)}
-                onMetaClick={() => navigate(`/my-collections/${collection_id}`)}
+                onMetaClick={() => navigate(`${ROUTE.MY_COLLECTIONS}/${collection_id}`)}
               />
             ),
           )}
