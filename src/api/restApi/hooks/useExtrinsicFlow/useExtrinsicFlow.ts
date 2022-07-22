@@ -10,6 +10,11 @@ import { useApiMutation } from '../useApiMutation';
 import { extrinsicFlowReducer } from './extrinsicFlowReducer';
 import { useExtrinsicStatus, useExtrinsicSubmit } from '../../extrinsic';
 
+type ExtrinsicRequest<TPayload> = {
+  payload: TPayload;
+  accountAddress?: string;
+};
+
 export const useExtrinsicFlow = <
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
@@ -19,9 +24,8 @@ export const useExtrinsicFlow = <
   endpoint: ConcreteEndpointMutation,
 ) => {
   const [txHash, setTxHash] = useState<string | null | undefined>();
-  const [payload, setPayload] = useState<Omit<
-    Parameters<ConcreteEndpointMutation['request']>[0],
-    'api'
+  const [request, setRequest] = useState<ExtrinsicRequest<
+    Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>
   > | null>();
 
   const { api } = useApi();
@@ -45,12 +49,13 @@ export const useExtrinsicFlow = <
       return;
     }
 
-    if (payload) {
-      const execute = () => signAndSubmitExtrinsicAsync(payload);
+    if (request) {
+      const execute = () =>
+        signAndSubmitExtrinsicAsync(request.payload, request.accountAddress);
 
       execute();
     }
-  }, [payload]);
+  }, [request]);
 
   useEffect(() => {
     if (!data) {
@@ -61,7 +66,7 @@ export const useExtrinsicFlow = <
 
     if (isCompleted) {
       setTxHash(null);
-      setPayload(null);
+      setRequest(null);
 
       if (isError) {
         setExtrinsicFlowState({
@@ -78,29 +83,34 @@ export const useExtrinsicFlow = <
 
   const signAndSubmitExtrinsic = (
     payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
+    accountAddress?: string,
   ) => {
-    setPayload(payload);
+    setRequest({
+      payload,
+      accountAddress,
+    });
   };
 
   const signAndSubmitExtrinsicAsync = async (
     payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
+    accountAddress?: string,
   ) => {
     setExtrinsicFlowState({ type: 'startflow' });
 
     try {
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'obtaining' } });
 
-      const unsignedResult = await mutateAsync({ ...payload, api });
+      const unsignedResult: UnsignedTxPayloadResponse = await mutateAsync({
+        ...payload,
+        api,
+      });
       if (!unsignedResult) {
         throw new Error('Getting extrinsic error');
       }
 
-      const signerPayloadJSON = (unsignedResult as UnsignedTxPayloadResponse)
-        .signerPayloadJSON;
-
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'signing' } });
 
-      const signResult = await signMessage(signerPayloadJSON);
+      const signResult = await signMessage(unsignedResult, accountAddress);
       if (!signResult) {
         throw new Error('Signing result is not define');
       }
@@ -108,7 +118,7 @@ export const useExtrinsicFlow = <
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'submitting' } });
 
       const submitResult = await submitExtrinsic({
-        signerPayloadJSON,
+        signerPayloadJSON: unsignedResult.signerPayloadJSON,
         signature: signResult,
       });
       if (!submitResult) {

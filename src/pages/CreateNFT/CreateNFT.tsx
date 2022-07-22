@@ -130,7 +130,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   useEffect(() => {
     if (flowStatus === 'success') {
-      info('Collection created successfully');
+      info('NFT created successfully');
 
       closable && navigate(ROUTE.MY_TOKENS);
     }
@@ -220,7 +220,11 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                               isActive,
                             })}
                           >
-                            <Avatar size={24} src={suggestion.img || ''} type="circle" />
+                            <Avatar
+                              size={24}
+                              type="circle"
+                              src={suggestion.img || undefined}
+                            />
                             {suggestion?.title} [id {suggestion?.id}]
                           </SuggestOption>
                         );

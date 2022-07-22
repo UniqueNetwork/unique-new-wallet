@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { useApi } from '@app/hooks';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
+import { truncateDecimalsBalanceSheet } from '@app/utils';
 
 import { EndpointMutation } from '../../request';
 import { useApiMutation } from '../useApiMutation';
@@ -90,7 +91,7 @@ export const useExtrinsicFee = <
         type: 'success',
         payload: {
           fee: fee.amount,
-          feeFormatted: [fee.amount.replace(/([0]+)$/, ''), fee.unit].join(' '),
+          feeFormatted: [truncateDecimalsBalanceSheet(fee.amount), fee.unit].join(' '),
         },
       });
     } catch (e) {
