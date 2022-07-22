@@ -1,21 +1,21 @@
 import { RouteObject } from 'react-router-dom';
 
+import { CollectionForm, TokenForm } from '@app/context';
 import {
   Accounts,
   Coins,
-  CreateCollection,
   CollectionNft,
   CollectionPage,
+  CreateCollection,
+  CreateNFT,
   Faq,
   MyCollections,
   MyTokens,
+  NFTDetails,
   NFTs,
   NotFound,
   Welcome,
-  NFTDetails,
-  CreateNFT,
 } from '@app/pages';
-import { CollectionForm, TokenForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
 import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/pages';
 

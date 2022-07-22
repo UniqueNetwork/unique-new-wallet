@@ -1,6 +1,3 @@
-import React, { useContext } from 'react';
-import styled from 'styled-components';
-import classNames from 'classnames';
 import {
   CollectionLink,
   IPaginationProps,
@@ -8,15 +5,18 @@ import {
   Pagination,
   Text,
 } from '@unique-nft/ui-kit';
+import classNames from 'classnames';
+import React, { useContext } from 'react';
+import styled from 'styled-components';
 
-import { TOrderBy } from '@app/api';
-import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { DeviceSize, useDeviceSize } from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
+import { TOrderBy } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { LisFooter, PaddedBlock } from '@app/styles/styledVariables';
 import { NotFoundCoins } from '@app/components';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import noCoverImage from '@app/static/icons/empty-image.svg';
+import { LisFooter, PaddedBlock } from '@app/styles/styledVariables';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 interface MyCollectionsListProps {
   className?: string;
@@ -33,6 +33,7 @@ export const MyCollectionsList = ({
   search,
   onPageChange,
 }: MyCollectionsListProps) => {
+  const { currentChain } = useApi();
   const deviceSize = useDeviceSize();
   const { selectedAccount } = useContext(AccountContext);
 
@@ -80,7 +81,7 @@ export const MyCollectionsList = ({
                 key={collection.collection_id}
                 link={{
                   title: `${collection.name} [${collection.collection_id}]`,
-                  href: `/my-collections/${collection.collection_id}/nft`,
+                  href: `/${currentChain?.network}/my-collections/${collection.collection_id}/nft`,
                 }}
               />
             ))}
