@@ -111,17 +111,21 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
   }, [isVisible]);
 
   useEffect(() => {
-    if (sender?.address && recipient?.address && amount) {
-      onAmountChange(sender.address, recipient.address, parseInt(amount));
+    const parsedAmount = parseFloat(amount);
+
+    if (sender?.address && recipient?.address && parsedAmount) {
+      onAmountChange(sender.address, recipient.address, parsedAmount);
     }
   }, [sender?.address, recipient?.address, amount]);
 
   const confirm = () => {
-    if (!sender?.address || !recipient?.address || !amount) {
+    const parsedAmount = parseFloat(amount);
+
+    if (!sender?.address || !recipient?.address || !parsedAmount) {
       return;
     }
 
-    onConfirm(sender?.address, recipient?.address, parseInt(amount));
+    onConfirm(sender?.address, recipient?.address, parsedAmount);
   };
 
   const handleRecipientAddress = (address: string) => {
@@ -229,7 +233,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
         <TransferBtn
           role="primary"
           title="Confirm"
-          disabled={!amount || !sender?.address || !recipient?.address}
+          disabled={!parseFloat(amount) || !sender?.address || !recipient?.address}
           onClick={confirm}
         />
       </ModalFooter>
