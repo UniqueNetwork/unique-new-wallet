@@ -84,13 +84,16 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     destinationAddress: string,
     amount: number,
   ) => {
-    signAndSubmitExtrinsic({
-      balanceTransfer: {
-        address: senderAddress,
-        destination: destinationAddress,
-        amount,
+    signAndSubmitExtrinsic(
+      {
+        balanceTransfer: {
+          address: senderAddress,
+          destination: destinationAddress,
+          amount,
+        },
       },
-    });
+      senderAddress,
+    );
   };
 
   return (

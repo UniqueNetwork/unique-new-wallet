@@ -9,11 +9,12 @@ import { useMessage } from '@app/hooks/useMessage';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 import { getSuri, PairType } from '../utils/seedUtils';
-import AccountContext, { Account, AccountSigner } from '../account/AccountContext';
+import AccountContext, { AccountSigner } from '../account/AccountContext';
 
 export const useAccounts = () => {
   const { showError } = useMessage();
   const {
+    signer,
     accounts,
     selectedAccount,
     isLoading,
@@ -93,22 +94,24 @@ export const useAccounts = () => {
 
   const unlockLocalAccount = useCallback(
     (password: string) => {
-      if (!selectedAccount) {
+      if (!signer) {
         return;
       }
 
-      const signature = keyring.getPair(selectedAccount.address);
+      const signature = keyring.getPair(signer.address);
       signature.unlock(password);
 
       return signature;
     },
-    [selectedAccount],
+    [signer],
   );
 
   const signMessage = useCallback(
-    async (unsignedTxPayload: UnsignedTxPayloadResponse, account?: Account) => {
-      const _account = account || selectedAccount;
-      if (!_account) {
+    async (unsignedTxPayload: UnsignedTxPayloadResponse, accountAddress?: string) => {
+      const account =
+        accounts.find((acc) => acc.address === accountAddress) || selectedAccount;
+
+      if (!account) {
         throw new Error('Account was not provided');
       }
       if (!unsignedTxPayload) {
@@ -117,9 +120,9 @@ export const useAccounts = () => {
 
       let signature: string | undefined;
 
-      if (_account.signerType === AccountSigner.local) {
+      if (account.signerType === AccountSigner.local) {
         const { signerPayloadHex } = unsignedTxPayload;
-        const pair = await showSignDialog();
+        const pair = await showSignDialog(account);
 
         signature = u8aToHex(
           pair.sign(signerPayloadHex, {
@@ -127,7 +130,7 @@ export const useAccounts = () => {
           }),
         );
       } else {
-        const injector = await web3FromSource(_account.meta.source);
+        const injector = await web3FromSource(account.meta.source);
         if (!injector.signer.signPayload) {
           throw new Error('Web3 not available');
         }
@@ -145,7 +148,7 @@ export const useAccounts = () => {
 
       return signature;
     },
-    [selectedAccount, showSignDialog],
+    [accounts, selectedAccount, showSignDialog],
   );
 
   return {
@@ -158,6 +161,7 @@ export const useAccounts = () => {
     fetchAccountsError,
     selectedAccount,
     unlockLocalAccount,
+    signer,
     signMessage,
     forgetLocalAccount,
     restoreJSONAccount,

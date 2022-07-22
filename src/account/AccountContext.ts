@@ -26,6 +26,7 @@ export interface Account extends InjectedAccountWithMeta {
 
 export type AccountContextProps = {
   isLoading: boolean;
+  signer?: Account;
   accounts: Account[];
   selectedAccount: Account | undefined;
   fetchAccounts: () => Promise<void>;
@@ -34,7 +35,7 @@ export type AccountContextProps = {
   setFetchAccountsError(error: string | undefined): void;
   setAccounts(accounts: Account[]): void;
   setIsLoading(loading: boolean): void;
-  showSignDialog(): Promise<KeyringPair>;
+  showSignDialog(signer: Account): Promise<KeyringPair>;
   forgetLocalAccount(addressWallet: string): void;
 };
 
