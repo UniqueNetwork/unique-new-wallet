@@ -1,34 +1,33 @@
 # wallet e2e tests
 
-## Предустановка
+## Preset
 
-Создать `.env` файл из `.env.example` в проекте unique-new-wallet и в tests
+Create `.env` from `.env.example` in project unique-new-wallet and in tests
 
-## Запуск
+## Start
 
-### Быстрый старт
+### Quick start
 
-`.env.example` сделан так, чтобы можно было стартовать тестирование без дополнительного конфигурирования.
+`.env.example` written to start testing without additional configuration.
 
 ```
 npm run all
 ```
 
-Этот скрипт
 
-1. Запустит приложение unique new wallet
-2. Запустит прогон ui e2e тестов.
+1. Script will run application unique new wallet
+2. Start ui e2e tests.
 
 
-## Тесты E2E
+## E2E tests
 
-Браузерные тесты должны заканчиваться на `.ui.test.ts`. Запуск только браузерных тестов:
+UI test names end with `.ui.test.ts`.Run only ui tests:
 
 ```
 npm run test:ui
 ```
 
-Запуск тестов в debug режиме 
+Running tests in debug mode 
 
 ```
 npm run debug:ui
