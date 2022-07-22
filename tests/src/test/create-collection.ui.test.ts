@@ -6,7 +6,7 @@ import {generateAccount} from "../utils/api";
 import {expect} from "@playwright/test";
 
 
-baseUiTest.describe('Tests (@ui)', () => {
+baseUiTest.describe('Tests', () => {
     baseUiTest.beforeEach(async ({ context }) => {
         const myTokensPage = new MyTokensPage(await context.newPage());
         await myTokensPage.navigate();
@@ -17,7 +17,7 @@ baseUiTest.describe('Tests (@ui)', () => {
     });
 
     baseUiTest('Create collection', async ({ page, context }) => {
-        const testUser = await generateAccount();
+        const testUser = await generateAccount(100);
 
         await PolkadotjsExtensionPage.connectAccountByExtension(await context.newPage(), testUser.mnemonic, '1234qwe',
             'TestUser', testUser.keyfile.address);

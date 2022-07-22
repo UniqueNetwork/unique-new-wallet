@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test:ui": "npx playwright test --workers=1 .*.ui.test.ts",
-    "debug:ui": "npx playwright test --workers=1 .*.ui.test.ts --debug"
+    "debug:ui": "npx playwright test --workers=1 .*.ui.test.ts --debug",
+    "all": "cd ../ && npm run start && cd tests && npm run test:ui"
   },
   "author": "",
   "license": "ISC",
