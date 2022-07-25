@@ -36,7 +36,6 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
 
   const offsetMinutes = new Date().getTimezoneOffset() * -1;
   const offsetHours = offsetMinutes / 60;
-  const offsetSeconds = offsetMinutes * 60;
 
   return (
     <div className={classNames('collection-description', className)}>
@@ -83,7 +82,7 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
                 <strong>
                   {date_of_creation
                     ? `${format(
-                        addSeconds(new Date(0), date_of_creation + offsetSeconds),
+                        addSeconds(new Date(0), date_of_creation),
                         'MMMM, d, yyyy, HH:mm:ss',
                       )} UTC ${offsetHours > 0 ? '+' : ''}${offsetHours}`
                     : 'Calculation in progress...'}
