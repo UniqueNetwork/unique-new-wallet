@@ -1,9 +1,9 @@
-import { VFC } from 'react';
+import { useEffect, VFC } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Heading } from '@unique-nft/ui-kit';
 
+import { usePageSettingContext } from '@app/context';
 import { PagePaperNoPadding } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 
@@ -45,27 +45,30 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
 }) => {
   const location = useLocation();
   const isCollectionsListPath = location.pathname === '/my-collections';
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
 
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('My collections');
+  }, []);
+
   return (
-    <>
-      <Heading size="1">My collections</Heading>
-      <PagePaperNoPadding>
-        {isCollectionsListPath ? (
-          <MyCollectiosWrapper className={classNames('my-collections', className)}>
-            <MyCollectionsFilter />
-            <MyCollectionsList
-              order={order}
-              page={page}
-              search={search}
-              onPageChange={onChangePagination}
-            />
-          </MyCollectiosWrapper>
-        ) : (
-          <Outlet />
-        )}
-      </PagePaperNoPadding>
-    </>
+    <PagePaperNoPadding>
+      {isCollectionsListPath ? (
+        <MyCollectiosWrapper className={classNames('my-collections', className)}>
+          <MyCollectionsFilter />
+          <MyCollectionsList
+            order={order}
+            page={page}
+            search={search}
+            onPageChange={onChangePagination}
+          />
+        </MyCollectiosWrapper>
+      ) : (
+        <Outlet />
+      )}
+    </PagePaperNoPadding>
   );
 };
 
