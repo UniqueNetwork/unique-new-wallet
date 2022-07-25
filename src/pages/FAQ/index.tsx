@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
-import { Accordion, Heading } from '@unique-nft/ui-kit';
+import { Accordion } from '@unique-nft/ui-kit';
 
+import { usePageSettingContext } from '@app/context';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 
 import { faqItems } from './components';
@@ -56,30 +57,29 @@ const WrapperContentStyled = styled(WrapperContent)`
 `;
 
 export const Faq = (): React.ReactElement<void> => {
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
+
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('FAQ');
+  }, []);
+
   return (
-    <>
-      <Heading size="1">FAQ</Heading>
-      <MainWrapper>
-        <WrapperContentStyled>
-          {faqItems.map((item, i) => {
-            return (
-              <Accordion
-                key={i}
-                className="faq-item"
-                expanded={i === 0}
-                title={item.title}
-              >
-                {item.content}
-              </Accordion>
-            );
-          })}
-        </WrapperContentStyled>
-        {/* https://cryptousetech.atlassian.net/browse/WMS-901 */}
-        {/* <WrapperSidebar>
+    <MainWrapper>
+      <WrapperContentStyled>
+        {faqItems.map((item, i) => {
+          return (
+            <Accordion key={i} className="faq-item" expanded={i === 0} title={item.title}>
+              {item.content}
+            </Accordion>
+          );
+        })}
+      </WrapperContentStyled>
+      {/* https://cryptousetech.atlassian.net/browse/WMS-901 */}
+      {/* <WrapperSidebar>
           <AskQuestion />
         </WrapperSidebar> */}
-      </MainWrapper>
-    </>
+    </MainWrapper>
   );
 };
 
