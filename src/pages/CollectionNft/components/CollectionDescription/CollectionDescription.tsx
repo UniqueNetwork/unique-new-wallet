@@ -1,4 +1,4 @@
-import React, { VFC } from 'react';
+import React, { useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { format, addSeconds } from 'date-fns';
@@ -34,8 +34,10 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
 
   const sponsor = getSponsorShip(sponsorship);
 
-  const offsetMinutes = new Date().getTimezoneOffset() * -1;
-  const offsetHours = offsetMinutes / 60;
+  const [offsetHours] = useState(() => {
+    const offsetMinutes = new Date().getTimezoneOffset() * -1;
+    return offsetMinutes / 60;
+  });
 
   return (
     <div className={classNames('collection-description', className)}>
