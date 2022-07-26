@@ -23,5 +23,6 @@ export const useFileUpload = () => {
 
   return {
     uploadFile,
+    isLoading: fileUpload.isLoading,
   };
 };

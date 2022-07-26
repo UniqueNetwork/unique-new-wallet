@@ -11,7 +11,6 @@ import {
   IconProps,
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
 
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';

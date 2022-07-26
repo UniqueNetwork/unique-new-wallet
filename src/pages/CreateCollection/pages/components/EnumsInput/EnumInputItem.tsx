@@ -3,13 +3,14 @@ import styled from 'styled-components';
 import { Icon } from '@unique-nft/ui-kit';
 
 interface Props {
-  deleteItem: (enumItem: string) => void;
+  deleteItem: (idx: number) => void;
   enumItem: string;
+  idx: number;
 }
 
-const EnumInputItem: VFC<Props> = ({ deleteItem, enumItem }) => {
+const EnumInputItem: VFC<Props> = ({ deleteItem, enumItem, idx }) => {
   const onDeleteItem = () => {
-    deleteItem(enumItem);
+    deleteItem(idx);
   };
 
   return (

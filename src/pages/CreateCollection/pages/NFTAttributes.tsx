@@ -13,10 +13,12 @@ import {
   TooltipAlign,
   useNotifications,
 } from '@unique-nft/ui-kit';
+import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { useDebounce } from 'use-debounce';
 
 import { useAccounts, useBalanceInsufficient } from '@app/hooks';
 import { ArtificialAttributeItemType } from '@app/types';
-import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
+// import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
 import {
   Alert,
   CollectionStepper,
@@ -25,7 +27,7 @@ import {
   TooltipButtonWrapper,
 } from '@app/components';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
-import { ROUTE } from '@app/routes';
+import { CREATE_COLLECTION_TABS_ROUTE, ROUTE } from '@app/routes';
 import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
 import {
   ButtonGroup,
@@ -37,6 +39,9 @@ import {
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import { InputController } from '@app/components/FormControllerComponents';
+import { useCollectionFormContext } from '@app/context/CollectionFormContext/useCollectionFormContext';
+import { CheckboxController } from '@app/components/FormControllerComponents/CheckboxController';
 
 const addressTooltip = createRef<HTMLDivElement>();
 const burnTooltip = createRef<HTMLDivElement>();
@@ -48,27 +53,74 @@ const tooltipAlign: TooltipAlign = {
 };
 
 export const NFTAttributes = () => {
-  const {
-    attributes,
-    mainInformationForm,
-    setAttributes,
-    tokenLimit,
-    setTokenLimit,
-    ownerCanDestroy,
-    setOwnerCanDestroy,
-    mapFormToCollectionDto,
-  } = useContext(CollectionFormContext);
+  // const {
+  //   attributes = [],
+  //   mainInformationForm,
+  //   setAttributes,
+  //   tokenLimit,
+  //   setTokenLimit,
+  //   ownerCanDestroy,
+  //   setOwnerCanDestroy,
+  //   mapFormToCollectionDto,
+  // } = useContext(CollectionFormContext);
   const { selectedAccount } = useAccounts();
   const navigate = useNavigate();
   const { info, error } = useNotifications();
+  const { data } = useCollectionFormContext();
+
+  const collectionNftAttributesForm = useForm<any>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      ...data,
+      sponsorship: {
+        address: '',
+      },
+      limits: {
+        tokenLimit: null,
+        ownerCanDestroy: true,
+      },
+      attributes: [],
+    },
+  });
+
+  const attributesArrayField: any = useFieldArray({
+    control: collectionNftAttributesForm.control,
+    name: 'attributes',
+  });
+
+  console.log(attributesArrayField.fields);
+
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
     useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
   const { feeError, isFeeError, getFee, fee, feeFormatted } = useExtrinsicFee(
     CollectionApiService.collectionCreateMutation,
   );
-  const [address, setAddress] = useState<string>('');
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+
+  const nftFormValues = useWatch({
+    control: collectionNftAttributesForm.control,
+  });
+
+  const [nftDebounceValue] = useDebounce(nftFormValues, 500);
+
+  useEffect(() => {
+    if (!data) {
+      navigate(
+        `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
+        {
+          replace: true,
+        },
+      );
+    }
+  }, [data, navigate]);
+
+  useEffect(() => {
+    getFee({
+      collection: nftDebounceValue,
+    });
+  }, [nftDebounceValue]);
 
   useEffect(() => {
     if (flowStatus === 'success') {
@@ -83,75 +135,47 @@ export const NFTAttributes = () => {
 
   useEffect(() => {
     if (isFeeError && feeError) {
-      // waiting notifications fix
+      error(feeError.message);
     }
   }, [feeError, isFeeError]);
 
   const onPreviousStepClick = () => {
-    navigate('/create-collection/main-information');
+    navigate(
+      `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
+    );
   };
 
-  const createCollectionHandler = () => {
+  const onSubmitAttributes = (values: any) => {
     if (!selectedAccount) {
       error('Account is not found');
-
       return;
     }
+    console.log(values);
+    // signAndSubmitExtrinsic({
+    //   collection: values,
+    // });
+  };
 
-    const collection = mapFormToCollectionDto(selectedAccount?.address);
-    if (!collection) {
-      error('Collection was not formed');
-
-      return;
-    }
-
-    signAndSubmitExtrinsic({
-      collection,
+  const handleAddAttributeItem = () => {
+    attributesArrayField.append({
+      name: { _: '' },
+      optional: true,
+      type: 'string',
     });
   };
 
-  const onSubmitAttributes = () => {
-    const { isSubmitting, isValid } = mainInformationForm;
-
-    if (isSubmitting && isValid) {
-      if (attributes?.length < 2) {
-        setIsOpenConfirm(true);
-      } else {
-        createCollectionHandler();
-      }
-    }
-  };
-
-  const onSetTokenLimit = (value: string) => {
-    if (!value) {
-      setTokenLimit(null);
-      return;
-    }
-
-    const numVal = Number(value);
-
-    if (numVal > maxTokenLimit || numVal < 0) {
-      return;
-    }
-
-    setTokenLimit(numVal);
-  };
-
   const onSetAttributes = (attributes: ArtificialAttributeItemType[]) => {
-    setAttributes([...attributes, ...defaultAttributesWithTokenIpfs]);
+    console.log(attributes);
+    // setAttributes([...attributes, ...defaultAttributesWithTokenIpfs]);
   };
 
-  const attributesWithoutIpfs = useMemo(
-    () => attributes.filter((attr) => attr.name !== 'ipfsJson'),
-    [attributes],
-  );
-
-  useEffect(() => {
-    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
-  }, [attributes]);
+  // const attributesWithoutIpfs = useMemo(
+  //   () => attributes.filter((attr: any) => attr.name !== 'ipfsJson'),
+  //   [attributes],
+  // );
 
   return (
-    <>
+    <FormProvider {...collectionNftAttributesForm}>
       <FormWrapper>
         <CollectionStepper activeStep={2} onClickStep={onPreviousStepClick} />
         <FormHeader>
@@ -162,13 +186,18 @@ export const NFTAttributes = () => {
           </Text>
         </FormHeader>
         <FormBody>
-          <AttributesTable value={attributesWithoutIpfs} onChange={onSetAttributes} />
+          <AttributesTable
+            value={attributesArrayField.fields}
+            onAddAttributeItem={handleAddAttributeItem}
+            onChange={onSetAttributes}
+          />
           <AdvancedSettingsAccordion title="Advanced settings">
             <SettingsRow>
               <Text>This section contains marketplace related settings.</Text>
             </SettingsRow>
             <SettingsRow>
-              <InputText
+              <InputController
+                name="sponsorship.address"
                 label={
                   <>
                     Collection sponsor address
@@ -189,8 +218,6 @@ export const NFTAttributes = () => {
                 }
                 additionalText="The designated sponsor should approve the request"
                 maxLength={48}
-                value={address}
-                onChange={setAddress}
               />
             </SettingsRow>
             <FormRow>
@@ -203,7 +230,8 @@ export const NFTAttributes = () => {
               </Text>
             </FormRow>
             <SettingsRow>
-              <InputText
+              <InputController<string, number | null>
+                name="limits.tokenLimit"
                 label={
                   <>
                     Token limit
@@ -221,12 +249,24 @@ export const NFTAttributes = () => {
                   </>
                 }
                 additionalText="Unlimited by default"
-                value={tokenLimit ? tokenLimit.toString() : ''}
-                onChange={onSetTokenLimit}
+                role="number"
+                transform={{
+                  output: (value) => {
+                    const valueNumber = Number(value);
+                    if (!valueNumber) {
+                      return null;
+                    }
+                    if (valueNumber > maxTokenLimit || valueNumber < 0) {
+                      return Number(value.slice(0, -1));
+                    }
+                    return valueNumber;
+                  },
+                }}
               />
             </SettingsRow>
             <SettingsRow>
-              <Checkbox
+              <CheckboxController
+                name="limits.ownerCanDestroy"
                 label={
                   <>
                     Owner can burn collection
@@ -245,8 +285,6 @@ export const NFTAttributes = () => {
                     />
                   </>
                 }
-                checked={ownerCanDestroy}
-                onChange={setOwnerCanDestroy}
               />
             </SettingsRow>
           </AdvancedSettingsAccordion>
@@ -277,9 +315,9 @@ export const NFTAttributes = () => {
             ) : (
               <Button
                 title="Create a collection"
-                type="button"
+                type="submit"
                 role="primary"
-                onClick={onSubmitAttributes}
+                onClick={collectionNftAttributesForm.handleSubmit(onSubmitAttributes)}
               />
             )}
           </ButtonGroup>
@@ -293,7 +331,7 @@ export const NFTAttributes = () => {
             role: 'primary',
             onClick: () => {
               setIsOpenConfirm(false);
-              createCollectionHandler();
+              // createCollectionHandler();
             },
           },
         ]}
@@ -307,7 +345,7 @@ export const NFTAttributes = () => {
         isVisible={isFlowLoading}
         description="Creating collection"
       />
-    </>
+    </FormProvider>
   );
 };
 

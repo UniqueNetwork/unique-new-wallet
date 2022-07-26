@@ -229,14 +229,14 @@ export function str2vec(str: number[] | string): number[] {
   return Array.from(str).map((x) => x.charCodeAt(0));
 }
 
-export const convertArtificialAttributesToProtobuf = (
-  attributes: ArtificialAttributeItemType[],
-): AttributeItemType[] => {
-  return attributes.map((attr: ArtificialAttributeItemType): AttributeItemType => {
-    if (attr.fieldType === 'repeated') {
-      return { ...attr, fieldType: 'enum', rule: 'repeated' };
-    }
-
-    return { ...attr } as AttributeItemType;
-  });
-};
+// export const convertArtificialAttributesToProtobuf = (
+//   attributes: ArtificialAttributeItemType[],
+// ): AttributeItemType[] => {
+//   return attributes.map((attr: ArtificialAttributeItemType): AttributeItemType => {
+//     if (attr.fieldType === 'repeated') {
+//       return { ...attr, fieldType: 'enum', rule: 'repeated' };
+//     }
+//
+//     return { ...attr } as AttributeItemType;
+//   });
+// };

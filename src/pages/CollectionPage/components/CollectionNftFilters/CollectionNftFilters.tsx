@@ -8,7 +8,8 @@ import {
   Select,
   RadioOptionValueType,
 } from '@unique-nft/ui-kit';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery, gql } from '@apollo/client';
 
 import { iconDown, iconUp } from '@app/utils';
 import {
@@ -18,6 +19,8 @@ import {
 import { Direction } from '@app/api/graphQL/tokens';
 import { ROUTE } from '@app/routes';
 import { MintingBtn } from '@app/components';
+import { collectionsQuery } from '@app/api/graphQL/collections/collections';
+import { ViewCollection } from '@app/api';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -59,6 +62,23 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
   className,
 }) => {
   const navigate = useNavigate();
+
+  const { collectionId } = useParams<{ collectionId: string }>();
+  const cache = useQuery(collectionsQuery).client.cache;
+  const currentCollection: Pick<
+    ViewCollection,
+    'name' | 'description' | 'collection_id' | 'collection_cover'
+  > | null = cache.readFragment({
+    id: `view_collections:{"collection_id":${collectionId}}`,
+    fragment: gql`
+      fragment currentCollection on view_collections {
+        name
+        description
+        collection_id
+        collection_cover
+      }
+    `,
+  });
   const [search, setSearch] = useState('');
   const { direction, onChangeSearch, onChangeDirection, onChangeType } =
     useNftFilterContext();
@@ -96,7 +116,18 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         }}
         title="Create an NFT"
         role="primary"
-        onClick={() => navigate(ROUTE.CREATE_NFT)}
+        onClick={() =>
+          navigate(ROUTE.CREATE_NFT, {
+            state: currentCollection
+              ? {
+                  id: currentCollection.collection_id,
+                  title: currentCollection.name,
+                  description: currentCollection.description,
+                  img: currentCollection.collection_cover,
+                }
+              : null,
+          })
+        }
       />
     </div>
   );

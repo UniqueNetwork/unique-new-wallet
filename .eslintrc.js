@@ -138,11 +138,13 @@ module.exports = {
     'react/jsx-closing-bracket-location': [1, 'line-aligned'],
     'react/jsx-fragments': 'error',
     'no-void': 'off',
+    'spaced-comment': 'off',
     // this seems very broken atm, false positives
     '@typescript-eslint/unbound-method': 'off',
     // suppress errors for missing 'import React' in files
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-var-requires': 'off',

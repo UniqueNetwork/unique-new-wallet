@@ -15,7 +15,7 @@ import {
   NFTDetails,
   CreateNFT,
 } from '@app/pages';
-import { CollectionForm, TokenForm } from '@app/context';
+import { TokenForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
 import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/pages';
 
@@ -91,11 +91,7 @@ export const routes: RouteConfig = {
       ],
     },
     {
-      element: (
-        <CollectionForm>
-          <CreateCollection />
-        </CollectionForm>
-      ),
+      element: <CreateCollection />,
       name: 'Create collection',
       path: ROUTE.CREATE_COLLECTION,
       children: [

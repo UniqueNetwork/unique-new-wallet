@@ -9,28 +9,31 @@ import {
   Tooltip,
 } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { Table } from '@app/components';
 import {
   ArtificialAttributeItemType,
-  ArtificialFieldRuleType,
+  // ArtificialFieldRuleType,
   ArtificialFieldType,
   FieldRuleType,
 } from '@app/types';
+import { InputController } from '@app/components/FormControllerComponents';
+import { SelectController } from '@app/components/FormControllerComponents/SelectController';
+import { EnumsInputController } from '@app/pages/CreateCollection/pages/components/EnumsInput/EnumsInputController';
 
 import { EnumsInput } from './EnumsInput';
-import trash from '../../../../static/icons/trash.svg'; // TODO: get this icon from ui-kit
+import trash from '../../../../static/icons/trash.svg';
 
 interface AttributesTableProps {
   className?: string;
   value: ArtificialAttributeItemType[];
   onChange: (value: ArtificialAttributeItemType[]) => void;
+  onAddAttributeItem(): void;
 }
 
 interface AttributesColumnsProps {
   onAttributeChange(attribute: ArtificialAttributeItemType): void;
-
-  onRemoveAttributeClick(value: ArtificialAttributeItemType): void;
 }
 
 type FieldTypeOption = SelectOptionProps & { key: ArtificialFieldType };
@@ -40,10 +43,11 @@ const fieldTypeOptions: FieldTypeOption[] = [
   { key: 'repeated', value: 'Multiselect' },
 ];
 
-type FieldRuleOption = SelectOptionProps & { key: ArtificialFieldRuleType };
+type FieldRuleOption = SelectOptionProps & { key: boolean };
+
 const fieldRuleOptions: FieldRuleOption[] = [
-  { key: 'optional', value: 'Optional' },
-  { key: 'required', value: 'Required' },
+  { key: true, value: 'Optional' },
+  { key: false, value: 'Required' },
 ];
 
 const attributeTooltip = createRef<HTMLDivElement>();
@@ -115,9 +119,31 @@ const ValuesTitle = () => {
   );
 };
 
+const EnumsValuesAttribute = () => {
+  const { control } = useFormContext();
+  const enumValuesFields = useFieldArray({
+    control,
+    name: `attributes.${0}.enumValues`,
+  });
+  return (
+    <EnumsInputController<{ _: string }>
+      // isDisabled={attribute.fieldType === 'string'}
+      name={`attributes.${0}.enumValues`}
+      maxSymbols={40}
+      defaultValue={[]}
+      getValues={(values) => values.map((val) => val._)}
+      onAdd={(value) => {
+        enumValuesFields.append({ _: value });
+      }}
+      onDelete={(index) => {
+        enumValuesFields.remove(index);
+      }}
+    />
+  );
+};
+
 const getAttributesColumns = ({
   onAttributeChange,
-  onRemoveAttributeClick,
 }: AttributesColumnsProps): TableColumnProps[] => [
   {
     title: AttributeTitle(),
@@ -125,11 +151,7 @@ const getAttributesColumns = ({
     field: 'name',
     render(name: string, attribute: ArtificialAttributeItemType) {
       return (
-        <InputText
-          placeholder="Attribute name"
-          value={name}
-          onChange={(value: string) => onAttributeChange({ ...attribute, name: value })}
-        />
+        <InputController name={`attributes.${0}.name._`} placeholder="Attribute name" />
       );
     },
   },
@@ -138,21 +160,22 @@ const getAttributesColumns = ({
     width: '17%',
     field: 'fieldType',
     render(type: ArtificialFieldType, attribute: ArtificialAttributeItemType) {
-      return (
-        <Select
-          placeholder="Type"
-          options={fieldTypeOptions}
-          optionKey="key"
-          optionValue="value"
-          value={type}
-          onChange={(option) =>
-            onAttributeChange({
-              ...attribute,
-              fieldType: (option as FieldTypeOption).key,
-            })
-          }
-        />
-      );
+      // return (
+      //   <Select
+      //     placeholder="Type"
+      //     options={fieldTypeOptions}
+      //     optionKey="key"
+      //     optionValue="value"
+      //     value={type}
+      //     onChange={(option) =>
+      //       onAttributeChange({
+      //         ...attribute,
+      //         fieldType: (option as FieldTypeOption).key,
+      //       })
+      //     }
+      //   />
+      // );
+      return <div>Title</div>;
     },
   },
   {
@@ -161,15 +184,12 @@ const getAttributesColumns = ({
     field: 'rule',
     render(rule: FieldRuleType, attribute: ArtificialAttributeItemType) {
       return (
-        <Select
+        <SelectController
+          name={`attributes.${0}.optional`}
           placeholder="Rule"
           options={fieldRuleOptions}
           optionKey="key"
           optionValue="value"
-          value={rule}
-          onChange={(option) =>
-            onAttributeChange({ ...attribute, rule: (option as FieldRuleOption).key })
-          }
         />
       );
     },
@@ -179,14 +199,7 @@ const getAttributesColumns = ({
     width: '40%',
     field: 'values',
     render(values: string[], attribute: ArtificialAttributeItemType) {
-      return (
-        <EnumsInput
-          isDisabled={attribute.fieldType === 'string'}
-          maxSymbols={40}
-          setValues={(values: string[]) => onAttributeChange({ ...attribute, values })}
-          values={attribute.values}
-        />
-      );
+      return <EnumsValuesAttribute />;
     },
   },
   {
@@ -199,7 +212,7 @@ const getAttributesColumns = ({
           title=""
           role="ghost"
           iconLeft={{ file: trash, size: 24 }}
-          onClick={() => onRemoveAttributeClick(attribute)}
+          // onClick={() => onRemoveAttributeClick(attribute)}
         />
       );
     },
@@ -210,22 +223,20 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
   className,
   value,
   onChange,
+  onAddAttributeItem,
 }) => {
-  const onAddAttributeItemClick = () => {
-    onChange([
-      ...value,
-      {
-        id: value.length++,
-        name: '',
-        fieldType: 'string',
-        rule: 'optional',
-        values: [],
-      },
-    ]);
-  };
+  // const { control } = useFormContext();
+  // const attributesArray = useFieldArray({
+  //   control,
+  //   name: 'attributes',
+  // });
 
-  const onAttributeChange = (attribute: ArtificialAttributeItemType) => {
-    onChange(value.map((item) => (item.id !== attribute.id ? item : attribute)));
+  // const onAttributeChange = (attribute: ArtificialAttributeItemType) => {
+  //   onChange(value.map((item) => (item.id !== attribute.id ? item : attribute)));
+  // };
+
+  const onAttributeChange = (...args: any) => {
+    console.log('onAttributeChange', args);
   };
 
   const onRemoveAttributeClick = (attribute: ArtificialAttributeItemType) => {
@@ -234,10 +245,9 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
 
   return (
     <div className={className}>
-      {/* TODO: @future: add new table cellPadding=8 from next uikit ver. */}
       <Table
         data={value}
-        columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
+        columns={getAttributesColumns({ onAttributeChange })}
         noDataMessage={null}
       />
       <AddButtonWrapper>
@@ -245,7 +255,7 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
           role="ghost"
           title="Add field"
           iconRight={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
-          onClick={onAddAttributeItemClick}
+          onClick={onAddAttributeItem}
         />
       </AddButtonWrapper>
     </div>

@@ -1,15 +1,11 @@
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import {
-  Heading,
-  InputText,
-  Text,
-  Textarea,
-  Upload,
-  useNotifications,
-} from '@unique-nft/ui-kit';
+import React, { FC, useEffect, useState } from 'react';
+import { Heading, Loader, Text, useNotifications } from '@unique-nft/ui-kit';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useDebounce } from 'use-debounce';
 
 import { useAccounts } from '@app/hooks';
-import { CollectionFormContext } from '@app/context';
 import { CollectionApiService, useExtrinsicFee, useFileUpload } from '@app/api';
 import { Alert, CollectionStepper, Confirm, MintingBtn } from '@app/components';
 import {
@@ -23,103 +19,131 @@ import {
   LabelText,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
+import { CreateCollectionNewRequest } from '@app/types/Api';
+import { useCollectionFormContext } from '@app/context/CollectionFormContext/useCollectionFormContext';
+import { CREATE_COLLECTION_TABS_ROUTE, ROUTE } from '@app/routes';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
+import {
+  InputController,
+  TextareaController,
+  UploadController,
+} from '@app/components/FormControllerComponents';
+
+type RequiredSchemaCollectionType = Pick<
+  CreateCollectionNewRequest['schema'],
+  | 'schemaName'
+  | 'schemaVersion'
+  | 'attributesSchemaVersion'
+  | 'image'
+  | 'attributesSchema'
+> & {
+  coverPicture?: { ipfsCid: string };
+};
+
+export type CreateCollectionFormType = Pick<
+  CreateCollectionNewRequest,
+  'address' | 'name' | 'description' | 'tokenPrefix'
+> & { schema?: RequiredSchemaCollectionType };
 
 export const MainInformation: FC = () => {
+  const navigate = useNavigate();
   const { selectedAccount } = useAccounts();
+  const { data, setCollectionFormData } = useCollectionFormContext();
+
+  const collectionForm = useForm<CreateCollectionFormType>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: data || {
+      address: selectedAccount?.address,
+      name: '',
+      description: '',
+      tokenPrefix: '',
+      schema: {
+        coverPicture: {
+          ipfsCid: '',
+        },
+        attributesSchema: {},
+        attributesSchemaVersion: '1.0.0',
+        image: {
+          urlTemplate: 'string{infix}.ext',
+        },
+        schemaName: 'unique',
+        schemaVersion: '1.0.0',
+      },
+    },
+  });
+
+  const {
+    handleSubmit,
+    control,
+    formState: { isValid },
+  } = collectionForm;
+
+  const collectionFormValues = useWatch({
+    control,
+  }) as CreateCollectionFormType;
+
+  const [collectionDebounceValue] = useDebounce(collectionFormValues, 500);
+
   const { error } = useNotifications();
-  const { mainInformationForm, setCoverImgFile, mapFormToCollectionDto } =
-    useContext(CollectionFormContext);
   const { feeError, isFeeError, feeFormatted, getFee } = useExtrinsicFee(
     CollectionApiService.collectionCreateMutation,
   );
-  const { uploadFile } = useFileUpload();
+  const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
-  const { dirty, submitForm, isValid, setFieldValue, values, errors, touched } =
-    mainInformationForm;
+  const uploadCover = async (file: { url: string; file: Blob }) => {
+    const response = await uploadFile(file.file);
 
-  const setName = useCallback(
-    (value: string) => {
-      if (value.length > 64) {
-        return;
-      }
-      setFieldValue('name', value);
-    },
-    [setFieldValue],
-  );
-
-  const setDescription = useCallback(
-    (value: string) => {
-      if (value.length > 256) {
-        return;
-      }
-      setFieldValue('description', value);
-    },
-    [setFieldValue],
-  );
-
-  const setTokenPrefix = useCallback(
-    (value: string) => {
-      if (value.length > 4) {
-        return;
-      }
-      setFieldValue('tokenPrefix', value);
-    },
-    [setFieldValue],
-  );
-
-  const uploadCover = async (file: Blob) => {
-    const response = await uploadFile(file);
-
-    setFieldValue('coverImgAddress', response?.cid);
-
-    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
+    response && collectionForm.setValue('schema.coverPicture.ipfsCid', response.cid);
   };
+
+  useEffect(() => {
+    if (!collectionDebounceValue) {
+      return;
+    }
+    getFee({
+      collection: collectionDebounceValue,
+    });
+  }, [collectionDebounceValue]);
+
+  useEffect(() => {
+    setCollectionFormData(collectionFormValues);
+  }, [collectionFormValues, setCollectionFormData]);
 
   const setCover = (data: { url: string; file: Blob } | null) => {
     if (!data?.file) {
+      collectionForm.setValue('schema.coverPicture.ipfsCid', '');
+      return;
+    }
+    const _10MB = 10000000;
+    if (data.file.size > _10MB) {
+      error('File size more 10MB');
       return;
     }
 
-    const file: Blob = data?.file;
-
-    setCoverImgFile(file);
-
-    void uploadCover(file);
+    uploadCover(data);
   };
 
-  const onFormSubmit = () => {
-    if (!values.coverImgAddress) {
+  useEffect(() => {
+    if (!isFeeError) {
+      return;
+    }
+    error(feeError?.message);
+  }, [feeError?.message, isFeeError]);
+
+  const onSubmit = (values: CreateCollectionFormType) => {
+    if (!values.schema?.coverPicture?.ipfsCid) {
       setIsOpenConfirm(true);
-    } else {
-      void submitForm();
-    }
-  };
-
-  const onClickStep = (step: number) => {
-    if (!dirty || !isValid) {
       return;
     }
-
-    if (step === 2) {
-      onFormSubmit();
-    }
+    navigate(`${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`);
   };
-
-  useEffect(() => {
-    if (isFeeError) {
-      error(feeError?.message);
-    }
-  }, [isFeeError]);
-
-  useEffect(() => {
-    getFee({ collection: mapFormToCollectionDto(selectedAccount?.address || '') });
-  }, [values]);
 
   return (
-    <>
+    <FormProvider {...collectionForm}>
       <FormWrapper>
-        <CollectionStepper activeStep={1} onClickStep={onClickStep} />
+        <CollectionStepper activeStep={1} />
         <FormHeader>
           <Heading size="2">Main information</Heading>
           <Text>
@@ -130,52 +154,53 @@ export const MainInformation: FC = () => {
         <FormBody>
           <Form>
             <FormRow>
-              <InputText
+              <InputController
+                name="name"
                 label="Name*"
                 additionalText="Max 64 symbols"
-                name="name"
-                value={values.name}
-                error={touched.name && Boolean(errors.name)}
-                statusText={touched.name ? errors.name : undefined}
-                onChange={setName}
+                maxLength={64}
+                rules={{
+                  required: true,
+                }}
               />
             </FormRow>
             <FormRow>
-              <Textarea
+              <TextareaController
                 label="Description"
                 additionalText="Max 256 symbols"
-                name="description"
                 rows={4}
-                value={mainInformationForm.values.description}
-                onChange={setDescription}
+                name="description"
+                maxLength={256}
               />
             </FormRow>
             <FormRow>
-              <InputText
+              <InputController
+                name="tokenPrefix"
                 label="Symbol*"
                 additionalText="Token name as displayed in Wallet (max 4 symbols)"
-                name="symbol"
-                value={mainInformationForm.values.tokenPrefix}
-                error={
-                  touched.tokenPrefix && Boolean(mainInformationForm.errors.tokenPrefix)
-                }
-                statusText={
-                  touched.tokenPrefix ? mainInformationForm.errors.tokenPrefix : undefined
-                }
-                onChange={setTokenPrefix}
+                rules={{
+                  required: true,
+                }}
+                maxLength={4}
               />
             </FormRow>
             <FormRow className="has_uploader">
-              <UploadWidget>
-                <LabelText>Upload image</LabelText>
-                <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
-                <Upload
-                  // TODO - fix file preload, file clearing
-                  // upload={coverImgFile ? URL.createObjectURL(coverImgFile) : undefined}
-                  onChange={setCover}
-                />
-              </UploadWidget>
+              <DownloadCover>
+                <UploadWidget>
+                  <LabelText>Upload image</LabelText>
+                  <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
+                  <UploadController
+                    name="schema.coverPicture.ipfsCid"
+                    upload={getTokenIpfsUriByImagePath(
+                      collectionFormValues?.schema?.coverPicture?.ipfsCid || null,
+                    )}
+                    onChange={setCover}
+                  />
+                </UploadWidget>
+                {isLoadingFileUpload && <Loader label="Download image..." />}
+              </DownloadCover>
             </FormRow>
+
             {feeFormatted && (
               <Alert type="warning">
                 A fee of ~ {feeFormatted} can be applied to the transaction
@@ -183,15 +208,14 @@ export const MainInformation: FC = () => {
             )}
             <ButtonGroup>
               <MintingBtn
-                disabled={!dirty || !isValid}
+                disabled={isLoadingFileUpload || !isValid}
                 iconRight={{
                   color: 'currentColor',
                   name: 'arrow-right',
                   size: 12,
                 }}
                 title="Next step"
-                type="button"
-                onClick={onFormSubmit}
+                onClick={handleSubmit(onSubmit)}
               />
             </ButtonGroup>
           </Form>
@@ -203,9 +227,11 @@ export const MainInformation: FC = () => {
           {
             title: 'Yes, I am sure',
             role: 'primary',
+            type: 'submit',
             onClick: () => {
-              setIsOpenConfirm(false);
-              void submitForm();
+              navigate(
+                `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`,
+              );
             },
           },
         ]}
@@ -215,6 +241,12 @@ export const MainInformation: FC = () => {
       >
         <Text>You cannot return to editing the cover in this product version.</Text>
       </Confirm>
-    </>
+    </FormProvider>
   );
 };
+
+const DownloadCover = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 30px;
+`;

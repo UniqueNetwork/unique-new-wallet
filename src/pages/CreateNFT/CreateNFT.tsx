@@ -10,7 +10,7 @@ import {
   Upload,
   useNotifications,
 } from '@unique-nft/ui-kit';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useAccounts, useBalanceInsufficient } from '@app/hooks';
 import {
@@ -71,7 +71,11 @@ const defaultOptions = {
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   const [closable, setClosable] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
+  // тут лежит объект коллекции, по которой кликнул пользователь при переходе со страницы my collections -> NFTS
+  const location = useLocation() as { state: Option | null };
+  const [selectedCollection, setSelectedCollection] = useState<Option | null>(
+    location.state || null,
+  );
 
   const navigate = useNavigate();
   const { uploadFile } = useFileUpload();
@@ -236,6 +240,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
                       option.id === activeOption.id
                     }
                     getSuggestionValue={({ title }: Option) => title}
+                    value={selectedCollection || undefined}
                     onChange={setSelectedCollection}
                   />
                 </FormRow>
