@@ -140,7 +140,7 @@ const getAccountsColumns = ({
             <Button
               title="Get"
               onClick={() => {
-                window.open(config.telegramBot, '_blank');
+                window.open(config.telegramBot, '_blank', 'noopener');
               }}
             />
           ) : (
