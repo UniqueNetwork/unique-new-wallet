@@ -25,6 +25,7 @@ import {
   TransferBtn,
 } from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
+import { config } from '@app/config';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
@@ -135,7 +136,17 @@ const getAccountsColumns = ({
             disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}
           />
-          <Button disabled title="Get" />
+          {rowData.balance?.availableBalance.unit === 'OPL' ? (
+            <Button
+              title="Get"
+              onClick={() => {
+                window.open(config.telegramBot, '_blank', 'noopener');
+              }}
+            />
+          ) : (
+            <Button disabled title="Get" />
+          )}
+
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
               placement="right"
