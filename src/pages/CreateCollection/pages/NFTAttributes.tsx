@@ -188,7 +188,7 @@ export const NFTAttributes = () => {
                   </>
                 }
                 additionalText="The designated sponsor should approve the request"
-                maxLength={48}
+                maxLength={49}
                 value={address}
                 onChange={setAddress}
               />
