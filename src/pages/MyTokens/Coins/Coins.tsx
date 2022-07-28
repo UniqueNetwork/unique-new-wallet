@@ -50,6 +50,33 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     [],
   );
 
+  const getCoinRowConfig = (chain: string) => {
+    switch (chain) {
+      case 'OPAL':
+        return {
+          getDisabled: false,
+          onGet: () => {
+            window.open(config.telegramBot, '_blank', 'noopener');
+          },
+        };
+      case 'KUSAMA':
+        return {
+          getDisabled: false,
+          onGet: getCoinsHandler,
+        };
+      case 'QUARTZ':
+        return {
+          getDisabled: true,
+          onGet: undefined,
+        };
+      default:
+        return {
+          getDisabled: true,
+          onGet: undefined,
+        };
+    }
+  };
+
   return (
     <>
       {fundsModalVisible && (
@@ -67,13 +94,16 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
       <CoinsContainer>
         <Heading size="4">Network</Heading>
         {Object.values(config.chains).map((chain, idx) => {
-          const isKusamaChain = chain.network.toLowerCase() === 'kusama';
+          const isQuartzChain = chain.network.toLowerCase() === 'quartz';
+          const { getDisabled, onGet } = getCoinRowConfig(chain.network);
           return (
             <CoinsRow
-              getDisabled={!isKusamaChain}
+              getDisabled={getDisabled}
               key={chain.network}
               loading={chainsBalanceLoading}
-              sendDisabled={!Number(chainsBalance?.[idx].availableBalance.amount)}
+              sendDisabled={
+                isQuartzChain || !Number(chainsBalance?.[idx].availableBalance.amount)
+              }
               address={selectedAccount?.address}
               balanceFull={chainsBalance?.[idx].freeBalance.amount}
               balanceLocked={chainsBalance?.[idx].lockedBalance.amount}
@@ -83,7 +113,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
               symbol={chainsBalance?.[idx].availableBalance.unit}
               chain={chain}
               onSend={sendFundsHandler}
-              onGet={isKusamaChain ? getCoinsHandler : undefined}
+              onGet={onGet}
             />
           );
         })}
