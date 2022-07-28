@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
 
 import { useApi } from '@app/hooks';
@@ -58,11 +58,12 @@ export const useExtrinsicFee = <
     }
   }, [payload]);
 
-  const getFee = (
-    payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
-  ) => {
-    setPayload(payload);
-  };
+  const getFee = useCallback(
+    (payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>) => {
+      setPayload(payload);
+    },
+    [],
+  );
 
   const getFeeAsync = async (
     payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,

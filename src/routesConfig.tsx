@@ -17,7 +17,7 @@ import {
 } from '@app/pages';
 import { TokenForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
-import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/pages';
+import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/tabs';
 
 import {
   COLLECTION_TABS_ROUTE,

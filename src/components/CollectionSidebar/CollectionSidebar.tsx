@@ -6,7 +6,7 @@ import { useCollectionFormContext } from '@app/context/CollectionFormContext/use
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 export const CollectionSidebar = () => {
-  const { data } = useCollectionFormContext();
+  // const { data } = useCollectionFormContext();
   // const { attributes, coverImgFile, mainInformationForm } =
   //   useContext(CollectionFormContext) || {};
   // const { values } = mainInformationForm;
@@ -19,7 +19,7 @@ export const CollectionSidebar = () => {
 
   return (
     <WrapperSidebar>
-      <SidebarRow>
+      {/* <SidebarRow>
         <Heading size="3">Collection preview</Heading>
         <Card
           title={data?.name || 'Name'}
@@ -41,7 +41,7 @@ export const CollectionSidebar = () => {
           geometry="square"
           picture={undefined}
         />
-      </SidebarRow>
+      </SidebarRow> */}
     </WrapperSidebar>
   );
 };

@@ -1,6 +1,6 @@
 import { useApiMutation } from '@app/api';
 import { useApi, useMessage } from '@app/hooks';
-import { CreateCollectionFormType } from '@app/pages/CreateCollection/pages';
+import { CreateCollectionFormType } from '@app/pages/CreateCollection/tabs';
 
 import { CollectionApiService } from '../CollectionApiService';
 

@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Heading, Loader, Text, useNotifications } from '@unique-nft/ui-kit';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 
 import { useAccounts } from '@app/hooks';
@@ -46,74 +46,80 @@ export type CreateCollectionFormType = Pick<
 > & { schema?: RequiredSchemaCollectionType };
 
 export const MainInformation: FC = () => {
-  const navigate = useNavigate();
-  const { selectedAccount } = useAccounts();
-  const { data, setCollectionFormData } = useCollectionFormContext();
+  // const navigate = useNavigate();
+  // const { selectedAccount } = useAccounts();
+  const { goToStep } = useOutletContext<any>();
+  // const { data, setCollectionFormData } = useCollectionFormContext();
 
-  const collectionForm = useForm<CreateCollectionFormType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: data || {
-      address: selectedAccount?.address,
-      name: '',
-      description: '',
-      tokenPrefix: '',
-      schema: {
-        coverPicture: {
-          ipfsCid: '',
-        },
-        attributesSchema: {},
-        attributesSchemaVersion: '1.0.0',
-        image: {
-          urlTemplate: 'string{infix}.ext',
-        },
-        schemaName: 'unique',
-        schemaVersion: '1.0.0',
-      },
-    },
-  });
+  // const collectionForm = useForm<CreateCollectionFormType>({
+  //   mode: 'onChange',
+  //   reValidateMode: 'onChange',
+  //   defaultValues: data || {
+  //     address: selectedAccount?.address,
+  //     name: '',
+  //     description: '',
+  //     tokenPrefix: '',
+  //     schema: {
+  //       coverPicture: {
+  //         ipfsCid: '',
+  //       },
+  //       attributesSchema: {},
+  //       attributesSchemaVersion: '1.0.0',
+  //       image: {
+  //         urlTemplate: 'string{infix}.ext',
+  //       },
+  //       schemaName: 'unique',
+  //       schemaVersion: '1.0.0',
+  //     },
+  //   },
+  // });
 
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { isValid },
-  } = collectionForm;
+    getValues,
+  } = useFormContext<CreateCollectionFormType>();
+
+  console.log(getValues());
 
   const collectionFormValues = useWatch({
     control,
   }) as CreateCollectionFormType;
 
-  const [collectionDebounceValue] = useDebounce(collectionFormValues, 500);
+  // const [collectionDebounceValue] = useDebounce(collectionFormValues, 500);
 
   const { error } = useNotifications();
-  const { feeError, isFeeError, feeFormatted, getFee } = useExtrinsicFee(
-    CollectionApiService.collectionCreateMutation,
-  );
+  // const { feeError, isFeeError, feeFormatted, getFee } = useExtrinsicFee(
+  //   CollectionApiService.collectionCreateMutation,
+  // );
   const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
 
   const uploadCover = async (file: { url: string; file: Blob }) => {
     const response = await uploadFile(file.file);
 
-    response && collectionForm.setValue('schema.coverPicture.ipfsCid', response.cid);
+    response && setValue('schema.coverPicture.ipfsCid', response.cid);
   };
 
-  useEffect(() => {
-    if (!collectionDebounceValue) {
-      return;
-    }
-    getFee({
-      collection: collectionDebounceValue,
-    });
-  }, [collectionDebounceValue]);
+  // useEffect(() => {
+  //   console.log(collectionDebounceValue);
+  //   // if (!collectionDebounceValue) {
+  //   //   return;
+  //   // }
+  //   // getFee({
+  //   //   collection: collectionDebounceValue,
+  //   // });
+  // }, [collectionDebounceValue]);
 
-  useEffect(() => {
-    setCollectionFormData(collectionFormValues);
-  }, [collectionFormValues, setCollectionFormData]);
+  // useEffect(() => {
+  //   setCollectionFormData(collectionFormValues);
+  // }, [collectionFormValues, setCollectionFormData]);
 
   const setCover = (data: { url: string; file: Blob } | null) => {
     if (!data?.file) {
-      collectionForm.setValue('schema.coverPicture.ipfsCid', '');
+      setValue('schema.coverPicture.ipfsCid', '');
       return;
     }
     const _10MB = 10000000;
@@ -125,23 +131,15 @@ export const MainInformation: FC = () => {
     uploadCover(data);
   };
 
-  useEffect(() => {
-    if (!isFeeError) {
-      return;
-    }
-    error(feeError?.message);
-  }, [feeError?.message, isFeeError]);
-
-  const onSubmit = (values: CreateCollectionFormType) => {
-    if (!values.schema?.coverPicture?.ipfsCid) {
-      setIsOpenConfirm(true);
-      return;
-    }
-    navigate(`${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`);
-  };
+  // useEffect(() => {
+  //   if (!isFeeError) {
+  //     return;
+  //   }
+  //   error(feeError?.message);
+  // }, [feeError?.message, isFeeError]);
 
   return (
-    <FormProvider {...collectionForm}>
+    <>
       <FormWrapper>
         <CollectionStepper activeStep={1} />
         <FormHeader>
@@ -192,7 +190,8 @@ export const MainInformation: FC = () => {
                   <UploadController
                     name="schema.coverPicture.ipfsCid"
                     upload={getTokenIpfsUriByImagePath(
-                      collectionFormValues?.schema?.coverPicture?.ipfsCid || null,
+                      // collectionFormValues?.schema?.coverPicture?.ipfsCid ||
+                      null,
                     )}
                     onChange={setCover}
                   />
@@ -201,12 +200,12 @@ export const MainInformation: FC = () => {
               </DownloadCover>
             </FormRow>
 
-            {feeFormatted && (
+            {/* {feeFormatted && (
               <Alert type="warning">
                 A fee of ~ {feeFormatted} can be applied to the transaction
               </Alert>
-            )}
-            <ButtonGroup>
+            )} */}
+            {/* <ButtonGroup>
               <MintingBtn
                 disabled={isLoadingFileUpload || !isValid}
                 iconRight={{
@@ -217,31 +216,11 @@ export const MainInformation: FC = () => {
                 title="Next step"
                 onClick={handleSubmit(onSubmit)}
               />
-            </ButtonGroup>
+            </ButtonGroup> */}
           </Form>
         </FormBody>
       </FormWrapper>
-      <Confirm
-        buttons={[
-          { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
-          {
-            title: 'Yes, I am sure',
-            role: 'primary',
-            type: 'submit',
-            onClick: () => {
-              navigate(
-                `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`,
-              );
-            },
-          },
-        ]}
-        isVisible={isOpenConfirm}
-        title="You have not entered the cover. Are you sure that you want to create the collection without it?"
-        onClose={() => setIsOpenConfirm(false)}
-      >
-        <Text>You cannot return to editing the cover in this product version.</Text>
-      </Confirm>
-    </FormProvider>
+    </>
   );
 };
 

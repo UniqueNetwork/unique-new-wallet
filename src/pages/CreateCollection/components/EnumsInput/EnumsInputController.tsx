@@ -2,10 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useEffect } from 'react';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
-import {
-  EnumsInput,
-  EnumsInputProps,
-} from '@app/pages/CreateCollection/pages/components';
+import { EnumsInput, EnumsInputProps } from '@app/pages/CreateCollection/components';
 
 type EnumsInputControllerProps<T> = BaseControllerProps<
   Omit<EnumsInputProps<T>, 'value'>

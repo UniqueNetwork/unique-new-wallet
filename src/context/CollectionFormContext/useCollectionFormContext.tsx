@@ -6,7 +6,7 @@ export const useCollectionFormContext = () => {
   const context = useContext(CollectionFormContext);
 
   if (!context) {
-    throw new Error('Collection form context not exist');
+    // throw new Error('Collection form context not exist');
   }
   return context;
 };

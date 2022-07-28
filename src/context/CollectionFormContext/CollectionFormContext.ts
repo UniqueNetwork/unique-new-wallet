@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { CreateCollectionFormType } from '@app/pages/CreateCollection/pages';
+import { CreateCollectionFormType } from '@app/pages/CreateCollection/tabs';
 
 export interface CollectionFormProps {
   data: CreateCollectionFormType | null;

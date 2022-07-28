@@ -20,10 +20,9 @@ import {
 } from '@app/types';
 import { InputController } from '@app/components/FormControllerComponents';
 import { SelectController } from '@app/components/FormControllerComponents/SelectController';
-import { EnumsInputController } from '@app/pages/CreateCollection/pages/components/EnumsInput/EnumsInputController';
 
-import { EnumsInput } from './EnumsInput';
-import trash from '../../../../static/icons/trash.svg';
+import { EnumsInputController } from './EnumsInput/EnumsInputController';
+import trash from '../../../static/icons/trash.svg';
 
 interface AttributesTableProps {
   className?: string;
@@ -225,7 +224,7 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
   onChange,
   onAddAttributeItem,
 }) => {
-  // const { control } = useFormContext();
+  const { control } = useFormContext();
   // const attributesArray = useFieldArray({
   //   control,
   //   name: 'attributes',

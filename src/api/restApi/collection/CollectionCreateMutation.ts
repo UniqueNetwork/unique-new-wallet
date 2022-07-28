@@ -3,7 +3,7 @@ import { QueryClient } from 'react-query';
 import { EndpointMutation } from '@app/api/restApi/request';
 import { IBaseApi } from '@app/api';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
-import { CreateCollectionFormType } from '@app/pages/CreateCollection/pages';
+import { CreateCollectionFormType } from '@app/pages/CreateCollection/tabs';
 
 export type CollectionCreatePayload = {
   api: IBaseApi;

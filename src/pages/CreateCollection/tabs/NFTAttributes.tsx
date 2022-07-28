@@ -13,7 +13,13 @@ import {
   TooltipAlign,
   useNotifications,
 } from '@unique-nft/ui-kit';
-import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
 import { useAccounts, useBalanceInsufficient } from '@app/hooks';
@@ -28,7 +34,7 @@ import {
 } from '@app/components';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
 import { CREATE_COLLECTION_TABS_ROUTE, ROUTE } from '@app/routes';
-import { AttributesTable } from '@app/pages/CreateCollection/pages/components';
+import { AttributesTable } from '@app/pages/CreateCollection/components';
 import {
   ButtonGroup,
   FormBody,
@@ -65,24 +71,12 @@ export const NFTAttributes = () => {
   // } = useContext(CollectionFormContext);
   const { selectedAccount } = useAccounts();
   const navigate = useNavigate();
-  const { info, error } = useNotifications();
-  const { data } = useCollectionFormContext();
+  // const { info, error } = useNotifications();
+  // const { data } = useCollectionFormContext();
 
-  const collectionNftAttributesForm = useForm<any>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      ...data,
-      sponsorship: {
-        address: '',
-      },
-      limits: {
-        tokenLimit: null,
-        ownerCanDestroy: true,
-      },
-      attributes: [],
-    },
-  });
+  const collectionNftAttributesForm = useFormContext<any>();
+
+  console.log(collectionNftAttributesForm.getValues());
 
   const attributesArrayField: any = useFieldArray({
     control: collectionNftAttributesForm.control,
@@ -91,70 +85,68 @@ export const NFTAttributes = () => {
 
   console.log(attributesArrayField.fields);
 
-  const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
-  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
-  const { feeError, isFeeError, getFee, fee, feeFormatted } = useExtrinsicFee(
-    CollectionApiService.collectionCreateMutation,
-  );
-  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  // const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
+  // const { feeError, isFeeError, getFee, fee, feeFormatted } = useExtrinsicFee(
+  //   CollectionApiService.collectionCreateMutation,
+  // );
+  // const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
-  const nftFormValues = useWatch({
-    control: collectionNftAttributesForm.control,
-  });
+  // const nftFormValues = useWatch({
+  //   control: collectionNftAttributesForm.control,
+  // });
 
-  const [nftDebounceValue] = useDebounce(nftFormValues, 500);
+  // const [nftDebounceValue] = useDebounce(nftFormValues, 500);
 
-  useEffect(() => {
-    if (!data) {
-      navigate(
-        `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
-        {
-          replace: true,
-        },
-      );
-    }
-  }, [data, navigate]);
+  // useEffect(() => {
+  //   if (!data) {
+  //     navigate(
+  //       `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
+  //       {
+  //         replace: true,
+  //       },
+  //     );
+  //   }
+  // }, [data, navigate]);
 
-  useEffect(() => {
-    getFee({
-      collection: nftDebounceValue,
-    });
-  }, [nftDebounceValue]);
+  // useEffect(() => {
+  //   getFee({
+  //     collection: nftDebounceValue,
+  //   });
+  // }, [nftDebounceValue]);
 
-  useEffect(() => {
-    if (flowStatus === 'success') {
-      info('Collection created successfully');
+  // useEffect(() => {
+  //   if (flowStatus === 'success') {
+  //     info('Collection created successfully');
 
-      navigate(ROUTE.MY_COLLECTIONS);
-    }
-    if (flowStatus === 'error') {
-      error(flowError?.message);
-    }
-  }, [flowStatus]);
+  //     navigate(ROUTE.MY_COLLECTIONS);
+  //   }
+  //   if (flowStatus === 'error') {
+  //     error(flowError?.message);
+  //   }
+  // }, [flowStatus]);
 
-  useEffect(() => {
-    if (isFeeError && feeError) {
-      error(feeError.message);
-    }
-  }, [feeError, isFeeError]);
+  // useEffect(() => {
+  //   if (isFeeError && feeError) {
+  //     error(feeError.message);
+  //   }
+  // }, [feeError, isFeeError]);
 
-  const onPreviousStepClick = () => {
-    navigate(
-      `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
-    );
-  };
+  // const onPreviousStepClick = () => {
+  //   navigate(
+  //     `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
+  //   );
+  // };
 
-  const onSubmitAttributes = (values: any) => {
-    if (!selectedAccount) {
-      error('Account is not found');
-      return;
-    }
-    console.log(values);
-    // signAndSubmitExtrinsic({
-    //   collection: values,
-    // });
-  };
+  // const onSubmitAttributes = (values: any) => {
+  //   if (!selectedAccount) {
+  //     error('Account is not found');
+  //     return;
+  //   }
+  //   console.log(values);
+  //   // signAndSubmitExtrinsic({
+  //   //   collection: values,
+  //   // });
+  // };
 
   const handleAddAttributeItem = () => {
     attributesArrayField.append({
@@ -177,7 +169,7 @@ export const NFTAttributes = () => {
   return (
     <FormProvider {...collectionNftAttributesForm}>
       <FormWrapper>
-        <CollectionStepper activeStep={2} onClickStep={onPreviousStepClick} />
+        {/* <CollectionStepper activeStep={2} onClickStep={onPreviousStepClick} /> */}
         <FormHeader>
           <Heading size="2">NFT attributes</Heading>
           <Text>
@@ -288,12 +280,12 @@ export const NFTAttributes = () => {
               />
             </SettingsRow>
           </AdvancedSettingsAccordion>
-          {feeFormatted && (
+          {/* {feeFormatted && (
             <Alert type="warning">
               A fee of ~ {feeFormatted} can be applied to the transaction
             </Alert>
-          )}
-          <ButtonGroup>
+          )} */}
+          {/* <ButtonGroup>
             <Button
               iconLeft={{
                 color: 'var(--color-primary-400)',
@@ -320,10 +312,10 @@ export const NFTAttributes = () => {
                 onClick={collectionNftAttributesForm.handleSubmit(onSubmitAttributes)}
               />
             )}
-          </ButtonGroup>
+          </ButtonGroup> */}
         </FormBody>
       </FormWrapper>
-      <Confirm
+      {/* <Confirm
         buttons={[
           { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
           {
@@ -340,11 +332,11 @@ export const NFTAttributes = () => {
         onClose={() => setIsOpenConfirm(false)}
       >
         <Text>You cannot return to editing the attributes in this product version.</Text>
-      </Confirm>
-      <StatusTransactionModal
+      </Confirm> */}
+      {/* <StatusTransactionModal
         isVisible={isFlowLoading}
         description="Creating collection"
-      />
+      /> */}
     </FormProvider>
   );
 };
