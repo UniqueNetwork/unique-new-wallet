@@ -16,6 +16,7 @@ import { useCallback } from 'react';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
 import { TokenPreviewInfo } from '@app/api';
+import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
 
 interface NFTsListComponentProps {
@@ -43,6 +44,7 @@ const NFTsListComponent = ({
   onPageChange,
   onChipsReset,
 }: NFTsListComponentProps) => {
+  const { currentChain } = useApi();
   const navigate = useNavigate();
 
   return (
@@ -73,7 +75,9 @@ const NFTsListComponent = ({
                 key={`${collection_id}-${token_id}`}
                 image={getTokenIpfsUriByImagePath(image_path)}
                 link={`${collection_name} [id ${collection_id}]`}
-                onTokenClick={() => navigate(`/token/${collection_id}/${token_id}`)}
+                onTokenClick={() =>
+                  navigate(`/${currentChain?.network}/token/${collection_id}/${token_id}`)
+                }
                 onMetaClick={() => navigate(`${ROUTE.MY_COLLECTIONS}/${collection_id}`)}
               />
             ),
