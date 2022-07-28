@@ -6,6 +6,7 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useGraphQlCollection } from '@app/api/graphQL/collections/collections';
 import { useAccounts, useApi } from '@app/hooks';
+import { usePageSettingContext } from '@app/context';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 
 import { CollectionNftFilters } from './components';
@@ -27,6 +28,7 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { selectedAccount } = useAccounts();
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const { collectionId } = useParams<'collectionId'>();
   const baseUrl = collectionId
     ? `/${currentChain?.network}/${basePath}/${collectionId}`
@@ -45,6 +47,18 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
       navigate(tabUrls[activeTab]);
     }
   }, [baseUrl, location.pathname, navigate]);
+
+  useEffect(() => {
+    setPageBreadcrumbs({
+      options: [
+        {
+          title: '🡠 back',
+          link: '/my-collections',
+        },
+      ],
+    });
+    setPageHeading(collectionData?.collection?.name || '');
+  }, [collectionData?.collection?.name]);
 
   return (
     <CollectionsNftFilterWrapper>

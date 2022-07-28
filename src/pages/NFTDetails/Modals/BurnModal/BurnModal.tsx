@@ -26,7 +26,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
 
   useEffect(() => {
     if (flowStatus === 'success') {
-      info('Collection created successfully');
+      info('NFT burned successfully');
 
       navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
     }

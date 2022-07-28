@@ -88,6 +88,7 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
         <InputText
           iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
           value={searchString}
+          placeholder="Search"
           onChange={setSearchString}
           onKeyDown={handleSearchString}
         />
@@ -143,11 +144,8 @@ export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
     .unique-select {
       width: 100%;
     }
-
-    .unique-select {
-      .select-value {
-        grid-column-gap: 7px;
-      }
+    .unique-input-text .input-wrapper:hover {
+      border: 1px solid var(--color-grey-500);
     }
   }
 `;

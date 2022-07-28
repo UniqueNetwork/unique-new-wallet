@@ -10,11 +10,14 @@ import {
   Link,
   IconProps,
 } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
 import { TokenPreviewInfo } from '@app/api';
 import { useApi } from '@app/hooks';
+import { ROUTE } from '@app/routes';
 
 interface NFTsListComponentProps {
   className?: string;
@@ -42,6 +45,7 @@ const NFTsListComponent = ({
   onChipsReset,
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
+  const navigate = useNavigate();
 
   return (
     <div className={classNames('nft-list', className)}>
@@ -67,13 +71,14 @@ const NFTsListComponent = ({
           {tokens.map(
             ({ token_id, token_name, collection_name, collection_id, image_path }) => (
               <TokenLink
+                title={token_name}
                 key={`${collection_id}-${token_id}`}
                 image={getTokenIpfsUriByImagePath(image_path)}
-                link={{
-                  href: `/${currentChain?.network}/token/${collection_id}/${token_id}`,
-                  title: `${collection_name} [id ${collection_id}]`,
-                }}
-                title={token_name}
+                link={`${collection_name} [id ${collection_id}]`}
+                onTokenClick={() =>
+                  navigate(`/${currentChain?.network}/token/${collection_id}/${token_id}`)
+                }
+                onMetaClick={() => navigate(`${ROUTE.MY_COLLECTIONS}/${collection_id}`)}
               />
             ),
           )}

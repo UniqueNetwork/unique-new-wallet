@@ -1,9 +1,10 @@
 import styled from 'styled-components';
-import { Heading, Tabs } from '@unique-nft/ui-kit';
+import { Tabs } from '@unique-nft/ui-kit';
 import React, { useEffect, VFC } from 'react';
 import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { usePageSettingContext } from '@app/context';
 import { PagePaperNoPadding } from '@app/components';
 
 import { NFTFilters } from './NFTs';
@@ -24,6 +25,19 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
+
+  useEffect(() => {
+    if (location.pathname === basePath) {
+      navigate(tabUrls[activeTab]);
+    }
+  }, [activeTab, basePath, location.pathname, navigate, tabUrls]);
+
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('My tokens');
+  }, []);
+
   const currentTabIndex = tabUrls.findIndex((tab) =>
     location.pathname.includes(`${basePath}/${tab}`),
   );
@@ -38,7 +52,6 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 
   return (
     <NFTsWrapper>
-      <Heading size="1">My tokens</Heading>
       <PagePaperNoPadding>
         <div className={classNames('my-tokens', className)}>
           <div className="tabs-header">

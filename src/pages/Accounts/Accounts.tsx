@@ -1,8 +1,7 @@
-import React, { createRef, useCallback, useMemo, useState } from 'react';
+import React, { createRef, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Dropdown,
-  Heading,
   Icon,
   InputText,
   TableColumnProps,
@@ -15,6 +14,7 @@ import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
+import { usePageSettingContext } from '@app/context';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
 import {
@@ -25,6 +25,7 @@ import {
   TransferBtn,
 } from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
+import { config } from '@app/config';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
@@ -135,7 +136,17 @@ const getAccountsColumns = ({
             disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}
           />
-          <Button disabled title="Get" />
+          {rowData.balance?.availableBalance.unit === 'OPL' ? (
+            <Button
+              title="Get"
+              onClick={() => {
+                window.open(config.telegramBot, '_blank', 'noopener');
+              }}
+            />
+          ) : (
+            <Button disabled title="Get" />
+          )}
+
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
               placement="right"
@@ -157,6 +168,7 @@ const getAccountsColumns = ({
 export const Accounts = () => {
   const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
@@ -209,6 +221,11 @@ export const Accounts = () => {
     void fetchAccounts();
   }, [fetchAccounts]);
 
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('My accounts');
+  }, []);
+
   // const totalBalance = useMemo(
   //   () =>
   //     accounts.reduce<BN>(
@@ -219,66 +236,63 @@ export const Accounts = () => {
   // );
 
   return (
-    <>
-      <Heading size="1">My accounts</Heading>
-      <PagePaperNoPadding>
-        <AccountsPageHeader>
-          {/* <AccountsTotalBalance balance={totalBalance} /> */}
-          <SearchInputWrapper>
-            <SearchInputStyled
-              placeholder="Search"
-              iconLeft={{ name: 'magnify', size: 18 }}
-              value={searchString}
-              onChange={setSearchString}
-            />
-          </SearchInputWrapper>
-          <AccountsGroupButton />
-        </AccountsPageHeader>
-        <AccountsPageContent>
-          <Table
-            columns={getAccountsColumns({
-              onShowSendFundsModal: onSendFundsClick,
-              onForgetWalletClick,
-            })}
-            loading={isLoadingBalances}
-            data={filteredAccounts}
+    <PagePaperNoPadding>
+      <AccountsPageHeader>
+        {/* <AccountsTotalBalance balance={totalBalance} /> */}
+        <SearchInputWrapper>
+          <SearchInputStyled
+            placeholder="Search"
+            iconLeft={{ name: 'magnify', size: 18 }}
+            value={searchString}
+            onChange={setSearchString}
           />
-        </AccountsPageContent>
-        {isOpenModal && (
-          <SendFunds
-            chain={currentChain}
-            isVisible={true}
-            senderAccount={selectedAddress}
-            networkType={selectedAccount?.unitBalance}
-            onClose={onChangeAccountsFinish}
-            onSendSuccess={() => {
-              refetch();
-            }}
-          />
-        )}
-        <Confirm
-          buttons={[
-            { title: 'No, return', onClick: () => setForgetWalletAddress('') },
-            {
-              title: 'Yes, I am sure',
-              role: 'primary',
-              onClick: () => {
-                forgetLocalAccount(forgetWalletAddress);
-                setForgetWalletAddress('');
-              },
+        </SearchInputWrapper>
+        <AccountsGroupButton />
+      </AccountsPageHeader>
+      <AccountsPageContent>
+        <Table
+          columns={getAccountsColumns({
+            onShowSendFundsModal: onSendFundsClick,
+            onForgetWalletClick,
+          })}
+          loading={isLoadingBalances}
+          data={filteredAccounts}
+        />
+      </AccountsPageContent>
+      {isOpenModal && (
+        <SendFunds
+          chain={currentChain}
+          isVisible={true}
+          senderAccount={selectedAddress}
+          networkType={selectedAccount?.unitBalance}
+          onClose={onChangeAccountsFinish}
+          onSendSuccess={() => {
+            refetch();
+          }}
+        />
+      )}
+      <Confirm
+        buttons={[
+          { title: 'No, return', onClick: () => setForgetWalletAddress('') },
+          {
+            title: 'Yes, I am sure',
+            role: 'primary',
+            onClick: () => {
+              forgetLocalAccount(forgetWalletAddress);
+              setForgetWalletAddress('');
             },
-          ]}
-          isVisible={Boolean(forgetWalletAddress)}
-          title="Forget wallet"
-          onClose={() => setForgetWalletAddress('')}
-        >
-          <Text>
-            Are you sure you want to&nbsp;perform this action? You can always recover your
-            wallet with your seed password using the &rsquo;Add account via&rsquo; button
-          </Text>
-        </Confirm>
-      </PagePaperNoPadding>
-    </>
+          },
+        ]}
+        isVisible={Boolean(forgetWalletAddress)}
+        title="Forget wallet"
+        onClose={() => setForgetWalletAddress('')}
+      >
+        <Text>
+          Are you sure you want to&nbsp;perform this action? You can always recover your
+          wallet with your seed password using the &rsquo;Add account via&rsquo; button
+        </Text>
+      </Confirm>
+    </PagePaperNoPadding>
   );
 };
 
@@ -286,7 +300,7 @@ const AccountsPageHeader = styled.div`
   display: flex;
   column-gap: var(--prop-gap);
   align-items: center;
-  padding: var(--prop-gap) calc(var(--prop-gap) * 2);
+  padding: calc(var(--prop-gap) * 2);
   border-bottom: 1px solid var(--color-grey-300);
 `;
 
