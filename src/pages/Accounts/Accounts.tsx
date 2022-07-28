@@ -1,7 +1,8 @@
-import React, { createRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { createRef, useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Dropdown,
+  Heading,
   Icon,
   InputText,
   TableColumnProps,
@@ -14,7 +15,6 @@ import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import { usePageSettingContext } from '@app/context';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
 import {
@@ -348,12 +348,10 @@ const LinkLikeButton = styled.a`
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  border: 1px solid;
   border-radius: var(--prop-border-radius);
   cursor: pointer;
-  border-width: 1px;
-  border-style: solid;
   text-decoration: none;
-  white-space: nowrap;
   padding: 8px 24px;
   font-size: 16px;
   height: 22px;
@@ -364,7 +362,6 @@ const LinkLikeButton = styled.a`
   &:hover {
     background: var(--color-primary-100);
     color: var(--color-primary-400);
-    border-color: var(--color-primary-400);
   }
 `;
 
