@@ -137,13 +137,7 @@ const getAccountsColumns = ({
             onClick={onShowSendFundsModal(rowData)}
           />
           {rowData.balance?.availableBalance.unit === 'OPL' ? (
-            <LinkLikeButton
-              href={config.telegramBot}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Get
-            </LinkLikeButton>
+            <ButtonGet title="Get" role="outlined" link={config.telegramBot} />
           ) : (
             <Button disabled title="Get" />
           )}
@@ -341,28 +335,8 @@ const LinkStyled = styled.a`
   column-gap: 4px;
 `;
 
-const LinkLikeButton = styled.a`
-  font-family: var(--prop-font-family);
-  font-size: var(--prop-font-size);
-  font-weight: var(--prop-font-weight);
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid;
-  border-radius: var(--prop-border-radius);
-  cursor: pointer;
-  text-decoration: none;
-  padding: 8px 24px;
-  font-size: 16px;
-  height: 22px;
-  line-height: 40px;
-  background: var(--color-additional-light);
-  border-color: var(--color-primary-500);
-  color: var(--color-primary-500);
-  &:hover {
-    background: var(--color-primary-100);
-    color: var(--color-primary-400);
-  }
+const ButtonGet = styled(Button)`
+  box-sizing: border-box;
 `;
 
 const ActionsWrapper = styled.div`
