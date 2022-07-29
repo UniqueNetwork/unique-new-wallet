@@ -27,7 +27,7 @@ import {
   StatusTransactionModal,
   TooltipButtonWrapper,
 } from '@app/components';
-import { TokenFormContext } from '@app/context';
+import { TokenFormContext, usePageSettingContext } from '@app/context';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
 import {
@@ -96,6 +96,12 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     useExtrinsicFlow(TokenApiService.tokenCreateMutation);
   const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
+
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('Create a NFT');
+  }, []);
 
   const collectionsOptions = useMemo(
     () =>
@@ -195,7 +201,6 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   return (
     <>
-      <Heading size="1">Create a NFT</Heading>
       <MainWrapper className={classNames('create-nft-page', className)}>
         <WrapperContent>
           <FormWrapper>
