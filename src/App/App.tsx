@@ -1,4 +1,5 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Notifications } from '@unique-nft/ui-kit';
 
 import { AccountWrapper } from '@app/account';
@@ -15,15 +16,18 @@ export default function App() {
   const location = useLocation();
   const chainFromUrl = config.chains[location.pathname.split('/')[1]];
   const { setCurrentChain } = useApi();
+  const navigate = useNavigate();
 
-  if (chainFromUrl === undefined) {
-    setCurrentChain(config.defaultChain);
-    localStorage.setItem(defaultChainKey, config.defaultChain.network);
-    return <Navigate to={`/${config.defaultChain.network}/${ROUTE.MY_TOKENS}`} />;
-  } else {
-    localStorage.setItem(defaultChainKey, chainFromUrl.network);
-    setCurrentChain(chainFromUrl);
-  }
+  useEffect(() => {
+    if (chainFromUrl === undefined) {
+      setCurrentChain(config.defaultChain);
+      localStorage.setItem(defaultChainKey, config.defaultChain.network);
+      navigate(`/${config.defaultChain.network}/${ROUTE.MY_TOKENS}`);
+    } else {
+      localStorage.setItem(defaultChainKey, chainFromUrl.network);
+      setCurrentChain(chainFromUrl);
+    }
+  }, []);
 
   return (
     <Notifications closingDelay={5000}>
