@@ -5,7 +5,8 @@ import { Tabs } from '@unique-nft/ui-kit';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useGraphQlCollection } from '@app/api/graphQL/collections/collections';
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
+import { usePageSettingContext } from '@app/context';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 
 import { CollectionNftFilters } from './components';
@@ -23,15 +24,18 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
   basePath,
   className,
 }) => {
+  const { currentChain } = useApi();
   const navigate = useNavigate();
   const location = useLocation();
   const { selectedAccount } = useAccounts();
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const { collectionId } = useParams<'collectionId'>();
-  const baseUrl = collectionId ? `${basePath}/${collectionId}` : basePath;
+  const baseUrl = collectionId
+    ? `/${currentChain?.network}/${basePath}/${collectionId}`
+    : basePath;
   const currentTabIndex = tabUrls.findIndex(
     (tab) => `${baseUrl}/${tab}` === location.pathname,
   );
-
   const collectionData = useGraphQlCollection(collectionId, selectedAccount?.address);
 
   const handleClick = (tabIndex: number) => {
@@ -43,6 +47,18 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
       navigate(tabUrls[activeTab]);
     }
   }, [baseUrl, location.pathname, navigate]);
+
+  useEffect(() => {
+    setPageBreadcrumbs({
+      options: [
+        {
+          title: '🡠 back',
+          link: '/my-collections',
+        },
+      ],
+    });
+    setPageHeading(collectionData?.collection?.name || '');
+  }, [collectionData?.collection?.name]);
 
   return (
     <CollectionsNftFilterWrapper>

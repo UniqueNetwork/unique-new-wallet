@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { InputText, Select } from '@unique-nft/ui-kit';
 
 import { ROUTE } from '@app/routes';
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
 import { MintingBtn } from '@app/components';
 import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
@@ -29,6 +29,7 @@ const sortOptions: Option[] = [
 ];
 
 const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
+  const { currentChain } = useApi();
   const [search, setSearch] = useState<string>('');
 
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
             ? 'Please create a collection first'
             : null
         }
-        onClick={() => navigate(ROUTE.CREATE_NFT)}
+        onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
       />
     </div>
   );
