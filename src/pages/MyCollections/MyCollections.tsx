@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { usePageSettingContext } from '@app/context';
 import { PagePaperNoPadding } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
+import { useApi } from '@app/hooks';
 
 import { useMyCollectionsContext } from './context';
 import { MyCollectionsFilter, MyCollectionsList } from './components';
@@ -43,8 +44,10 @@ const MyCollectiosWrapper = styled.div`
 export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
 }) => {
+  const { currentChain } = useApi();
   const location = useLocation();
-  const isCollectionsListPath = location.pathname === '/my-collections';
+  const isCollectionsListPath =
+    location.pathname === `/${currentChain?.network}/my-collections`;
   const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
 

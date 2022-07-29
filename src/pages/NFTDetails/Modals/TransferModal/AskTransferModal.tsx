@@ -28,7 +28,7 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
       </HeadingWrapper>
       <InputWrapper
         label="Please enter the address you wish to send the NFT to"
-        maxLength={48}
+        maxLength={49}
         value={recipient}
         onChange={onRecipientChange}
       />

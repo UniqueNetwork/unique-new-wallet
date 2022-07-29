@@ -146,7 +146,7 @@ const CollectionSettings = () => {
                     }
                     additionalText="The designated sponsor should approve the request"
                     id="address"
-                    maxLength={48}
+                    maxLength={49}
                     value={form.values.address}
                     onChange={(value) => {
                       form.setFieldValue('address', value);

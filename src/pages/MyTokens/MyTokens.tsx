@@ -38,13 +38,17 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
     setPageHeading('My tokens');
   }, []);
 
-  const currentTabIndex = tabUrls.findIndex(
-    (tab) => `${basePath}/${tab}` === location.pathname,
+  const currentTabIndex = tabUrls.findIndex((tab) =>
+    location.pathname.includes(`${basePath}/${tab}`),
   );
 
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);
   };
+
+  useEffect(() => {
+    navigate(tabUrls[activeTab]);
+  }, []);
 
   return (
     <NFTsWrapper>

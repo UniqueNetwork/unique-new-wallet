@@ -3,7 +3,7 @@ import { useNotifications } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { ROUTE } from '@app/routes';
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
 import { TokenApiService, useExtrinsicFlow, useExtrinsicFee, ViewToken } from '@app/api';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 
@@ -15,6 +15,7 @@ interface BurnModalProps {
 }
 
 export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) => {
+  const { currentChain } = useApi();
   const navigate = useNavigate();
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
@@ -27,7 +28,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     if (flowStatus === 'success') {
       info('NFT burned successfully');
 
-      navigate(ROUTE.MY_TOKENS);
+      navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
     }
 
     if (flowStatus === 'error') {
