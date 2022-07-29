@@ -7,8 +7,8 @@ import {
   ImportViaJSONAccountModal,
   ImportViaQRCodeAccountModal,
 } from '@app/pages';
-
 import './AccountsGroupButton.scss';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 enum AccountModal {
   CREATE = 'create',
@@ -27,6 +27,7 @@ export const AccountsGroupButton = () => {
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
 
   const onCreateAccountClick = useCallback(() => {
+    logUserEvent(UserEvents.CREATE_SUBSTRATE);
     setCurrentModal(AccountModal.CREATE);
   }, []);
 
@@ -46,7 +47,10 @@ export const AccountsGroupButton = () => {
         optionKey="modal"
         value={currentModal}
         optionRender={({ title }: any) => title}
-        onChange={({ modal }: any) => setCurrentModal(modal)}
+        onChange={({ modal }: any) => {
+          logUserEvent(UserEvents.ADD_ACCOUNT_VIA);
+          setCurrentModal(modal);
+        }}
       >
         <Button
           role="primary"

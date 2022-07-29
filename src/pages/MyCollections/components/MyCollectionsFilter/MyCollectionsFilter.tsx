@@ -11,6 +11,7 @@ import { Direction } from '@app/api/graphQL/tokens';
 import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
 import { useApi } from '@app/hooks';
 import { MintingBtn } from '@app/components';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 type SelectOption = {
   id: string;
@@ -79,6 +80,7 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
   };
 
   const onCreateCollection = () => {
+    logUserEvent(UserEvents.CREATE_COLLECTION);
     navigate(`/${currentChain?.network}/create-collection/main-information`);
   };
 
