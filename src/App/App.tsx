@@ -12,14 +12,8 @@ import { PageLayout } from '@app/components';
 
 import './styles.scss';
 
-let ampKey = '';
+const ampKey = window.ENV?.NET_AMPLITUDE_KEY || process.env.REACT_APP_AMPLITUDE_KEY || '';
 
-if (process.env.NODE_ENV === 'production') {
-  ampKey =
-    window.ENV?.AMPLITUDE_KEY_PROD || process.env.REACT_APP_AMPLITUDE_KEY_PROD || '';
-} else {
-  ampKey = window.ENV?.AMPLITUDE_KEY_DEV || process.env.REACT_APP_AMPLITUDE_KEY_DEV || '';
-}
 amplitude.getInstance().init(ampKey);
 
 export default function App() {
