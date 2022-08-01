@@ -37,6 +37,7 @@ import {
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 const addressTooltip = createRef<HTMLDivElement>();
 const burnTooltip = createRef<HTMLDivElement>();
@@ -89,6 +90,7 @@ export const NFTAttributes = () => {
   }, [feeError, isFeeError]);
 
   const onPreviousStepClick = () => {
+    logUserEvent(UserEvents.CREATE_COLLECTION_STEP_2_PREVIOS);
     navigate(`/${currentChain?.network}/create-collection/main-information`);
   };
 
@@ -113,6 +115,7 @@ export const NFTAttributes = () => {
 
   const onSubmitAttributes = () => {
     const { isSubmitting, isValid } = mainInformationForm;
+    logUserEvent(UserEvents.CREATE_COLLECTION_STEP_2_NEXT);
 
     if (isSubmitting && isValid) {
       if (attributes?.length < 2) {
