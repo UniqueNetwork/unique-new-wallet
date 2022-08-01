@@ -19,12 +19,12 @@ const sortOptions: Option[] = [
   {
     title: 'NFT ID',
     id: 'asc' as Direction,
-    iconRight: iconDown,
+    iconRight: iconUp,
   },
   {
     title: 'NFT ID',
     id: 'desc' as Direction,
-    iconRight: iconUp,
+    iconRight: iconDown,
   },
 ];
 

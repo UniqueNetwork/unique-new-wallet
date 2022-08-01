@@ -40,3 +40,68 @@ export const SidebarRow = styled.div`
     margin-bottom: 40px;
   }
 `;
+
+export const InnerWrapper = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+`;
+
+export const InnerSidebar = styled.div`
+  border-right: 1px solid var(--color-grey-300);
+  flex: 0 0 235px;
+  padding: calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 1.5) 0
+    calc(var(--prop-gap) * 2);
+`;
+
+export const InnerContent = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+
+  @media (max-width: 1024px) {
+    padding-left: 0;
+  }
+`;
+
+export const TabsHeader = styled.div`
+  border-bottom: 1px solid var(--color-grey-300);
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 calc(var(--prop-gap) * 2);
+`;
+
+export const TabsBody = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+
+  .unique-tabs-contents {
+    flex: 1 1 100%;
+    display: flex;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+`;
+
+export const GridList = styled.div`
+  flex: 1 1 auto;
+  display: grid;
+  align-content: baseline;
+  gap: calc(var(--prop-gap) * 2);
+
+  @media screen and (min-width: 520px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media screen and (min-width: 1600px) {
+    grid-template-columns: repeat(5, 1fr);
+  }
+`;

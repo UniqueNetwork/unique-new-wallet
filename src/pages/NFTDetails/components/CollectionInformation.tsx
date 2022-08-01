@@ -27,6 +27,7 @@ const CollectionInformationComponent: VFC<CollectionInformationProps> = ({
         </Heading>
         {!!description && (
           <Text
+            appearance="block"
             size="s"
             weight="light"
             color="grey-500"
@@ -59,7 +60,6 @@ export const CollectionInformation = memo(styled(CollectionInformationComponent)
   }
 
   .collection-description {
-    display: block;
     max-width: 724px;
   }
 `);

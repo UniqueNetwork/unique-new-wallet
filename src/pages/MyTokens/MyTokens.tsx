@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { usePageSettingContext } from '@app/context';
+import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { PagePaperNoPadding } from '@app/components';
 
 import { NFTFilters } from './NFTs';
@@ -52,41 +53,28 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 
   return (
     <NFTsWrapper>
-      <PagePaperNoPadding>
-        <div className={classNames('my-tokens', className)}>
-          <div className="tabs-header">
-            <Tabs
-              activeIndex={currentTabIndex}
-              labels={['NFTs', 'Coins']}
-              type="slim"
-              onClick={handleClick}
-            />
-            <Tabs activeIndex={currentTabIndex}>
-              <NFTFilters />
-              <></>
-            </Tabs>
-          </div>
+      <PagePaperNoPadding className={classNames('data-grid', 'my-tokens', className)}>
+        <TabsHeader>
+          <Tabs
+            activeIndex={currentTabIndex}
+            labels={['NFTs', 'Coins']}
+            type="slim"
+            onClick={handleClick}
+          />
+          <Tabs activeIndex={currentTabIndex}>
+            <NFTFilters />
+            <></>
+          </Tabs>
+        </TabsHeader>
+        <TabsBody>
           <Tabs activeIndex={currentTabIndex}>
             <Outlet />
             <Outlet />
           </Tabs>
-        </div>
+        </TabsBody>
       </PagePaperNoPadding>
     </NFTsWrapper>
   );
 };
 
-export const MyTokens = styled(MyTokensComponent)`
-  .tabs-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 calc(var(--prop-gap) * 2);
-    border-bottom: 1px solid var(--color-grey-300);
-  }
-
-  .unique-tabs-contents {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-`;
+export const MyTokens = styled(MyTokensComponent)``;
