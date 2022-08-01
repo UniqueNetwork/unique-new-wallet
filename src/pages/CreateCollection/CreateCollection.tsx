@@ -130,7 +130,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
       setCurrentStep(step);
     }
   };
-  const onSubmit = (values: CreateCollectionFormType) => {
+  const onNextStep = (values: CreateCollectionFormType) => {
     if (!values.schema?.coverPicture?.ipfsCid) {
       setWarning(warnings.coverIsNotDefine);
       return;
@@ -139,7 +139,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     goToNextStep(currentStep + 1);
   };
 
-  const onSubmitAttributes = (values: any) => {
+  const onSubmit = (values: CreateCollectionFormType) => {
     if (!selectedAccount) {
       error('Account is not found');
       return;
@@ -174,7 +174,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
                     size: 12,
                   }}
                   title="Next step"
-                  onClick={handleSubmit(onSubmit)}
+                  onClick={handleSubmit(onNextStep)}
                 />
               )}
               {!isFirstStep && (
@@ -203,7 +203,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
                   role="primary"
                   type="submit"
                   title="Create a collection"
-                  onClick={handleSubmit(onSubmitAttributes)}
+                  onClick={handleSubmit(onSubmit)}
                 />
               )}
             </ButtonGroup>

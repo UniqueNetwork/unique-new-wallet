@@ -116,7 +116,7 @@ export const MainInformation: FC = () => {
                   onChange={uploadCover}
                 />
               </UploadWidget>
-              {isLoadingFileUpload && <Loader label="Download image..." />}
+              {/* {isLoadingFileUpload && <Loader label="Download image..." />} */}
             </DownloadCover>
           </FormRow>
         </Form>

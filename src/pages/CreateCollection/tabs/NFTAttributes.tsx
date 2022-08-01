@@ -112,7 +112,7 @@ export const NFTAttributes = () => {
             </Text>
           </FormRow>
           <SettingsRow>
-            <InputController<string, number | null>
+            <InputController
               name="limits.tokenLimit"
               label={
                 <>
