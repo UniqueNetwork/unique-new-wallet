@@ -6,6 +6,7 @@ import { Button, Icon, useNotifications, Loader } from '@unique-nft/ui-kit';
 import { Chain, NetworkType } from '@app/types';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 import { TransferBtn } from '@app/components';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 type CoinsRowComponentProps = TNetworkBalances & {
   address?: string;
@@ -78,9 +79,19 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         <TransferBtn
           disabled={sendDisabled}
           title="Send"
-          onClick={() => onSend(symbol, chain)}
+          onClick={() => {
+            logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
+            onSend(symbol, chain);
+          }}
         />
-        <Button disabled={getDisabled} title="Get" onClick={onGet} />
+        <Button
+          disabled={getDisabled}
+          title="Get"
+          onClick={() => {
+            logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
+            onGet();
+          }}
+        />
       </NetworkActions>
     </div>
   );

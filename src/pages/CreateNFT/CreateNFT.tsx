@@ -1,6 +1,3 @@
-import { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
-import classNames from 'classnames';
-import get from 'lodash/get';
 import {
   Avatar,
   Button,
@@ -10,16 +7,11 @@ import {
   Upload,
   useNotifications,
 } from '@unique-nft/ui-kit';
+import classNames from 'classnames';
+import get from 'lodash/get';
+import { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAccounts, useBalanceInsufficient } from '@app/hooks';
-import {
-  Alert,
-  MintingBtn,
-  StatusTransactionModal,
-  TooltipButtonWrapper,
-} from '@app/components';
-import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import {
   Collection,
   TokenApiService,
@@ -27,15 +19,17 @@ import {
   useExtrinsicFlow,
   useFileUpload,
 } from '@app/api';
-import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { ROUTE } from '@app/routes';
-import { TokenField } from '@app/types';
-import { TokenFormContext } from '@app/context';
-import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
+import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
+import {
+  Alert,
+  MintingBtn,
+  StatusTransactionModal,
+  TooltipButtonWrapper,
+} from '@app/components';
+import { TokenFormContext, usePageSettingContext } from '@app/context';
+import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
-import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
-import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import {
   AdditionalText,
   ButtonGroup,
@@ -49,6 +43,13 @@ import {
   SuggestOption,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
+import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
+import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
+import { ROUTE } from '@app/routes';
+import { TokenField } from '@app/types';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 interface Option {
   id: number;
@@ -70,6 +71,7 @@ const defaultOptions = {
 };
 
 export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
+  const { currentChain } = useApi();
   const [closable, setClosable] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
 
@@ -95,6 +97,12 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     useExtrinsicFlow(TokenApiService.tokenCreateMutation);
   const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
+
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('Create a NFT');
+  }, []);
 
   const collectionsOptions = useMemo(
     () =>
@@ -132,7 +140,7 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     if (flowStatus === 'success') {
       info('NFT created successfully');
 
-      closable && navigate(ROUTE.MY_TOKENS);
+      closable && navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
     }
 
     if (flowStatus === 'error') {
@@ -163,6 +171,11 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   }, []);
 
   const confirmFormHandler = (closable?: boolean) => {
+    if (closable) {
+      logUserEvent(UserEvents.CONFIRM_CLOSE);
+    } else {
+      logUserEvent(UserEvents.CONFIRM_MORE);
+    }
     if (!selectedCollection) {
       error('Collection is not chosen');
 
@@ -194,7 +207,6 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   return (
     <>
-      <Heading size="1">Create a NFT</Heading>
       <MainWrapper className={classNames('create-nft-page', className)}>
         <WrapperContent>
           <FormWrapper>

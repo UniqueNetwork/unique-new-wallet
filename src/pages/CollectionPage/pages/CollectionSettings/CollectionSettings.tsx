@@ -1,4 +1,4 @@
-import { createRef, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -28,6 +28,7 @@ import {
   SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 const addressTooltip = createRef<HTMLDivElement>();
 const destroyTooltip = createRef<HTMLDivElement>();
@@ -44,6 +45,10 @@ const CollectionSettings = () => {
   const { selectedAccount } = useAccounts();
   const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    logUserEvent(UserEvents.SETTINGS_OF_COLLECTION);
+  }, []);
 
   const {
     token_limit,
@@ -146,7 +151,7 @@ const CollectionSettings = () => {
                     }
                     additionalText="The designated sponsor should approve the request"
                     id="address"
-                    maxLength={48}
+                    maxLength={49}
                     value={form.values.address}
                     onChange={(value) => {
                       form.setFieldValue('address', value);

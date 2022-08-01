@@ -1,12 +1,12 @@
 export const enum ROUTE {
   BASE = '/',
-  MY_TOKENS = '/my-tokens',
-  MY_COLLECTIONS = '/my-collections',
-  CREATE_COLLECTION = '/create-collection',
-  CREATE_NFT = '/create-nft',
+  MY_TOKENS = 'my-tokens',
+  MY_COLLECTIONS = 'my-collections',
+  CREATE_COLLECTION = 'create-collection',
+  CREATE_NFT = 'create-nft',
   TOKEN = 'token/:collectionId/:tokenId',
-  FAQ = '/faq',
-  ACCOUNTS = '/accounts',
+  FAQ = 'faq',
+  ACCOUNTS = 'accounts',
   NOT_FOUND = '*',
 }
 
@@ -18,6 +18,8 @@ export const enum MY_TOKENS_TABS_ROUTE {
 export const enum MY_COLLECTIONS_ROUTE {
   COLLECTION = ':collectionId',
 }
+
+export const NETWORK_ROUTE = ':network/';
 
 export const enum COLLECTION_TABS_ROUTE {
   NFT = 'nft',
