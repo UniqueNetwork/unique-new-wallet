@@ -27,96 +27,24 @@ import trash from '../../../static/icons/trash.svg';
 interface AttributesTableProps {
   className?: string;
   value: ArtificialAttributeItemType[];
-  onChange: (value: ArtificialAttributeItemType[]) => void;
-  onAddAttributeItem(): void;
+  onAddAttribute: () => void;
+  onRemoveAttribute: (id: string) => void;
+  onChangeAttributeType: (id: string, fieldType: FieldTypeOption) => void;
 }
 
-interface AttributesColumnsProps {
-  onAttributeChange(attribute: ArtificialAttributeItemType): void;
-}
-
-type FieldTypeOption = SelectOptionProps & { key: ArtificialFieldType };
+export type FieldTypeOption = SelectOptionProps & { key: ArtificialFieldType };
 const fieldTypeOptions: FieldTypeOption[] = [
   { key: 'string', value: 'Text' },
   { key: 'enum', value: 'Select' },
   { key: 'repeated', value: 'Multiselect' },
 ];
 
-type FieldRuleOption = SelectOptionProps & { key: boolean };
+type FieldRuleOption = SelectOptionProps & { key: string };
 
 const fieldRuleOptions: FieldRuleOption[] = [
-  { key: true, value: 'Optional' },
-  { key: false, value: 'Required' },
+  { key: 'true', value: 'Optional' },
+  { key: 'false', value: 'Required' },
 ];
-
-const attributeTooltip = createRef<HTMLDivElement>();
-const typeTooltip = createRef<HTMLDivElement>();
-const ruleTooltip = createRef<HTMLDivElement>();
-const valuesTooltip = createRef<HTMLDivElement>();
-
-const AttributeTitle = () => {
-  return (
-    <span>
-      Attribute
-      <Tooltip targetRef={attributeTooltip}>
-        Textual traits that show up&nbsp;on&nbsp;Token
-      </Tooltip>
-      <Icon
-        ref={attributeTooltip}
-        name="question"
-        size={18}
-        color="var(--color-primary-500)"
-      />
-    </span>
-  );
-};
-
-const TypeTitle = () => {
-  return (
-    <span>
-      Type
-      <Tooltip targetRef={typeTooltip}>
-        Select type of&nbsp;information you want to&nbsp;create
-      </Tooltip>
-      <Icon
-        ref={typeTooltip}
-        name="question"
-        size={18}
-        color="var(--color-primary-500)"
-      />
-    </span>
-  );
-};
-
-const RuleTitle = () => {
-  return (
-    <span>
-      Rule
-      <Tooltip targetRef={ruleTooltip}>Set a&nbsp;rule for your attribute</Tooltip>
-      <Icon
-        ref={ruleTooltip}
-        name="question"
-        size={18}
-        color="var(--color-primary-500)"
-      />
-    </span>
-  );
-};
-
-const ValuesTitle = () => {
-  return (
-    <span>
-      Possible values
-      <Tooltip targetRef={valuesTooltip}>Write down all the options you have</Tooltip>
-      <Icon
-        ref={valuesTooltip}
-        name="question"
-        size={18}
-        color="var(--color-primary-500)"
-      />
-    </span>
-  );
-};
 
 const EnumsValuesAttribute = () => {
   const { control } = useFormContext();
@@ -141,63 +69,105 @@ const EnumsValuesAttribute = () => {
   );
 };
 
+const ColumnTitle: VFC<{ title: string; tooltip: string }> = ({ title, tooltip }) => {
+  const valuesTooltip = createRef<HTMLDivElement>();
+
+  return (
+    <span>
+      {title}
+      <Tooltip targetRef={valuesTooltip}>{tooltip}</Tooltip>
+      <Icon
+        ref={valuesTooltip}
+        name="question"
+        size={18}
+        color="var(--color-primary-500)"
+      />
+    </span>
+  );
+};
+
 const getAttributesColumns = ({
-  onAttributeChange,
-}: AttributesColumnsProps): TableColumnProps[] => [
+  value,
+  onRemoveAttribute,
+  onChangeAttributeType,
+}: AttributesTableProps): TableColumnProps[] => [
   {
-    title: AttributeTitle(),
     width: '21%',
     field: 'name',
+    title: (
+      <ColumnTitle title="Attribute" tooltip="Textual traits that show up on Token" />
+    ),
     render(name: string, attribute: ArtificialAttributeItemType) {
+      const attrIndex = value.findIndex((f) => f.id === attribute.id);
       return (
-        <InputController name={`attributes.${0}.name._`} placeholder="Attribute name" />
-      );
-    },
-  },
-  {
-    title: TypeTitle(),
-    width: '17%',
-    field: 'fieldType',
-    render(type: ArtificialFieldType, attribute: ArtificialAttributeItemType) {
-      // return (
-      //   <Select
-      //     placeholder="Type"
-      //     options={fieldTypeOptions}
-      //     optionKey="key"
-      //     optionValue="value"
-      //     value={type}
-      //     onChange={(option) =>
-      //       onAttributeChange({
-      //         ...attribute,
-      //         fieldType: (option as FieldTypeOption).key,
-      //       })
-      //     }
-      //   />
-      // );
-      return <div>Title</div>;
-    },
-  },
-  {
-    title: RuleTitle(),
-    width: '17%',
-    field: 'rule',
-    render(rule: FieldRuleType, attribute: ArtificialAttributeItemType) {
-      return (
-        <SelectController
-          name={`attributes.${0}.optional`}
-          placeholder="Rule"
-          options={fieldRuleOptions}
-          optionKey="key"
-          optionValue="value"
+        <InputController
+          name={`attributes.${attrIndex}.name._`}
+          placeholder="Attribute name"
         />
       );
     },
   },
   {
-    title: ValuesTitle(),
+    width: '17%',
+    field: 'fieldType',
+    title: (
+      <ColumnTitle title="Type" tooltip="Select type of information you want to create" />
+    ),
+    render(type: ArtificialFieldType, attribute: ArtificialAttributeItemType) {
+      return (
+        <Select
+          placeholder="Type"
+          options={fieldTypeOptions}
+          optionKey="key"
+          optionValue="value"
+          value={type}
+          onChange={(option: FieldTypeOption) => {
+            onChangeAttributeType(attribute.id, option);
+          }}
+        />
+      );
+    },
+  },
+  {
+    width: '17%',
+    field: 'rule',
+    title: <ColumnTitle title="Rule" tooltip="Set a rule for your attribute" />,
+    render(rule: FieldRuleType, attribute: ArtificialAttributeItemType) {
+      const attrIndex = value.findIndex((f) => f.id === attribute.id);
+
+      return (
+        <SelectController
+          name={`attributes.${attrIndex}.optional`}
+          placeholder="Rule"
+          optionKey="key"
+          optionValue="value"
+          options={fieldRuleOptions}
+          transform={{
+            input: (val: boolean) => {
+              return fieldRuleOptions.find((f) => JSON.parse(f.key) === val)?.key;
+            },
+            output: (val: FieldRuleOption) => {
+              return JSON.parse(val.key);
+            },
+          }}
+        />
+      );
+    },
+  },
+  {
     width: '40%',
     field: 'values',
+    title: (
+      <ColumnTitle
+        title="Possible values"
+        tooltip="Write down all the options you have"
+      />
+    ),
     render(values: string[], attribute: ArtificialAttributeItemType) {
+      // console.log('VALUES');
+      // console.log(values);
+      // console.log(attribute);
+
       return <EnumsValuesAttribute />;
     },
   },
@@ -205,56 +175,37 @@ const getAttributesColumns = ({
     title: '',
     width: '5%',
     field: 'id',
-    render(id: number, attribute: ArtificialAttributeItemType) {
+    render(id: string, attribute: ArtificialAttributeItemType) {
+      // console.log('attribute');
+      // console.log(id);
+      // console.log(attribute);
+
       return (
         <Button
           title=""
           role="ghost"
           iconLeft={{ file: trash, size: 24 }}
-          // onClick={() => onRemoveAttributeClick(attribute)}
+          onClick={() => onRemoveAttribute(id)}
         />
       );
     },
   },
 ];
 
-const AttributesTableComponent: VFC<AttributesTableProps> = ({
-  className,
-  value,
-  onChange,
-  onAddAttributeItem,
-}) => {
-  const { control } = useFormContext();
-  // const attributesArray = useFieldArray({
-  //   control,
-  //   name: 'attributes',
-  // });
-
-  // const onAttributeChange = (attribute: ArtificialAttributeItemType) => {
-  //   onChange(value.map((item) => (item.id !== attribute.id ? item : attribute)));
-  // };
-
-  const onAttributeChange = (...args: any) => {
-    console.log('onAttributeChange', args);
-  };
-
-  const onRemoveAttributeClick = (attribute: ArtificialAttributeItemType) => {
-    onChange(value.filter((item) => item.id !== attribute.id));
-  };
+const AttributesTableComponent: VFC<AttributesTableProps> = (props) => {
+  const { className, value, onAddAttribute, onRemoveAttribute } = props;
+  // console.log('data');
+  // console.log(value);
 
   return (
     <div className={className}>
-      <Table
-        data={value}
-        columns={getAttributesColumns({ onAttributeChange })}
-        noDataMessage={null}
-      />
+      <Table data={value} noDataMessage={null} columns={getAttributesColumns(props)} />
       <AddButtonWrapper>
         <Button
           role="ghost"
           title="Add field"
           iconRight={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
-          onClick={onAddAttributeItem}
+          onClick={onAddAttribute}
         />
       </AddButtonWrapper>
     </div>

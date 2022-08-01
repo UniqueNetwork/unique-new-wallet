@@ -1,16 +1,16 @@
+import { useMemo } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { Heading } from '@unique-nft/ui-kit';
 
-import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { Card } from '@app/pages/components/Card';
-import { useCollectionFormContext } from '@app/context/CollectionFormContext/useCollectionFormContext';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { CreateCollectionFormType } from '@app/pages/CreateCollection/tabs';
+import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
+import { useCollectionFormContext } from '@app/context/CollectionFormContext/useCollectionFormContext';
 
 export const CollectionSidebar = () => {
-  // const { data } = useCollectionFormContext();
-  // const { attributes, coverImgFile, mainInformationForm } =
-  //   useContext(CollectionFormContext) || {};
-  // const { values } = mainInformationForm;
-  // const { name, description, tokenPrefix } = values;
+  const { setValue, control } = useFormContext<CreateCollectionFormType>();
+  const { tokenPrefix, description, schema, name } = useWatch({ control });
 
   // const tags = useMemo(
   //   () => attributes.filter((attr) => attr.name !== 'ipfsJson').map(({ name }) => name),
@@ -19,14 +19,14 @@ export const CollectionSidebar = () => {
 
   return (
     <WrapperSidebar>
-      {/* <SidebarRow>
+      <SidebarRow>
         <Heading size="3">Collection preview</Heading>
         <Card
-          title={data?.name || 'Name'}
-          description={data?.description || 'Description'}
+          title={name || 'Name'}
+          description={description || 'Description'}
           picture={
-            data?.schema?.coverPicture?.ipfsCid
-              ? getTokenIpfsUriByImagePath(data.schema.coverPicture.ipfsCid)
+            schema?.coverPicture?.ipfsCid
+              ? getTokenIpfsUriByImagePath(schema.coverPicture.ipfsCid)
               : undefined
           }
         />
@@ -36,12 +36,12 @@ export const CollectionSidebar = () => {
         <Card
           // TODO: пустой массив
           attributesInline={[]}
-          title={data?.tokenPrefix || 'Symbol'}
-          description={data?.name || 'Collection name'}
+          title={tokenPrefix || 'Symbol'}
+          description={name || 'Collection name'}
           geometry="square"
           picture={undefined}
         />
-      </SidebarRow> */}
+      </SidebarRow>
     </WrapperSidebar>
   );
 };

@@ -28,13 +28,14 @@ export const SelectController = ({
   return (
     <Controller
       control={userControl || control}
-      render={({ field: { ref, value, ...selectField } }) => (
+      render={({ field: { ref, value, onChange, ...selectField } }) => (
         <Select
           {...selectField}
           value={transform?.input ? transform.input(value) : value ?? ''}
           onChange={(val) => {
             const updateValue = transform?.output ? transform.output(val) : val;
-            setValue(name, updateValue);
+
+            onChange(updateValue);
             // selectField.onChange(updateValue);
           }}
           {...selectProps}

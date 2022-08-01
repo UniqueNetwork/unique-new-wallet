@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Heading, Text, Button, useNotifications } from '@unique-nft/ui-kit';
@@ -18,11 +18,15 @@ import {
   TooltipButtonWrapper,
 } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
-// import { CollectionFormProvider } from '@app/context/CollectionFormContext/CollectionFormProvider';
 
 import { CreateCollectionFormType } from './tabs';
-import { ButtonGroup } from '../components/FormComponents';
+import { ButtonGroup, FormWrapper } from '../components/FormComponents';
 import { NO_BALANCE_MESSAGE } from '../constants';
+
+type Warning = {
+  title: string;
+  description: string;
+};
 
 interface CreateCollectionProps {
   className?: string;
@@ -33,9 +37,22 @@ const tabsUrls = [
   `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`,
 ];
 
+const warnings: Record<string, Warning> = {
+  coverIsNotDefine: {
+    title:
+      'You have not entered the cover. Are you sure that you want to create the collection without it?',
+    description: 'You cannot return to editing the cover in this product version.',
+  },
+  attributesAreNotDefine: {
+    title:
+      'You have not entered attributes. Are you sure that you want to create the collection without them?',
+    description: 'You cannot return to editing the attributes in this product version.',
+  },
+};
+
 export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+  const [warning, setWarning] = useState<Warning | null>();
 
   const navigate = useNavigate();
   const { error, info } = useNotifications();
@@ -46,6 +63,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     CollectionApiService.collectionCreateMutation,
   );
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+
   const collectionForm = useForm<CreateCollectionFormType>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -68,10 +86,11 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
       },
     },
   });
-  const { control } = collectionForm;
+  const { control, formState, handleSubmit } = collectionForm;
   const collectionFormValues = useWatch({
     control,
   }) as CreateCollectionFormType;
+
   const [collectionDebounceValue] = useDebounce(collectionFormValues, 500);
 
   useEffect(() => {
@@ -105,7 +124,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     }
   }, [collectionDebounceValue, getFee]);
 
-  const goToStep = (step: number) => setCurrentStep(step);
+  const goToNextStep = (step: number) => setCurrentStep(step);
   const goToPreviousStep = (step: number) => {
     if (step < currentStep) {
       setCurrentStep(step);
@@ -113,17 +132,11 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   };
   const onSubmit = (values: CreateCollectionFormType) => {
     if (!values.schema?.coverPicture?.ipfsCid) {
-      setIsOpenConfirm(true);
+      setWarning(warnings.coverIsNotDefine);
       return;
     }
 
-    goToStep(2);
-  };
-
-  const onPreviousStepClick = () => {
-    navigate(
-      `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
-    );
+    goToNextStep(currentStep + 1);
   };
 
   const onSubmitAttributes = (values: any) => {
@@ -137,80 +150,87 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     // });
   };
 
+  const isFirstStep = currentStep - 1 === 0;
+  const isLastStep = currentStep === tabsUrls.length;
+
   return (
     <FormProvider {...collectionForm}>
       <Heading size="1">Create a collection</Heading>
       <MainWrapper className={classNames('create-collection-page', className)}>
         <WrapperContent>
-          <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
-          <Outlet
-            context={{
-              goToStep,
-            }}
-          />
-          <Alert type="warning">
-            A fee of ~{feeFormatted} can be applied to the transaction
-          </Alert>
-          <ButtonGroup>
-            <MintingBtn
-              disabled={!collectionForm.formState.isValid}
-              iconRight={{
-                color: 'currentColor',
-                name: 'arrow-right',
-                size: 12,
-              }}
-              title="Next step"
-              onClick={collectionForm.handleSubmit(onSubmit)}
-            />
-          </ButtonGroup>
-          <Button
-            iconLeft={{
-              color: 'var(--color-primary-400)',
-              name: 'arrow-left',
-              size: 12,
-            }}
-            title="Previous step"
-            onClick={onPreviousStepClick}
-          />
-          {isBalanceInsufficient ? (
-            <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
-              <Button
-                disabled={true}
-                title="Create a collection"
-                type="button"
-                role="primary"
-              />
-            </TooltipButtonWrapper>
-          ) : (
-            <Button
-              title="Create a collection"
-              type="submit"
-              role="primary"
-              onClick={collectionForm.handleSubmit(onSubmitAttributes)}
-            />
-          )}
-          <Confirm
-            buttons={[
-              { title: 'No, return', onClick: () => setIsOpenConfirm(false) },
-              {
-                title: 'Yes, I am sure',
-                role: 'primary',
-                type: 'submit',
-                onClick: () => {
-                  goToStep(2);
+          <FormWrapper>
+            <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
+            <Outlet />
+            <Alert type="warning">
+              A fee of ~{feeFormatted} can be applied to the transaction
+            </Alert>
+            <ButtonGroup>
+              {!isLastStep && (
+                <MintingBtn
+                  disabled={!formState.isValid}
+                  iconRight={{
+                    color: 'currentColor',
+                    name: 'arrow-right',
+                    size: 12,
+                  }}
+                  title="Next step"
+                  onClick={handleSubmit(onSubmit)}
+                />
+              )}
+              {!isFirstStep && (
+                <Button
+                  iconLeft={{
+                    color: 'var(--color-primary-400)',
+                    name: 'arrow-left',
+                    size: 12,
+                  }}
+                  title="Previous step"
+                  onClick={() => goToPreviousStep(currentStep - 1)}
+                />
+              )}
+              {isBalanceInsufficient && isLastStep && (
+                <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
+                  <Button
+                    type="button"
+                    role="primary"
+                    disabled={true}
+                    title="Create a collection"
+                  />
+                </TooltipButtonWrapper>
+              )}
+              {isLastStep && (
+                <Button
+                  role="primary"
+                  type="submit"
+                  title="Create a collection"
+                  onClick={handleSubmit(onSubmitAttributes)}
+                />
+              )}
+            </ButtonGroup>
+            <Confirm
+              buttons={[
+                { title: 'No, return', onClick: () => setWarning(null) },
+                {
+                  title: 'Yes, I am sure',
+                  role: 'primary',
+                  type: 'submit',
+                  onClick: () => {
+                    goToNextStep(2);
+                    setWarning(null);
+                  },
                 },
-              },
-            ]}
-            isVisible={isOpenConfirm}
-            title="You have not entered the cover. Are you sure that you want to create the collection without it?"
-            onClose={() => setIsOpenConfirm(false)}
-          >
-            <Text>You cannot return to editing the cover in this product version.</Text>
-          </Confirm>
-          <StatusTransactionModal
-            isVisible={isFlowLoading}
-            description="Creating collection"
-          />
+              ]}
+              isVisible={!!warning}
+              title={warning?.title}
+              onClose={() => setWarning(null)}
+            >
+              <Text>{warning?.description}</Text>
+            </Confirm>
+            <StatusTransactionModal
+              isVisible={isFlowLoading}
+              description="Creating collection"
+            />
+          </FormWrapper>
         </WrapperContent>
         <CollectionSidebar />
       </MainWrapper>
