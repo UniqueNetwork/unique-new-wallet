@@ -49,6 +49,7 @@ import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { ROUTE } from '@app/routes';
 import { TokenField } from '@app/types';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 interface Option {
   id: number;
@@ -170,6 +171,11 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   }, []);
 
   const confirmFormHandler = (closable?: boolean) => {
+    if (closable) {
+      logUserEvent(UserEvents.CONFIRM_CLOSE);
+    } else {
+      logUserEvent(UserEvents.CONFIRM_MORE);
+    }
     if (!selectedCollection) {
       error('Collection is not chosen');
 

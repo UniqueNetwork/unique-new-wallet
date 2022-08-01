@@ -23,6 +23,7 @@ import {
   LabelText,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 export const MainInformation: FC = () => {
   const { selectedAccount } = useAccounts();
@@ -89,6 +90,7 @@ export const MainInformation: FC = () => {
   };
 
   const onFormSubmit = () => {
+    logUserEvent(UserEvents.CREATE_COLLECTION_STEP_1_NEXT);
     if (!values.coverImgAddress) {
       setIsOpenConfirm(true);
     } else {

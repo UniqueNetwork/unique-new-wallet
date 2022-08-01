@@ -10,6 +10,7 @@ import React, {
 import { KeyringPair } from '@polkadot/keyring/types';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
+import amplitude from 'amplitude-js';
 
 import { sleep } from '@app/utils';
 import { NetworkType } from '@app/types';
@@ -33,6 +34,12 @@ export const AccountWrapper: FC = ({ children }) => {
   const { collectionsTotal, tokensTotal } = useGraphQlAccountCommonInfo(
     selectedAccount?.address,
   );
+
+  useEffect(() => {
+    if (selectedAccount) {
+      amplitude.getInstance().setUserId(selectedAccount.address);
+    }
+  }, [selectedAccount]);
 
   const changeAccount = useCallback((account: Account) => {
     localStorage.setItem(DefaultAccountKey, account.normalizedAddress);

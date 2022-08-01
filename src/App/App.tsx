@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Notifications } from '@unique-nft/ui-kit';
+import amplitude from 'amplitude-js';
 
 import { AccountWrapper } from '@app/account';
 import { config } from '@app/config';
@@ -11,6 +12,10 @@ import { PageSettingsWrapper } from '@app/context';
 import { PageLayout } from '@app/components';
 
 import './styles.scss';
+
+const ampKey = window.ENV?.AMPLITUDE_KEY || process.env.REACT_APP_AMPLITUDE_KEY || '';
+
+amplitude.getInstance().init(ampKey);
 
 export default function App() {
   const location = useLocation();
