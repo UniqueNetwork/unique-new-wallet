@@ -1,6 +1,7 @@
 import { VFC } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 import { useResolvedPath, useMatch, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { logUserEvent } from '@app/utils/logUserEvent';
 
@@ -9,6 +10,10 @@ interface MenuLinkProps {
   path?: string;
   logEvent: string;
 }
+
+const PointerWrapper = styled.span`
+  cursor: pointer;
+`;
 
 export const MenuLink: VFC<MenuLinkProps> = ({ name, path = '', logEvent }) => {
   const resolved = useResolvedPath(path);
@@ -21,11 +26,11 @@ export const MenuLink: VFC<MenuLinkProps> = ({ name, path = '', logEvent }) => {
   };
 
   return (
-    <span key={name} onClick={() => clickToNavigate(path, logEvent)}>
+    <PointerWrapper key={name} onClick={() => clickToNavigate(path, logEvent)}>
       <Text color={match ? 'additional-dark' : 'primary-500'} size="m">
         {name}
       </Text>
-    </span>
+    </PointerWrapper>
   );
 };
 
