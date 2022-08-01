@@ -12,7 +12,7 @@ import { PageLayout } from '@app/components';
 
 import './styles.scss';
 
-const ampKey = window.ENV?.NET_AMPLITUDE_KEY || process.env.REACT_APP_AMPLITUDE_KEY || '';
+const ampKey = window.ENV?.AMPLITUDE_KEY || process.env.REACT_APP_AMPLITUDE_KEY || '';
 
 amplitude.getInstance().init(ampKey);
 
