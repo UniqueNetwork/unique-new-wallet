@@ -1,7 +1,8 @@
-import React, { createRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { createRef, useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Dropdown,
+  Heading,
   Icon,
   InputText,
   TableColumnProps,
@@ -14,7 +15,6 @@ import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import { usePageSettingContext } from '@app/context';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
 import {
@@ -137,12 +137,7 @@ const getAccountsColumns = ({
             onClick={onShowSendFundsModal(rowData)}
           />
           {rowData.balance?.availableBalance.unit === 'OPL' ? (
-            <Button
-              title="Get"
-              onClick={() => {
-                window.open(config.telegramBot, '_blank', 'noopener');
-              }}
-            />
+            <ButtonGet title="Get" role="outlined" link={config.telegramBot} />
           ) : (
             <Button disabled title="Get" />
           )}
@@ -338,6 +333,10 @@ const LinkStyled = styled.a`
   display: flex;
   align-items: center;
   column-gap: 4px;
+`;
+
+const ButtonGet = styled(Button)`
+  box-sizing: border-box;
 `;
 
 const ActionsWrapper = styled.div`
