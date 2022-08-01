@@ -1,7 +1,7 @@
-import { Locator, Page } from '@playwright/test';
-import { BasePage } from './base-page';
+import {Locator, Page} from '@playwright/test';
+import {BasePage} from './base-page';
 import {PolkadotjsExtensionPage} from "./polkadotjs-extension-page";
-import { expect } from '@playwright/test';
+import {expect} from '@playwright/test';
 
 
 export class MyCollectionsPage extends BasePage {

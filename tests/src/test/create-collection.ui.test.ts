@@ -1,13 +1,13 @@
-import { baseUiTest } from './base.test';
-import { MyTokensPage } from '../pom';
-import { PolkadotjsExtensionPage } from '../pom/polkadotjs-extension-page';
+import {baseUiTest} from './base.test';
+import {MyTokensPage} from '../pom';
+import {PolkadotjsExtensionPage} from '../pom/polkadotjs-extension-page';
 import {MyCollectionsPage} from "../pom/my-collections-page";
 import {generateAccount} from "../utils/api";
 import {expect} from "@playwright/test";
 
 
 baseUiTest.describe('Tests', () => {
-    baseUiTest.beforeEach(async ({ context }) => {
+    baseUiTest.beforeEach(async ({context}) => {
         const myTokensPage = new MyTokensPage(await context.newPage());
         await myTokensPage.navigate();
         const polkdotExtensionPage = new PolkadotjsExtensionPage(await context.newPage());
@@ -16,7 +16,7 @@ baseUiTest.describe('Tests', () => {
         await myTokensPage.close();
     });
 
-    baseUiTest('Create collection', async ({ page, context }) => {
+    baseUiTest('Create collection', async ({page, context}) => {
         const testUser = await generateAccount(100);
 
         await PolkadotjsExtensionPage.connectAccountByExtension(await context.newPage(), testUser.mnemonic, '1234qwe',

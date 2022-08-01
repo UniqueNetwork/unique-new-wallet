@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import {Page, Locator, expect} from '@playwright/test';
 
 export abstract class BasePage {
     readonly page: Page;
@@ -26,6 +26,6 @@ export abstract class BasePage {
      */
     async waitAccountConnected(expectedAccountName: string, timeout = 3000000) {
         await expect(this.accountName, `Account ${expectedAccountName} has not been connected`)
-            .toHaveText(expectedAccountName, { timeout });
+            .toHaveText(expectedAccountName, {timeout});
     }
 }

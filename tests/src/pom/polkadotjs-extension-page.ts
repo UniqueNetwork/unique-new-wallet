@@ -1,5 +1,5 @@
-import { expect, Locator, Page } from '@playwright/test';
-import { BasePage } from './base-page';
+import {expect, Locator, Page} from '@playwright/test';
+import {BasePage} from './base-page';
 
 export class PolkadotjsExtensionPage extends BasePage {
     readonly confirmButton: Locator;
@@ -32,8 +32,8 @@ export class PolkadotjsExtensionPage extends BasePage {
 
     async firstOpen() {
         await this.navigate();
-        await this.confirmButton.click({ force: true });
-        await this.acceptButton.click({ force: true });
+        await this.confirmButton.click({force: true});
+        await this.acceptButton.click({force: true});
     }
 
     async navigate() {
