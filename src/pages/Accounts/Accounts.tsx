@@ -1,4 +1,4 @@
-import React, { createRef, useCallback, useMemo, useState } from 'react';
+import React, { createRef, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Dropdown,
@@ -26,6 +26,7 @@ import {
 } from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 import { config } from '@app/config';
+import { usePageSettingContext } from '@app/context';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
