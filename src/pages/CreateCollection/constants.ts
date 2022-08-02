@@ -3,8 +3,8 @@ import { CREATE_COLLECTION_TABS_ROUTE, ROUTE } from '@app/routes';
 import { AttributeFieldOptional, AttributeFieldType, Warning } from './types';
 
 export const tabsUrls = [
-  `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
-  `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`,
+  `${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
+  `${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`,
 ];
 
 export const warnings: Record<string, Warning> = {

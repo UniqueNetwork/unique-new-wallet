@@ -17,6 +17,7 @@ import {
   StatusTransactionModal,
   TooltipButtonWrapper,
 } from '@app/components';
+import { usePageSettingContext } from '@app/context/PageSettingsContext';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 
 import { NO_BALANCE_MESSAGE } from '../constants';
@@ -32,6 +33,8 @@ interface CreateCollectionProps {
 export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
+
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   const navigate = useNavigate();
   const { error, info } = useNotifications();
@@ -129,6 +132,11 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
 
   const isFirstStep = currentStep - 1 === 0;
   const isLastStep = currentStep === tabsUrls.length;
+
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('Create a collection');
+  }, []);
 
   return (
     <FormProvider {...collectionForm}>

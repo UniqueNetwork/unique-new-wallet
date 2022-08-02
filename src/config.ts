@@ -12,6 +12,7 @@ declare type Config = {
   IPFSGateway: string | undefined;
   chains: Record<string, Chain>;
   defaultChain: Chain;
+  telegramBot: string | undefined;
 };
 
 declare global {
@@ -26,6 +27,7 @@ export const config: Config = {
   IPFSGateway: window.ENV?.IPFS_GATEWAY_URL || process.env.REACT_APP_IPFS_GATEWAY_URL,
   defaultChain: chains[getDefaultChain(window.ENV || process.env)],
   chains,
+  telegramBot: window.ENV?.TELEGRAM_BOT || process.env.REACT_APP_NET_TELEGRAM_BOT,
 };
 
 console.log(config);

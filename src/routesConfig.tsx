@@ -3,17 +3,17 @@ import { RouteObject } from 'react-router-dom';
 import {
   Accounts,
   Coins,
-  CreateCollection,
   CollectionNft,
   CollectionPage,
+  CreateCollection,
+  CreateNFT,
   Faq,
   MyCollections,
   MyTokens,
+  NFTDetails,
   NFTs,
   NotFound,
   Welcome,
-  NFTDetails,
-  CreateNFT,
 } from '@app/pages';
 import { TokenForm } from '@app/context';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';

@@ -12,15 +12,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 
 import { iconDown, iconUp } from '@app/utils';
+import { ROUTE } from '@app/routes';
+import { useApi } from '@app/hooks';
+import { ViewCollection } from '@app/api';
+import { MintingBtn } from '@app/components';
+import { Direction } from '@app/api/graphQL/tokens';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { collectionsQuery } from '@app/api/graphQL/collections/collections';
 import {
   ListNftsFilterType,
   useNftFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { Direction } from '@app/api/graphQL/tokens';
-import { ROUTE } from '@app/routes';
-import { MintingBtn } from '@app/components';
-import { collectionsQuery } from '@app/api/graphQL/collections/collections';
-import { ViewCollection } from '@app/api';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -79,6 +81,7 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
       }
     `,
   });
+  const { currentChain } = useApi();
   const [search, setSearch] = useState('');
   const { direction, onChangeSearch, onChangeDirection, onChangeType } =
     useNftFilterContext();
@@ -116,18 +119,10 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         }}
         title="Create an NFT"
         role="primary"
-        onClick={() =>
-          navigate(ROUTE.CREATE_NFT, {
-            state: currentCollection
-              ? {
-                  id: currentCollection.collection_id,
-                  title: currentCollection.name,
-                  description: currentCollection.description,
-                  img: currentCollection.collection_cover,
-                }
-              : null,
-          })
-        }
+        onClick={() => {
+          logUserEvent(UserEvents.CREATE_NFT);
+          navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`);
+        }}
       />
     </div>
   );

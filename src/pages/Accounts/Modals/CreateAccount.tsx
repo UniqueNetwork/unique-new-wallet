@@ -4,6 +4,7 @@ import { Heading, Modal } from '@unique-nft/ui-kit';
 import { AskCredentialsModal, AskSeedPhrase } from '@app/pages';
 import { useAccounts } from '@app/hooks';
 import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import {
   CreateAccountModalStages,
@@ -53,10 +54,16 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
           accountProperties.password || '',
           defaultPairType,
         );
-
+        logUserEvent(UserEvents.CREATE_SUBSTRATE_STEP_3_NEXT);
         onFinish();
         setStage(CreateAccountModalStages.AskSeed);
         return;
+      }
+      if (stage === 0) {
+        logUserEvent(UserEvents.CREATE_SUBSTRATE_STEP_1_NEXT);
+      }
+      if (stage === 1) {
+        logUserEvent(UserEvents.CREATE_SUBSTRATE_STEP_2_NEXT);
       }
       setAccountProperties(accountProperties);
       setStage(stage + 1);
@@ -67,6 +74,12 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
   const onGoBack = useCallback(() => {
     if (stage === CreateAccountModalStages.AskSeed) {
       return;
+    }
+    if (stage === CreateAccountModalStages.AskCredentials) {
+      logUserEvent(UserEvents.CREATE_SUBSTRATE_STEP_2_PREVIOS);
+    }
+    if (stage === CreateAccountModalStages.Final) {
+      logUserEvent(UserEvents.CREATE_SUBSTRATE_STEP_3_PREVIOS);
     }
     setStage(stage - 1);
   }, [stage]);
