@@ -10,8 +10,7 @@ import {
 } from '@unique-nft/ui-kit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { ArtificialAttributeItemType } from '@app/types';
-import { AttributesTable, FieldTypeOption } from '@app/pages/CreateCollection/components';
+import { AttributesTable } from '@app/pages/CreateCollection/components';
 import {
   FormBody,
   FormHeader,
@@ -22,7 +21,7 @@ import { InputController } from '@app/components/FormControllerComponents';
 import { CheckboxController } from '@app/components/FormControllerComponents/CheckboxController';
 import { maxTokenLimit } from '@app/pages/constants/token';
 
-import { CreateCollectionFormType } from './MainInformation';
+import { CollectionForm } from '../types';
 
 const addressTooltip = createRef<HTMLDivElement>();
 const burnTooltip = createRef<HTMLDivElement>();
@@ -34,7 +33,7 @@ const tooltipAlign: TooltipAlign = {
 };
 
 export const NFTAttributes = () => {
-  const { control, setValue } = useFormContext<any>();
+  const { control, setValue } = useFormContext<CollectionForm>();
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'attributes',
@@ -42,9 +41,10 @@ export const NFTAttributes = () => {
 
   const addAttributeHandler = () => {
     append({
-      name: { _: '' },
-      optional: true,
-      type: 'string',
+      name: '',
+      type: { id: 'string', title: 'Text' },
+      optional: { id: 'optional', title: 'Optional' },
+      values: [],
     });
   };
 
@@ -52,10 +52,6 @@ export const NFTAttributes = () => {
     const attrIndex = fields.findIndex((f) => f.id === id);
 
     remove(attrIndex);
-  };
-
-  const changeAttributeTypeHandler = (id: string, fieldType: FieldTypeOption) => {
-    const attrIndex = fields.findIndex((f) => f.id === id);
   };
 
   return (
@@ -72,7 +68,6 @@ export const NFTAttributes = () => {
           value={fields}
           onAddAttribute={addAttributeHandler}
           onRemoveAttribute={removeAttributeHandler}
-          onChangeAttributeType={changeAttributeTypeHandler}
         />
         <AdvancedSettingsAccordion title="Advanced settings">
           <SettingsRow>
@@ -80,7 +75,7 @@ export const NFTAttributes = () => {
           </SettingsRow>
           <SettingsRow>
             <InputController
-              name="sponsorship.address"
+              name="sponsorAddress"
               label={
                 <>
                   Collection sponsor address
@@ -113,7 +108,7 @@ export const NFTAttributes = () => {
           </FormRow>
           <SettingsRow>
             <InputController
-              name="limits.tokenLimit"
+              name="tokenLimit"
               label={
                 <>
                   Token limit
@@ -148,7 +143,7 @@ export const NFTAttributes = () => {
           </SettingsRow>
           <SettingsRow>
             <CheckboxController
-              name="limits.ownerCanDestroy"
+              name="ownerCanDestroy"
               label={
                 <>
                   Owner can burn collection

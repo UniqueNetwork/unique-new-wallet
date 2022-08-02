@@ -9,8 +9,8 @@ export type EnumsInputProps<T> = {
   onChange?: (values: string[]) => void;
   onAdd?(value: string): void;
   onDelete?(index: number): void;
-  value: T[];
-  getValues(values: T[]): string[];
+  value?: T[];
+  getValues(values?: T[]): string[] | null | undefined;
 };
 
 export const EnumsInput = <T,>({
@@ -24,11 +24,13 @@ export const EnumsInput = <T,>({
 }: EnumsInputProps<T>) => {
   const [currentEnum, setCurrentEnum] = useState<string>('');
 
-  const value = getValues(inputValue);
+  const value = getValues(inputValue) ?? [];
 
   console.log(value);
 
   const addItem = () => {
+    console.log(currentEnum);
+
     if (!currentEnum) {
       return;
     }
@@ -37,6 +39,8 @@ export const EnumsInput = <T,>({
       currentEnum.length &&
       !value.find((item: string) => item.toLowerCase() === currentEnum.toLowerCase())
     ) {
+      console.log('test');
+
       onChange?.([...value, currentEnum]);
       onAdd?.(currentEnum);
       setCurrentEnum('');
@@ -51,7 +55,7 @@ export const EnumsInput = <T,>({
       return;
     }
 
-    onChange?.(value.filter((item: string, idx) => idx !== enumItem));
+    onChange?.(value?.filter((item: string, idx) => idx !== enumItem));
     onDelete?.(enumItem);
   };
 
@@ -75,7 +79,7 @@ export const EnumsInput = <T,>({
     <Wrapper className={`${isDisabled ? 'enum-input disabled' : 'enum-input'}`}>
       <div className="enum-input--content">
         <div className="enum-input--content--elements">
-          {value.map((enumItem: string, idx) => (
+          {value?.map((enumItem: string, idx) => (
             <EnumInputItem
               deleteItem={deleteItem}
               enumItem={enumItem}

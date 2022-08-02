@@ -617,10 +617,10 @@ export interface SetPropertyPermissionsResponse {
 }
 
 export interface AttributeSchemaDto {
-  enumValues: Record<string, string | number | Record<string, string>>;
-  name: string | Record<string, string>;
+  enumValues?: Record<number, string | number | Record<string, string>>;
+  name: string | Record<number, string>;
+  isArray: boolean;
   optional: boolean;
-  kind: 'enum' | 'enumMultiple' | 'freeValue';
   type:
     | 'integer'
     | 'float'
@@ -733,7 +733,7 @@ export interface UniqueCollectionSchemaToCreateDto {
 
   /** @example 1.0.0 */
   attributesSchemaVersion: string;
-  coverPicture:
+  coverPicture?:
     | { urlInfix?: string; hash?: string | null }
     | { url?: string; hash?: string | null }
     | { ipfsCid?: string; hash?: string | null };
@@ -744,14 +744,14 @@ export interface UniqueCollectionSchemaToCreateDto {
 
   /** @example 1.0.0 */
   schemaVersion: string;
-  coverPicturePreview:
+  coverPicturePreview?:
     | { urlInfix?: string; hash?: string | null }
     | { url?: string; hash?: string | null }
     | { ipfsCid?: string; hash?: string | null };
-  imagePreview: ImagePreviewDto;
-  audio: AudioDto;
-  spatialObject: SpatialObjectDto;
-  video: VideoDto;
+  imagePreview?: ImagePreviewDto;
+  audio?: AudioDto;
+  spatialObject?: SpatialObjectDto;
+  video?: VideoDto;
 }
 
 export interface CreateCollectionNewRequest {

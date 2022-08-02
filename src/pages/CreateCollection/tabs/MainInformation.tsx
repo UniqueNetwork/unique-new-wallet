@@ -22,24 +22,10 @@ import {
   UploadController,
 } from '@app/components/FormControllerComponents';
 
-type RequiredSchemaCollectionType = Pick<
-  CreateCollectionNewRequest['schema'],
-  | 'schemaName'
-  | 'schemaVersion'
-  | 'attributesSchemaVersion'
-  | 'image'
-  | 'attributesSchema'
-> & {
-  coverPicture?: { ipfsCid: string };
-};
-
-export type CreateCollectionFormType = Pick<
-  CreateCollectionNewRequest,
-  'address' | 'name' | 'description' | 'tokenPrefix'
-> & { schema?: RequiredSchemaCollectionType };
+import { CollectionForm } from '../types';
 
 export const MainInformation: FC = () => {
-  const { setValue, control } = useFormContext<CreateCollectionFormType>();
+  const { setValue, control } = useFormContext<CollectionForm>();
   const collectionFormValues = useWatch({ control });
 
   const { error } = useNotifications();
@@ -47,7 +33,7 @@ export const MainInformation: FC = () => {
 
   const uploadCover = async (data: { url: string; file: Blob } | null) => {
     if (!data?.file) {
-      setValue('schema.coverPicture.ipfsCid', '');
+      setValue('coverPictureIpfsCid', '');
       return;
     }
     const _10MB = 10000000;
@@ -58,7 +44,7 @@ export const MainInformation: FC = () => {
 
     const response = await uploadFile(data.file);
 
-    response && setValue('schema.coverPicture.ipfsCid', response.cid);
+    response && setValue('coverPictureIpfsCid', response.cid);
   };
 
   return (
@@ -85,16 +71,16 @@ export const MainInformation: FC = () => {
           </FormRow>
           <FormRow>
             <TextareaController
+              name="description"
               label="Description"
               additionalText="Max 256 symbols"
-              rows={4}
-              name="description"
               maxLength={256}
+              rows={4}
             />
           </FormRow>
           <FormRow>
             <InputController
-              name="tokenPrefix"
+              name="symbol"
               label="Symbol*"
               additionalText="Token name as displayed in Wallet (max 4 symbols)"
               rules={{
@@ -109,9 +95,9 @@ export const MainInformation: FC = () => {
                 <LabelText>Upload image</LabelText>
                 <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
                 <UploadController
-                  name="schema.coverPicture.ipfsCid"
+                  name="coverPictureIpfsCid"
                   upload={getTokenIpfsUriByImagePath(
-                    collectionFormValues?.schema?.coverPicture?.ipfsCid || null,
+                    collectionFormValues?.coverPictureIpfsCid || null,
                   )}
                   onChange={uploadCover}
                 />

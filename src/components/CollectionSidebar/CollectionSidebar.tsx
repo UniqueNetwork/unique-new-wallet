@@ -4,18 +4,16 @@ import { Heading } from '@unique-nft/ui-kit';
 
 import { Card } from '@app/pages/components/Card';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { CreateCollectionFormType } from '@app/pages/CreateCollection/tabs';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
-import { useCollectionFormContext } from '@app/context/CollectionFormContext/useCollectionFormContext';
+import { CollectionForm } from '@app/pages/CreateCollection/types';
 
 export const CollectionSidebar = () => {
-  const { setValue, control } = useFormContext<CreateCollectionFormType>();
-  const { tokenPrefix, description, schema, name } = useWatch({ control });
+  const { setValue, control } = useFormContext<CollectionForm>();
+  const { symbol, description, coverPictureIpfsCid, name, attributes } = useWatch({
+    control,
+  });
 
-  // const tags = useMemo(
-  //   () => attributes.filter((attr) => attr.name !== 'ipfsJson').map(({ name }) => name),
-  //   [attributes],
-  // );
+  const attributesInline = attributes?.map<string>((attr) => attr.name || '');
 
   return (
     <WrapperSidebar>
@@ -25,8 +23,8 @@ export const CollectionSidebar = () => {
           title={name || 'Name'}
           description={description || 'Description'}
           picture={
-            schema?.coverPicture?.ipfsCid
-              ? getTokenIpfsUriByImagePath(schema.coverPicture.ipfsCid)
+            coverPictureIpfsCid
+              ? getTokenIpfsUriByImagePath(coverPictureIpfsCid)
               : undefined
           }
         />
@@ -35,8 +33,8 @@ export const CollectionSidebar = () => {
         <Heading size="3">NFT preview</Heading>
         <Card
           // TODO: пустой массив
-          attributesInline={[]}
-          title={tokenPrefix || 'Symbol'}
+          attributesInline={attributesInline}
+          title={symbol || 'Symbol'}
           description={name || 'Collection name'}
           geometry="square"
           picture={undefined}

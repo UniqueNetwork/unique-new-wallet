@@ -4,17 +4,9 @@ import { useEffect } from 'react';
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
 import { EnumsInput, EnumsInputProps } from '@app/pages/CreateCollection/components';
 
-type EnumsInputControllerProps<T> = BaseControllerProps<
-  Omit<EnumsInputProps<T>, 'value'>
->;
-
-export const EnumsInputController = <T,>({
-  name,
-  control: userControl,
-  rules,
-  defaultValue,
-  ...enumsProps
-}: EnumsInputControllerProps<T>) => {
+export const EnumsInputController: React.FC<
+  BaseControllerProps<EnumsInputProps<string>>
+> = ({ name, control: userControl, rules, defaultValue, ...enumsProps }) => {
   const { control, register } = useFormContext();
 
   useEffect(() => {
@@ -24,7 +16,7 @@ export const EnumsInputController = <T,>({
   return (
     <Controller
       control={userControl || control}
-      render={({ field: { onChange, ...enumsField } }) => (
+      render={({ field: { ...enumsField } }) => (
         <EnumsInput {...enumsField} {...enumsProps} />
       )}
       name={name}

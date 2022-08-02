@@ -17,6 +17,7 @@ export const SelectController = ({
   rules,
   defaultValue,
   transform,
+  optionKey,
   ...selectProps
 }: SelectControllerProps) => {
   const { control, setValue, register } = useFormContext();
@@ -31,7 +32,9 @@ export const SelectController = ({
       render={({ field: { ref, value, onChange, ...selectField } }) => (
         <Select
           {...selectField}
-          value={transform?.input ? transform.input(value) : value ?? ''}
+          value={
+            transform?.input ? transform.input(value) : value[optionKey || 'id'] ?? ''
+          }
           onChange={(val) => {
             const updateValue = transform?.output ? transform.output(val) : val;
 

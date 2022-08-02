@@ -2,12 +2,11 @@ import { QueryClient } from 'react-query';
 
 import { EndpointMutation } from '@app/api/restApi/request';
 import { IBaseApi } from '@app/api';
-import { UnsignedTxPayloadResponse } from '@app/types/Api';
-import { CreateCollectionFormType } from '@app/pages/CreateCollection/tabs';
+import { CreateCollectionNewRequest, UnsignedTxPayloadResponse } from '@app/types/Api';
 
 export type CollectionCreatePayload = {
   api: IBaseApi;
-  collection: CreateCollectionFormType;
+  collection: CreateCollectionNewRequest;
 };
 
 export class CollectionCreateMutation extends EndpointMutation<
@@ -25,7 +24,7 @@ export class CollectionCreateMutation extends EndpointMutation<
   }
 
   async request(payload: CollectionCreatePayload): Promise<UnsignedTxPayloadResponse> {
-    return payload.api.post<UnsignedTxPayloadResponse, CreateCollectionFormType>(
+    return payload.api.post<UnsignedTxPayloadResponse, CreateCollectionNewRequest>(
       `${this.baseUrl}`,
       payload.collection,
     );

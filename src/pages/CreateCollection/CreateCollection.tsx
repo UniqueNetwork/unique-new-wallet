@@ -7,7 +7,7 @@ import { useDebounce } from 'use-debounce';
 
 import { useAccounts, useBalanceInsufficient } from '@app/hooks';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
-import { CREATE_COLLECTION_TABS_ROUTE, ROUTE } from '@app/routes';
+import { ROUTE } from '@app/routes';
 import {
   Alert,
   CollectionSidebar,
@@ -19,36 +19,15 @@ import {
 } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 
-import { CreateCollectionFormType } from './tabs';
-import { ButtonGroup, FormWrapper } from '../components/FormComponents';
 import { NO_BALANCE_MESSAGE } from '../constants';
-
-type Warning = {
-  title: string;
-  description: string;
-};
+import { CollectionForm, Warning } from './types';
+import { ButtonGroup, FormWrapper } from '../components/FormComponents';
+import { tabsUrls, warnings } from './constants';
+import { useCollectionFormMapper } from './useCollectionFormMapper';
 
 interface CreateCollectionProps {
   className?: string;
 }
-
-const tabsUrls = [
-  `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.MAIN_INFORMATION}`,
-  `${ROUTE.CREATE_COLLECTION}/${CREATE_COLLECTION_TABS_ROUTE.NFT_ATTRIBUTES}`,
-];
-
-const warnings: Record<string, Warning> = {
-  coverIsNotDefine: {
-    title:
-      'You have not entered the cover. Are you sure that you want to create the collection without it?',
-    description: 'You cannot return to editing the cover in this product version.',
-  },
-  attributesAreNotDefine: {
-    title:
-      'You have not entered attributes. Are you sure that you want to create the collection without them?',
-    description: 'You cannot return to editing the attributes in this product version.',
-  },
-};
 
 export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -57,6 +36,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const navigate = useNavigate();
   const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
+  const formMapper = useCollectionFormMapper();
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
     useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
   const { feeError, isFeeError, fee, feeFormatted, getFee } = useExtrinsicFee(
@@ -64,34 +44,25 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   );
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
-  const collectionForm = useForm<CreateCollectionFormType>({
+  const collectionForm = useForm<CollectionForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
-      address: selectedAccount?.address,
       name: '',
+      symbol: '',
       description: '',
-      tokenPrefix: '',
-      schema: {
-        coverPicture: {
-          ipfsCid: '',
-        },
-        attributesSchema: {},
-        attributesSchemaVersion: '1.0.0',
-        image: {
-          urlTemplate: 'string{infix}.ext',
-        },
-        schemaName: 'unique',
-        schemaVersion: '1.0.0',
-      },
+      address: selectedAccount?.address,
     },
   });
   const { control, formState, handleSubmit } = collectionForm;
-  const collectionFormValues = useWatch({
+  const collectionFormValues = useWatch<CollectionForm>({
     control,
-  }) as CreateCollectionFormType;
+  });
 
-  const [collectionDebounceValue] = useDebounce(collectionFormValues, 500);
+  const [collectionDebounceValue] = useDebounce<CollectionForm>(
+    collectionFormValues as any,
+    500,
+  );
 
   useEffect(() => {
     if (isFeeError) {
@@ -118,8 +89,9 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     console.log(collectionDebounceValue);
 
     if (collectionDebounceValue) {
+      const collection = formMapper(collectionDebounceValue);
       getFee({
-        collection: collectionDebounceValue,
+        collection,
       });
     }
   }, [collectionDebounceValue, getFee]);
@@ -130,24 +102,29 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
       setCurrentStep(step);
     }
   };
-  const onNextStep = (values: CreateCollectionFormType) => {
-    if (!values.schema?.coverPicture?.ipfsCid) {
+  const onNextStep = ({ coverPictureIpfsCid }: CollectionForm) => {
+    if (!coverPictureIpfsCid) {
       setWarning(warnings.coverIsNotDefine);
+
       return;
     }
 
     goToNextStep(currentStep + 1);
   };
 
-  const onSubmit = (values: CreateCollectionFormType) => {
+  const onSubmit = (form: CollectionForm) => {
     if (!selectedAccount) {
       error('Account is not found');
       return;
     }
-    console.log(values);
-    // signAndSubmitExtrinsic({
-    //   collection: values,
-    // });
+    console.log(form);
+
+    const collection = formMapper(form);
+
+    console.log(collection);
+    signAndSubmitExtrinsic({
+      collection,
+    });
   };
 
   const isFirstStep = currentStep - 1 === 0;
