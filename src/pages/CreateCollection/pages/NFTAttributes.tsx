@@ -14,7 +14,7 @@ import {
   useNotifications,
 } from '@unique-nft/ui-kit';
 
-import { useAccounts, useBalanceInsufficient } from '@app/hooks';
+import { useAccounts, useBalanceInsufficient, useApi } from '@app/hooks';
 import { ArtificialAttributeItemType } from '@app/types';
 import { CollectionFormContext, defaultAttributesWithTokenIpfs } from '@app/context';
 import {
@@ -37,6 +37,7 @@ import {
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 const addressTooltip = createRef<HTMLDivElement>();
 const burnTooltip = createRef<HTMLDivElement>();
@@ -60,6 +61,7 @@ export const NFTAttributes = () => {
   } = useContext(CollectionFormContext);
   const { selectedAccount } = useAccounts();
   const navigate = useNavigate();
+  const { currentChain } = useApi();
   const { info, error } = useNotifications();
   const [isOpenConfirm, setIsOpenConfirm] = useState<boolean>(false);
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
@@ -74,7 +76,7 @@ export const NFTAttributes = () => {
     if (flowStatus === 'success') {
       info('Collection created successfully');
 
-      navigate(ROUTE.MY_COLLECTIONS);
+      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
     }
     if (flowStatus === 'error') {
       error(flowError?.message);
@@ -88,7 +90,8 @@ export const NFTAttributes = () => {
   }, [feeError, isFeeError]);
 
   const onPreviousStepClick = () => {
-    navigate('/create-collection/main-information');
+    logUserEvent(UserEvents.CREATE_COLLECTION_STEP_2_PREVIOS);
+    navigate(`/${currentChain?.network}/create-collection/main-information`);
   };
 
   const createCollectionHandler = () => {
@@ -112,6 +115,7 @@ export const NFTAttributes = () => {
 
   const onSubmitAttributes = () => {
     const { isSubmitting, isValid } = mainInformationForm;
+    logUserEvent(UserEvents.CREATE_COLLECTION_STEP_2_NEXT);
 
     if (isSubmitting && isValid) {
       if (attributes?.length < 2) {
@@ -188,7 +192,7 @@ export const NFTAttributes = () => {
                   </>
                 }
                 additionalText="The designated sponsor should approve the request"
-                maxLength={48}
+                maxLength={49}
                 value={address}
                 onChange={setAddress}
               />

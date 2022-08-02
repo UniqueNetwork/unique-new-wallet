@@ -1,24 +1,35 @@
 import { VFC } from 'react';
 import styled from 'styled-components/macro';
-import { Link, useResolvedPath, useMatch } from 'react-router-dom';
+import { Link, useResolvedPath, useMatch, useNavigate } from 'react-router-dom';
 import { Text } from '@unique-nft/ui-kit';
+
+import { logUserEvent } from '@app/utils/logUserEvent';
 
 interface MenuLinkProps {
   mobileMenuToggle: () => void;
   name: string;
   path?: string;
+  logEvent: string;
 }
 
 export const MobileMenuLink: VFC<MenuLinkProps> = ({
   mobileMenuToggle,
   name,
   path = '',
+  logEvent,
 }) => {
   const resolved = useResolvedPath(path);
   const match = useMatch(`${resolved.pathname}/*`);
+  const navigate = useNavigate();
+
+  const clickToNavigate = (path: string, logEvent: string) => {
+    logUserEvent(logEvent);
+    mobileMenuToggle();
+    navigate(path);
+  };
 
   return (
-    <LinkWrapper key={name} onClick={mobileMenuToggle}>
+    <LinkWrapper key={name} onClick={() => clickToNavigate(path, logEvent)}>
       <Link to={path}>
         <TextStyled $active={!!match} color="additional-dark" size="m">
           {name}

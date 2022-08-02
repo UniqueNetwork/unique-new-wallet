@@ -1,5 +1,5 @@
-import { useCallback, useState, VFC } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState, VFC } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 
@@ -9,11 +9,13 @@ import { networks } from '@app/utils';
 import { ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { defaultChainKey } from '@app/utils/configParser';
+import { UserEvents } from '@app/utils/logUserEvent';
 
 import MenuLink from './MenuLink';
 
 export const Header: VFC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
@@ -21,6 +23,11 @@ export const Header: VFC = () => {
   const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
     networks.find(({ id }) => id === currentChain?.network),
   );
+
+  useEffect(() => {
+    const active = networks.find(({ id }) => id === currentChain?.network);
+    setActiveNetwork(active);
+  }, [currentChain]);
 
   const mobileMenuToggle = useCallback(() => {
     toggleMobileMenu((prevState) => !prevState);
@@ -46,8 +53,12 @@ export const Header: VFC = () => {
   const handleChangeNetwork = (val: INetwork) => {
     setActiveNetwork(val);
     setCurrentChain(config.chains[val.id]);
-
     localStorage.setItem(defaultChainKey, config.chains[val.id].network);
+
+    const partsUrl = location.pathname.split('/');
+    partsUrl[1] = val.id;
+    const newlink = partsUrl.join('/');
+    navigate(newlink);
   };
 
   return (
@@ -64,10 +75,26 @@ export const Header: VFC = () => {
 
         {!showMobileMenu && (
           <nav>
-            <MenuLink name="My tokens" path={ROUTE.MY_TOKENS} />
-            <MenuLink name="My collections" path={ROUTE.MY_COLLECTIONS} />
-            <MenuLink name="My accounts" path={ROUTE.ACCOUNTS} />
-            <MenuLink name="FAQ" path={ROUTE.FAQ} />
+            <MenuLink
+              name="My tokens"
+              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+              logEvent={UserEvents.HEADER_MY_TOKENS}
+            />
+            <MenuLink
+              name="My collections"
+              path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
+              logEvent={UserEvents.HEADER_MY_COLLECTION}
+            />
+            <MenuLink
+              name="My accounts"
+              path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
+              logEvent={UserEvents.HEADER_MY_ACCOUNTS}
+            />
+            <MenuLink
+              name="FAQ"
+              path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
+              logEvent={UserEvents.HEADER_FAQ}
+            />
           </nav>
         )}
       </LeftSideColumn>
@@ -84,7 +111,7 @@ export const Header: VFC = () => {
               name: selectedAccount?.meta.name,
             }}
             symbol={selectedAccount?.unitBalance ?? ''}
-            onNetworkChange={handleChangeNetwork}
+            onNetworkChange={(val) => handleChangeNetwork(val)}
             onAccountChange={onAccountChange}
           />
         )}
@@ -101,22 +128,26 @@ export const Header: VFC = () => {
         <MobileMenu>
           <MobileMenuLink
             name="My tokens"
-            path={ROUTE.MY_TOKENS}
+            path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+            logEvent={UserEvents.HEADER_MY_TOKENS}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="My collections"
-            path={ROUTE.MY_COLLECTIONS}
+            path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
+            logEvent={UserEvents.HEADER_MY_COLLECTION}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="My accounts"
-            path={ROUTE.ACCOUNTS}
+            path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
+            logEvent={UserEvents.HEADER_MY_ACCOUNTS}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="FAQ"
-            path={ROUTE.FAQ}
+            path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
+            logEvent={UserEvents.HEADER_FAQ}
             mobileMenuToggle={mobileMenuToggle}
           />
         </MobileMenu>
@@ -132,7 +163,8 @@ const HeaderStyled = styled.div`
   width: 100%;
 
   nav {
-    & > a {
+    display: flex;
+    & > span {
       margin-right: calc(var(--prop-gap) / 1.5);
     }
   }

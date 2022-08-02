@@ -3,19 +3,23 @@ import { Outlet } from 'react-router-dom';
 import { Layout } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
+import { usePageSettingContext } from '@app/context';
 import { useFooter } from '@app/hooks';
 
 import { Header } from '../';
 
 export const PageLayout: FC = () => {
+  const { breadcrumbs, heading } = usePageSettingContext();
   const footer = useFooter();
 
   return (
     <Wrapper className="page-layout">
       <LayoutStyled>
         <Layout
+          breadcrumbs={breadcrumbs}
           footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
           header={<Header />}
+          heading={heading}
         >
           <Outlet />
         </Layout>
@@ -60,6 +64,19 @@ const LayoutStyled = styled.div`
   }
 
   main {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: var(--prop-container-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+
+    @media screen and (min-width: 1024px) {
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+
     > div {
       display: flex;
     }
@@ -67,10 +84,23 @@ const LayoutStyled = styled.div`
     /* Todo: remove after done task https://cryptousetech.atlassian.net/browse/NFTPAR-1238 */
     .unique-breadcrumbs-wrapper {
       align-items: center;
+      width: 100%;
+
+      &:empty {
+        display: none;
+      }
 
       .breadcrumb-item {
         line-height: 22px;
+
+        &:first-child {
+          margin-left: 0;
+        }
       }
+    }
+
+    .unique-font-heading + .unique-breadcrumbs-wrapper {
+      margin-top: -16px;
     }
   }
 

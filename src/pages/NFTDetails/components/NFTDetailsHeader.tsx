@@ -5,6 +5,7 @@ import { Dropdown, Heading, Text, SelectOptionProps, Icon } from '@unique-nft/ui
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
 import { BurnBtn, TransferBtn } from '@app/components';
 import { useApi } from '@app/hooks';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 interface NFTDetailsHeaderProps {
   title?: string;
@@ -118,7 +119,10 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
             className="transfer-btn"
             title="Transfer"
             role="outlined"
-            onClick={() => onShowModal('transfer')}
+            onClick={() => {
+              logUserEvent(UserEvents.TRANSFER_NFT);
+              onShowModal('transfer');
+            }}
           />
         )}
       </HeaderContent>

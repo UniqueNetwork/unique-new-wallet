@@ -9,6 +9,7 @@ import { SendFunds } from '@app/pages/SendFunds';
 import { useAccountBalancesService } from '@app/api/restApi/balance/hooks/useAccountBalancesService';
 import { config } from '@app/config';
 import { ApiWrapper } from '@app/api';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CoinsRow } from './components';
 
@@ -32,6 +33,10 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
     Object.values(config.chains).map((chain) => chain.apiEndpoint),
     selectedAccount?.address,
   );
+
+  useEffect(() => {
+    logUserEvent(UserEvents.COINS);
+  }, []);
 
   useEffect(() => {
     refetchChainsBalance();
