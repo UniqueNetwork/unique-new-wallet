@@ -52,7 +52,7 @@ module.exports = {
   parserOptions: {
     extraFileExtensions: ['.cjs', '.mjs'],
     warnOnUnsupportedTypeScriptVersion: false,
-    project: ['./tsconfig.json'],
+    project: ['./tsconfig.json', 'tests/tsconfig.json'],
     ecmaFeatures: {
       jsx: true,
     },
