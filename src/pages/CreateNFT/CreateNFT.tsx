@@ -27,7 +27,7 @@ import {
   StatusTransactionModal,
   TooltipButtonWrapper,
 } from '@app/components';
-import { TokenFormContext } from '@app/context';
+import { TokenFormContext, usePageSettingContext } from '@app/context';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
 import {
@@ -49,6 +49,7 @@ import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { ROUTE } from '@app/routes';
 import { TokenField } from '@app/types';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 interface Option {
   id: number;
@@ -96,6 +97,12 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     useExtrinsicFlow(TokenApiService.tokenCreateMutation);
   const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
+
+  useEffect(() => {
+    setPageBreadcrumbs({ options: [] });
+    setPageHeading('Create a NFT');
+  }, []);
 
   const collectionsOptions = useMemo(
     () =>
@@ -164,6 +171,11 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
   }, []);
 
   const confirmFormHandler = (closable?: boolean) => {
+    if (closable) {
+      logUserEvent(UserEvents.CONFIRM_CLOSE);
+    } else {
+      logUserEvent(UserEvents.CONFIRM_MORE);
+    }
     if (!selectedCollection) {
       error('Collection is not chosen');
 
@@ -195,7 +207,6 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
 
   return (
     <>
-      <Heading size="1">Create a NFT</Heading>
       <MainWrapper className={classNames('create-nft-page', className)}>
         <WrapperContent>
           <FormWrapper>

@@ -8,6 +8,7 @@ import { useGraphQlCollection } from '@app/api/graphQL/collections/collections';
 import { useAccounts, useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
@@ -41,6 +42,10 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);
   };
+
+  useEffect(() => {
+    logUserEvent(UserEvents.REVIEW_COLLECTION);
+  }, []);
 
   useEffect(() => {
     if (location.pathname === baseUrl) {

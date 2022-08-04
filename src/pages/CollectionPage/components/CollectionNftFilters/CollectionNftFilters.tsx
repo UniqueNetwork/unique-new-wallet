@@ -19,6 +19,7 @@ import { Direction } from '@app/api/graphQL/tokens';
 import { ROUTE } from '@app/routes';
 import { useApi } from '@app/hooks';
 import { MintingBtn } from '@app/components';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -98,7 +99,10 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         }}
         title="Create an NFT"
         role="primary"
-        onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
+        onClick={() => {
+          logUserEvent(UserEvents.CREATE_NFT);
+          navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`);
+        }}
       />
     </div>
   );

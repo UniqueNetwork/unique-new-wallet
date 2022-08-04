@@ -9,6 +9,7 @@ import { networks } from '@app/utils';
 import { ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { defaultChainKey } from '@app/utils/configParser';
+import { UserEvents } from '@app/utils/logUserEvent';
 
 import MenuLink from './MenuLink';
 
@@ -74,16 +75,26 @@ export const Header: VFC = () => {
 
         {!showMobileMenu && (
           <nav>
-            <MenuLink name="My tokens" path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`} />
+            <MenuLink
+              name="My tokens"
+              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+              logEvent={UserEvents.HEADER_MY_TOKENS}
+            />
             <MenuLink
               name="My collections"
               path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
+              logEvent={UserEvents.HEADER_MY_COLLECTION}
             />
             <MenuLink
               name="My accounts"
               path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
+              logEvent={UserEvents.HEADER_MY_ACCOUNTS}
             />
-            <MenuLink name="FAQ" path={`${activeNetwork?.id}/${ROUTE.FAQ}`} />
+            <MenuLink
+              name="FAQ"
+              path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
+              logEvent={UserEvents.HEADER_FAQ}
+            />
           </nav>
         )}
       </LeftSideColumn>
@@ -118,21 +129,25 @@ export const Header: VFC = () => {
           <MobileMenuLink
             name="My tokens"
             path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+            logEvent={UserEvents.HEADER_MY_TOKENS}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="My collections"
             path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
+            logEvent={UserEvents.HEADER_MY_COLLECTION}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="My accounts"
             path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
+            logEvent={UserEvents.HEADER_MY_ACCOUNTS}
             mobileMenuToggle={mobileMenuToggle}
           />
           <MobileMenuLink
             name="FAQ"
             path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
+            logEvent={UserEvents.HEADER_FAQ}
             mobileMenuToggle={mobileMenuToggle}
           />
         </MobileMenu>
@@ -148,7 +163,8 @@ const HeaderStyled = styled.div`
   width: 100%;
 
   nav {
-    & > a {
+    display: flex;
+    & > span {
       margin-right: calc(var(--prop-gap) / 1.5);
     }
   }
