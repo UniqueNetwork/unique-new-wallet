@@ -86,8 +86,8 @@ export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) 
         <Heading size="2">Share</Heading>
       </HeadingWrapper>
       <ButtonWrapper>
-        {socialItems.map(({ title, url, icon }) => (
-          <Button title={title} iconLeft={icon} onClick={openLink(url)} />
+        {socialItems.map(({ title, url, icon }, index) => (
+          <Button key={index} title={title} iconLeft={icon} onClick={openLink(url)} />
         ))}
       </ButtonWrapper>
       <ButtonWrapper>
