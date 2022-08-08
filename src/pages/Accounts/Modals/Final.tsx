@@ -1,12 +1,5 @@
 import { createRef, FC, useCallback, useMemo } from 'react';
-import {
-  Avatar,
-  Button,
-  Icon,
-  InputText,
-  Tooltip,
-  TooltipAlign,
-} from '@unique-nft/ui-kit';
+import { Button, Icon, InputText, Tooltip, TooltipAlign } from '@unique-nft/ui-kit';
 
 import {
   AddressText,
@@ -21,9 +14,9 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { IdentityIcon } from '@app/components';
 
 import { defaultPairType, derivePath } from './CreateAccount';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import { TCreateAccountBodyModalProps } from './types';
 
 const keypairTooltip = createRef<HTMLDivElement>();
@@ -62,7 +55,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
       <ModalContent>
         <ContentRow>
           <AddressWrapper>
-            <Avatar size={24} src={DefaultAvatar} />
+            <IdentityIcon address={accountProperties?.address || ''} />
             <AddressText>{accountProperties?.address || ''}</AddressText>
           </AddressWrapper>
         </ContentRow>

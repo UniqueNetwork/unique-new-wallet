@@ -1,11 +1,9 @@
 import React from 'react';
-import { Text, Icon } from '@unique-nft/ui-kit';
+import { Text, Icon, useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { shortcutText } from '@app/utils';
-import { Avatar } from '@app/components/Avatar/Avatar';
-
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
+import { IdentityIcon } from '@app/components';
 
 interface AccountCardProps {
   accountName: string;
@@ -17,39 +15,44 @@ interface AccountCardProps {
 
 const AccountCard = ({
   accountName,
-  accountAddress,
+  accountAddress = '',
   isShort = false,
   canCopy = true,
   hideAddress = false,
 }: AccountCardProps) => {
+  const address = isShort ? shortcutText(accountAddress) : accountAddress;
+  const { info } = useNotifications();
+
   const onCopyAddress = (account: string) => () => {
+    info(
+      <NotificationInfo>
+        Address <i>{account}</i>
+        <br />
+        successfully copied
+      </NotificationInfo>,
+    );
+
     navigator.clipboard.writeText(account);
   };
 
-  const address = isShort ? shortcutText(accountAddress || '') : accountAddress || '';
-
   return (
     <>
-      <Avatar size={24} src={DefaultAvatar} />
+      <IdentityIcon address={address} />
       <AccountInfoWrapper>
         <Text>
           {accountName}
-          {/* TODO: no functionality 
-           <EditIconWrapper>
+          {/* TODO: no functionality
+           <ActionButton>
             <Icon name="pencil" size={16} />
-          </EditIconWrapper> */}
+          </ActionButton> */}
         </Text>
         {!hideAddress && (
           <AddressRow>
-            <Text size="s" color="grey-500">
-              {address}
-            </Text>
+            {address}
             {canCopy && (
-              <a onClick={onCopyAddress(accountAddress || '')}>
-                <CopyIconWrapper>
-                  <Icon name="copy" size={16} />
-                </CopyIconWrapper>
-              </a>
+              <ActionButton onClick={onCopyAddress(accountAddress)}>
+                <Icon color="currentColor" name="copy" size={16} />
+              </ActionButton>
             )}
           </AddressRow>
         )}
@@ -58,27 +61,20 @@ const AccountCard = ({
   );
 };
 
+const NotificationInfo = styled.p`
+  word-break: break-all;
+`;
+
 const AccountInfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding-left: var(--prop-gap);
+  padding-left: calc(var(--prop-gap) / 2);
 
   span {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-`;
-
-const CopyIconWrapper = styled.div`
-  && {
-    width: 24px;
-    height: 24px;
-    color: var(--color-grey-400);
-    padding: 0;
-    margin-left: calc(var(--prop-gap) / 4);
-    cursor: copy;
   }
 `;
 
@@ -95,10 +91,28 @@ const CopyIconWrapper = styled.div`
 //   }
 // `;
 
-const AddressRow = styled.div`
-  && {
-    display: flex;
-    padding: 0;
+const AddressRow = styled.span`
+  display: flex;
+  align-items: center;
+  padding: 0;
+  color: var(--color-grey-500);
+`;
+
+const ActionButton = styled.button.attrs({ type: 'button' })`
+  appearance: none;
+  border: 0;
+  padding: 4px;
+  background: none transparent;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-within {
+    color: var(--color-primary-500);
+  }
+
+  .icon {
+    display: block;
   }
 `;
 

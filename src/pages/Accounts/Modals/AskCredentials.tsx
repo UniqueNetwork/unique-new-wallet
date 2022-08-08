@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Avatar, Button, InputText } from '@unique-nft/ui-kit';
+import { Button, InputText } from '@unique-nft/ui-kit';
 
-import { PasswordInput } from '@app/components';
+import { IdentityIcon, PasswordInput } from '@app/components';
 import {
   AdditionalText,
   AddressText,
@@ -17,7 +17,6 @@ import {
 } from '@app/pages/components/ModalComponents';
 
 import { TCreateAccountBodyModalProps } from './types';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
 export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
   accountProperties,
@@ -50,7 +49,7 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
       <ModalContent>
         <ContentRow>
           <AddressWrapper>
-            <Avatar size={24} src={DefaultAvatar} />
+            <IdentityIcon address={accountProperties?.address || ''} />
             <AddressText>{accountProperties?.address || ''}</AddressText>
           </AddressWrapper>
         </ContentRow>

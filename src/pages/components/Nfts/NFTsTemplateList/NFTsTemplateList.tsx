@@ -85,7 +85,11 @@ const NFTsListComponent = ({
                       `/${currentChain?.network}/token/${collection_id}/${token_id}`,
                     )
                   }
-                  onMetaClick={() => navigate(`${ROUTE.MY_COLLECTIONS}/${collection_id}`)}
+                  onMetaClick={() =>
+                    navigate(
+                      `/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection_id}`,
+                    )
+                  }
                 />
               ),
             )}

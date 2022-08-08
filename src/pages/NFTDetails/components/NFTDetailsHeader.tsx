@@ -1,16 +1,9 @@
 import { memo, useMemo, VFC } from 'react';
 import styled from 'styled-components';
-import {
-  Button,
-  Dropdown,
-  Heading,
-  Icon,
-  SelectOptionProps,
-  Text,
-} from '@unique-nft/ui-kit';
+import { Button, Dropdown, Heading, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
-import { BurnBtn, TransferBtn } from '@app/components';
+import { BurnBtn, IdentityIcon, TransferBtn } from '@app/components';
 import { useApi } from '@app/hooks';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
@@ -56,13 +49,22 @@ const MenuOptionContainer = styled.div<{ color?: string }>`
   }
 `;
 
-const TextOwner = styled(Text).attrs({
-  appearance: 'block',
-  color: 'grey-500',
-  size: 's',
-  weight: 'light',
-})`
+const TextOwner = styled.div`
+  display: flex;
+  align-items: center;
   margin-bottom: var(--prop-gap);
+  color: var(--color-grey-500);
+`;
+
+const Address = styled.span`
+  display: flex;
+  align-items: center;
+  margin-left: calc(var(--prop-gap) / 2);
+  color: var(--color-primary-500);
+
+  .address-account-image {
+    margin-right: calc(var(--prop-gap) / 2);
+  }
 `;
 
 const MenuOption = (
@@ -137,8 +139,14 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
             'You own it'
           ) : (
             <>
-              Owned by{' '}
-              <span style={{ color: 'var(--color-primary-500' }}>{ownerAddress}</span>
+              Owned by
+              <Address>
+                <IdentityIcon
+                  address={ownerAddress || ''}
+                  className="address-account-image"
+                />
+                {ownerAddress}
+              </Address>
             </>
           )}
         </TextOwner>

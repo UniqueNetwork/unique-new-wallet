@@ -39,18 +39,15 @@ export const AccountWrapper = styled.div`
     ${truncateText};
     line-height: 1.5;
   }
-
-  img {
-    margin-right: var(--prop-gap);
-  }
 `;
 
 export const AccountGroup = styled.div`
   max-width: calc(100% - 40px);
   width: 100%;
+  margin-left: calc(var(--prop-gap) / 2);
 `;
 
-export const AddressCopy = styled.button`
+export const AddressCopy = styled.button.attrs({ type: 'button' })`
   appearance: none;
   border: 0 none;
   border-radius: 0;
@@ -100,6 +97,10 @@ export const AccountSelectWrapper = styled(AccountContainer)`
     width: 0;
     height: 0;
     content: '';
+
+    .dropped & {
+      transform: rotate(180deg) translate3d(0, 5px, 0);
+    }
   }
 `;
 
@@ -114,6 +115,10 @@ export const AccountSelect = styled.div`
       width: 100%;
       padding: 0;
       line-height: normal;
+    }
+
+    .dropdown-options {
+      border: 1px solid transparent;
     }
   }
 `;
