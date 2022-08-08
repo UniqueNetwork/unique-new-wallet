@@ -3,9 +3,13 @@ import styled from 'styled-components/macro';
 import { Accordion } from '@unique-nft/ui-kit';
 
 import { usePageSettingContext } from '@app/context';
-import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import {
+  MainWrapper,
+  WrapperContent,
+  WrapperSidebar,
+} from '@app/pages/components/PageComponents';
 
-import { faqItems } from './components';
+import { faqItems, AskQuestion } from './components';
 
 const WrapperContentStyled = styled(WrapperContent)`
   padding-bottom: calc(var(--prop-gap) * 2);
@@ -75,10 +79,9 @@ export const Faq = (): React.ReactElement<void> => {
           );
         })}
       </WrapperContentStyled>
-      {/* https://cryptousetech.atlassian.net/browse/WMS-901 */}
-      {/* <WrapperSidebar>
-          <AskQuestion />
-        </WrapperSidebar> */}
+      <WrapperSidebar>
+        <AskQuestion />
+      </WrapperSidebar>
     </MainWrapper>
   );
 };
