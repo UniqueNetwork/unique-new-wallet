@@ -58,6 +58,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   interface NetworkInfo {
     getDisabled: boolean;
     onGet?: () => void;
+    sendDisabled?: any;
   }
 
   type NetworkName = 'OPAL' | 'KUSAMA' | 'QUARTZ' | 'UNIQUE' | 'POLKADOT' | string;
@@ -92,32 +93,28 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
       <CoinsContainer>
         <Heading size="4">Network</Heading>
         {Object.values(config.chains).map((chain, idx) => {
-          const isQuartzChain = chain.network.toLowerCase() === 'quartz';
-          if (coinConfig[chain.network]) {
-            const { getDisabled, onGet } = coinConfig[chain.network];
-            return (
-              <CoinsRow
-                getDisabled={getDisabled}
-                key={chain.network}
-                loading={chainsBalanceLoading}
-                sendDisabled={
-                  isQuartzChain || !Number(chainsBalance?.[idx].availableBalance.amount)
-                }
-                address={selectedAccount?.address}
-                balanceFull={chainsBalance?.[idx].freeBalance.amount}
-                balanceLocked={chainsBalance?.[idx].lockedBalance.amount}
-                balanceTransferable={chainsBalance?.[idx].availableBalance.amount}
-                iconName={`chain-${chain.network.toLowerCase()}`}
-                name={chain.name}
-                symbol={chainsBalance?.[idx].availableBalance.unit}
-                chain={chain}
-                onSend={sendFundsHandler}
-                onGet={onGet}
-              />
-            );
-          } else {
+          if (coinConfig[chain.network] === undefined) {
             return null;
           }
+          const { getDisabled, onGet } = coinConfig[chain.network];
+          return (
+            <CoinsRow
+              getDisabled={getDisabled}
+              key={chain.network}
+              loading={chainsBalanceLoading}
+              sendDisabled={!Number(chainsBalance?.[idx].availableBalance.amount)}
+              address={selectedAccount?.address}
+              balanceFull={chainsBalance?.[idx].freeBalance.amount}
+              balanceLocked={chainsBalance?.[idx].lockedBalance.amount}
+              balanceTransferable={chainsBalance?.[idx].availableBalance.amount}
+              iconName={`chain-${chain.network.toLowerCase()}`}
+              name={chain.name}
+              symbol={chainsBalance?.[idx].availableBalance.unit}
+              chain={chain}
+              onSend={sendFundsHandler}
+              onGet={onGet}
+            />
+          );
         })}
       </CoinsContainer>
     </>
