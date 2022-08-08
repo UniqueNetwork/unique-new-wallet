@@ -237,7 +237,6 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({
 
   return (
     <div className={className}>
-      {/* TODO: @future: add new table cellPadding=8 from next uikit ver. */}
       <Table
         data={value}
         columns={getAttributesColumns({ onAttributeChange, onRemoveAttributeClick })}
