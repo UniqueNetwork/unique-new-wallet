@@ -3,7 +3,6 @@ import React, { useContext, useMemo, VFC } from 'react';
 import get from 'lodash/get';
 
 import { useCollectionCover } from '@app/hooks';
-import { TokenFormContext } from '@app/context';
 import { TokenField } from '@app/types';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
@@ -16,55 +15,66 @@ export interface TokenFieldGroup {
 }
 
 export interface SidebarProps {
-  collectionId?: number;
+  collectionName?: string;
+  collectionDescription?: string;
+  collectionCoverUrl?: string | null;
+  tokenPrefix?: string;
+  tokenImageUrl?: string;
+  hidden?: boolean;
 }
 
-export const Sidebar: VFC<SidebarProps> = ({ collectionId }) => {
-  const { tokenImg, tokenForm } = useContext(TokenFormContext);
-  const { data: collection } = useCollectionQuery(collectionId ?? 0);
-  const collectionCover = useCollectionCover(collection);
-  const tokenFields = get(collection, 'properties.fields', []);
-  const { values } = tokenForm;
+export const Sidebar: VFC<SidebarProps> = ({
+  collectionName,
+  collectionDescription,
+  collectionCoverUrl,
+  tokenPrefix,
+  tokenImageUrl,
+  hidden,
+}) => {
+  // const tokenFields = get(collection, 'properties.fields', []);
+  // // const { values } = tokenForm;
 
-  const fieldGroups = useMemo<TokenFieldGroup[]>(() => {
-    const attributes = generateTokenFromValues(values);
-    const attrs: TokenFieldGroup[] = tokenFields
-      ?.filter((field: TokenField) => field.name !== 'ipfsJson')
-      .map((field: TokenField) => ({
-        group: field.name,
-        values:
-          field.type === 'text'
-            ? [attributes?.[field.name] ?? null]
-            : attributes?.[field.name] ?? null,
-      }));
+  // const fieldGroups = useMemo<TokenFieldGroup[]>(() => {
+  //   const attributes = generateTokenFromValues(values);
+  //   const attrs: TokenFieldGroup[] = tokenFields
+  //     ?.filter((field: TokenField) => field.name !== 'ipfsJson')
+  //     .map((field: TokenField) => ({
+  //       group: field.name,
+  //       values:
+  //         field.type === 'text'
+  //           ? [attributes?.[field.name] ?? null]
+  //           : attributes?.[field.name] ?? null,
+  //     }));
 
-    return attrs;
-  }, [tokenFields, values]);
+  //   return attrs;
+  // }, [tokenFields, values]);
 
-  if (!collection) {
+  if (hidden) {
     return null;
   }
 
   return (
-    <WrapperSidebar>
-      <SidebarRow>
-        <Heading size="3">Collection preview</Heading>
-        <Card
-          title={collection.name}
-          description={collection.description}
-          picture={collectionCover}
-        />
-      </SidebarRow>
-      <SidebarRow>
-        <Heading size="3">NFT preview</Heading>
-        <Card
-          attributes={fieldGroups}
-          title={collection.tokenPrefix}
-          description={collection.name}
-          geometry="square"
-          picture={tokenImg ? URL.createObjectURL(tokenImg) : undefined}
-        />
-      </SidebarRow>
-    </WrapperSidebar>
+    <>
+      <WrapperSidebar>
+        <SidebarRow>
+          <Heading size="3">Collection preview</Heading>
+          <Card
+            title={collectionName}
+            description={collectionDescription}
+            picture={collectionCoverUrl || ''}
+          />
+        </SidebarRow>
+        <SidebarRow>
+          <Heading size="3">NFT preview</Heading>
+          <Card
+            geometry="square"
+            title={tokenPrefix}
+            description={collectionName}
+            picture={tokenImageUrl || undefined}
+            attributes={[]}
+          />
+        </SidebarRow>
+      </WrapperSidebar>
+    </>
   );
 };

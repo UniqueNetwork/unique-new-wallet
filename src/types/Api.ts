@@ -324,8 +324,48 @@ export interface UniqueTokenDataToCreateDto {
 export interface CreateTokenNewDto {
   address: string;
   collectionId: number;
-  data: UniqueTokenDataToCreateDto;
+  data: UniqueTokenToCreateDto;
   owner: string;
+}
+
+export interface UniqueTokenToCreateDto {
+  image:
+    | { urlInfix?: string; hash?: string | null }
+    | { url?: string; hash?: string | null }
+    | { ipfsCid?: string; hash?: string | null };
+
+  /** @example {"0":0,"1":[0,1]} */
+  encodedAttributes?: Record<
+    string,
+    | number
+    | number[]
+    | { _?: string }
+    | { _?: string }[]
+    | { _?: number }
+    | { _?: number }[]
+  >;
+
+  /** @example {"_":"Hello!","en":"Hello!","fr":"Bonjour!"} */
+  name?: { _?: string };
+  audio?:
+    | { urlInfix?: string; hash?: string | null }
+    | { url?: string; hash?: string | null }
+    | { ipfsCid?: string; hash?: string | null };
+
+  /** @example {"_":"Hello!","en":"Hello!","fr":"Bonjour!"} */
+  description?: { _?: string };
+  imagePreview?:
+    | { urlInfix?: string; hash?: string | null }
+    | { url?: string; hash?: string | null }
+    | { ipfsCid?: string; hash?: string | null };
+  spatialObject?:
+    | { urlInfix?: string; hash?: string | null }
+    | { url?: string; hash?: string | null }
+    | { ipfsCid?: string; hash?: string | null };
+  video?:
+    | { urlInfix?: string; hash?: string | null }
+    | { url?: string; hash?: string | null }
+    | { ipfsCid?: string; hash?: string | null };
 }
 
 export interface CollectionSponsorship {
@@ -617,10 +657,10 @@ export interface SetPropertyPermissionsResponse {
 }
 
 export interface AttributeSchemaDto {
-  enumValues?: Record<number, string | number | Record<string, string>>;
-  name: string | Record<number, string>;
-  isArray: boolean;
+  /** @example {"_":"Hello!","en":"Hello!","fr":"Bonjour!"} */
+  name: { _?: string };
   optional: boolean;
+  isArray: boolean;
   type:
     | 'integer'
     | 'float'
@@ -630,8 +670,8 @@ export interface AttributeSchemaDto {
     | 'url'
     | 'isoDate'
     | 'time'
-    | 'colorRgba'
-    | 'localizedStringDictionary';
+    | 'colorRgba';
+  enumValues?: Record<string, { _?: string } | { _?: number }>;
 }
 
 export interface ImageDto {
@@ -715,6 +755,7 @@ export interface CollectionInfoWithSchemaResponse {
   limits?: CollectionLimitsDto;
   metaUpdatePermission?: 'ItemOwner' | 'Admin' | 'None';
   permissions?: CollectionPermissionsDto;
+  readOnly: boolean;
 
   /** @example 1 */
   id: number;
@@ -724,7 +765,8 @@ export interface CollectionInfoWithSchemaResponse {
    * @example yGCyN3eydMkze4EPtz59Tn7obwbUbYNZCz48dp8FRdemTaLwm
    */
   owner: string;
-  schema: UniqueCollectionSchemaDecodedDto;
+  schema?: UniqueCollectionSchemaDecodedDto;
+  properties: CollectionPropertyDto[];
 }
 
 export interface UniqueCollectionSchemaToCreateDto {

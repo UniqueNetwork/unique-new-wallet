@@ -22,6 +22,8 @@ export const SelectController = ({
 }: SelectControllerProps) => {
   const { control, setValue, register } = useFormContext();
 
+  console.log(selectProps.options);
+
   useEffect(() => {
     register(name, rules);
   }, [name, register, rules]);
@@ -32,14 +34,19 @@ export const SelectController = ({
       render={({ field: { ref, value, onChange, ...selectField } }) => (
         <Select
           {...selectField}
+          values={[value]}
           value={
-            transform?.input ? transform.input(value) : value[optionKey || 'id'] ?? ''
+            transform?.input
+              ? transform.input(value)
+              : (value && value[optionKey || 'id']) ?? ''
           }
           onChange={(val) => {
+            console.log('onchange');
+            console.log(val);
+
             const updateValue = transform?.output ? transform.output(val) : val;
 
-            onChange(updateValue);
-            // selectField.onChange(updateValue);
+            onChange(val);
           }}
           {...selectProps}
         />

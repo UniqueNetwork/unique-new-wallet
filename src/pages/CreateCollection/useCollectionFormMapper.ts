@@ -1,3 +1,4 @@
+import { config } from '@app/config';
 import { CreateCollectionNewRequest } from '@app/types/Api';
 
 import { CollectionForm } from './types';
@@ -35,7 +36,7 @@ export const useCollectionFormMapper = () => {
         attributesSchema: {},
         attributesSchemaVersion: '1.0.0',
         image: {
-          urlTemplate: 'string{infix}.ext',
+          urlTemplate: `${config.IPFSGateway}/{infix}`,
         },
         schemaName: 'unique',
         schemaVersion: '1.0.0',

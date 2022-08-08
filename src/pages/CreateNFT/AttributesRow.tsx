@@ -1,13 +1,18 @@
 import { VFC, useMemo, useContext, useState } from 'react';
 import { InputText, Select, SelectOptionProps } from '@unique-nft/ui-kit';
+import { Controller, useFormContext } from 'react-hook-form';
 
 import { TokenField } from '@app/types';
-import { TokenFormContext } from '@app/context';
 import { FormRow, LabelText } from '@app/pages/components/FormComponents';
 
+import { AttributeOption, AttributeType } from './types';
+
 interface AttributesRowProps {
-  tokenField: TokenField;
-  maxLength: number;
+  label?: string;
+  required?: boolean;
+  type: AttributeType;
+  values: Array<number | string | undefined>;
+  name: string;
 }
 
 export interface IOption extends SelectOptionProps {
@@ -15,86 +20,60 @@ export interface IOption extends SelectOptionProps {
   title: string;
 }
 
-const createOptionsByFiled = (tokenField: TokenField): IOption[] =>
-  tokenField.items?.map((val: string, index: number) => ({
-    title: JSON.parse(val).en as string,
-    id: index.toString(),
-  })) ?? [];
+export const AttributesRow: VFC<AttributesRowProps> = ({
+  type,
+  values,
+  label,
+  required,
+  name,
+}) => {
+  const { control } = useFormContext();
 
-export const AttributesRow: VFC<AttributesRowProps> = ({ tokenField, maxLength }) => {
-  const { tokenForm } = useContext(TokenFormContext);
-
-  const { setFieldValue, values, errors, touched } = tokenForm;
-
-  const onSetAttributeValue = (value: string) => {
-    setFieldValue(tokenField.name, value);
-  };
-
-  const onSetMultiSelectValue = (value: IOption[]) => {
-    setFieldValue(tokenField.name, value);
-  };
-
-  const onSetSelectValue = (value: IOption) => {
-    setFieldValue(tokenField.name, [value]);
-  };
-
-  const options = useMemo(() => {
-    try {
-      if (tokenField.type === 'select' && tokenField?.items?.length) {
-        return createOptionsByFiled(tokenField);
-      }
-    } catch (e) {
-      console.log('token field parse error', e);
-    }
-
-    return [];
-  }, [tokenField]);
+  const options = useMemo(
+    () => values.map((val, index) => ({ id: index, title: val })),
+    [],
+  );
 
   return (
     <FormRow>
-      {tokenField.type === 'text' && (
-        <>
-          <LabelText>
-            {tokenField.name}
-            {tokenField.required && '*'}
-          </LabelText>
-          <InputText
-            error={touched[tokenField.name] && Boolean(errors[tokenField.name])}
-            name={tokenField.name}
-            maxLength={maxLength}
-            value={values[tokenField.name]}
-            onChange={onSetAttributeValue}
-          />
-        </>
+      <LabelText>
+        {label}
+        {required && '*'}
+      </LabelText>
+      {type === 'text' && (
+        <Controller
+          name={name}
+          control={control}
+          rules={{ required }}
+          render={({ field: { onChange, value } }) => (
+            <InputText value={value} onChange={onChange} />
+          )}
+        />
       )}
-      {tokenField.type === 'select' && (
-        <>
-          <LabelText>
-            {tokenField.name}
-            {tokenField.required && '*'}
-          </LabelText>
-          {tokenField.multi ? (
+      {type === 'select' && (
+        <Controller
+          name={name}
+          control={control}
+          rules={{ required }}
+          render={({ field: { onChange, value } }) => (
+            <Select value={value?.id} options={options} onChange={onChange} />
+          )}
+        />
+      )}
+      {type === 'multiselect' && (
+        <Controller
+          name={name}
+          control={control}
+          rules={{ required }}
+          render={({ field: { onChange, value } }) => (
             <Select
               multi
-              error={touched[tokenField.name] && Boolean(errors[tokenField.name])}
-              name={tokenField.name}
+              values={value?.map((val: AttributeOption) => val.id)}
               options={options}
-              optionKey="id"
-              optionValue="title"
-              values={values[tokenField.name]?.map(({ id }: { id: string }) => id)}
-              onChange={(options: IOption[]) => onSetMultiSelectValue(options)}
-            />
-          ) : (
-            <Select
-              error={touched[tokenField.name] && Boolean(errors[tokenField.name])}
-              options={options}
-              optionKey="id"
-              optionValue="title"
-              value={values[tokenField.name]?.[0]?.id}
-              onChange={(option: IOption) => onSetSelectValue(option)}
+              onChange={onChange}
             />
           )}
-        </>
+        />
       )}
     </FormRow>
   );

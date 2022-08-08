@@ -62,10 +62,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     control,
   });
 
-  const [collectionDebounceValue] = useDebounce<CollectionForm>(
-    collectionFormValues as any,
-    500,
-  );
+  const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
   useEffect(() => {
     if (isFeeError) {

@@ -18,7 +18,7 @@ export class CollectionQuery extends EndpointQuery<
   constructor() {
     super();
 
-    this.baseUrl = '/collection';
+    this.baseUrl = '/collection-new';
   }
 
   getKey({ collectionId }: RequestArgs): QueryKey {
