@@ -1,15 +1,19 @@
 import { useContext, useMemo, VFC } from 'react';
-import styled from 'styled-components';
 import classNames from 'classnames';
 
 import {
-  useGraphQlOwnerTokens,
   useGraphQlCollectionsByTokensOwner,
+  useGraphQlOwnerTokens,
 } from '@app/api/graphQL/tokens';
 import AccountContext from '@app/account/AccountContext';
-import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
-import { CollectionsFilter, TypeFilter } from '@app/pages';
 import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
+import { CollectionsFilter, TypeFilter } from '@app/pages';
+import {
+  InnerContent,
+  InnerSidebar,
+  InnerWrapper,
+} from '@app/pages/components/PageComponents';
+import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
 
 import { useNFTsContext } from '../context';
 import { defaultLimit, defaultTypesFilters } from '../constants';
@@ -18,7 +22,7 @@ export interface NFTsComponentProps {
   className?: string;
 }
 
-const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
+export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
   const {
@@ -95,15 +99,15 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
   };
 
   return (
-    <div className={classNames('my-tokens--nft', className)}>
-      <div className="filters-column">
+    <InnerWrapper className={classNames('my-tokens-nft', className)}>
+      <InnerSidebar>
         <TypeFilter defaultTypes={defaultTypesFilters} />
         <CollectionsFilter
           isLoading={collectionsLoading}
           defaultCollections={defaultCollections}
         />
-      </div>
-      <div className="tokens-column">
+      </InnerSidebar>
+      <InnerContent>
         <NFTsTemplateList
           tokens={tokens}
           isLoading={tokensLoading}
@@ -113,34 +117,7 @@ const NFTsComponent: VFC<NFTsComponentProps> = ({ className }) => {
           onChipsReset={handleChipsReset}
           onPageChange={changeTokensPage}
         />
-      </div>
-    </div>
+      </InnerContent>
+    </InnerWrapper>
   );
 };
-
-export const NFTs = styled(NFTsComponent)`
-  display: flex;
-  flex: 1;
-
-  .filters-column {
-    width: 235px;
-    max-width: 235px;
-    padding-top: calc(var(--prop-gap) * 2);
-    padding-left: calc(var(--prop-gap) * 2);
-    padding-right: calc(var(--prop-gap) * 1.5);
-    border-right: 1px solid var(--color-grey-300);
-  }
-
-  .tokens-column {
-    flex: 1;
-
-    > div:nth-of-type(2) {
-      margin-top: 16px;
-      margin-bottom: 32px;
-    }
-
-    @media (max-width: 1024px) {
-      padding-left: 0;
-    }
-  }
-`;

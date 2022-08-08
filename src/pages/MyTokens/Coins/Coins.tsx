@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, VFC } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Heading } from '@unique-nft/ui-kit';
 
@@ -13,11 +13,7 @@ import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CoinsRow } from './components';
 
-interface CoinsComponentProps {
-  className?: string;
-}
-
-export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
+export const CoinsComponent: FC = () => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
@@ -56,7 +52,29 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   );
 
   return (
-    <>
+    <CoinsContainer>
+      <Heading size="4">Network</Heading>
+      {Object.values(config.chains).map((chain, idx) => {
+        const isKusamaChain = chain.network.toLowerCase() === 'kusama';
+        return (
+          <CoinsRow
+            getDisabled={!isKusamaChain}
+            key={chain.network}
+            loading={chainsBalanceLoading}
+            sendDisabled={!Number(chainsBalance?.[idx].availableBalance.amount)}
+            address={selectedAccount?.address}
+            balanceFull={chainsBalance?.[idx].freeBalance.amount}
+            balanceLocked={chainsBalance?.[idx].lockedBalance.amount}
+            balanceTransferable={chainsBalance?.[idx].availableBalance.amount}
+            iconName={`chain-${chain.network.toLowerCase()}`}
+            name={chain.name}
+            symbol={chainsBalance?.[idx].availableBalance.unit}
+            chain={chain}
+            onSend={sendFundsHandler}
+            onGet={isKusamaChain ? getCoinsHandler : undefined}
+          />
+        );
+      })}
       {fundsModalVisible && (
         <ApiWrapper>
           <SendFunds
@@ -69,36 +87,13 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
         </ApiWrapper>
       )}
       <RampModal isVisible={rampModalVisible} onClose={closeRampModalHandler} />
-      <CoinsContainer>
-        <Heading size="4">Network</Heading>
-        {Object.values(config.chains).map((chain, idx) => {
-          const isKusamaChain = chain.network.toLowerCase() === 'kusama';
-          return (
-            <CoinsRow
-              getDisabled={!isKusamaChain}
-              key={chain.network}
-              loading={chainsBalanceLoading}
-              sendDisabled={!Number(chainsBalance?.[idx].availableBalance.amount)}
-              address={selectedAccount?.address}
-              balanceFull={chainsBalance?.[idx].freeBalance.amount}
-              balanceLocked={chainsBalance?.[idx].lockedBalance.amount}
-              balanceTransferable={chainsBalance?.[idx].availableBalance.amount}
-              iconName={`chain-${chain.network.toLowerCase()}`}
-              name={chain.name}
-              symbol={chainsBalance?.[idx].availableBalance.unit}
-              chain={chain}
-              onSend={sendFundsHandler}
-              onGet={isKusamaChain ? getCoinsHandler : undefined}
-            />
-          );
-        })}
-      </CoinsContainer>
-    </>
+    </CoinsContainer>
   );
 };
 
 const CoinsContainer = styled.div`
-  padding: 32px;
+  flex: 1 1 100%;
+  padding: calc(var(--prop-gap) * 2);
 `;
 
 export const Coins = styled(CoinsComponent)`

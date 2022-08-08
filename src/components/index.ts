@@ -5,7 +5,7 @@ export * from './CollectionScanLink';
 export * from './CollectionSidebar';
 export * from './CollectionStepper';
 export * from './Header';
-export * from './NotFoundCoins';
+export * from './NoItems';
 export * from './PageLayout';
 export * from './PagePaper';
 export * from './PasswordInput';

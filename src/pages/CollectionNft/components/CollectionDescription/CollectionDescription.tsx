@@ -1,24 +1,16 @@
 import React, { useState, VFC } from 'react';
 import styled from 'styled-components';
-import classNames from 'classnames';
-import { format, addSeconds } from 'date-fns';
+import { addSeconds, format } from 'date-fns';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
 
 import { AccountLinkComponent, CollectionScanLink } from '@app/components';
-import { PaddedBlock } from '@app/styles/styledVariables';
 import noCollections from '@app/static/icons/no-collections.svg';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
 import { maxTokenLimit } from '@app/pages/constants/token';
 
-interface CollectionDescriptionComponentProps {
-  className?: string;
-  collectionId: string;
-}
-
-const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> = ({
-  className,
+const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
   collectionId,
 }) => {
   const { collection, isCollectionFetching } = useCollectionContext() || {};
@@ -40,70 +32,67 @@ const CollectionDescriptionComponent: VFC<CollectionDescriptionComponentProps> =
   });
 
   return (
-    <div className={classNames('collection-description', className)}>
-      <CollectionVerticalCard>
-        {isCollectionFetching ? (
-          <Loader />
-        ) : (
-          <>
-            <Row>
-              <Avatar
-                src={getTokenIpfsUriByImagePath(collection_cover) || noCollections}
-                type="circle"
-              />
-              <Badge>ID: {collectionId}</Badge>
-            </Row>
+    <CollectionVerticalCard>
+      {isCollectionFetching ? (
+        <Loader />
+      ) : (
+        <>
+          <Row>
+            <Avatar
+              src={getTokenIpfsUriByImagePath(collection_cover) || noCollections}
+              type="circle"
+            />
+            <Badge>ID: {collectionId}</Badge>
+          </Row>
+          <Row>
+            <span>
+              Items: <strong>{tokens_count}</strong>
+            </span>
+            <span>
+              Symbol: <strong>{token_prefix}</strong>
+            </span>
+          </Row>
+          {sponsor?.isConfirmed && (
             <Row>
               <span>
-                Items: <strong>{tokens_count}</strong>
+                Sponsor: <AccountLinkComponent value={sponsor.value} />
               </span>
-              <span>
-                Symbol: <strong>{token_prefix}</strong>
-              </span>
             </Row>
-            {sponsor?.isConfirmed && (
-              <Row>
-                <span>
-                  Sponsor: <AccountLinkComponent value={sponsor.value} />
-                </span>
-              </Row>
-            )}
-            {existValue(token_limit) && (
-              <Row>
-                <span>
-                  Token limit:{' '}
-                  <strong>
-                    {token_limit === maxTokenLimit ? 'Unlimited' : token_limit}
-                  </strong>
-                </span>
-              </Row>
-            )}
+          )}
+          {existValue(token_limit) && (
             <Row>
               <span>
-                Date of creation:{' '}
+                Token limit:{' '}
                 <strong>
-                  {date_of_creation
-                    ? `${format(
-                        addSeconds(new Date(0), date_of_creation),
-                        'MMMM, d, yyyy, HH:mm:ss',
-                      )} UTC ${offsetHours > 0 ? '+' : ''}${offsetHours}`
-                    : 'Calculation in progress...'}
+                  {token_limit === maxTokenLimit ? 'Unlimited' : token_limit}
                 </strong>
               </span>
             </Row>
-            {description && <Description>{description}</Description>}
-            <CollectionScanLink collectionId={collectionId} />
-          </>
-        )}
-      </CollectionVerticalCard>
-    </div>
+          )}
+          <Row>
+            <span>
+              Date of creation:{' '}
+              <strong>
+                {date_of_creation
+                  ? `${format(
+                      addSeconds(new Date(0), date_of_creation),
+                      'MMMM, d, yyyy, HH:mm:ss',
+                    )} UTC ${offsetHours > 0 ? '+' : ''}${offsetHours}`
+                  : 'Calculation in progress...'}
+              </strong>
+            </span>
+          </Row>
+          {description && <Description>{description}</Description>}
+          <CollectionScanLink collectionId={collectionId} />
+        </>
+      )}
+    </CollectionVerticalCard>
   );
 };
 
 const CollectionVerticalCard = styled.div`
   display: flex;
   flex-direction: column;
-  ${PaddedBlock};
   grid-row-gap: var(--prop-gap);
 
   strong {
@@ -139,8 +128,6 @@ export const Badge = styled.div`
 `;
 
 export const CollectionDescription = styled(CollectionDescriptionComponent)`
-  border-right: 1px solid var(--color-grey-300);
-
   .unique-collection-card {
     overflow: hidden;
     word-break: break-all;
