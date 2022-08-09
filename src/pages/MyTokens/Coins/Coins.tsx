@@ -58,7 +58,6 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
   interface NetworkInfo {
     getDisabled: boolean;
     onGet?: () => void;
-    sendDisabled?: any;
   }
 
   type NetworkName = 'OPAL' | 'KUSAMA' | 'QUARTZ' | 'UNIQUE' | 'POLKADOT' | string;
@@ -93,7 +92,7 @@ export const CoinsComponent: VFC<CoinsComponentProps> = ({ className }) => {
       <CoinsContainer>
         <Heading size="4">Network</Heading>
         {Object.values(config.chains).map((chain, idx) => {
-          if (coinConfig[chain.network] === undefined) {
+          if (!coinConfig[chain.network]) {
             return null;
           }
           const { getDisabled, onGet } = coinConfig[chain.network];
