@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import {
-  Avatar,
   Button,
   Checkbox,
   Heading,
@@ -13,7 +12,7 @@ import {
 import styled from 'styled-components/macro';
 
 import { addressFromSeed } from '@app/utils';
-import { Tooltip } from '@app/components';
+import { IdentityIcon, Tooltip } from '@app/components';
 import {
   AddressText,
   AddressWrapper,
@@ -28,7 +27,6 @@ import {
 } from '@app/pages/components/ModalComponents';
 
 import { defaultPairType, derivePath } from './CreateAccount';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import { TCreateAccountBodyModalProps } from './types';
 
 const seedGenerators = [{ id: 'Mnemonic', title: 'Mnemonic' }];
@@ -74,7 +72,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
       <ModalContent>
         <ContentRow>
           <AddressWrapper>
-            <Avatar size={24} src={DefaultAvatar} />
+            <IdentityIcon address={address} />
             <AddressText>{address}</AddressText>
           </AddressWrapper>
         </ContentRow>

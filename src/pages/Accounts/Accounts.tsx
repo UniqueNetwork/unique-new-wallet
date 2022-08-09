@@ -2,7 +2,6 @@ import React, { createRef, useCallback, useEffect, useMemo, useState } from 'rea
 import {
   Button,
   Dropdown,
-  Heading,
   Icon,
   InputText,
   TableColumnProps,
@@ -247,6 +246,7 @@ export const Accounts = () => {
       </AccountsPageHeader>
       <AccountsPageContent>
         <Table
+          columnPadding={32}
           columns={getAccountsColumns({
             onShowSendFundsModal: onSendFundsClick,
             onForgetWalletClick,
@@ -325,6 +325,7 @@ const SearchInputStyled = styled(InputText)`
 
 const AccountCellWrapper = styled.div`
   display: flex;
+  align-items: center;
   padding: 20px 0;
 `;
 

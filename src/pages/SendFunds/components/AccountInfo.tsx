@@ -1,13 +1,13 @@
 import React, { VFC } from 'react';
-import { Avatar, Icon, Text } from '@unique-nft/ui-kit';
+import { Icon, Text } from '@unique-nft/ui-kit';
 
-import DefaultAvatar from '@app/static/icons/default-avatar.svg';
 import {
   AccountAddress,
   AccountGroup,
   AccountWrapper,
   AddressCopy,
 } from '@app/pages/SendFunds/components/Style';
+import { IdentityIcon } from '@app/components';
 
 export const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boolean }> = ({
   name = '',
@@ -20,7 +20,7 @@ export const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boole
 
   return (
     <AccountWrapper>
-      <Avatar size={24} src={DefaultAvatar} />
+      <IdentityIcon address={address} />
       <AccountGroup>
         <Text>{name}</Text>
         <AccountAddress>
