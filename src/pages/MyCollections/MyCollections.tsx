@@ -1,12 +1,11 @@
 import { useEffect, VFC } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
 import classNames from 'classnames';
 
+import { useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
 import { PagePaperNoPadding } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
-import { useApi } from '@app/hooks';
 
 import { useMyCollectionsContext } from './context';
 import { MyCollectionsFilter, MyCollectionsList } from './components';
@@ -14,32 +13,6 @@ import { MyCollectionsFilter, MyCollectionsList } from './components';
 interface MyCollectionsComponentProps {
   className?: string;
 }
-
-const MyCollectiosWrapper = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .my-collections-filter,
-  .my-collections-list {
-    box-sizing: border-box;
-    width: 100%;
-  }
-
-  .my-collections-filter {
-    flex: 0 0 auto;
-  }
-
-  .my-collections-list {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-  }
-
-  .unique-loader {
-    margin: auto;
-  }
-`;
 
 export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
@@ -57,9 +30,9 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   }, []);
 
   return (
-    <PagePaperNoPadding>
+    <PagePaperNoPadding className={classNames('data-grid', 'my-collections', className)}>
       {isCollectionsListPath ? (
-        <MyCollectiosWrapper className={classNames('my-collections', className)}>
+        <>
           <MyCollectionsFilter />
           <MyCollectionsList
             order={order}
@@ -67,7 +40,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
             search={search}
             onPageChange={onChangePagination}
           />
-        </MyCollectiosWrapper>
+        </>
       ) : (
         <Outlet />
       )}

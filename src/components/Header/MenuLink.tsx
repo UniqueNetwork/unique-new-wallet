@@ -1,36 +1,69 @@
 import { VFC } from 'react';
-import { Text } from '@unique-nft/ui-kit';
-import { useResolvedPath, useMatch, useNavigate } from 'react-router-dom';
+import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+import classNames from 'classnames';
 import styled from 'styled-components';
 
 import { logUserEvent } from '@app/utils/logUserEvent';
 
 interface MenuLinkProps {
+  logEvent: string;
   name: string;
   path?: string;
-  logEvent: string;
+  mobileMenuToggle?: () => void;
 }
 
-const PointerWrapper = styled.span`
-  cursor: pointer;
+const LinkStyled = styled(Link)`
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+
+  &._isMobile {
+    border-radius: var(--prop-border-radius);
+    padding: 0.5rem 1rem;
+    color: var(--color-additional-dark);
+
+    &._isActive {
+      background-color: var(--color-primary-500);
+      color: var(--color-additional-light);
+    }
+  }
+
+  &:not(._isMobile) {
+    color: var(--color-primary-500);
+
+    &._isActive {
+      color: var(--color-additional-dark);
+    }
+
+    & + & {
+      margin-left: calc(var(--prop-gap) * 1.5);
+    }
+  }
 `;
 
-export const MenuLink: VFC<MenuLinkProps> = ({ name, path = '', logEvent }) => {
+export const MenuLink: VFC<MenuLinkProps> = ({
+  logEvent,
+  name,
+  path = '',
+  mobileMenuToggle,
+}) => {
   const resolved = useResolvedPath(path);
   const match = useMatch(`${resolved.pathname}/*`);
-  const navigate = useNavigate();
 
-  const clickToNavigate = (path: string, logEvent: string) => {
+  const menuClickHandle = (logEvent: string) => {
     logUserEvent(logEvent);
-    navigate(path);
+    mobileMenuToggle?.();
   };
 
   return (
-    <PointerWrapper key={name} onClick={() => clickToNavigate(path, logEvent)}>
-      <Text color={match ? 'additional-dark' : 'primary-500'} size="m">
-        {name}
-      </Text>
-    </PointerWrapper>
+    <LinkStyled
+      className={classNames({ _isMobile: mobileMenuToggle, _isActive: !!match })}
+      key={name}
+      to={path}
+      onClick={() => menuClickHandle(logEvent)}
+    >
+      {name}
+    </LinkStyled>
   );
 };
 

@@ -1,26 +1,35 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import styled from 'styled-components/macro';
-import { Icon, Text } from '@unique-nft/ui-kit';
+import { Icon, IconProps, Text } from '@unique-nft/ui-kit';
 
-const NoItems: FC = () => {
+interface NoItemsProps {
+  iconName?: IconProps['name'];
+  title?: string;
+}
+
+const Wrapper = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+`;
+
+const Title = styled(Text).attrs({ color: 'grey-500', weight: 'light' })`
+  margin-top: var(--prop-gap);
+`;
+
+const NoItemsComponent: FC<NoItemsProps> = ({
+  iconName = 'no-items',
+  title = 'No items found',
+}) => {
   return (
-    <NoItemsWrapper>
-      <Icon name="no-items" size={80} />
-      <Text size="l" color="grey-500">
-        No items found
-      </Text>
-    </NoItemsWrapper>
+    <Wrapper>
+      <Icon name={iconName} size={80} />
+      <Title>{title}</Title>
+    </Wrapper>
   );
 };
 
-const NoItemsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: calc(var(--prop-gap) * 1.5);
-  width: 100%;
-  height: 640px;
-  align-items: center;
-  justify-content: center;
-`;
-
-export default NoItems;
+export const NoItems = memo(NoItemsComponent);

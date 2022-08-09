@@ -9,14 +9,14 @@ import classNames from 'classnames';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 
-import AccountContext from '@app/account/AccountContext';
 import { TOrderBy } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { NotFoundCoins } from '@app/components';
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
-import noCoverImage from '@app/static/icons/empty-image.svg';
-import { LisFooter, PaddedBlock } from '@app/styles/styledVariables';
+import AccountContext from '@app/account/AccountContext';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { NoItems } from '@app/components';
+import { GridList } from '@app/pages/components/PageComponents';
+import noCoverImage from '@app/static/icons/empty-image.svg';
 
 interface MyCollectionsListProps {
   className?: string;
@@ -37,6 +37,7 @@ export const MyCollectionsList = ({
   const deviceSize = useDeviceSize();
   const { selectedAccount } = useContext(AccountContext);
 
+  // TODO: move method to utils
   const getItems = () => {
     switch (deviceSize) {
       case DeviceSize.sm:
@@ -66,10 +67,10 @@ export const MyCollectionsList = ({
   return (
     <ListWrapper className={classNames('my-collections-list', className)}>
       {isCollectionsLoading ? (
-        <Loader size="middle" />
+        <Loader isFullPage={true} size="middle" />
       ) : collectionsCount > 0 ? (
-        <>
-          <List>
+        <ListContent>
+          <GridList>
             {collections?.map((collection) => (
               <CollectionLink
                 count={collection.tokens_count || 0}
@@ -85,7 +86,7 @@ export const MyCollectionsList = ({
                 }}
               />
             ))}
-          </List>
+          </GridList>
           <Footer>
             <Text size="m">
               {`${collectionsCount} ${collectionsCount === 1 ? 'item' : 'items'}`}
@@ -97,45 +98,37 @@ export const MyCollectionsList = ({
               onPageChange={onPageChange}
             />
           </Footer>
-        </>
+        </ListContent>
       ) : (
-        <NotFoundCoins />
+        <NoItems iconName="box" title="Nothing found" />
       )}
     </ListWrapper>
   );
 };
 
 const Footer = styled.div`
-  ${LisFooter}
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: calc(var(--prop-gap) * 2);
 `;
 
 const ListWrapper = styled.div`
   &.my-collections-list {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
     padding: var(--prop-gap) 0 calc(var(--prop-gap) * 2);
 
     @media screen and (min-width: 1024px) {
-      ${PaddedBlock};
+      padding: calc(var(--prop-gap) * 2);
     }
   }
 `;
 
-const List = styled.div`
-  display: grid;
-  gap: var(--prop-gap);
-
-  @media screen and (min-width: 520px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  @media screen and (min-width: 1600px) {
-    grid-template-columns: repeat(5, 1fr);
-  }
+const ListContent = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
 `;

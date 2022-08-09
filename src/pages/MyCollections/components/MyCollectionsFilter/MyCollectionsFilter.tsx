@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
 import { iconDown, iconUp, Option } from '@app/utils';
-import { PaddedBlock } from '@app/styles/styledVariables';
 import { Direction } from '@app/api/graphQL/tokens';
 import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
 import { useApi } from '@app/hooks';
@@ -130,16 +129,16 @@ export const LeftColumn = styled.div`
 export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
   &.my-collections-filter {
     border-bottom: 1px solid var(--color-grey-300);
+    flex: 0 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     padding-bottom: var(--prop-gap);
-    justify-content: space-between;
 
     @media screen and (min-width: 1024px) {
       flex-wrap: nowrap;
-      ${PaddedBlock};
+      padding: calc(var(--prop-gap) * 2);
     }
 
     .unique-input-text,

@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState, VFC } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 
 import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
-import MobileMenuLink from '@app/components/Header/MobileMenuLink';
 import { networks } from '@app/utils';
-import { ROUTE } from '@app/routes';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { defaultChainKey } from '@app/utils/configParser';
 import { UserEvents } from '@app/utils/logUserEvent';
@@ -15,7 +14,6 @@ import MenuLink from './MenuLink';
 
 export const Header: VFC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
@@ -54,11 +52,7 @@ export const Header: VFC = () => {
     setActiveNetwork(val);
     setCurrentChain(config.chains[val.id]);
     localStorage.setItem(defaultChainKey, config.chains[val.id].network);
-
-    const partsUrl = location.pathname.split('/');
-    partsUrl[1] = val.id;
-    const newlink = partsUrl.join('/');
-    navigate(newlink);
+    navigate(`${activeNetwork?.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
   };
 
   return (
@@ -69,15 +63,15 @@ export const Header: VFC = () => {
             <Icon name="menu" size={32} />
           </MenuIcon>
         )}
-        <Link to={ROUTE.BASE}>
+        <Link to={ROUTE.BASE} onClick={() => showMobileMenu && toggleMobileMenu(false)}>
           <LogoIcon src="/logos/logo.svg" />
         </Link>
 
         {!showMobileMenu && (
-          <nav>
+          <HeaderNav>
             <MenuLink
               name="My tokens"
-              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`}
               logEvent={UserEvents.HEADER_MY_TOKENS}
             />
             <MenuLink
@@ -95,7 +89,7 @@ export const Header: VFC = () => {
               path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
               logEvent={UserEvents.HEADER_FAQ}
             />
-          </nav>
+          </HeaderNav>
         )}
       </LeftSideColumn>
       <RightSide>
@@ -126,25 +120,25 @@ export const Header: VFC = () => {
 
       {showMobileMenu && mobileMenuIsOpen && (
         <MobileMenu>
-          <MobileMenuLink
+          <MenuLink
             name="My tokens"
             path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
             logEvent={UserEvents.HEADER_MY_TOKENS}
             mobileMenuToggle={mobileMenuToggle}
           />
-          <MobileMenuLink
+          <MenuLink
             name="My collections"
             path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
             logEvent={UserEvents.HEADER_MY_COLLECTION}
             mobileMenuToggle={mobileMenuToggle}
           />
-          <MobileMenuLink
+          <MenuLink
             name="My accounts"
             path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
             logEvent={UserEvents.HEADER_MY_ACCOUNTS}
             mobileMenuToggle={mobileMenuToggle}
           />
-          <MobileMenuLink
+          <MenuLink
             name="FAQ"
             path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
             logEvent={UserEvents.HEADER_FAQ}
@@ -170,15 +164,25 @@ const HeaderStyled = styled.div`
   }
 `;
 
+const HeaderNav = styled.nav``;
+
 const LeftSideColumn = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const MenuIcon = styled.div`
+const MenuIcon = styled.button.attrs({ type: 'button' })`
+  appearance: none;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 32px;
   height: 32px;
-  margin-right: calc(var(--prop-gap) / 2);
+  margin: 0 calc(var(--prop-gap) / 2) 0 0;
+  padding: 0;
+  background: none transparent;
+  cursor: pointer;
 `;
 
 const LogoIcon = styled.img`
@@ -190,7 +194,7 @@ const RightSide = styled.div`
   align-items: center;
 `;
 
-const MobileMenu = styled.div`
+const MobileMenu = styled.nav`
   position: absolute;
   top: 81px;
   left: 0;
