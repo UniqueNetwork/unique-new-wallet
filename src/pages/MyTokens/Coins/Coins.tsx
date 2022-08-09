@@ -1,14 +1,14 @@
+import { Heading } from '@unique-nft/ui-kit';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Heading } from '@unique-nft/ui-kit';
 
-import { RampModal } from '@app/pages';
-import { Chain, NetworkType } from '@app/types';
-import { useAccounts } from '@app/hooks';
-import { SendFunds } from '@app/pages/SendFunds';
+import { ApiWrapper } from '@app/api';
 import { useAccountBalancesService } from '@app/api/restApi/balance/hooks/useAccountBalancesService';
 import { config } from '@app/config';
-import { ApiWrapper } from '@app/api';
+import { useAccounts } from '@app/hooks';
+import { RampModal } from '@app/pages';
+import { SendFunds } from '@app/pages/SendFunds';
+import { Chain, NetworkType } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CoinsRow } from './components';
@@ -51,14 +51,37 @@ export const CoinsComponent: FC = () => {
     [],
   );
 
+  interface NetworkInfo {
+    getDisabled: boolean;
+    onGet?: () => void;
+  }
+
+  type NetworkName = 'OPAL' | 'KUSAMA' | 'QUARTZ' | 'UNIQUE' | 'POLKADOT' | string;
+
+  const coinConfig: Record<NetworkName, NetworkInfo> = {
+    OPAL: {
+      getDisabled: false,
+      onGet: () => {
+        window.open(config.telegramBot, '_blank', 'noopener');
+      },
+    },
+    KUSAMA: { getDisabled: false, onGet: getCoinsHandler },
+    QUARTZ: { getDisabled: true },
+    UNIQUE: { getDisabled: true },
+    POLKADOT: { getDisabled: true },
+  };
+
   return (
     <CoinsContainer>
       <Heading size="4">Network</Heading>
       {Object.values(config.chains).map((chain, idx) => {
-        const isKusamaChain = chain.network.toLowerCase() === 'kusama';
+        if (!coinConfig[chain.network]) {
+          return null;
+        }
+        const { getDisabled, onGet } = coinConfig[chain.network];
         return (
           <CoinsRow
-            getDisabled={!isKusamaChain}
+            getDisabled={getDisabled}
             key={chain.network}
             loading={chainsBalanceLoading}
             sendDisabled={!Number(chainsBalance?.[idx].availableBalance.amount)}
@@ -71,7 +94,7 @@ export const CoinsComponent: FC = () => {
             symbol={chainsBalance?.[idx].availableBalance.unit}
             chain={chain}
             onSend={sendFundsHandler}
-            onGet={isKusamaChain ? getCoinsHandler : undefined}
+            onGet={onGet}
           />
         );
       })}
