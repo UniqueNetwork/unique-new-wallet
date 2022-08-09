@@ -44,6 +44,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@hookform/devtools": "^4.2.2",
     "@polkadot/dev": "^0.65.35",
     "@polkadot/extension-inject": "^0.42.7",
     "@polkadot/types": "^7.8.1",

@@ -5,6 +5,7 @@ import { Button, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import { DevTool } from '@hookform/devtools';
 
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection, TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
@@ -25,7 +26,7 @@ import { ROUTE } from '@app/routes';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
-import { Option, TokenForm } from './types';
+import { AttributeView, Option, TokenForm } from './types';
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
 
@@ -58,7 +59,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     useExtrinsicFlow(TokenApiService.tokenCreateMutation);
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
-
   const tokenForm = useForm<TokenForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -70,20 +70,49 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const {
     control,
+    reset,
     formState: { isValid },
   } = tokenForm;
 
-  // const { replace } = useFieldArray({ name: 'attributes', control: control as any });
-
   const formValues = useWatch({ control });
   const [debouncedFormValues] = useDebounce(formValues, 500);
-
-  // TODO - use searchOnType here
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
   });
   const { data: collection } = useCollectionQuery(formValues.collectionId ?? 0);
+
+  const tokenAttributes: AttributeView[] | undefined = useMemo(() => {
+    const attrsSchema = collection?.schema?.attributesSchema;
+    const formAttrs = formValues.attributes;
+
+    if (!attrsSchema || !formAttrs?.length) {
+      return [];
+    }
+
+    const attrs: AttributeView[] = [];
+
+    for (let i = 0; i < formAttrs.length; i++) {
+      let values: string[] = [];
+      const attr = formAttrs[i];
+
+      if (!attr) {
+        continue;
+      }
+
+      if (Array.isArray(attr)) {
+        values = attr.map((val) => val.title || '');
+      } else if (typeof attr === 'string') {
+        values = [attr];
+      } else if (typeof attr === 'object') {
+        values = [attr.title || ''];
+      }
+
+      attrs.push({ values, group: attrsSchema[i].name._ });
+    }
+
+    return attrs;
+  }, [collection, formValues]);
 
   const collectionsOptions = useMemo(
     () =>
@@ -102,18 +131,18 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, []);
 
   useEffect(() => {
-    if (debouncedFormValues?.collectionId && isValid) {
-      console.log(debouncedFormValues);
+    const { address, collectionId } = debouncedFormValues;
 
-      getFee({ token: mapper(debouncedFormValues as TokenForm) });
+    if (collectionId && address && isValid) {
+      getFee({ token: mapper(debouncedFormValues as Required<TokenForm>) });
     }
-  }, [debouncedFormValues, isValid]);
+  }, [debouncedFormValues]);
 
   useEffect(() => {
     if (flowStatus === 'success') {
       info('NFT created successfully');
 
-      closable && navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+      closable ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`) : reset();
     }
 
     if (flowStatus === 'error') {
@@ -128,17 +157,17 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [isFeeError]);
 
   const confirmFormHandler = (closable?: boolean) => {
-    if (closable) {
-      logUserEvent(UserEvents.CONFIRM_CLOSE);
-    } else {
-      logUserEvent(UserEvents.CONFIRM_MORE);
+    const { address, collectionId } = debouncedFormValues;
+
+    if (address && collectionId && isValid) {
+      logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
+
+      setClosable(!!closable);
+
+      signAndSubmitExtrinsic({
+        token: mapper(debouncedFormValues as Required<TokenForm>),
+      });
     }
-
-    setClosable(!!closable);
-
-    signAndSubmitExtrinsic({
-      token: mapper(debouncedFormValues as TokenForm),
-    });
   };
 
   return (
@@ -153,22 +182,22 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 collectionsOptionsLoading={isCollectionsLoading}
               />
             </FormProvider>
-            {feeFormatted && (
-              <Alert className="alert" type="warning">
-                A fee of ~ {feeFormatted} can be applied to the transaction
-              </Alert>
-            )}
+            <Alert className="alert" type="warning">
+              {isValid
+                ? `A fee of ~ ${feeFormatted} can be applied to the transaction`
+                : 'A fee will be calculated after corrected filling required fields'}
+            </Alert>
             <ButtonGroup className="buttons">
               <MintingBtn
                 role="primary"
                 title="Confirm and create more"
-                // tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
+                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
                 disabled={!isValid}
                 onClick={() => confirmFormHandler()}
               />
               <MintingBtn
                 title="Confirm and close"
-                // tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
+                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
                 disabled={!isValid}
                 onClick={() => confirmFormHandler(true)}
               />
@@ -182,9 +211,11 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           collectionCoverUrl={collection?.schema?.coverPicture.fullUrl}
           tokenPrefix={collection?.tokenPrefix}
           tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid || null)}
+          attributes={tokenAttributes}
         />
       </MainWrapper>
       <StatusTransactionModal isVisible={isFlowLoading} description="Creating NFT" />
+      <DevTool control={control} />
     </>
   );
 };

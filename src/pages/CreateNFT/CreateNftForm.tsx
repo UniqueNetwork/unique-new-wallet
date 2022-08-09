@@ -1,4 +1,4 @@
-import { VFC } from 'react';
+import { FC, useEffect, useMemo, memo, VFC, useCallback } from 'react';
 import classNames from 'classnames';
 import {
   Avatar,
@@ -8,7 +8,7 @@ import {
   Upload,
   useNotifications,
 } from '@unique-nft/ui-kit';
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 
 import {
   AdditionalText,
@@ -24,9 +24,8 @@ import {
 import { useFileUpload } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
-import { UploadController } from '@app/components/FormControllerComponents';
 
-import { AttributeType, Option, TokenForm } from './types';
+import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
 
 interface CreateNftFormProps {
@@ -34,6 +33,29 @@ interface CreateNftFormProps {
   collectionsOptionsLoading: boolean;
   selectedCollection?: CollectionInfoWithSchemaResponse;
 }
+
+interface AttributesProps {
+  name: string;
+  label?: string;
+  required?: boolean;
+  type: AttributeType;
+}
+
+const CollectionSuggestion: FC<{
+  suggestion: Option;
+  isActive?: boolean;
+}> = ({ suggestion, isActive }) => {
+  return (
+    <SuggestOption
+      className={classNames('suggestion-item', {
+        isActive,
+      })}
+    >
+      <Avatar size={24} type="circle" src={suggestion.img || undefined} />
+      {suggestion.title} [id {suggestion.id}]
+    </SuggestOption>
+  );
+};
 
 export const CreateNftForm: VFC<CreateNftFormProps> = ({
   collectionsOptions,
@@ -43,29 +65,34 @@ export const CreateNftForm: VFC<CreateNftFormProps> = ({
   const { error } = useNotifications();
   const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
 
-  const { control, setValue, reset } = useFormContext();
-  const tokenFormValues = useWatch<TokenForm>({ control: control as any });
+  const { resetField } = useFormContext();
 
-  const uploadCover = async (
-    data: { url: string; file: Blob } | null,
-    callbackFn: (cid: string) => void,
-  ) => {
-    if (!data?.file) {
-      callbackFn('');
-      return;
-    }
-    const _10MB = 10000000;
-    if (data.file.size > _10MB) {
-      error('File size more 10MB');
-      return;
-    }
+  const attributes = useMemo(
+    () => Object.values(selectedCollection?.schema?.attributesSchema ?? []),
+    [selectedCollection],
+  );
 
-    const response = await uploadFile(data.file);
+  const uploadCover = useCallback(
+    async (
+      data: { url: string; file: Blob } | null,
+      callbackFn: (cid: string) => void,
+    ) => {
+      if (!data?.file) {
+        callbackFn('');
+        return;
+      }
+      const _10MB = 10000000;
+      if (data.file.size > _10MB) {
+        error('File size more 10MB');
+        return;
+      }
 
-    response && callbackFn(response.cid);
-  };
+      const response = await uploadFile(data.file);
 
-  console.log(selectedCollection?.schema?.attributesSchema);
+      response && callbackFn(response.cid);
+    },
+    [],
+  );
 
   return (
     <>
@@ -78,42 +105,24 @@ export const CreateNftForm: VFC<CreateNftFormProps> = ({
             <LabelText>Collection*</LabelText>
             <Controller
               name="collectionId"
-              control={control}
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <Suggest
                   components={{
-                    SuggestItem: ({
-                      suggestion,
-                      isActive,
-                    }: {
-                      suggestion: Option;
-                      isActive?: boolean;
-                    }) => {
-                      return (
-                        <SuggestOption
-                          className={classNames('suggestion-item', {
-                            isActive,
-                          })}
-                        >
-                          <Avatar
-                            size={24}
-                            type="circle"
-                            src={suggestion.img || undefined}
-                          />
-                          {suggestion?.title} [id {suggestion?.id}]
-                        </SuggestOption>
-                      );
-                    },
+                    SuggestItem: CollectionSuggestion,
                   }}
-                  value={value}
                   suggestions={collectionsOptions}
                   isLoading={collectionsOptionsLoading}
-                  getActiveSuggestOption={(option: Option, activeOption: Option) =>
-                    option.id === activeOption.id
-                  }
+                  value={collectionsOptions.find((co) => co.id === value)}
+                  getActiveSuggestOption={(option: Option) => {
+                    console.log(value);
+                    return option.id === (value as number);
+                  }}
                   getSuggestionValue={({ title }: Option) => title}
                   onChange={(val) => {
+                    resetField('attributes');
+                    resetField('imageIpfsCid');
+
                     onChange(val?.id);
                   }}
                 />
@@ -127,12 +136,10 @@ export const CreateNftForm: VFC<CreateNftFormProps> = ({
               <Controller
                 name="imageIpfsCid"
                 rules={{ required: true }}
-                render={({ field: { onChange } }) => (
+                render={({ field: { onChange, value } }) => (
                   <Upload
                     type="square"
-                    upload={getTokenIpfsUriByImagePath(
-                      tokenFormValues?.imageIpfsCid || null,
-                    )}
+                    upload={getTokenIpfsUriByImagePath(value || null)}
                     onChange={(data) => uploadCover(data, onChange)}
                   />
                 )}
@@ -140,30 +147,26 @@ export const CreateNftForm: VFC<CreateNftFormProps> = ({
             </UploadWidget>
           </FormRow>
           <Heading size="3">Attributes</Heading>
-          {Object.values(selectedCollection?.schema?.attributesSchema ?? []).map(
-            (attr, index) => {
-              const values = Object.values(attr.enumValues ?? []).map((val) => val._);
+          {attributes.map((attr, index) => {
+            const values = Object.values(attr.enumValues ?? []).map((val) => val._);
 
-              console.log(values);
+            let type: AttributeType = 'text';
 
-              let type: AttributeType = 'text';
+            if (attr.enumValues) {
+              type = attr.isArray ? 'multiselect' : 'select';
+            }
 
-              if (attr.enumValues) {
-                type = attr.isArray ? 'multiselect' : 'select';
-              }
-
-              return (
-                <AttributesRow
-                  key={`${index}${attr.name}`}
-                  name={`attributes.${index}`}
-                  label={attr.name._}
-                  required={!attr.optional}
-                  type={type}
-                  values={values}
-                />
-              );
-            },
-          )}
+            return (
+              <AttributesRow
+                key={`${selectedCollection?.id}${index}${attr.name}`}
+                name={`attributes.${index}`}
+                label={attr.name._}
+                required={!attr.optional}
+                type={type}
+                values={values}
+              />
+            );
+          })}
           {!selectedCollection && (
             <FormRowEmpty>
               <Text color="grey-500" size="s">

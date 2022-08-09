@@ -9,13 +9,17 @@ export type Attribute = string | AttributeOption | AttributeOption[];
 export type AttributeType = 'text' | 'select' | 'multiselect';
 export type AttributeOption = {
   id: number;
-  title: number | number[];
+  title: string;
+};
+export type AttributeView = {
+  group?: string;
+  values?: Array<string>;
 };
 
 export type TokenForm = {
-  address: string;
-  owner: string;
+  address?: string;
+  owner?: string;
   collectionId?: number;
-  imageIpfsCid: string;
+  imageIpfsCid?: string;
   attributes?: Array<Attribute>;
 };

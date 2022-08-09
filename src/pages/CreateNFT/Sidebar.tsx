@@ -1,18 +1,10 @@
+import React, { VFC, memo } from 'react';
 import { Heading } from '@unique-nft/ui-kit';
-import React, { useContext, useMemo, VFC } from 'react';
-import get from 'lodash/get';
 
-import { useCollectionCover } from '@app/hooks';
-import { TokenField } from '@app/types';
-import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { Card } from '@app/pages/components/Card';
-import { generateTokenFromValues } from '@app/utils';
 
-export interface TokenFieldGroup {
-  group: string;
-  values: string[];
-}
+import { AttributeView } from './types';
 
 export interface SidebarProps {
   collectionName?: string;
@@ -20,35 +12,19 @@ export interface SidebarProps {
   collectionCoverUrl?: string | null;
   tokenPrefix?: string;
   tokenImageUrl?: string;
+  attributes?: AttributeView[];
   hidden?: boolean;
 }
 
-export const Sidebar: VFC<SidebarProps> = ({
+const SidebarComponent: VFC<SidebarProps> = ({
   collectionName,
   collectionDescription,
   collectionCoverUrl,
   tokenPrefix,
   tokenImageUrl,
+  attributes,
   hidden,
 }) => {
-  // const tokenFields = get(collection, 'properties.fields', []);
-  // // const { values } = tokenForm;
-
-  // const fieldGroups = useMemo<TokenFieldGroup[]>(() => {
-  //   const attributes = generateTokenFromValues(values);
-  //   const attrs: TokenFieldGroup[] = tokenFields
-  //     ?.filter((field: TokenField) => field.name !== 'ipfsJson')
-  //     .map((field: TokenField) => ({
-  //       group: field.name,
-  //       values:
-  //         field.type === 'text'
-  //           ? [attributes?.[field.name] ?? null]
-  //           : attributes?.[field.name] ?? null,
-  //     }));
-
-  //   return attrs;
-  // }, [tokenFields, values]);
-
   if (hidden) {
     return null;
   }
@@ -71,10 +47,12 @@ export const Sidebar: VFC<SidebarProps> = ({
             title={tokenPrefix}
             description={collectionName}
             picture={tokenImageUrl || undefined}
-            attributes={[]}
+            attributes={attributes}
           />
         </SidebarRow>
       </WrapperSidebar>
     </>
   );
 };
+
+export const Sidebar = memo(SidebarComponent);

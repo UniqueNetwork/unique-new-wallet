@@ -1,4 +1,4 @@
-import { CollectionInfoWithSchemaResponse, CreateTokenNewDto } from '@app/types/Api';
+import { CreateTokenNewDto } from '@app/types/Api';
 
 import { TokenForm, Attribute, AttributeOption } from './types';
 
@@ -28,11 +28,11 @@ const attributeMapper = (attribute?: Attribute) => {
 };
 
 export const useTokenFormMapper = () => {
-  const mapper = (formData: TokenForm): CreateTokenNewDto => {
+  const mapper = (formData: Required<TokenForm>): CreateTokenNewDto => {
     const request: CreateTokenNewDto = {
       owner: formData.address,
       address: formData.address,
-      collectionId: formData.collectionId!,
+      collectionId: formData.collectionId,
       data: {
         image: {
           ipfsCid: formData.imageIpfsCid,
