@@ -41,6 +41,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
         from: selectedAccount.address,
         collectionId: token.collection_id,
         tokenId: token.token_id,
+        address: selectedAccount.address,
       },
     });
   };
@@ -56,6 +57,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
         from: selectedAccount.address,
         collectionId: token.collection_id,
         tokenId: token.token_id,
+        address: selectedAccount.address,
       },
     });
   }, [recipient]);

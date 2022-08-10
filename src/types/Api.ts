@@ -162,6 +162,8 @@ export interface TransferTokenBody {
    * @example yGCyN3eydMkze4EPtz59Tn7obwbUbYNZCz48dp8FRdemTaLwm
    */
   to: string;
+
+  address: string;
 }
 
 export interface TokenId {
