@@ -5,7 +5,7 @@ import { Text, Button, useNotifications } from '@unique-nft/ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
-import { useAccounts, useBalanceInsufficient } from '@app/hooks';
+import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
@@ -36,6 +36,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   const navigate = useNavigate();
+  const { currentChain } = useApi();
   const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
   const formMapper = useCollectionFormMapper();
@@ -77,7 +78,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     if (flowStatus === 'success') {
       info('Collection created successfully');
 
-      navigate(ROUTE.MY_COLLECTIONS);
+      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
     }
     if (flowStatus === 'error') {
       error(flowError?.message);
