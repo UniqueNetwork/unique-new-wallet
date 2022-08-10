@@ -1,6 +1,13 @@
-import React, { FC, useState } from 'react';
-import { Heading, Loader, Text, useNotifications } from '@unique-nft/ui-kit';
-import { useFormContext, useWatch } from 'react-hook-form';
+import React, { FC } from 'react';
+import {
+  Heading,
+  InputText,
+  Text,
+  Textarea,
+  Upload,
+  useNotifications,
+} from '@unique-nft/ui-kit';
+import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
 
 import { useFileUpload } from '@app/api';
@@ -10,30 +17,21 @@ import {
   FormBody,
   FormHeader,
   FormRow,
-  FormWrapper,
   LabelText,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
-import { CreateCollectionNewRequest } from '@app/types/Api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import {
-  InputController,
-  TextareaController,
-  UploadController,
-} from '@app/components/FormControllerComponents';
-
-import { CollectionForm } from '../types';
 
 export const MainInformation: FC = () => {
-  const { setValue, control } = useFormContext<CollectionForm>();
-  const collectionFormValues = useWatch({ control });
-
   const { error } = useNotifications();
   const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
 
-  const uploadCover = async (data: { url: string; file: Blob } | null) => {
+  const uploadCover = async (
+    data: { url: string; file: Blob } | null,
+    callbackFn: (cid: string) => void,
+  ) => {
     if (!data?.file) {
-      setValue('coverPictureIpfsCid', '');
+      callbackFn('');
       return;
     }
     const _10MB = 10000000;
@@ -44,7 +42,7 @@ export const MainInformation: FC = () => {
 
     const response = await uploadFile(data.file);
 
-    response && setValue('coverPictureIpfsCid', response.cid);
+    response && callbackFn(response.cid);
   };
 
   return (
@@ -59,34 +57,52 @@ export const MainInformation: FC = () => {
       <FormBody>
         <Form>
           <FormRow>
-            <InputController
+            <Controller
               name="name"
-              label="Name*"
-              additionalText="Max 64 symbols"
-              maxLength={64}
               rules={{
                 required: true,
               }}
+              render={({ field: { onChange, value } }) => (
+                <InputText
+                  label="Name*"
+                  maxLength={64}
+                  value={value}
+                  additionalText="Max 64 symbols"
+                  onChange={onChange}
+                />
+              )}
             />
           </FormRow>
           <FormRow>
-            <TextareaController
+            <Controller
               name="description"
-              label="Description"
-              additionalText="Max 256 symbols"
-              maxLength={256}
-              rows={4}
+              render={({ field: { onChange, value } }) => (
+                <Textarea
+                  label="Description"
+                  rows={4}
+                  maxLength={256}
+                  additionalText="Max 256 symbols"
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
             />
           </FormRow>
           <FormRow>
-            <InputController
+            <Controller
               name="symbol"
-              label="Symbol*"
-              additionalText="Token name as displayed in Wallet (max 4 symbols)"
               rules={{
                 required: true,
               }}
-              maxLength={4}
+              render={({ field: { onChange, value } }) => (
+                <InputText
+                  label="Symbol*"
+                  additionalText="Token name as displayed in Wallet (max 4 symbols)"
+                  maxLength={4}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
             />
           </FormRow>
           <FormRow className="has_uploader">
@@ -94,12 +110,15 @@ export const MainInformation: FC = () => {
               <UploadWidget>
                 <LabelText>Upload image</LabelText>
                 <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
-                <UploadController
+                <Controller
                   name="coverPictureIpfsCid"
-                  upload={getTokenIpfsUriByImagePath(
-                    collectionFormValues?.coverPictureIpfsCid || null,
+                  render={({ field: { onChange, value } }) => (
+                    <Upload
+                      type="square"
+                      upload={getTokenIpfsUriByImagePath(value || null)}
+                      onChange={(data) => uploadCover(data, onChange)}
+                    />
                   )}
-                  onChange={uploadCover}
                 />
               </UploadWidget>
               {/* {isLoadingFileUpload && <Loader label="Download image..." />} */}

@@ -10,7 +10,6 @@ import {
   Tooltip,
   TooltipAlign,
 } from '@unique-nft/ui-kit';
-import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
 import { PagePaper, StatusTransactionModal } from '@app/components';
@@ -58,17 +57,7 @@ const CollectionSettings = () => {
   } = collection || {};
   const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
 
-  const form = useFormik({
-    initialValues: {
-      address: getSponsorShip(sponsorship)?.value || '',
-      limit: token_limit || 0,
-      ownerCanDestroy,
-    },
-    enableReinitialize: true,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+  const form: any = {};
 
   const handleBurnCollection = () => {
     if (!collection_id || !selectedAccount) {

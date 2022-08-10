@@ -26,11 +26,7 @@ export const EnumsInput = <T,>({
 
   const value = getValues(inputValue) ?? [];
 
-  console.log(value);
-
   const addItem = () => {
-    console.log(currentEnum);
-
     if (!currentEnum) {
       return;
     }
@@ -39,8 +35,6 @@ export const EnumsInput = <T,>({
       currentEnum.length &&
       !value.find((item: string) => item.toLowerCase() === currentEnum.toLowerCase())
     ) {
-      console.log('test');
-
       onChange?.([...value, currentEnum]);
       onAdd?.(currentEnum);
       setCurrentEnum('');

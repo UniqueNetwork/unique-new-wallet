@@ -1,22 +1,23 @@
-import React, { createRef, useEffect, VFC } from 'react';
-import { Button, Icon, InputText, TableColumnProps, Tooltip } from '@unique-nft/ui-kit';
+import React, { createRef, useCallback, VFC } from 'react';
+import {
+  Button,
+  Icon,
+  InputText,
+  Select,
+  TableColumnProps,
+  Tooltip,
+} from '@unique-nft/ui-kit';
 import styled from 'styled-components';
-import { Controller, FieldArrayWithId, useWatch } from 'react-hook-form';
+import { Controller, useFieldArray, useWatch } from 'react-hook-form';
 
 import { Table } from '@app/components';
-import { InputController } from '@app/components/FormControllerComponents';
-import { SelectController } from '@app/components/FormControllerComponents/SelectController';
 
-import { EnumsInputController } from './EnumsInput/EnumsInputController';
+import { EnumsInputController } from '../components/EnumsInput/EnumsInputController';
 import trash from '../../../static/icons/trash.svg';
-import { AttributeField } from '../types';
 import { rules, types } from '../constants';
 
 interface AttributesTableProps {
   className?: string;
-  value: FieldArrayWithId<AttributeField>[];
-  onAddAttribute: () => void;
-  onRemoveAttribute: (id: string) => void;
 }
 
 const ColumnTitle: VFC<{ title: string; tooltip: string }> = ({ title, tooltip }) => {
@@ -39,10 +40,6 @@ const ColumnTitle: VFC<{ title: string; tooltip: string }> = ({ title, tooltip }
 const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
   const type = useWatch({ name: `attributes.${index}.type` } as any);
 
-  useEffect(() => {
-    console.log('test test test test teasdasdasdqw');
-  }, []);
-
   return (
     <EnumsInputController
       rules={{
@@ -57,10 +54,20 @@ const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
   );
 };
 
-const getAttributesColumns = ({
-  value,
-  onRemoveAttribute,
-}: AttributesTableProps): TableColumnProps[] => [
+const DeleteRowCell: VFC<{ index: number }> = ({ index }) => {
+  const { remove } = useFieldArray({ name: 'attributes' });
+
+  return (
+    <Button
+      title=""
+      role="ghost"
+      iconLeft={{ file: trash, size: 24 }}
+      onClick={() => remove(index)}
+    />
+  );
+};
+
+const attributesColumns: TableColumnProps[] = [
   {
     width: '21%',
     field: 'name',
@@ -97,32 +104,40 @@ const getAttributesColumns = ({
     title: (
       <ColumnTitle title="Type" tooltip="Select type of information you want to create" />
     ),
-    render(data, attribute, { rowIndex }) {
-      return (
-        <SelectController
-          name={`attributes.${rowIndex}.type`}
-          rules={{
-            deps: `attributes.${rowIndex}.values`,
-          }}
-          placeholder="Type"
-          options={types}
-        />
-      );
-    },
+    render: (data, attribute, { rowIndex }) => (
+      <Controller
+        name={`attributes.${rowIndex}.type`}
+        rules={{
+          deps: `attributes.${rowIndex}.values`,
+        }}
+        render={({ field: { value, onChange } }) => (
+          <Select
+            value={value?.id}
+            placeholder="Type"
+            options={types}
+            onChange={onChange}
+          />
+        )}
+      />
+    ),
   },
   {
     width: '17%',
     field: 'rule',
     title: <ColumnTitle title="Rule" tooltip="Set a rule for your attribute" />,
-    render(data, attribute, { rowIndex }) {
-      return (
-        <SelectController
-          name={`attributes.${rowIndex}.optional`}
-          placeholder="Rule"
-          options={rules}
-        />
-      );
-    },
+    render: (data, attribute, { rowIndex }) => (
+      <Controller
+        name={`attributes.${rowIndex}.optional`}
+        render={({ field: { value, onChange } }) => (
+          <Select
+            value={value?.id}
+            placeholder="Rule"
+            options={rules}
+            onChange={onChange}
+          />
+        )}
+      />
+    ),
   },
   {
     width: '40%',
@@ -139,30 +154,33 @@ const getAttributesColumns = ({
     title: '',
     width: '5%',
     field: 'id',
-    render(id: string) {
-      return (
-        <Button
-          title=""
-          role="ghost"
-          iconLeft={{ file: trash, size: 24 }}
-          onClick={() => onRemoveAttribute(id)}
-        />
-      );
-    },
+    render: (data, attribute, { rowIndex }) => <DeleteRowCell index={rowIndex} />,
   },
 ];
 
-const AttributesTableComponent: VFC<AttributesTableProps> = (props) => {
-  const { className, value, onAddAttribute } = props;
+const AttributesTableComponent: VFC<AttributesTableProps> = ({ className }) => {
+  const { fields, append } = useFieldArray({
+    name: 'attributes',
+  });
+
+  const addAttributeHandler = useCallback(() => {
+    append({
+      name: '',
+      type: { id: 'string', title: 'Text' },
+      optional: { id: 'optional', title: 'Optional' },
+      values: [],
+    });
+  }, []);
+
   return (
     <div className={className}>
-      <Table data={value} noDataMessage={null} columns={getAttributesColumns(props)} />
+      <Table data={fields} noDataMessage={null} columns={attributesColumns} />
       <AddButtonWrapper>
         <Button
           role="ghost"
           title="Add field"
           iconRight={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
-          onClick={onAddAttribute}
+          onClick={addAttributeHandler}
         />
       </AddButtonWrapper>
     </div>

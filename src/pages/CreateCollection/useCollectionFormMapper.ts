@@ -52,7 +52,6 @@ export const useCollectionFormMapper = () => {
       };
 
       if (attr.values?.length) {
-        console.log(attr.values?.length);
         request.schema.attributesSchema[index].enumValues = attr.values.reduce(
           (acc, val, index) => {
             return {

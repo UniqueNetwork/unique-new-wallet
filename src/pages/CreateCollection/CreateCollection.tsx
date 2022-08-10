@@ -90,8 +90,6 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   }, [currentStep, navigate]);
 
   useEffect(() => {
-    console.log(collectionDebounceValue);
-
     if (collectionDebounceValue) {
       const collection = formMapper(collectionDebounceValue);
       getFee({
@@ -121,11 +119,9 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
       error('Account is not found');
       return;
     }
-    console.log(form);
 
     const collection = formMapper(form);
 
-    console.log(collection);
     signAndSubmitExtrinsic({
       collection,
     });

@@ -38,9 +38,6 @@ export const SelectController = ({
               : (value && value[optionKey || 'id']) ?? ''
           }
           onChange={(val) => {
-            console.log('onchange');
-            console.log(val);
-
             const updateValue = transform?.output ? transform.output(val) : val;
 
             onChange(val);
