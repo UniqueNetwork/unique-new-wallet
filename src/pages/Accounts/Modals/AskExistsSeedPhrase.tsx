@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Avatar, Button } from '@unique-nft/ui-kit';
+import { Button } from '@unique-nft/ui-kit';
 
 import { addressFromSeed } from '@app/utils';
 import {
@@ -15,10 +15,10 @@ import {
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
 import { LabelText } from '@app/pages/components/FormComponents';
+import { IdentityIcon } from '@app/components';
 
 import { TCreateAccountBodyModalProps } from './types';
 import { defaultPairType, derivePath } from './CreateAccount';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
 export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) => {
   const [seed, setSeed] = useState<string>('');
@@ -46,7 +46,7 @@ export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish
       <ModalContent>
         <ContentRow>
           <AddressWrapper>
-            {seed && <Avatar size={24} src={DefaultAvatar} />}
+            {seed && <IdentityIcon address={address} />}
             <AddressText>
               {seed
                 ? address

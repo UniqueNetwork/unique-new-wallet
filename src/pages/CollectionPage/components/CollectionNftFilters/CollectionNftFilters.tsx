@@ -48,12 +48,12 @@ const sortOptions: SelectOption[] = [
   {
     id: 'asc',
     title: 'NFT ID',
-    iconRight: iconDown,
+    iconRight: iconUp,
   },
   {
     id: 'desc',
     title: 'NFT ID',
-    iconRight: iconUp,
+    iconRight: iconDown,
   },
 ];
 

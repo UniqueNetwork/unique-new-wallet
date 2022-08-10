@@ -1,30 +1,21 @@
 import React, { useEffect, VFC } from 'react';
-import styled from 'styled-components';
-import classNames from 'classnames';
 import { Tabs } from '@unique-nft/ui-kit';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useGraphQlCollection } from '@app/api/graphQL/collections/collections';
 import { useAccounts, useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
-import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
+import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
 
-interface CollectionPageComponentProps {
-  basePath: string;
-  className?: string;
-}
-
 const tabUrls = ['nft', 'settings'];
 const activeTab = 0;
 
-export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
-  basePath,
-  className,
-}) => {
+export const CollectionPage: VFC<{ basePath: string }> = ({ basePath }) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,40 +58,26 @@ export const CollectionPageComponent: VFC<CollectionPageComponentProps> = ({
 
   return (
     <CollectionsNftFilterWrapper>
-      <div className={classNames('collection-page', className)}>
-        <div className="tabs-header">
-          <Tabs
-            activeIndex={currentTabIndex}
-            labels={['NFTs', 'Settings']}
-            type="slim"
-            onClick={handleClick}
-          />
-          <Tabs activeIndex={currentTabIndex}>
-            <CollectionNftFilters />
-            <></>
-          </Tabs>
-        </div>
+      <TabsHeader>
+        <Tabs
+          activeIndex={currentTabIndex}
+          labels={['NFTs', 'Settings']}
+          type="slim"
+          onClick={handleClick}
+        />
+        <Tabs activeIndex={currentTabIndex}>
+          <CollectionNftFilters />
+          <></>
+        </Tabs>
+      </TabsHeader>
+      <TabsBody>
         <collectionContext.Provider value={collectionData}>
           <Tabs activeIndex={currentTabIndex}>
             <Outlet />
             <Outlet />
           </Tabs>
         </collectionContext.Provider>
-      </div>
+      </TabsBody>
     </CollectionsNftFilterWrapper>
   );
 };
-
-export const CollectionPage = styled(CollectionPageComponent)`
-  .tabs-header {
-    align-items: center;
-    border-bottom: 1px solid var(--grey-300);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 calc(var(--prop-gap) * 2);
-  }
-
-  .unique-tabs-contents {
-    padding: 0;
-  }
-`;

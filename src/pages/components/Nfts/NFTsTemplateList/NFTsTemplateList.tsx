@@ -1,23 +1,23 @@
 import classNames from 'classnames';
 import styled from 'styled-components';
 import {
-  Text,
-  Pagination,
-  TokenLink,
-  IPaginationProps,
-  Loader,
   Chip,
-  Link,
   IconProps,
+  IPaginationProps,
+  Link,
+  Loader,
+  Pagination,
+  Text,
+  TokenLink,
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
 
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { NFTsNotFound } from '@app/pages/components/Nfts/NFTsNotFound';
 import { TokenPreviewInfo } from '@app/api';
 import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
+import { NoItems } from '@app/components';
+import { GridList } from '@app/pages/components/PageComponents';
 
 interface NFTsListComponentProps {
   className?: string;
@@ -34,6 +34,12 @@ interface NFTsListComponentProps {
   onChipsReset?(): void;
 }
 
+const renderItemsCount = (count = 0) => (
+  <Text weight="light">
+    {count}&nbsp;{count === 1 ? 'item' : 'items'}
+  </Text>
+);
+
 const NFTsListComponent = ({
   className,
   tokens = [],
@@ -49,10 +55,10 @@ const NFTsListComponent = ({
 
   return (
     <div className={classNames('nft-list', className)}>
-      {isLoading && <Loader isFullPage={true} size="large" />}
+      {isLoading && <Loader isFullPage={true} size="middle" />}
       {!isNaN(Number(tokensCount)) && (
-        <div className="token-size-wrapper">
-          <Text size="m">{`${tokensCount} items`}</Text>
+        <div className="nft-list__header">
+          {renderItemsCount(tokensCount)}
           {chips?.map((item, index) => (
             <Chip key={index} {...item} />
           ))}
@@ -62,31 +68,38 @@ const NFTsListComponent = ({
         </div>
       )}
 
-      {tokensCount === 0 ? (
-        <div className="nft-list--empty">
-          <NFTsNotFound />
-        </div>
-      ) : (
-        <div className="nft-list--content">
-          {tokens.map(
-            ({ token_id, token_name, collection_name, collection_id, image_path }) => (
-              <TokenLink
-                title={token_name}
-                key={`${collection_id}-${token_id}`}
-                image={getTokenIpfsUriByImagePath(image_path)}
-                link={`${collection_name} [id ${collection_id}]`}
-                onTokenClick={() =>
-                  navigate(`/${currentChain?.network}/token/${collection_id}/${token_id}`)
-                }
-                onMetaClick={() => navigate(`${ROUTE.MY_COLLECTIONS}/${collection_id}`)}
-              />
-            ),
-          )}
-        </div>
-      )}
+      <div className="nft-list__body">
+        {tokensCount === 0 ? (
+          <NoItems iconName="not-found" />
+        ) : (
+          <GridList>
+            {tokens.map(
+              ({ token_id, token_name, collection_name, collection_id, image_path }) => (
+                <TokenLink
+                  title={token_name}
+                  key={`${collection_id}-${token_id}`}
+                  image={getTokenIpfsUriByImagePath(image_path)}
+                  link={`${collection_name} [id ${collection_id}]`}
+                  onTokenClick={() =>
+                    navigate(
+                      `/${currentChain?.network}/token/${collection_id}/${token_id}`,
+                    )
+                  }
+                  onMetaClick={() =>
+                    navigate(
+                      `/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection_id}`,
+                    )
+                  }
+                />
+              ),
+            )}
+          </GridList>
+        )}
+      </div>
+
       {!!tokensCount && (
-        <div className="nft-list--footer">
-          <Text size="m">{`${tokensCount} items`}</Text>
+        <div className="nft-list__footer">
+          {renderItemsCount(tokensCount)}
           <Pagination
             withIcons={true}
             current={page}
@@ -100,34 +113,37 @@ const NFTsListComponent = ({
 };
 
 export const NFTsTemplateList = styled(NFTsListComponent)`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 calc(100% - var(--prop-gap) * 4);
   padding: calc(var(--prop-gap) * 2);
 
-  .token-size-wrapper {
-    margin-bottom: 25px;
-    min-height: 32px;
-    display: flex;
-    flex-flow: wrap;
-    align-items: center;
-    gap: 10px;
-  }
-
   .nft-list {
-    &--empty {
+    &__header {
+      min-height: 32px;
       display: flex;
-      justify-content: center;
-    }
-    &--content {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 20px 2%;
+      flex: 0 0 auto;
+      flex-flow: wrap;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: calc(var(--prop-gap) * 1.5);
     }
 
-    &--footer {
-      align-items: center;
+    &__footer {
       display: flex;
+      flex: 0 0 auto;
+      align-items: center;
       justify-content: space-between;
       padding-top: calc(var(--prop-gap) * 2);
+    }
+
+    &__items {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: calc(var(--prop-gap) * 2);
     }
   }
 `;

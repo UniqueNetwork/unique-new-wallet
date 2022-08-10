@@ -21,4 +21,9 @@ export const PagePaper = styled.div`
 
 export const PagePaperNoPadding = styled.div`
   ${PagePaperStyles};
+
+  &.data-grid {
+    display: flex;
+    flex-direction: column;
+  }
 `;

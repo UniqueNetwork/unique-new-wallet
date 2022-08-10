@@ -28,17 +28,19 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
   } else if (!loading) {
     children = (
       <>
-        {data?.map((item, index) => (
-          <MobileTableRow key={index}>
-            {columns?.map((column, index) => (
-              <div key={`column-${column.field || index}`}>
+        {data?.map((item, rowIdx) => (
+          <MobileTableRow key={rowIdx}>
+            {columns?.map((column, colIdx) => (
+              <div key={`column-${column.field || colIdx}`}>
                 {typeof column?.title === 'object' ? (
                   column.title
                 ) : (
                   <Text color="grey-500">{column?.title}</Text>
                 )}
-                {column.render?.(getDeepValue(item, column.field), item) ||
-                  getDeepValue(item, column.field)}
+                {column.render?.(getDeepValue(item, column.field), item, {
+                  rowIndex: rowIdx,
+                  columnIndex: colIdx,
+                }) || getDeepValue(item, column.field)}
               </div>
             ))}
           </MobileTableRow>
