@@ -36,7 +36,7 @@ interface NFTsListComponentProps {
 
 const renderItemsCount = (count = 0) => (
   <Text weight="light">
-    {count}&nbsp;{count === 1 ? 'item' : 'items'}
+    {count} {count === 1 ? 'item' : 'items'}
   </Text>
 );
 

@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
 
 import { useAccounts, useApi } from '@app/hooks';
@@ -81,15 +81,18 @@ export const useExtrinsicFlow = <
     }
   }, [data]);
 
-  const signAndSubmitExtrinsic = (
-    payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
-    accountAddress?: string,
-  ) => {
-    setRequest({
-      payload,
-      accountAddress,
-    });
-  };
+  const signAndSubmitExtrinsic = useCallback(
+    (
+      payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
+      accountAddress?: string,
+    ) => {
+      setRequest({
+        payload,
+        accountAddress,
+      });
+    },
+    [],
+  );
 
   const signAndSubmitExtrinsicAsync = async (
     payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,

@@ -1,17 +1,30 @@
-import React, { VFC, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import EnumInputItem from './EnumInputItem';
 
-interface Props {
+export type EnumsInputProps<T> = {
   isDisabled?: boolean;
   maxSymbols?: number;
-  setValues: (values: string[]) => void;
-  values: string[];
-}
+  onChange?: (values: string[]) => void;
+  onAdd?(value: string): void;
+  onDelete?(index: number): void;
+  value?: T[];
+  getValues(values?: T[]): string[] | null | undefined;
+};
 
-export const EnumsInput: VFC<Props> = ({ isDisabled, maxSymbols, setValues, values }) => {
+export const EnumsInput = <T,>({
+  isDisabled,
+  maxSymbols,
+  onChange,
+  onAdd,
+  onDelete,
+  value: inputValue,
+  getValues,
+}: EnumsInputProps<T>) => {
   const [currentEnum, setCurrentEnum] = useState<string>('');
+
+  const value = getValues(inputValue) ?? [];
 
   const addItem = () => {
     if (!currentEnum) {
@@ -20,9 +33,10 @@ export const EnumsInput: VFC<Props> = ({ isDisabled, maxSymbols, setValues, valu
 
     if (
       currentEnum.length &&
-      !values.find((item: string) => item.toLowerCase() === currentEnum.toLowerCase())
+      !value.find((item: string) => item.toLowerCase() === currentEnum.toLowerCase())
     ) {
-      setValues([...values, currentEnum]);
+      onChange?.([...value, currentEnum]);
+      onAdd?.(currentEnum);
       setCurrentEnum('');
     } else {
       alert('Warning. You are trying to add already existed item');
@@ -30,14 +44,13 @@ export const EnumsInput: VFC<Props> = ({ isDisabled, maxSymbols, setValues, valu
     }
   };
 
-  const deleteItem = (enumItem: string) => {
+  const deleteItem = (enumItem: number) => {
     if (isDisabled) {
       return;
     }
 
-    setValues(
-      values.filter((item: string) => item.toLowerCase() !== enumItem.toLowerCase()),
-    );
+    onChange?.(value?.filter((item: string, idx) => idx !== enumItem));
+    onDelete?.(enumItem);
   };
 
   const changeCurrentEnum = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +73,13 @@ export const EnumsInput: VFC<Props> = ({ isDisabled, maxSymbols, setValues, valu
     <Wrapper className={`${isDisabled ? 'enum-input disabled' : 'enum-input'}`}>
       <div className="enum-input--content">
         <div className="enum-input--content--elements">
-          {values.map((enumItem: string) => (
-            <EnumInputItem deleteItem={deleteItem} enumItem={enumItem} key={enumItem} />
+          {value?.map((enumItem: string, idx) => (
+            <EnumInputItem
+              deleteItem={deleteItem}
+              enumItem={enumItem}
+              key={enumItem}
+              idx={idx}
+            />
           ))}
         </div>
         <input

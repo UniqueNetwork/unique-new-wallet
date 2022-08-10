@@ -55,12 +55,12 @@ export const FormWrapper = styled.div`
 export const FormRow = styled.div`
   margin-bottom: calc(var(--prop-gap) * 2);
 
-  &.has_uploader {
-    margin-bottom: calc(var(--prop-gap) * 2.5);
-  }
-
   &:last-child {
     margin-bottom: 0;
+  }
+
+  &.has_uploader {
+    margin-bottom: calc(var(--prop-gap) * 2.5);
   }
 `;
 
