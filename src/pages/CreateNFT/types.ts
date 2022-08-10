@@ -19,7 +19,11 @@ export type AttributeView = {
 export type TokenForm = {
   address?: string;
   owner?: string;
-  collectionId?: number;
   imageIpfsCid?: string;
+  collectionId?: number | null;
   attributes?: Array<Attribute>;
 };
+
+export type FilledTokenForm = Required<{
+  [P in keyof TokenForm]: NonNullable<TokenForm[P]>;
+}>;

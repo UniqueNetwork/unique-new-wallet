@@ -1,7 +1,7 @@
-import { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
+import { useEffect, useMemo, useState, VFC } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { Button, useNotifications } from '@unique-nft/ui-kit';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
@@ -10,12 +10,7 @@ import { DevTool } from '@hookform/devtools';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection, TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
-import {
-  Alert,
-  MintingBtn,
-  StatusTransactionModal,
-  TooltipButtonWrapper,
-} from '@app/components';
+import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
 import { usePageSettingContext } from '@app/context';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
@@ -26,9 +21,9 @@ import { ROUTE } from '@app/routes';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
-import { AttributeView, Option, TokenForm } from './types';
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
+import { AttributeView, Option, TokenForm, FilledTokenForm } from './types';
 
 interface ICreateNFTProps {
   className?: string;
@@ -47,6 +42,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
   const { error, info } = useNotifications();
@@ -59,12 +55,17 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     useExtrinsicFlow(TokenApiService.tokenCreateMutation);
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+
+  const collectionId = params.get('collectionId');
+  console.log(collectionId);
+
   const tokenForm = useForm<TokenForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
       owner: selectedAccount?.address,
       address: selectedAccount?.address,
+      collectionId: collectionId ? Number(collectionId) : null,
     },
   });
 
@@ -134,7 +135,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     const { address, collectionId } = debouncedFormValues;
 
     if (collectionId && address && isValid) {
-      getFee({ token: mapper(debouncedFormValues as Required<TokenForm>) });
+      getFee({ token: mapper(debouncedFormValues as FilledTokenForm) });
     }
   }, [debouncedFormValues]);
 
@@ -167,7 +168,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       setClosable(!!closable);
 
       signAndSubmitExtrinsic({
-        token: mapper(debouncedFormValues as Required<TokenForm>),
+        token: mapper(debouncedFormValues as FilledTokenForm),
       });
     }
   };

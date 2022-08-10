@@ -64,8 +64,8 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <LabelText size="m">
             Partial seed
             <Tooltip align={tooltipAlign} targetRef={seedTooltip}>
-              The seed is&nbsp;your key to&nbsp;the account. Knowing the seed allows you,
-              or&nbsp;anyone else who knows the seed, to&nbsp;re-generate and control this
+              The seed is your key to the account. Knowing the seed allows you,
+              or anyone else who knows the seed, to re-generate and control this
               account.
             </Tooltip>
             <Icon
@@ -82,9 +82,9 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <LabelText size="m">
             Keypair type
             <Tooltip align={tooltipAlign} targetRef={keypairTooltip}>
-              Substrate supports a&nbsp;number of&nbsp;different crypto mechanisms.
-              As&nbsp;such the keyring allows for the creation and management
-              of&nbsp;different types of&nbsp;crypto.
+              Substrate supports a number of different crypto mechanisms.
+              As such the keyring allows for the creation and management
+              of different types of crypto.
             </Tooltip>
             <Icon
               ref={keypairTooltip}
@@ -100,8 +100,8 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <LabelText size="m">
             Derivation path
             <Tooltip align={tooltipAlign} targetRef={pathTooltip}>
-              If&nbsp;you would like to&nbsp;create and manage several accounts
-              on&nbsp;the network using the same seed, you can use derivation paths.
+              If you would like to create and manage several accounts
+              on the network using the same seed, you can use derivation paths.
             </Tooltip>
             <Icon
               ref={pathTooltip}
@@ -114,10 +114,10 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
         </ContentRow>
         <ContentRow>
           <TextWarning color="additional-warning-500" size="s">
-            Consider storing your account in&nbsp;a&nbsp;signer such
-            as&nbsp;a&nbsp;browser extension, hardware device, QR-capable phone wallet
-            (non-connected) or&nbsp;desktop application for optimal account security.
-            Future versions of&nbsp;the web-only interface will drop support for
+            Consider storing your account in a signer such
+            as a browser extension, hardware device, QR-capable phone wallet
+            (non-connected) or desktop application for optimal account security.
+            Future versions of the web-only interface will drop support for
             non-external accounts, much like the IPFS version.
           </TextWarning>
         </ContentRow>

@@ -50,8 +50,8 @@ export const MainInformation: FC = () => {
       <FormHeader>
         <Heading size="2">Main information</Heading>
         <Text>
-          The core collection information cannot be&nbsp;modified once approved/signed.
-          For any changes the collection will need to&nbsp;be&nbsp;burned and re-created
+          The core collection information cannot be modified once approved/signed. For any
+          changes the collection will need to be burned and re-created
         </Text>
       </FormHeader>
       <FormBody>
@@ -114,7 +114,7 @@ export const MainInformation: FC = () => {
                   name="coverPictureIpfsCid"
                   render={({ field: { onChange, value } }) => (
                     <Upload
-                      type="square"
+                      type="circle"
                       upload={getTokenIpfsUriByImagePath(value || null)}
                       onChange={(data) => uploadCover(data, onChange)}
                     />

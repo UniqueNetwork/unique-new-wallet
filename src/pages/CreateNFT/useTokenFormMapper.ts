@@ -1,6 +1,6 @@
 import { CreateTokenNewDto } from '@app/types/Api';
 
-import { TokenForm, Attribute, AttributeOption } from './types';
+import { Attribute, AttributeOption, FilledTokenForm } from './types';
 
 const attributeMapper = (attribute?: Attribute) => {
   if (
@@ -28,7 +28,7 @@ const attributeMapper = (attribute?: Attribute) => {
 };
 
 export const useTokenFormMapper = () => {
-  const mapper = (formData: Required<TokenForm>): CreateTokenNewDto => {
+  const mapper = (formData: FilledTokenForm): CreateTokenNewDto => {
     const request: CreateTokenNewDto = {
       owner: formData.address,
       address: formData.address,

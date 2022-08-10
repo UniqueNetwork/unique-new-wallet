@@ -54,19 +54,6 @@ const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
   );
 };
 
-const DeleteRowCell: VFC<{ index: number }> = ({ index }) => {
-  const { remove } = useFieldArray({ name: 'attributes' });
-
-  return (
-    <Button
-      title=""
-      role="ghost"
-      iconLeft={{ file: trash, size: 24 }}
-      onClick={() => remove(index)}
-    />
-  );
-};
-
 const attributesColumns: TableColumnProps[] = [
   {
     width: '21%',
@@ -154,14 +141,23 @@ const attributesColumns: TableColumnProps[] = [
     title: '',
     width: '5%',
     field: 'id',
-    render: (data, attribute, { rowIndex }) => <DeleteRowCell index={rowIndex} />,
+    render: (data, attribute, { rowIndex }) => (
+      <Button
+        title=""
+        role="ghost"
+        iconLeft={{ file: trash, size: 24 }}
+        onClick={() => attribute.remove(rowIndex)}
+      />
+    ),
   },
 ];
 
 const AttributesTableComponent: VFC<AttributesTableProps> = ({ className }) => {
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     name: 'attributes',
+    keyName: 'key',
   });
+  const advancedFields = fields.map((f) => ({ ...f, remove }));
 
   const addAttributeHandler = useCallback(() => {
     append({
@@ -174,7 +170,7 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({ className }) => {
 
   return (
     <div className={className}>
-      <Table data={fields} noDataMessage={null} columns={attributesColumns} />
+      <Table data={advancedFields} noDataMessage={null} columns={attributesColumns} />
       <AddButtonWrapper>
         <Button
           role="ghost"

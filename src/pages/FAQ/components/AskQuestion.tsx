@@ -19,7 +19,7 @@ const Wrapper = styled.div`
 
 export const AskQuestion: VFC = () => (
   <Wrapper>
-    <Heading size="3">Didn&apos;t find the answer? Write&nbsp;to us.</Heading>
+    <Heading size="3">Didn&apos;t find the answer? Write to us.</Heading>
     <Button title="Ask a question" />
     <SidePlateFooter>
       <Text>You can also find information in our community</Text>

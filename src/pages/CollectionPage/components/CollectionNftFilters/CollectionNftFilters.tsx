@@ -64,23 +64,8 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
   className,
 }) => {
   const navigate = useNavigate();
-
   const { collectionId } = useParams<{ collectionId: string }>();
-  const cache = useQuery(collectionsQuery).client.cache;
-  const currentCollection: Pick<
-    ViewCollection,
-    'name' | 'description' | 'collection_id' | 'collection_cover'
-  > | null = cache.readFragment({
-    id: `view_collections:{"collection_id":${collectionId}}`,
-    fragment: gql`
-      fragment currentCollection on view_collections {
-        name
-        description
-        collection_id
-        collection_cover
-      }
-    `,
-  });
+
   const { currentChain } = useApi();
   const [search, setSearch] = useState('');
   const { direction, onChangeSearch, onChangeDirection, onChangeType } =
@@ -121,7 +106,9 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         role="primary"
         onClick={() => {
           logUserEvent(UserEvents.CREATE_NFT);
-          navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`);
+          navigate(
+            `/${currentChain?.network}/${ROUTE.CREATE_NFT}?collectionId=${collectionId}`,
+          );
         }}
       />
     </div>

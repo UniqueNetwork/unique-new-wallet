@@ -37,7 +37,7 @@ export const NFTAttributes = () => {
       <FormHeader>
         <Heading size="2">NFT attributes</Heading>
         <Text>
-          Customize your token — define your NFT&apos;s traits: name, accessory, gender,
+          Customize your token — define your NFTs traits: name, accessory, gender,
           background, face, body, tier, etc.
         </Text>
       </FormHeader>
@@ -56,11 +56,10 @@ export const NFTAttributes = () => {
                     <>
                       Collection sponsor address
                       <Tooltip align={tooltipAlign} targetRef={addressTooltip}>
-                        The collection sponsor pays for all transactions related
-                        to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
-                        a&nbsp;regular account or&nbsp;a&nbsp;market contract. The sponsor
-                        will need to&nbsp;confirm the sponsorship before the sponsoring
-                        begins
+                        The collection sponsor pays for all transactions related to this
+                        collection. You can set as a sponsor a regular account or a market
+                        contract. The sponsor will need to confirm the sponsorship before
+                        the sponsoring begins
                       </Tooltip>
                       <Icon
                         ref={addressTooltip}
@@ -96,9 +95,8 @@ export const NFTAttributes = () => {
                     <>
                       Token limit
                       <Tooltip align={tooltipAlign} targetRef={limitTooltip}>
-                        The token limit (collection size) is&nbsp;a&nbsp;mandatory
-                        parameter if&nbsp;you want to&nbsp;list your collection
-                        on&nbsp;a&nbsp;marketplace.
+                        The token limit (collection size) is a mandatory parameter if you
+                        want to list your collection on a marketplace.
                       </Tooltip>
                       <Icon
                         ref={limitTooltip}
@@ -134,11 +132,10 @@ export const NFTAttributes = () => {
                     <>
                       Owner can burn collection
                       <Tooltip align={tooltipAlign} targetRef={burnTooltip}>
-                        Should you decide to&nbsp;keep the right to&nbsp;destroy the
-                        collection, a&nbsp;marketplace could reject it&nbsp;depending
-                        on&nbsp;its policies as&nbsp;it&nbsp;gives the author the power
-                        to&nbsp;arbitrarily destroy a&nbsp;collection at&nbsp;any moment
-                        in&nbsp;the future
+                        Should you decide to keep the right to destroy the collection, a
+                        marketplace could reject it depending on its policies as it gives
+                        the author the power to arbitrarily destroy a collection at any
+                        moment in the future
                       </Tooltip>
                       <Icon
                         ref={burnTooltip}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Heading, Text, Button, useNotifications } from '@unique-nft/ui-kit';
+import { Text, Button, useNotifications } from '@unique-nft/ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
@@ -15,7 +15,6 @@ import {
   Confirm,
   MintingBtn,
   StatusTransactionModal,
-  TooltipButtonWrapper,
 } from '@app/components';
 import { usePageSettingContext } from '@app/context/PageSettingsContext';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
