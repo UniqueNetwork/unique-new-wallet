@@ -57,7 +57,11 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
       address: selectedAccount?.address,
     },
   });
-  const { control, formState, handleSubmit } = collectionForm;
+  const {
+    control,
+    formState: { isValid },
+    handleSubmit,
+  } = collectionForm;
   const collectionFormValues = useWatch<CollectionForm>({
     control,
   });
@@ -149,7 +153,6 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
             <ButtonGroup>
               {!isLastStep && (
                 <MintingBtn
-                  disabled={!formState.isValid}
                   iconRight={{
                     color: 'currentColor',
                     name: 'arrow-right',
@@ -170,21 +173,12 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
                   onClick={() => goToPreviousStep(currentStep - 1)}
                 />
               )}
-              {isBalanceInsufficient && isLastStep && (
-                <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
-                  <Button
-                    type="button"
-                    role="primary"
-                    disabled={true}
-                    title="Create a collection"
-                  />
-                </TooltipButtonWrapper>
-              )}
               {isLastStep && (
-                <Button
+                <MintingBtn
                   role="primary"
-                  type="submit"
-                  title="Create a collection"
+                  title="Create collection"
+                  tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
+                  disabled={!isValid}
                   onClick={handleSubmit(onSubmit)}
                 />
               )}

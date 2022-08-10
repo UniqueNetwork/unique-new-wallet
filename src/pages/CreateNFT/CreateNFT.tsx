@@ -142,7 +142,9 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     if (flowStatus === 'success') {
       info('NFT created successfully');
 
-      closable ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`) : reset();
+      closable
+        ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
+        : reset(undefined, { keepDefaultValues: true });
     }
 
     if (flowStatus === 'error') {

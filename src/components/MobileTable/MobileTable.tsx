@@ -37,7 +37,7 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
                 ) : (
                   <Text color="grey-500">{column?.title}</Text>
                 )}
-                {column.render?.(getDeepValue(item, column.field), item) ||
+                {(column.render as any)?.(getDeepValue(item, column.field), item) ||
                   getDeepValue(item, column.field)}
               </div>
             ))}

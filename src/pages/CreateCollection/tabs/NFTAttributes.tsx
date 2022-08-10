@@ -59,7 +59,7 @@ export const NFTAttributes = () => {
       <FormHeader>
         <Heading size="2">NFT attributes</Heading>
         <Text>
-          Customize your token — define your NTF&apos;s traits: name, accessory, gender,
+          Customize your token — define your NFT&apos;s traits: name, accessory, gender,
           background, face, body, tier, etc.
         </Text>
       </FormHeader>

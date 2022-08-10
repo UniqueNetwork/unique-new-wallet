@@ -1,22 +1,9 @@
-import React, { createRef, VFC } from 'react';
-import {
-  Button,
-  Icon,
-  InputText,
-  Select,
-  SelectOptionProps,
-  TableColumnProps,
-  Tooltip,
-} from '@unique-nft/ui-kit';
+import React, { createRef, useEffect, VFC } from 'react';
+import { Button, Icon, InputText, TableColumnProps, Tooltip } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
-import { FieldArrayWithId } from 'react-hook-form';
+import { Controller, FieldArrayWithId, useWatch } from 'react-hook-form';
 
 import { Table } from '@app/components';
-import {
-  ArtificialAttributeItemType,
-  ArtificialFieldType,
-  FieldRuleType,
-} from '@app/types';
 import { InputController } from '@app/components/FormControllerComponents';
 import { SelectController } from '@app/components/FormControllerComponents/SelectController';
 
@@ -49,6 +36,27 @@ const ColumnTitle: VFC<{ title: string; tooltip: string }> = ({ title, tooltip }
   );
 };
 
+const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
+  const type = useWatch({ name: `attributes.${index}.type` } as any);
+
+  useEffect(() => {
+    console.log('test test test test teasdasdasdqw');
+  }, []);
+
+  return (
+    <EnumsInputController
+      rules={{
+        required: type.id !== 'string',
+      }}
+      defaultValue={null}
+      isDisabled={type.id === 'string'}
+      name={`attributes.${index}.values`}
+      maxSymbols={40}
+      getValues={(values) => values?.map((val) => val)}
+    />
+  );
+};
+
 const getAttributesColumns = ({
   value,
   onRemoveAttribute,
@@ -59,17 +67,26 @@ const getAttributesColumns = ({
     title: (
       <ColumnTitle title="Attribute" tooltip="Textual traits that show up on Token" />
     ),
-    render(_, attribute: FieldArrayWithId<AttributeField>) {
-      console.log(attribute);
+    render(data, attribute, { rowIndex }) {
+      const inputRegExp = /^[^0-9].*$|^$/;
 
-      const attrIndex = value.findIndex((f) => f.id === attribute.id);
       return (
-        <InputController
+        <Controller
+          name={`attributes.${rowIndex}.name`}
           rules={{
             required: true,
           }}
-          name={`attributes.${attrIndex}.name`}
-          placeholder="Attribute name"
+          render={({ field: { value, onChange } }) => (
+            <InputText
+              value={value}
+              placeholder="Attribute name"
+              onChange={(value) => {
+                if (inputRegExp.test(value)) {
+                  onChange(value);
+                }
+              }}
+            />
+          )}
         />
       );
     },
@@ -80,11 +97,13 @@ const getAttributesColumns = ({
     title: (
       <ColumnTitle title="Type" tooltip="Select type of information you want to create" />
     ),
-    render(_, attribute: FieldArrayWithId<AttributeField>) {
-      const attrIndex = value.findIndex((f) => f.id === attribute.id);
+    render(data, attribute, { rowIndex }) {
       return (
         <SelectController
-          name={`attributes.${attrIndex}.type`}
+          name={`attributes.${rowIndex}.type`}
+          rules={{
+            deps: `attributes.${rowIndex}.values`,
+          }}
           placeholder="Type"
           options={types}
         />
@@ -95,12 +114,10 @@ const getAttributesColumns = ({
     width: '17%',
     field: 'rule',
     title: <ColumnTitle title="Rule" tooltip="Set a rule for your attribute" />,
-    render(_, attribute: FieldArrayWithId<AttributeField>) {
-      const attrIndex = value.findIndex((f) => f.id === attribute.id);
-
+    render(data, attribute, { rowIndex }) {
       return (
         <SelectController
-          name={`attributes.${attrIndex}.optional`}
+          name={`attributes.${rowIndex}.optional`}
           placeholder="Rule"
           options={rules}
         />
@@ -116,28 +133,13 @@ const getAttributesColumns = ({
         tooltip="Write down all the options you have"
       />
     ),
-    render(values: string[], attribute: FieldArrayWithId<AttributeField>) {
-      const attrIndex = value.findIndex((f) => f.id === attribute.id);
-      const row = value[attrIndex];
-      console.log('test');
-      console.log(row);
-
-      return (
-        <EnumsInputController
-          isDisabled={(row as any).type.id === 'string'}
-          name={`attributes.${attrIndex}.values`}
-          maxSymbols={40}
-          defaultValue={[]}
-          getValues={(values) => values?.map((val) => val)}
-        />
-      );
-    },
+    render: (data, attribute, { rowIndex }) => <PossibleValuesCell index={rowIndex} />,
   },
   {
     title: '',
     width: '5%',
     field: 'id',
-    render(id: string, attribute: ArtificialAttributeItemType) {
+    render(id: string) {
       return (
         <Button
           title=""

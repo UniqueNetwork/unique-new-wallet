@@ -21,9 +21,6 @@ export const SelectController = ({
   ...selectProps
 }: SelectControllerProps) => {
   const { control, setValue, register } = useFormContext();
-
-  console.log(selectProps.options);
-
   useEffect(() => {
     register(name, rules);
   }, [name, register, rules]);
