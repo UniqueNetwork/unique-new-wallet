@@ -1,4 +1,3 @@
-import { base64Decode, base64Encode } from '@polkadot/util-crypto';
 import {
   Button,
   Heading,
@@ -29,6 +28,10 @@ const Wrapper = styled.div`
 `;
 
 export const AskQuestion: VFC = () => {
+  const zenDeskToken =
+    window.ENV?.ZENDESK_OAUTH_APP_TOKEN ||
+    process.env.REACT_APP_ZENDESK_OAUTH_APP_TOKEN ||
+    '';
   const [visibleModal, setVisibleModal] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -127,17 +130,15 @@ export const AskQuestion: VFC = () => {
                   {
                     ticket: {
                       comment: {
-                        body: 'test',
+                        body: 'From Unique Wallet',
                       },
                       priority: 'urgent',
-                      subject: 'My printer is on fire!',
+                      subject: `Name: ${name}, Email: ${email}, Question: ${question}.`,
                     },
                   },
                   {
                     headers: {
-                      Authorization: `Basic ${base64Encode(
-                        'support@unique.network',
-                      )}/token:kUzNDX6e6X4ycDCYBQ1Y6VrRYuRPChp7OUUjfbu0`,
+                      Authorization: `Bearer ${zenDeskToken}`,
                     },
                   },
                 )
