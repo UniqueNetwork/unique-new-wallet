@@ -9,6 +9,7 @@ import {
   useNotifications,
 } from '@unique-nft/ui-kit';
 import { Controller, useFormContext } from 'react-hook-form';
+import styled from 'styled-components';
 
 import {
   AdditionalText,
@@ -32,13 +33,7 @@ interface CreateNftFormProps {
   collectionsOptions: Option[];
   collectionsOptionsLoading: boolean;
   selectedCollection?: CollectionInfoWithSchemaResponse;
-}
-
-interface AttributesProps {
-  name: string;
-  label?: string;
-  required?: boolean;
-  type: AttributeType;
+  className?: string;
 }
 
 const CollectionSuggestion: FC<{
@@ -57,10 +52,11 @@ const CollectionSuggestion: FC<{
   );
 };
 
-export const CreateNftForm: VFC<CreateNftFormProps> = ({
+const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   collectionsOptions,
   collectionsOptionsLoading,
   selectedCollection,
+  className,
 }) => {
   const { error } = useNotifications();
   const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
@@ -99,7 +95,7 @@ export const CreateNftForm: VFC<CreateNftFormProps> = ({
       <FormHeader>
         <Heading size="2">Main information</Heading>
       </FormHeader>
-      <FormBody>
+      <FormBody className={className}>
         <Form>
           <FormRow>
             <LabelText>Collection*</LabelText>
@@ -115,7 +111,6 @@ export const CreateNftForm: VFC<CreateNftFormProps> = ({
                   isLoading={collectionsOptionsLoading}
                   value={collectionsOptions.find((co) => co.id === value)}
                   getActiveSuggestOption={(option: Option) => {
-                    console.log(value);
                     return option.id === (value as number);
                   }}
                   getSuggestionValue={({ title }: Option) => title}
@@ -179,3 +174,10 @@ export const CreateNftForm: VFC<CreateNftFormProps> = ({
     </>
   );
 };
+
+export const CreateNftForm = styled(CreateNftFormComponent)`
+  .unique-suggestion-wrapper {
+    display: block;
+    width: auto;
+  }
+`;

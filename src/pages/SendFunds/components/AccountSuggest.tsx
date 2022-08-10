@@ -6,8 +6,6 @@ import { RecipientAddressType } from '@app/pages/SendFunds/SendFundsModal';
 import { AccountInfo } from '@app/pages/SendFunds/components/AccountInfo';
 import { AllBalancesResponse } from '@app/types/Api';
 
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
-
 type AccountSuggestType = {
   recipientOptions: RecipientAddressType[];
   recipient: RecipientAddressType | null;
@@ -27,12 +25,6 @@ export const AccountSuggest = ({
     <>
       <SuggestWrapper>
         <Suggest
-          inputProps={{
-            iconLeft: {
-              file: DefaultAvatar,
-              size: 24,
-            },
-          }}
           suggestions={recipientOptions}
           getSuggestionValue={(suggestion) => suggestion.address}
           getActiveSuggestOption={(suggest, activeValue) =>
@@ -74,17 +66,53 @@ const SuggestItem = styled.div`
 `;
 
 const SuggestWrapper = styled.div`
+  .unique-suggestion-wrapper {
+    width: 100%;
+  }
+
   .unique-suggestion,
   .suggest-input {
     display: block;
   }
 
-  .input-wrapper {
-    padding: calc(var(--prop-gap) / 2) var(--prop-gap);
-    padding-right: 0;
-
-    img {
-      margin-right: var(--prop-gap);
+  .unique-suggestion {
+    .icon-right-wrapper {
+      height: 100%;
     }
+
+    .suggestion-values {
+      box-shadow: 0 4px 16px rgb(0 0 0 / 16%);
+      border: 1px solid transparent;
+      padding: 0;
+
+      & > div {
+        & > div {
+          &:not(:last-child) {
+            margin-bottom: 3px;
+          }
+        }
+      }
+    }
+
+    .suggestion-item {
+      padding-left: var(--prop-gap);
+    }
+  }
+
+  .suggest-input {
+    .suggest-active-value {
+      height: auto;
+      padding-left: 0;
+
+      .suggestion-item {
+        padding-left: var(--prop-gap);
+      }
+    }
+  }
+
+  .input-wrapper {
+    height: calc(61px - var(--prop-gap));
+    padding: calc(var(--prop-gap) / 2) var(--prop-gap) calc(var(--prop-gap) / 2)
+      calc(var(--prop-gap) * 2.125);
   }
 `;

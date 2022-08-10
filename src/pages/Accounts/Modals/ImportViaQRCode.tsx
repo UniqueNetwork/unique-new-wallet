@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Avatar, Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
+import { Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
 import keyring from '@polkadot/ui-keyring';
 import styled from 'styled-components/macro';
 
@@ -16,9 +16,9 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { IdentityIcon } from '@app/components';
 
 import { TCreateAccountModalProps } from './types';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 
 export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({
   isVisible,
@@ -72,7 +72,7 @@ export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({
         <ContentRow>
           {address ? (
             <AddressWrapper>
-              <Avatar size={24} src={DefaultAvatar} />
+              <IdentityIcon address={address} />
               <Text>{address}</Text>
             </AddressWrapper>
           ) : (

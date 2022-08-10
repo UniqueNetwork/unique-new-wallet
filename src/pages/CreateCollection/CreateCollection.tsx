@@ -141,7 +141,6 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
 
   return (
     <FormProvider {...collectionForm}>
-      <Heading size="1">Create a collection</Heading>
       <MainWrapper className={classNames('create-collection-page', className)}>
         <WrapperContent>
           <FormWrapper>

@@ -1,9 +1,9 @@
-import { memo, ReactNode, useMemo, VFC } from 'react';
+import { memo, useMemo, VFC } from 'react';
 import styled from 'styled-components';
-import { Dropdown, Heading, Text, SelectOptionProps, Icon } from '@unique-nft/ui-kit';
+import { Button, Dropdown, Heading, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
-import { BurnBtn, TransferBtn } from '@app/components';
+import { BurnBtn, IdentityIcon, TransferBtn } from '@app/components';
 import { useApi } from '@app/hooks';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
@@ -16,6 +16,8 @@ interface NFTDetailsHeaderProps {
 }
 
 interface MenuOptionItem extends SelectOptionProps {
+  color?: string;
+  disabled?: boolean;
   id: TNFTModalType;
 }
 
@@ -25,40 +27,76 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
 `;
 
-const HeaderContent = styled.div`
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
+const HeaderContent = styled.div``;
+
+const MenuOptionContainer = styled.div<{ color?: string }>`
+  margin: 0 calc(var(--prop-gap) / (-2));
+
+  &:not(:hover) {
+    color: ${(p) => p.color};
+  }
+
+  .unique-button {
+    padding: 0 calc(var(--prop-gap) / 2);
+
+    &:not([disabled]) {
+      color: inherit;
+    }
+
+    & > .icon {
+      pointer-events: none;
+    }
+  }
 `;
 
-const MenuOptionContainer = styled.div`
+const TextOwner = styled.div`
   display: flex;
   align-items: center;
-  gap: calc(var(--prop-gap) * 0.5);
+  margin-bottom: var(--prop-gap);
+  color: var(--color-grey-500);
 `;
 
-const MenuOption = (option: SelectOptionProps) => {
-  return (
-    <MenuOptionContainer>
-      <Icon
-        size={16}
-        color={(option.color as string) ?? ''}
-        name={(option.icon as any).name ?? ''}
-      />
-      <Text color={(option.color as string) ?? ''}>{option.title as string}</Text>
-    </MenuOptionContainer>
-  );
-};
+const Address = styled.span`
+  display: flex;
+  align-items: center;
+  margin-left: calc(var(--prop-gap) / 2);
+  color: var(--color-primary-500);
 
-const MenuBtnOption = (option: SelectOptionProps & { children: ReactNode }) => {
+  .address-account-image {
+    margin-right: calc(var(--prop-gap) / 2);
+  }
+`;
+
+const MenuOption = (
+  option: SelectOptionProps & { color?: string; disabled?: boolean },
+) => {
   return (
-    <MenuOptionContainer>
-      <Icon
-        size={16}
-        color={(option.color as string) ?? ''}
-        name={(option.icon as any).name ?? ''}
-      />
-      {option.children}
+    <MenuOptionContainer color={option.color}>
+      {option.disabled ? (
+        <BurnBtn
+          disabled={option.disabled}
+          iconLeft={{
+            color: 'currentColor',
+            name: (option.icon as string) ?? '',
+            size: 16,
+          }}
+          role="ghost"
+          title={option.title as string}
+          wide={true}
+        />
+      ) : (
+        <Button
+          disabled={option.disabled}
+          iconLeft={{
+            color: 'currentColor',
+            name: (option.icon as string) ?? '',
+            size: 16,
+          }}
+          role="ghost"
+          title={option.title as string}
+          wide={true}
+        />
+      )}
     </MenuOptionContainer>
   );
 };
@@ -74,24 +112,18 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   const options = useMemo(() => {
     const items: SelectOptionProps[] = [
       {
+        icon: 'shared',
         id: 'share',
         title: 'Share',
-        icon: {
-          name: 'shared',
-          size: 12,
-        },
       },
     ];
 
     if (isCurrentAccountOwner) {
       items.push({
+        color: 'var(--color-coral-500)',
+        icon: 'burn',
         id: 'burn',
         title: 'Burn NFT',
-        color: 'var(--color-coral-500)',
-        icon: {
-          name: 'burn',
-          size: 12,
-        },
       });
     }
 
@@ -101,19 +133,23 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   return (
     <HeaderContainer className={className}>
       <HeaderContent>
-        <Heading size="1">{title}</Heading>
-        <Text size="s" weight="light" color="grey-500">
+        <Heading>{title}</Heading>
+        <TextOwner>
           {isCurrentAccountOwner ? (
             'You own it'
           ) : (
             <>
-              Owned by{' '}
-              <Text size="s" weight="light" color="primary-500">
+              Owned by
+              <Address>
+                <IdentityIcon
+                  address={ownerAddress || ''}
+                  className="address-account-image"
+                />
                 {ownerAddress}
-              </Text>
+              </Address>
             </>
           )}
-        </Text>
+        </TextOwner>
         {isCurrentAccountOwner && (
           <TransferBtn
             className="transfer-btn"
@@ -129,18 +165,12 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
       <Dropdown
         placement="right"
         options={options}
-        optionRender={(opt) => {
-          if (opt.id === 'burn') {
-            return (
-              <BurnButtonWrapper disabled={!currentChain.burnEnabled}>
-                <MenuBtnOption {...opt}>
-                  <BurnBtn title={opt.title as string} role="ghost" />
-                </MenuBtnOption>
-              </BurnButtonWrapper>
-            );
-          }
-          return <MenuOption {...(opt as MenuOptionItem)} />;
-        }}
+        optionRender={(opt) => (
+          <MenuOption
+            {...(opt as MenuOptionItem)}
+            disabled={opt.id === 'burn' && !currentChain.burnEnabled}
+          />
+        )}
         onChange={(opt) => {
           if (opt.id === 'burn' && !currentChain.burnEnabled) {
             return;
@@ -154,22 +184,4 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   );
 };
 
-const BurnButtonWrapper = styled.div<{ disabled: boolean }>`
-  svg {
-    fill: ${(props) =>
-      props.disabled ? 'var(--color-blue-grey-300)' : 'var(--color-coral-500)'};
-  }
-
-  .unique-button {
-    background: none;
-    padding: 0;
-    color: ${(props) =>
-      props.disabled ? 'var(--color-blue-grey-300)' : 'var(--color-coral-500)'}}
-  }
-`;
-
-export const NFTDetailsHeader = memo(styled(NFTDetailsHeaderComponent)`
-  .transfer-btn {
-    margin-top: calc(var(--prop-gap) * 1.5);
-  }
-`);
+export const NFTDetailsHeader = memo(styled(NFTDetailsHeaderComponent)``);

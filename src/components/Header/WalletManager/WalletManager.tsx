@@ -4,12 +4,11 @@ import { Button, Icon, Text } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
 import { formatKusamaBalance, shortcutText } from '@app/utils/textUtils';
-import { DeviceSize, useApi, useAccounts, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
+import { IdentityIcon } from '@app/components';
 
 import { DropdownSelect, DropdownSelectProps } from './AccountSelect/DropdownSelect';
 import Loading from '../../Loading';
-import { Avatar } from '../../Avatar/Avatar';
-import DefaultAvatar from '../../../static/icons/default-avatar.svg';
 import { BalanceOption } from './types';
 
 const tokenSymbol = 'KSM';
@@ -74,7 +73,7 @@ export const WalletManager: FC = () => {
 const AccountOptionCard = (account: Account) => {
   return (
     <AccountOptionWrapper>
-      <Avatar size={24} src={DefaultAvatar} />
+      <IdentityIcon address={account.address} />
       <AccountOptionPropertyWrapper>
         {account.meta?.name && <Text size="m">{account.meta?.name}</Text>}
         <Text size="s" color="grey-500">
