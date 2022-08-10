@@ -124,11 +124,10 @@ const CollectionSettings = () => {
                       <>
                         Collection sponsor address
                         <Tooltip align={tooltipAlign} targetRef={addressTooltip}>
-                          The collection sponsor pays for all transactions related
-                          to this collection. You can set as a sponsor
-                          a regular account or a market contract. The
-                          sponsor will need to confirm the sponsorship before the
-                          sponsoring begins
+                          The collection sponsor pays for all transactions related to this
+                          collection. You can set as a sponsor a regular account or a
+                          market contract. The sponsor will need to confirm the
+                          sponsorship before the sponsoring begins
                         </Tooltip>
                         <Icon
                           ref={addressTooltip}
@@ -161,9 +160,8 @@ const CollectionSettings = () => {
                       <>
                         Token limit
                         <Tooltip align={tooltipAlign} targetRef={tokenTooltip}>
-                          The token limit (collection size) is a mandatory
-                          parameter if you want to list your collection
-                          on a marketplace.
+                          The token limit (collection size) is a mandatory parameter if
+                          you want to list your collection on a marketplace.
                         </Tooltip>
                         <Icon
                           ref={tokenTooltip}
@@ -187,11 +185,10 @@ const CollectionSettings = () => {
                       <>
                         Owner can burn collection
                         <Tooltip align={tooltipAlign} targetRef={destroyTooltip}>
-                          Should you decide to keep the right to destroy the
-                          collection, a marketplace could reject it depending
-                          on its policies as it gives the author the power
-                          to arbitrarily destroy a collection at any moment
-                          in the future
+                          Should you decide to keep the right to destroy the collection, a
+                          marketplace could reject it depending on its policies as it
+                          gives the author the power to arbitrarily destroy a collection
+                          at any moment in the future
                         </Tooltip>
                         <Icon
                           ref={destroyTooltip}
