@@ -38,8 +38,8 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
                   <Text color="grey-500">{column?.title}</Text>
                 )}
                 {column.render?.(getDeepValue(item, column.field), item, {
+                  rowIndex: rowIdx,
                   columnIndex: colIdx,
-                  rowIndex: 0,
                 }) || getDeepValue(item, column.field)}
               </div>
             ))}
