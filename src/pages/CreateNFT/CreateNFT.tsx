@@ -173,18 +173,25 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
   };
 
+  const isolatedTokenForm = useMemo(
+    () => (
+      <FormProvider {...tokenForm}>
+        <CreateNftForm
+          selectedCollection={collection}
+          collectionsOptions={collectionsOptions}
+          collectionsOptionsLoading={isCollectionsLoading}
+        />
+      </FormProvider>
+    ),
+    [collection, collectionsOptions, isCollectionsLoading, tokenForm],
+  );
+
   return (
     <>
       <MainWrapper className={classNames('create-nft-page', className)}>
         <WrapperContent>
           <FormWrapper>
-            <FormProvider {...tokenForm}>
-              <CreateNftForm
-                selectedCollection={collection}
-                collectionsOptions={collectionsOptions}
-                collectionsOptionsLoading={isCollectionsLoading}
-              />
-            </FormProvider>
+            {isolatedTokenForm}
             <Alert className="alert" type="warning">
               {isValid
                 ? `A fee of ~ ${feeFormatted} can be applied to the transaction`
@@ -218,7 +225,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
         />
       </MainWrapper>
       <StatusTransactionModal isVisible={isFlowLoading} description="Creating NFT" />
-      <DevTool control={control} />
     </>
   );
 };

@@ -100,7 +100,7 @@ export const MyCollectionsList = ({
           </Footer>
         </ListContent>
       ) : (
-        <NoItems iconName="box" title="Nothing found" />
+        <NoItems iconName="box" />
       )}
     </ListWrapper>
   );

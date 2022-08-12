@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Text, Button, useNotifications } from '@unique-nft/ui-kit';
@@ -135,76 +135,83 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     setPageHeading('Create a collection');
   }, []);
 
+  const isolatedCollectionForm = useMemo(
+    () => (
+      <FormProvider {...collectionForm}>
+        <Outlet />
+      </FormProvider>
+    ),
+    [collectionForm],
+  );
+
   return (
-    <FormProvider {...collectionForm}>
-      <MainWrapper className={classNames('create-collection-page', className)}>
-        <WrapperContent>
-          <FormWrapper>
-            <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
-            <Outlet />
-            <Alert type="warning">
-              A fee of ~{feeFormatted} can be applied to the transaction
-            </Alert>
-            <ButtonGroup>
-              {!isLastStep && (
-                <MintingBtn
-                  iconRight={{
-                    color: 'currentColor',
-                    name: 'arrow-right',
-                    size: 12,
-                  }}
-                  title="Next step"
-                  onClick={handleSubmit(onNextStep)}
-                />
-              )}
-              {!isFirstStep && (
-                <Button
-                  iconLeft={{
-                    color: 'var(--color-primary-400)',
-                    name: 'arrow-left',
-                    size: 12,
-                  }}
-                  title="Previous step"
-                  onClick={() => goToPreviousStep(currentStep - 1)}
-                />
-              )}
-              {isLastStep && (
-                <MintingBtn
-                  role="primary"
-                  title="Create collection"
-                  tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                  disabled={!isValid}
-                  onClick={handleSubmit(onSubmit)}
-                />
-              )}
-            </ButtonGroup>
-            <Confirm
-              buttons={[
-                { title: 'No, return', onClick: () => setWarning(null) },
-                {
-                  title: 'Yes, I am sure',
-                  role: 'primary',
-                  type: 'submit',
-                  onClick: () => {
-                    goToNextStep(2);
-                    setWarning(null);
-                  },
+    <MainWrapper className={classNames('create-collection-page', className)}>
+      <WrapperContent>
+        <FormWrapper>
+          <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
+          {isolatedCollectionForm}
+          <Alert type="warning">
+            A fee of ~{feeFormatted} can be applied to the transaction
+          </Alert>
+          <ButtonGroup>
+            {!isLastStep && (
+              <MintingBtn
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'arrow-right',
+                  size: 12,
+                }}
+                title="Next step"
+                onClick={handleSubmit(onNextStep)}
+              />
+            )}
+            {!isFirstStep && (
+              <Button
+                iconLeft={{
+                  color: 'var(--color-primary-400)',
+                  name: 'arrow-left',
+                  size: 12,
+                }}
+                title="Previous step"
+                onClick={() => goToPreviousStep(currentStep - 1)}
+              />
+            )}
+            {isLastStep && (
+              <MintingBtn
+                role="primary"
+                title="Create collection"
+                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
+                disabled={!isValid}
+                onClick={handleSubmit(onSubmit)}
+              />
+            )}
+          </ButtonGroup>
+          <Confirm
+            buttons={[
+              { title: 'No, return', onClick: () => setWarning(null) },
+              {
+                title: 'Yes, I am sure',
+                role: 'primary',
+                type: 'submit',
+                onClick: () => {
+                  goToNextStep(2);
+                  setWarning(null);
                 },
-              ]}
-              isVisible={!!warning}
-              title={warning?.title}
-              onClose={() => setWarning(null)}
-            >
-              <Text>{warning?.description}</Text>
-            </Confirm>
-            <StatusTransactionModal
-              isVisible={isFlowLoading}
-              description="Creating collection"
-            />
-          </FormWrapper>
-        </WrapperContent>
-        <CollectionSidebar />
-      </MainWrapper>
-    </FormProvider>
+              },
+            ]}
+            isVisible={!!warning}
+            title={warning?.title}
+            onClose={() => setWarning(null)}
+          >
+            <Text>{warning?.description}</Text>
+          </Confirm>
+          <StatusTransactionModal
+            isVisible={isFlowLoading}
+            description="Creating collection"
+          />
+        </FormWrapper>
+      </WrapperContent>
+      <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+    </MainWrapper>
   );
 };
