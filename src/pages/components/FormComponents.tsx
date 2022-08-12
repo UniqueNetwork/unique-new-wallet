@@ -113,11 +113,22 @@ export const LabelText = styled(Text).attrs({
 `;
 
 export const SuggestOption = styled.div`
-  display: flex;
-  align-items: center;
+  &.suggestion-item {
+    display: flex;
+    align-items: center;
 
-  & > img {
-    margin-right: calc(var(--prop-gap) / 2);
+    & > img {
+      flex: 0 0 auto;
+      margin-right: calc(var(--prop-gap) / 2);
+    }
+
+    .suggestion-item {
+      &__title {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
   }
 `;
 
