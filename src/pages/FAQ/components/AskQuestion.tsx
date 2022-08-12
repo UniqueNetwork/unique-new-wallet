@@ -2,17 +2,22 @@ import {
   Button,
   Heading,
   Icon,
-  InputText,
   Modal,
   Text,
-  Textarea,
   useNotifications,
+  Loader,
 } from '@unique-nft/ui-kit';
-import React, { useState, VFC } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useForm, FormProvider } from 'react-hook-form';
 
-import { BaseApi } from '@app/api';
+import {
+  InputController,
+  TextareaController,
+} from '@app/components/FormControllerComponents';
+import { AskQuestionRequestType } from '@app/api/restApi/ask-question';
+import { useAskQuestionRequest } from '@app/api/restApi/ask-question/useAskQuestionRequest';
+import { config } from '@app/config';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -28,19 +33,45 @@ const Wrapper = styled.div`
   }
 `;
 
-export const AskQuestion: VFC = () => {
-  const zenDeskToken =
-    window.ENV?.ZENDESK_OAUTH_APP_TOKEN ||
-    process.env.REACT_APP_ZENDESK_OAUTH_APP_TOKEN ||
-    '';
+export const AskQuestion = () => {
   const [visibleModal, setVisibleModal] = useState(false);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [question, setQuestion] = useState('');
+  const form = useForm<AskQuestionRequestType>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      name: '',
+      email: '',
+      question: '',
+    },
+  });
+
+  const { createAskQuestionRequest, isLoadingRequestQuestion } = useAskQuestionRequest();
+
+  const {
+    formState: { isValid },
+    handleSubmit,
+    reset,
+  } = form;
+
+  const onSubmit = (data: AskQuestionRequestType) => {
+    createAskQuestionRequest(data)
+      .then(() => {
+        setVisibleModal(false);
+        info('Your request has been accepted');
+      })
+      .catch(() => {
+        error('An unexpected error has occurred. Please repeat your question');
+      });
+  };
+
+  useEffect(() => {
+    reset();
+  }, [reset, visibleModal]);
+
   const { info, error } = useNotifications();
   return (
     <Wrapper>
-      <Heading size="3">Didn&apos;t find the answer? Write&nbsp;to us.</Heading>
+      <Heading size="3">Didn&apos;t find the answer? Write to us.</Heading>
       <Button
         title="Ask a question"
         onClick={() => {
@@ -50,41 +81,25 @@ export const AskQuestion: VFC = () => {
       <SidePlateFooter>
         <Text>You can also find information in our community</Text>
         <SocialNav>
-          <RouterLink
-            to="https://t.me/Uniquechain"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
+          <a href={config.socialLinks.telegram} target="_blank" rel="noreferrer noopener">
             <Icon name="social-telegram" color="var(--color-primary-500)" size={32} />
-          </RouterLink>
-          <RouterLink
-            to="https://twitter.com/Unique_NFTchain"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
+          </a>
+          <a href={config.socialLinks.twitter} target="_blank" rel="noreferrer noopener">
             <Icon name="social-twitter" color="var(--color-primary-500)" size={32} />
-          </RouterLink>
-          <RouterLink
-            to="https://discord.gg/jHVdZhsakC"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
+          </a>
+          <a href={config.socialLinks.discord} target="_blank" rel="noreferrer noopener">
             <Icon name="social-discord" color="var(--color-primary-500)" size={32} />
-          </RouterLink>
-          <RouterLink
-            to="https://github.com/UniqueNetwork"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
+          </a>
+          <a href={config.socialLinks.github} target="_blank" rel="noreferrer noopener">
             <Icon name="social-github" color="var(--color-primary-500)" size={32} />
-          </RouterLink>
-          <RouterLink
-            to="https://app.subsocial.network/@UniqueNetwork_NFT"
+          </a>
+          <a
+            href={config.socialLinks.subsocial}
             target="_blank"
             rel="noreferrer noopener"
           >
             <Icon name="social-subsocial" color="var(--color-primary-500)" size={32} />
-          </RouterLink>
+          </a>
         </SocialNav>
       </SidePlateFooter>
       <Modal
@@ -94,70 +109,51 @@ export const AskQuestion: VFC = () => {
           setVisibleModal(false);
         }}
       >
+        {isLoadingRequestQuestion && <Loader isFullPage={true} />}
         <Heading size="2">Ask a question</Heading>
         <ModalContent>
-          <InputText
-            label="Name *"
-            className="input"
-            value={name}
-            onChange={(text) => {
-              setName(text);
-            }}
-          />
-          <InputText
-            label="Email *"
-            className="input"
-            value={email}
-            onChange={(text) => {
-              setEmail(text);
-            }}
-          />
-          <Textarea
-            label="Question *"
-            className="textarea"
-            rows={6}
-            value={question}
-            onChange={(text) => {
-              setQuestion(text);
-            }}
-          />
-          <Button
-            title="Send"
-            disabled={name === '' || email === '' || question === ''}
-            role="primary"
-            onClick={() => {
-              const api = new BaseApi('https://uniquenetwork.zendesk.com/api/v2/tickets');
-              api
-                .post(
-                  'https://uniquenetwork.zendesk.com/api/v2/tickets',
-                  {
-                    ticket: {
-                      comment: {
-                        body: 'From Unique Wallet',
-                      },
-                      priority: 'urgent',
-                      subject: `Name: ${name}, Email: ${email}, Question: ${question}.`,
-                    },
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${zenDeskToken}`,
-                    },
-                  },
-                )
-                .then(() => {
-                  info('Your request has been accepted');
-                  setVisibleModal(false);
-                  setName('');
-                  setEmail('');
-                  setQuestion('');
-                })
-                .catch(() => {
-                  error('An unexpected error has occurred. Please repeat your question');
-                  setVisibleModal(false);
-                });
-            }}
-          />
+          <FormProvider {...form}>
+            <InputController
+              name="name"
+              label="Name *"
+              className="input"
+              id="name"
+              rules={{
+                required: true,
+              }}
+            />
+            <InputController
+              name="email"
+              label="Email *"
+              className="input"
+              id="email"
+              rules={{
+                required: true,
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: 'Entered value does not match email format',
+                },
+              }}
+            />
+            <TextareaController
+              name="question"
+              label="Question *"
+              className="textarea"
+              id="question"
+              rows={6}
+              rules={{
+                required: true,
+              }}
+            />
+
+            <Button
+              title="Send"
+              disabled={!isValid}
+              role="primary"
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
+            />
+          </FormProvider>
         </ModalContent>
       </Modal>
     </Wrapper>
