@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { Textarea, TextareaProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
@@ -7,15 +7,14 @@ type InputControllerProps = BaseControllerProps<TextareaProps>;
 
 export const TextareaController = ({
   name,
-  control: userControl,
+  control,
   rules,
   defaultValue,
   ...textareaProps
 }: InputControllerProps) => {
-  const { control } = useFormContext();
   return (
     <Controller
-      control={userControl || control}
+      control={control}
       render={({ field: { value, ...textareaField } }) => (
         <Textarea {...textareaField} value={value ?? ''} {...textareaProps} />
       )}
