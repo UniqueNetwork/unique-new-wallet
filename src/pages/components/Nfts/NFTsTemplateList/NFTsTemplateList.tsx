@@ -80,6 +80,11 @@ const NFTsListComponent = ({
                   key={`${collection_id}-${token_id}`}
                   image={getTokenIpfsUriByImagePath(image_path)}
                   link={`${collection_name} [id ${collection_id}]`}
+                  meta={
+                    <Text appearance="block" color="grey-500" size="s">
+                      {collection_name} [id {collection_id}]
+                    </Text>
+                  }
                   onTokenClick={() =>
                     navigate(
                       `/${currentChain?.network}/token/${collection_id}/${token_id}`,
