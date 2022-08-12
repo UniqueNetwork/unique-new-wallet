@@ -8,10 +8,11 @@ import {
   Textarea,
   useNotifications,
 } from '@unique-nft/ui-kit';
-import axios from 'axios';
 import React, { useState, VFC } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import styled from 'styled-components';
+
+import { BaseApi } from '@app/api';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -114,6 +115,7 @@ export const AskQuestion: VFC = () => {
           <Textarea
             label="Question *"
             className="textarea"
+            rows={6}
             value={question}
             onChange={(text) => {
               setQuestion(text);
@@ -124,7 +126,8 @@ export const AskQuestion: VFC = () => {
             disabled={name === '' || email === '' || question === ''}
             role="primary"
             onClick={() => {
-              axios
+              const api = new BaseApi('https://uniquenetwork.zendesk.com/api/v2/tickets');
+              api
                 .post(
                   'https://uniquenetwork.zendesk.com/api/v2/tickets',
                   {
@@ -172,11 +175,6 @@ const ModalContent = styled.div`
       text-align: start;
       margin-bottom: 15px;
       font-weight: 400;
-    }
-  }
-  .textarea {
-    textarea {
-      height: 114px;
     }
   }
   .unique-button {
