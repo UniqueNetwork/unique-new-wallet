@@ -72,6 +72,11 @@ const LayoutStyled = styled.div`
     padding-left: 24px;
     padding-right: 24px;
 
+    @media screen and (max-width: 567px) {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
     @media screen and (min-width: 1024px) {
       padding-left: 32px;
       padding-right: 32px;
