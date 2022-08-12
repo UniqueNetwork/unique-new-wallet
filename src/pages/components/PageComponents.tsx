@@ -16,21 +16,22 @@ export const MainWrapper = styled.div`
 
 export const WrapperContent = styled.div`
   box-sizing: border-box;
-  flex: 1 1 66.6666%;
 
   @media screen and (min-width: 1024px) {
     ${commonPlateCss};
+    flex: 1 1 66.6666%;
   }
 `;
 
 export const WrapperSidebar = styled.aside`
   box-sizing: border-box;
-  flex: 1 1 33.3333%;
-  max-width: 600px;
+  overflow: hidden;
   margin: calc(var(--prop-gap) * 3) 0;
 
   @media screen and (min-width: 1024px) {
     ${commonPlateCss};
+    flex: 1 1 33.3333%;
+    max-width: 600px;
     margin: 0 0 0 calc(var(--prop-gap) * 2);
   }
 `;
