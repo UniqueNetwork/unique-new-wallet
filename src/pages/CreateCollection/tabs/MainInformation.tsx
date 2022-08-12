@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import {
   Heading,
   InputText,
@@ -26,24 +26,27 @@ export const MainInformation: FC = () => {
   const { error } = useNotifications();
   const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
 
-  const uploadCover = async (
-    data: { url: string; file: Blob } | null,
-    callbackFn: (cid: string) => void,
-  ) => {
-    if (!data?.file) {
-      callbackFn('');
-      return;
-    }
-    const _10MB = 10000000;
-    if (data.file.size > _10MB) {
-      error('File size more 10MB');
-      return;
-    }
+  const uploadCover = useCallback(
+    async (
+      data: { url: string; file: Blob } | null,
+      callbackFn: (cid: string) => void,
+    ) => {
+      if (!data?.file) {
+        callbackFn('');
+        return;
+      }
+      const _10MB = 10000000;
+      if (data.file.size > _10MB) {
+        error('File size more 10MB');
+        return;
+      }
 
-    const response = await uploadFile(data.file);
+      const response = await uploadFile(data.file);
 
-    response && callbackFn(response.cid);
-  };
+      response && callbackFn(response.cid);
+    },
+    [],
+  );
 
   return (
     <>

@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { memo, VFC } from 'react';
 import { Heading } from '@unique-nft/ui-kit';
 
 import { Card } from '@app/pages/components/Card';
@@ -7,11 +6,10 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { CollectionForm } from '@app/pages/CreateCollection/types';
 
-export const CollectionSidebar = () => {
-  const { setValue, control } = useFormContext<CollectionForm>();
-  const { symbol, description, coverPictureIpfsCid, name, attributes } = useWatch({
-    control,
-  });
+const CollectionSidebarComponent: VFC<{
+  collectionForm: CollectionForm;
+}> = ({ collectionForm }) => {
+  const { name, description, symbol, coverPictureIpfsCid, attributes } = collectionForm;
 
   const attributesInline = attributes?.map<string>((attr) => attr.name || '');
 
@@ -43,3 +41,5 @@ export const CollectionSidebar = () => {
     </WrapperSidebar>
   );
 };
+
+export const CollectionSidebar = memo(CollectionSidebarComponent);
