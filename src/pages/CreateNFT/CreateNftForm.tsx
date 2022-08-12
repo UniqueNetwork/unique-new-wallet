@@ -47,7 +47,9 @@ const CollectionSuggestion: FC<{
       })}
     >
       <Avatar size={24} type="circle" src={suggestion.img || undefined} />
-      {suggestion.title} [id {suggestion.id}]
+      <span className="suggestion-item__title">
+        {suggestion.title} [id {suggestion.id}]
+      </span>
     </SuggestOption>
   );
 };
