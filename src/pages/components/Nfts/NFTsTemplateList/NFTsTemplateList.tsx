@@ -68,7 +68,11 @@ const NFTsListComponent = ({
         </div>
       )}
 
-      <div className="nft-list__body">
+      <div
+        className={classNames('nft-list__items', {
+          _empty: !tokensCount,
+        })}
+      >
         {tokensCount === 0 ? (
           <NoItems iconName="not-found" />
         ) : (
@@ -149,6 +153,10 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
       align-items: flex-start;
       flex-wrap: wrap;
       gap: calc(var(--prop-gap) * 2);
+
+      &._empty {
+        align-items: center;
+      }
     }
   }
 `;
