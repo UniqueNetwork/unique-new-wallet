@@ -36,7 +36,7 @@ interface NFTsListComponentProps {
 
 const renderItemsCount = (count = 0) => (
   <Text weight="light">
-    {count}&nbsp;{count === 1 ? 'item' : 'items'}
+    {count} {count === 1 ? 'item' : 'items'}
   </Text>
 );
 
@@ -85,7 +85,11 @@ const NFTsListComponent = ({
                       `/${currentChain?.network}/token/${collection_id}/${token_id}`,
                     )
                   }
-                  onMetaClick={() => navigate(`${ROUTE.MY_COLLECTIONS}/${collection_id}`)}
+                  onMetaClick={() =>
+                    navigate(
+                      `/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection_id}`,
+                    )
+                  }
                 />
               ),
             )}

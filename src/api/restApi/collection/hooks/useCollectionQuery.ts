@@ -1,11 +1,11 @@
 import { UseQueryResult } from 'react-query';
 
-import { CollectionInfoResponse } from '@app/types/Api';
 import { CollectionApiService, useApiQuery } from '@app/api';
+import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
 
 export const useCollectionQuery = (
   collectionId: number,
-): UseQueryResult<CollectionInfoResponse> =>
+): UseQueryResult<CollectionInfoWithSchemaResponse> =>
   useApiQuery({
     endpoint: CollectionApiService.collectionQuery,
     payload: { collectionId },

@@ -1,6 +1,5 @@
 import { RouteObject } from 'react-router-dom';
 
-import { CollectionForm, TokenForm } from '@app/context';
 import {
   Accounts,
   Coins,
@@ -17,7 +16,7 @@ import {
   Welcome,
 } from '@app/pages';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
-import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/pages';
+import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/tabs';
 
 import {
   COLLECTION_TABS_ROUTE,
@@ -91,11 +90,7 @@ export const routes: RouteConfig = {
       ],
     },
     {
-      element: (
-        <CollectionForm>
-          <CreateCollection />
-        </CollectionForm>
-      ),
+      element: <CreateCollection />,
       name: 'Create collection',
       path: ROUTE.CREATE_COLLECTION,
       children: [
@@ -112,11 +107,7 @@ export const routes: RouteConfig = {
       ],
     },
     {
-      element: (
-        <TokenForm>
-          <CreateNFT />
-        </TokenForm>
-      ),
+      element: <CreateNFT />,
       name: 'Create a NFT',
       path: ROUTE.CREATE_NFT,
     },

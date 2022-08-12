@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { useAccounts } from './hooks';
 import { Welcome } from './pages';
-import { MY_TOKENS_TABS_ROUTE, ROUTE } from './routes';
+import { ROUTE, MY_TOKENS_TABS_ROUTE, CREATE_COLLECTION_TABS_ROUTE } from './routes';
 
 const LoaderContainer = styled.div`
   margin: auto;

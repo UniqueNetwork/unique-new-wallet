@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { useApi } from '@app/hooks';
 import { useApiMutation } from '@app/api';
 
@@ -10,7 +12,7 @@ export const useFileUpload = () => {
     endpoint: FileService.fileUpload,
   });
 
-  const uploadFile = async (file: Blob) => {
+  const uploadFile = useCallback(async (file: Blob) => {
     if (!api) {
       return;
     }
@@ -19,9 +21,10 @@ export const useFileUpload = () => {
       api,
       file,
     });
-  };
+  }, []);
 
   return {
     uploadFile,
+    isLoading: fileUpload.isLoading,
   };
 };

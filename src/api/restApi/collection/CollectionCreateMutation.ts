@@ -1,13 +1,12 @@
 import { QueryClient } from 'react-query';
 
 import { EndpointMutation } from '@app/api/restApi/request';
-import { NftCollectionDTO } from '@app/types';
 import { IBaseApi } from '@app/api';
-import { UnsignedTxPayloadResponse } from '@app/types/Api';
+import { CreateCollectionNewRequest, UnsignedTxPayloadResponse } from '@app/types/Api';
 
 export type CollectionCreatePayload = {
   api: IBaseApi;
-  collection: NftCollectionDTO;
+  collection: CreateCollectionNewRequest;
 };
 
 export class CollectionCreateMutation extends EndpointMutation<
@@ -19,13 +18,13 @@ export class CollectionCreateMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = '/collection';
+    this.baseUrl = '/collection-new';
 
     this.request = this.request.bind(this);
   }
 
   async request(payload: CollectionCreatePayload): Promise<UnsignedTxPayloadResponse> {
-    return payload.api.post<UnsignedTxPayloadResponse, NftCollectionDTO>(
+    return payload.api.post<UnsignedTxPayloadResponse, CreateCollectionNewRequest>(
       `${this.baseUrl}`,
       payload.collection,
     );

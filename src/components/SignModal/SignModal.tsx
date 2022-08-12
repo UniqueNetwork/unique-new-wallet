@@ -1,13 +1,11 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Avatar, Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
+import { Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { KeyringPair } from '@polkadot/keyring/types';
 
 import { AccountSigner } from '@app/account';
 import { useAccounts } from '@app/hooks';
-import { PasswordInput } from '@app/components';
-
-import DefaultAvatar from '../../static/icons/default-avatar.svg';
+import { IdentityIcon, PasswordInput } from '@app/components';
 
 export type TSignModalProps = {
   isVisible: boolean;
@@ -48,7 +46,7 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
         <Heading size="2">Authorize transaction</Heading>
       </Content>
       <AddressWrapper>
-        <Avatar size={24} src={DefaultAvatar} />
+        <IdentityIcon address={signer.address || ''} />
         <Text>{signer.address || ''}</Text>
       </AddressWrapper>
       <CredentialsWrapper>

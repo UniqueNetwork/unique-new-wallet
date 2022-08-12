@@ -9,6 +9,7 @@ import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { defaultChainKey } from '@app/utils/configParser';
 import { UserEvents } from '@app/utils/logUserEvent';
+import { IdentityIcon } from '@app/components';
 
 import MenuLink from './MenuLink';
 
@@ -96,6 +97,7 @@ export const Header: VFC = () => {
         {!isLoading && !!accounts.length && (
           <AccountsManager
             accounts={accountsForManager}
+            avatarRender={(address: string) => <IdentityIcon address={address} />}
             activeNetwork={activeNetwork}
             balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
             isLoading={isLoading}

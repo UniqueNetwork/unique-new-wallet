@@ -2,7 +2,6 @@ import React, { createRef, useCallback, useEffect, useMemo, useState } from 'rea
 import {
   Button,
   Dropdown,
-  Heading,
   Icon,
   InputText,
   TableColumnProps,
@@ -42,10 +41,10 @@ const AccountTitle = () => {
     <>
       Account
       <Tooltip targetRef={tooltipRef}>
-        Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may
-        be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
-        can be&nbsp;converted between each other because they share the same public key.
-        You can see all transformations for any given address on&nbsp;Subscan.
+        Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
+        represented by a different address character sequence, but they can be converted
+        between each other because they share the same public key. You can see all
+        transformations for any given address on Subscan.
       </Tooltip>
       <Icon ref={tooltipRef} name="question" size={20} color="var(--color-primary-500)" />
     </>
@@ -247,6 +246,7 @@ export const Accounts = () => {
       </AccountsPageHeader>
       <AccountsPageContent>
         <Table
+          columnPadding={32}
           columns={getAccountsColumns({
             onShowSendFundsModal: onSendFundsClick,
             onForgetWalletClick,
@@ -284,8 +284,8 @@ export const Accounts = () => {
         onClose={() => setForgetWalletAddress('')}
       >
         <Text>
-          Are you sure you want to&nbsp;perform this action? You can always recover your
-          wallet with your seed password using the &rsquo;Add account via&rsquo; button
+          Are you sure you want to perform this action? You can always recover your wallet
+          with your seed password using the &rsquo;Add account via&rsquo; button
         </Text>
       </Confirm>
     </PagePaperNoPadding>
@@ -325,6 +325,7 @@ const SearchInputStyled = styled(InputText)`
 
 const AccountCellWrapper = styled.div`
   display: flex;
+  align-items: center;
   padding: 20px 0;
 `;
 
