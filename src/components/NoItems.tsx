@@ -22,7 +22,7 @@ const Title = styled(Text).attrs({ color: 'grey-500', weight: 'light' })`
 
 const NoItemsComponent: FC<NoItemsProps> = ({
   iconName = 'no-items',
-  title = 'No items found',
+  title = 'Nothing found',
 }) => {
   return (
     <Wrapper>
