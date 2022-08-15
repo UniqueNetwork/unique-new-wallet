@@ -162,8 +162,6 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({ className }) => {
   });
   const advancedFields = fields.map((f) => ({ ...f, remove }));
 
-  console.log(advancedFields);
-
   const addAttributeHandler = useCallback(() => {
     append({
       name: '',
