@@ -12,8 +12,6 @@ import {
 import { AskQuestion, faqItems } from './components';
 
 const WrapperContentStyled = styled(WrapperContent)`
-  padding-bottom: calc(var(--prop-gap) * 2);
-
   .faq-item {
     border-bottom: 1px dashed var(--color-blue-grey-300);
     font-size: 1rem;
@@ -69,7 +67,7 @@ export const Faq = (): React.ReactElement<void> => {
   }, []);
 
   return (
-    <MainWrapper>
+    <MainWrapperStyled>
       <WrapperContentStyled>
         {faqItems.map((item, i) => {
           return (
@@ -82,8 +80,34 @@ export const Faq = (): React.ReactElement<void> => {
       <WrapperSidebar>
         <AskQuestion />
       </WrapperSidebar>
-    </MainWrapper>
+    </MainWrapperStyled>
   );
 };
+
+const MainWrapperStyled = styled(MainWrapper)`
+  @media only screen and (min-width: 800px) and (max-width: 1024px) {
+    width: 85%;
+  }
+
+  .unique-modal-wrapper {
+    padding: calc(var(--prop-gap) * 5) 5%;
+    box-sizing: border-box;
+
+    @media screen and (max-width: 567px) {
+      .unique-modal {
+        padding: calc(var(--prop-gap));
+
+        .unique-font-heading {
+          font-size: 24px;
+          text-align: left;
+        }
+
+        .close-button {
+          top: 20px;
+        }
+      }
+    }
+  }
+`;
 
 export default Faq;

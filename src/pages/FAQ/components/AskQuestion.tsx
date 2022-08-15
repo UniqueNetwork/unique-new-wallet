@@ -29,7 +29,8 @@ const Wrapper = styled.div`
   text-align: center;
 
   .unique-button {
-    min-width: 50%;
+    width: 100%;
+    max-width: 280px;
   }
 `;
 
@@ -170,7 +171,7 @@ const ModalContent = styled.div`
     label {
       text-align: start;
       margin-bottom: 15px;
-      font-weight: 400;
+      font-weight: 500;
     }
   }
   .unique-button {
