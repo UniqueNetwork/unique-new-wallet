@@ -37,7 +37,7 @@ const SidebarComponent: VFC<SidebarProps> = ({
           <Card
             title={collectionName}
             description={collectionDescription}
-            picture={collectionCoverUrl || ''}
+            picture={collectionCoverUrl || undefined}
           />
         </SidebarRow>
         <SidebarRow>

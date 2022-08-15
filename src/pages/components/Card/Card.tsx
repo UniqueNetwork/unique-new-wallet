@@ -1,9 +1,7 @@
 import { VFC } from 'react';
 import styled from 'styled-components';
-import classNames from 'classnames';
 import { Avatar, Tag, Text } from '@unique-nft/ui-kit';
 
-import imgUrl from '@app/static/icons/empty-image.svg';
 import { AttributeView } from '@app/pages/CreateNFT/types';
 
 interface IPreviewCard {
@@ -29,12 +27,6 @@ const PreviewCard = styled.div`
 
     &.square {
       border-radius: var(--prop-border-radius);
-    }
-  }
-
-  ._empty-picture {
-    .unique-avatar {
-      object-fit: none;
     }
   }
 `;
@@ -114,9 +106,7 @@ export const Card: VFC<IPreviewCard> = ({
 }) => {
   return (
     <PreviewCard>
-      <div className={classNames({ '_empty-picture': picture === undefined })}>
-        <Avatar size={64} src={picture || imgUrl} type={geometry} />
-      </div>
+      <Avatar size={64} src={picture} type={geometry} />
       <PreviewCardInfo>
         <PreviewCardTitle>{title}</PreviewCardTitle>
         <PreviewCardDescription>{description}</PreviewCardDescription>
