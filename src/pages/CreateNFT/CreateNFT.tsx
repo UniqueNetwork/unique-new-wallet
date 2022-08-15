@@ -202,13 +202,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 role="primary"
                 title="Confirm and create more"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid}
+                disabled={!isValid || isBalanceInsufficient}
                 onClick={() => confirmFormHandler()}
               />
               <MintingBtn
                 title="Confirm and close"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid}
+                disabled={!isValid || isBalanceInsufficient}
                 onClick={() => confirmFormHandler(true)}
               />
             </ButtonGroup>

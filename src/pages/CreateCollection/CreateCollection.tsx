@@ -181,7 +181,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
                 role="primary"
                 title="Create collection"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid}
+                disabled={!isValid || isBalanceInsufficient}
                 onClick={handleSubmit(onSubmit)}
               />
             )}

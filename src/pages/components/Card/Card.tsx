@@ -114,9 +114,7 @@ export const Card: VFC<IPreviewCard> = ({
 }) => {
   return (
     <PreviewCard>
-      <div className={classNames({ '_empty-picture': picture === undefined })}>
-        <Avatar size={64} src={picture || imgUrl} type={geometry} />
-      </div>
+      <Avatar size={64} src={picture} type={geometry} />
       <PreviewCardInfo>
         <PreviewCardTitle>{title}</PreviewCardTitle>
         <PreviewCardDescription>{description}</PreviewCardDescription>
