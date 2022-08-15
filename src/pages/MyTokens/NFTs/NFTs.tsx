@@ -52,7 +52,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     },
     {
       skip: !selectedAccount?.address,
-      direction: sortByTokenId,
+      order_by: sortByTokenId,
       pagination: { page: tokensPage, limit: defaultLimit },
     },
   );

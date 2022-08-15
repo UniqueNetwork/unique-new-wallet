@@ -2,6 +2,7 @@ import { gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
+import { QueryResponse, Token } from '../types';
 import { OptionsTokenCollection, ViewToken } from './types';
 
 export type Direction = 'asc' | 'desc';
@@ -24,26 +25,19 @@ type OwnerTokensResponse = {
 
 const OWNER_TOKENS_QUERY = gql`
   query GetGraphQlOwnerTokens(
-    $where: view_tokens_bool_exp
+    $where: TokenWhereParams
     $offset: Int
     $limit: Int
-    $direction: order_by
+    $order_by: TokenOrderByParams
   ) {
-    view_tokens(
-      where: $where
-      offset: $offset
-      limit: $limit
-      order_by: { token_id: $direction }
-    ) {
-      image_path
-      token_id
-      token_name
-      collection_name
-      collection_id
-    }
-    view_tokens_aggregate(where: $where) {
-      aggregate {
-        count
+    tokens(where: $where, offset: $offset, limit: $limit, order_by: $order_by) {
+      count
+      data {
+        token_id
+        token_name
+        collection_name
+        collection_id
+        image
       }
     }
   }
@@ -91,7 +85,7 @@ export const useGraphQlOwnerTokens = (
   options: OptionsTokenCollection,
 ) => {
   const { collectionsIds, typesFilters, searchText } = filters;
-  const { direction, pagination, skip } = options ?? {
+  const { order_by, pagination, skip } = options ?? {
     direction: 'desc',
     skip: !owner,
   };
@@ -101,7 +95,7 @@ export const useGraphQlOwnerTokens = (
     data: response,
     loading: tokensLoading,
     error,
-  } = useQuery<OwnerTokensResponse>(OWNER_TOKENS_QUERY, {
+  } = useQuery<QueryResponse<Token>>(OWNER_TOKENS_QUERY, {
     skip: skip || !owner,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
@@ -109,7 +103,7 @@ export const useGraphQlOwnerTokens = (
     variables: {
       limit,
       offset: limit * page,
-      direction,
+      order_by,
       where: {
         ...getConditionBySearchText('token_name', searchText),
         ...getConditionByTypesFilters(owner, typesFilters),
@@ -119,8 +113,8 @@ export const useGraphQlOwnerTokens = (
   });
 
   return {
-    tokensCount: response?.view_tokens_aggregate.aggregate.count,
-    tokens: response?.view_tokens,
+    tokensCount: response?.tokens.count,
+    tokens: response?.tokens.data,
     tokensLoading,
     error,
   };

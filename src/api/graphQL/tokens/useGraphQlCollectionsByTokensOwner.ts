@@ -1,20 +1,19 @@
 import { gql, useQuery } from '@apollo/client';
 
-import { CollectionPreview } from '@app/api';
-
-type CollectionsByTokensOwnerResponse = {
-  view_tokens: CollectionPreview[];
-};
+import { QueryResponse, Token } from '../types';
 
 const COLLECTIONS_BY_TOKENS_OWNER = gql`
   query Collections($owner: String) {
-    view_tokens(
+    tokens(
       where: { _or: [{ owner: { _eq: $owner } }, { owner_normalized: { _eq: $owner } }] }
       distinct_on: collection_id
     ) {
-      collection_cover
-      collection_id
-      collection_name
+      count
+      data {
+        collection_cover
+        collection_id
+        collection_name
+      }
     }
   }
 `;
@@ -27,15 +26,17 @@ export const useGraphQlCollectionsByTokensOwner = (
     data: response,
     loading: userCollectionsLoading,
     error,
-  } = useQuery<CollectionsByTokensOwnerResponse>(COLLECTIONS_BY_TOKENS_OWNER, {
+  } = useQuery<QueryResponse<Token>>(COLLECTIONS_BY_TOKENS_OWNER, {
     skip,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
     variables: { owner },
   });
 
+  console.log(response);
+
   return {
-    collections: response?.view_tokens,
+    collections: response?.tokens.data,
     collectionsLoading: userCollectionsLoading,
     error,
   };

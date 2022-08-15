@@ -7,20 +7,21 @@ type TokenByIdResponse = {
 };
 
 const TOKEN_BY_ID_QUERY = gql`
-  query TokenByIdQuery($tokenId: Int, $collectionId: bigint) {
-    view_tokens(
-      where: { collection_id: { _eq: $collectionId }, token_id: { _eq: $tokenId } }
+  query TokenByIdQuery($tokenId: Float, $collectionId: Float) {
+    tokens(
+      where: { token_id: { _eq: $tokenId }, collection_id: { _eq: $collectionId } }
     ) {
-      owner
-      token_name
-      collection_cover
-      collection_id
-      collection_owner
-      collection_name
-      token_id
-      collection_description
-      data
-      image_path
+      count
+      data {
+        date_of_creation
+        owner
+        token_id
+        token_name
+        collection_cover
+        collection_id
+        collection_name
+        collection_description
+      }
     }
   }
 `;
@@ -41,7 +42,7 @@ export const useGraphQlTokenById = (tokenId: number, collectionId: number) => {
   return {
     error,
     loading,
-    token: data?.view_tokens[0],
+    token: (data as any).tokens.data[0],
     refetch,
   };
 };

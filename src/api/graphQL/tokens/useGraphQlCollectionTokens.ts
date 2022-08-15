@@ -32,13 +32,6 @@ const COLLECTION_TOKENS = gql`
   }
 `;
 
-type TokensListData = {
-  isLoadingTokens: boolean;
-  tokens: TokenPreviewInfo[] | undefined;
-  tokensCount: number | undefined;
-  errorTokens: ApolloError | undefined;
-};
-
 export const useGraphQlCollectionTokens = ({
   filter,
   collectionOwner,
@@ -49,7 +42,7 @@ export const useGraphQlCollectionTokens = ({
   collectionOwner: string | undefined;
   filter: { search: string; type: ListNftsFilterType };
   options: OptionsTokenCollection;
-}): TokensListData => {
+}) => {
   const {
     pagination: { page, limit },
     direction,

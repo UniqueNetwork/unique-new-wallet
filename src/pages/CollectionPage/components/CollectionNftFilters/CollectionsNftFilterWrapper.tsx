@@ -32,7 +32,7 @@ export const CollectionsNftFilterWrapper = ({ children }: CollectionFilterType) 
     <nftListFilterContext.Provider
       value={{
         type,
-        direction,
+        order_by,
         page,
         search,
         onChangeDirection: handleChangeDirection,

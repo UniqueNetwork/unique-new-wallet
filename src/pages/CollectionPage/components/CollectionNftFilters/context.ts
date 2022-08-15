@@ -5,7 +5,7 @@ import { Direction } from '@app/api/graphQL/tokens';
 export type ListNftsFilterType = 'all' | 'owned' | 'disowned';
 
 type TListFilter = {
-  direction: Direction;
+  order_by: Direction;
   search: string;
   type: ListNftsFilterType;
   page: number;

@@ -12,7 +12,7 @@ export type ImagePath = {
 
 export type OptionsTokenCollection = {
   skip?: boolean;
-  direction?: Direction;
+  order_by?: Direction;
   pagination: Pagination;
 };
 

@@ -1,32 +1,28 @@
 import { gql, useQuery } from '@apollo/client';
 
-import { AccountCommonInfoResponse } from './types';
+import { QueryResponse } from '../types';
 
 const accountCommonInfoQuery = gql`
-  query getAccountCommonInfo($accountId: String!) {
-    view_collections_aggregate(
+  query AccountCommonInfoQuery($accountId: String) {
+    tokens(
       where: {
         _or: [{ owner: { _eq: $accountId } }, { owner_normalized: { _eq: $accountId } }]
       }
     ) {
-      aggregate {
-        count(columns: collection_id)
-      }
+      count
     }
-    view_tokens_aggregate(
+    collections(
       where: {
         _or: [{ owner: { _eq: $accountId } }, { owner_normalized: { _eq: $accountId } }]
       }
     ) {
-      aggregate {
-        count(columns: token_id)
-      }
+      count
     }
   }
 `;
 
 export const useGraphQlAccountCommonInfo = (accountId?: string) => {
-  const { data, loading } = useQuery<AccountCommonInfoResponse>(accountCommonInfoQuery, {
+  const { data, loading } = useQuery<QueryResponse>(accountCommonInfoQuery, {
     skip: !accountId,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
@@ -36,7 +32,7 @@ export const useGraphQlAccountCommonInfo = (accountId?: string) => {
 
   return {
     accountCommonInfoLoading: loading,
-    tokensTotal: data?.view_tokens_aggregate?.aggregate.count,
-    collectionsTotal: data?.view_collections_aggregate?.aggregate.count,
+    tokensTotal: data?.tokens.count,
+    collectionsTotal: data?.collections.count,
   };
 };
