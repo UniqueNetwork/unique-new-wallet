@@ -8,7 +8,6 @@ import {
   Loader,
   Pagination,
   Text,
-  TokenLink,
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +15,7 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { TokenPreviewInfo } from '@app/api';
 import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
-import { NoItems } from '@app/components';
+import { NoItems, TokenLink } from '@app/components';
 import { GridList } from '@app/pages/components/PageComponents';
 
 interface NFTsListComponentProps {
@@ -131,16 +130,6 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
   .unique-text {
     word-break: break-all;
     overflow: initial;
-  }
-
-  .unique-token-link {
-    width: 100%;
-    max-width: 235px;
-
-    img {
-      width: 100%;
-      height: auto;
-    }
   }
 
   .nft-list {

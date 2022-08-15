@@ -94,11 +94,11 @@ export const GridList = styled.div`
   align-content: baseline;
   gap: calc(var(--prop-gap) * 2);
 
-  @media screen and (min-width: 520px) {
+  @media screen and (min-width: 820px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media screen and (min-width: 1200px) {
+  @media screen and (min-width: 1100px) {
     grid-template-columns: repeat(3, 1fr);
   }
 
