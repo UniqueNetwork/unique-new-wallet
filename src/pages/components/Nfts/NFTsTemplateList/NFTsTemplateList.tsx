@@ -128,6 +128,21 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
   flex: 1 1 calc(100% - var(--prop-gap) * 4);
   padding: calc(var(--prop-gap) * 2);
 
+  .unique-text {
+    word-break: break-all;
+    overflow: initial;
+  }
+
+  .unique-token-link {
+    width: 100%;
+    max-width: 235px;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
   .nft-list {
     &__header {
       min-height: 32px;
