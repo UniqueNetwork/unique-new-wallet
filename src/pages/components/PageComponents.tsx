@@ -94,15 +94,19 @@ export const GridList = styled.div`
   align-content: baseline;
   gap: calc(var(--prop-gap) * 2);
 
-  @media screen and (min-width: 520px) {
+  @media screen and (min-width: 820px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media screen and (min-width: 1000px) {
-    grid-template-columns: repeat(2, 1fr);
+  @media screen and (min-width: 1100px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (min-width: 1400px) {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   @media screen and (min-width: 1500px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 `;
