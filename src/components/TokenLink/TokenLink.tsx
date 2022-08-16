@@ -1,7 +1,7 @@
 import React, { createRef, ReactNode, useState } from 'react';
-import { Text } from '@unique-nft/ui-kit';
-import './TokenLink.scss';
+import styled from 'styled-components';
 import classNames from 'classnames';
+import { Text } from '@unique-nft/ui-kit';
 
 import emptyImage from '@app/static/icons/empty-image.svg';
 
@@ -13,6 +13,64 @@ export interface ITokenLinkProps {
   onTokenClick(): void;
   onMetaClick(): void;
 }
+
+const TokenLinkWrapper = styled.div`
+  width: 100%;
+  max-width: 326px;
+  font-family: var(--prop-font-family);
+  font-size: var(--prop-font-size);
+  font-weight: var(--prop-font-weight);
+  cursor: pointer;
+`;
+
+const TokenLinkText = styled(Text).attrs({ appearance: 'block', size: 'l' })`
+  margin-bottom: 2px;
+  max-height: 80px;
+  overflow: hidden;
+`;
+
+const TokenLinkImageWrapper = styled.div`
+  overflow: hidden;
+  position: relative;
+  margin-bottom: var(--prop-gap);
+  transform: translate3d(0, 0, 0);
+
+  &::before {
+    display: block;
+    padding-bottom: 100%;
+    content: '';
+  }
+
+  & > img {
+    border-radius: var(--prop-border-radius);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0);
+    transition: opacity 0.15s linear;
+
+    &._fullSize {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform: none;
+      object-fit: cover;
+    }
+
+    &._broken {
+      width: 100%;
+      height: 100%;
+      background-color: var(--color-blue-grey-100);
+      object-fit: contain;
+    }
+
+    &._loaded {
+      opacity: 1;
+    }
+  }
+`;
 
 export const TokenLink = ({
   image,
@@ -39,9 +97,9 @@ export const TokenLink = ({
   };
 
   return (
-    <div className="unique-token-link">
+    <TokenLinkWrapper>
       <div onClick={onTokenClick}>
-        <div className="unique-token-image">
+        <TokenLinkImageWrapper>
           <img
             ref={imgRef}
             src={image || emptyImage}
@@ -53,12 +111,10 @@ export const TokenLink = ({
             })}
             onLoad={renderImage}
           />
-        </div>
-        <Text size="l" appearance="block">
-          {title}
-        </Text>
+        </TokenLinkImageWrapper>
+        <TokenLinkText>{title}</TokenLinkText>
       </div>
       <div onClick={onMetaClick}>{meta}</div>
-    </div>
+    </TokenLinkWrapper>
   );
 };
