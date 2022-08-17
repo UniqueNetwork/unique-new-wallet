@@ -88,25 +88,9 @@ export const TabsBody = styled.div`
   }
 `;
 
-export const GridList = styled.div`
+export const GridListCommon = styled.div`
   flex: 1 1 auto;
   display: grid;
   align-content: baseline;
   gap: calc(var(--prop-gap) * 2);
-
-  @media screen and (min-width: 820px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (min-width: 1100px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media screen and (min-width: 1400px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  @media screen and (min-width: 1500px) {
-    grid-template-columns: repeat(5, 1fr);
-  }
 `;

@@ -16,7 +16,7 @@ import { TokenPreviewInfo } from '@app/api';
 import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
 import { NoItems, TokenLink } from '@app/components';
-import { GridList } from '@app/pages/components/PageComponents';
+import { GridListCommon } from '@app/pages/components/PageComponents';
 
 interface NFTsListComponentProps {
   className?: string;
@@ -162,5 +162,23 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
         align-items: center;
       }
     }
+  }
+`;
+
+const GridList = styled(GridListCommon)`
+  @media screen and (min-width: 820px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (min-width: 1100px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (min-width: 1400px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media screen and (min-width: 1500px) {
+    grid-template-columns: repeat(5, 1fr);
   }
 `;

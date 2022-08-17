@@ -1,22 +1,17 @@
-import {
-  CollectionLink,
-  IPaginationProps,
-  Loader,
-  Pagination,
-  Text,
-} from '@unique-nft/ui-kit';
-import classNames from 'classnames';
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import classNames from 'classnames';
+import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
-import { TOrderBy } from '@app/api';
+import { Collection, TOrderBy } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { NoItems } from '@app/components';
-import { GridList } from '@app/pages/components/PageComponents';
-import noCoverImage from '@app/static/icons/empty-image.svg';
+import { NoItems, TokenLink } from '@app/components';
+import { GridListCommon } from '@app/pages/components/PageComponents';
+import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 
 interface MyCollectionsListProps {
   className?: string;
@@ -36,6 +31,7 @@ export const MyCollectionsList = ({
   const { currentChain } = useApi();
   const deviceSize = useDeviceSize();
   const { selectedAccount } = useContext(AccountContext);
+  const navigate = useNavigate();
 
   // TODO: move method to utils
   const getItems = () => {
@@ -64,6 +60,11 @@ export const MyCollectionsList = ({
       },
     });
 
+  const onClickNavigate = (id: Collection['collection_id']) =>
+    navigate(
+      `/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${id}/${MY_COLLECTIONS_ROUTE.NFT}`,
+    );
+
   return (
     <ListWrapper className={classNames('my-collections-list', className)}>
       {isCollectionsLoading ? (
@@ -72,18 +73,20 @@ export const MyCollectionsList = ({
         <ListContent>
           <GridList>
             {collections?.map((collection) => (
-              <CollectionLink
-                count={collection.tokens_count || 0}
-                image={
-                  collection.collection_cover
-                    ? getTokenIpfsUriByImagePath(collection.collection_cover)
-                    : noCoverImage
+              <TokenLink
+                image={getTokenIpfsUriByImagePath(collection.collection_cover)}
+                title={`${collection.name} [${collection.collection_id}]`}
+                meta={
+                  <>
+                    <Text color="grey-500" size="s">
+                      Items:{' '}
+                    </Text>
+                    <Text size="s">{collection.tokens_count || 0}</Text>
+                  </>
                 }
                 key={collection.collection_id}
-                link={{
-                  title: `${collection.name} [${collection.collection_id}]`,
-                  href: `/${currentChain?.network}/my-collections/${collection.collection_id}/nft`,
-                }}
+                onTokenClick={() => onClickNavigate(collection.collection_id)}
+                onMetaClick={() => onClickNavigate(collection.collection_id)}
               />
             ))}
           </GridList>
@@ -131,4 +134,26 @@ const ListContent = styled.div`
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+`;
+
+const GridList = styled(GridListCommon)`
+  @media screen and (min-width: 500px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media screen and (min-width: 1400px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media screen and (min-width: 1600px) {
+    grid-template-columns: repeat(5, 1fr);
+  }
 `;
