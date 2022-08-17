@@ -1,13 +1,9 @@
 import { gql, useQuery } from '@apollo/client';
 
-import { ViewToken } from './types';
-
-type TokenByIdResponse = {
-  view_tokens: ViewToken[];
-};
+import { QueryResponse, Token } from '../types';
 
 const TOKEN_BY_ID_QUERY = gql`
-  query TokenByIdQuery($tokenId: Float, $collectionId: Float) {
+  query token_by_id_query($tokenId: Float, $collectionId: Float) {
     tokens(
       where: { token_id: { _eq: $tokenId }, collection_id: { _eq: $collectionId } }
     ) {
@@ -15,8 +11,10 @@ const TOKEN_BY_ID_QUERY = gql`
       data {
         date_of_creation
         owner
+        image
         token_id
         token_name
+        attributes
         collection_cover
         collection_id
         collection_name
@@ -27,22 +25,24 @@ const TOKEN_BY_ID_QUERY = gql`
 `;
 
 export const useGraphQlTokenById = (tokenId: number, collectionId: number) => {
-  const { data, loading, error, refetch } = useQuery<TokenByIdResponse>(
-    TOKEN_BY_ID_QUERY,
-    {
-      fetchPolicy: 'network-only',
-      nextFetchPolicy: 'cache-first',
-      variables: {
-        tokenId,
-        collectionId,
-      },
+  const {
+    data: response,
+    loading,
+    refetch,
+    error,
+  } = useQuery<QueryResponse<Token>>(TOKEN_BY_ID_QUERY, {
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
+    variables: {
+      tokenId,
+      collectionId,
     },
-  );
+  });
 
   return {
     error,
     loading,
-    token: (data as any).tokens.data[0],
     refetch,
+    token: response?.tokens.data?.[0],
   };
 };

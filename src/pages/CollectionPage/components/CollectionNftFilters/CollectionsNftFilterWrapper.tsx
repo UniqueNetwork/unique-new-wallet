@@ -4,7 +4,7 @@ import {
   ListNftsFilterType,
   nftListFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { Direction } from '@app/api/graphQL/tokens';
+import { Direction } from '@app/api/graphQL/types';
 
 type CollectionFilterType = {
   children: ReactNode;
@@ -32,7 +32,7 @@ export const CollectionsNftFilterWrapper = ({ children }: CollectionFilterType) 
     <nftListFilterContext.Provider
       value={{
         type,
-        order_by,
+        direction,
         page,
         search,
         onChangeDirection: handleChangeDirection,

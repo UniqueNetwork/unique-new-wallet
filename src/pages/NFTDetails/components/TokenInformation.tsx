@@ -1,43 +1,42 @@
 import React, { memo, VFC } from 'react';
 import { Heading, Text, Tag } from '@unique-nft/ui-kit';
+import styled from 'styled-components';
 
-import { TAttributes } from '@app/api';
-
-interface TokenInformationProps {
-  attributes?: TAttributes;
-}
-
-const Attribute: VFC<{ name: string; value: TAttributes[keyof TAttributes] }> = ({
-  name,
-  value,
-}) => {
-  const valuesList = Array.isArray(value) ? value : [value];
-
-  return (
-    <div style={{ marginBottom: 16 }}>
-      <Text size="m" weight="light" color="grey-500">
-        {name}
-      </Text>
-      <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-        {valuesList.map((value, index) => (
-          <Tag key={`${value}${index}`} label={value} />
-        ))}
-      </div>
-    </div>
-  );
+export type Attribute = {
+  title: string;
+  tags: string[];
 };
 
-const TokenInformationComponent: VFC<TokenInformationProps> = ({ attributes }) => {
-  const attrsEntries = attributes ? Object.entries(attributes) : null;
+interface TokenInformationProps {
+  attributes?: Attribute[];
+}
+const AttributeRow = styled.div`
+  margin-bottom: 16px;
+`;
 
+const TagsRow = styled.div`
+  display: flex;
+  flex-wrap: 'wrap';
+  margin-top: 8px;
+  gap: 8px;
+`;
+
+const TokenInformationComponent: VFC<TokenInformationProps> = ({ attributes }) => {
   return (
     <>
       <Heading size="4">Attributes</Heading>
-      {attrsEntries
-        ?.filter((attr) => attr[0] !== 'ipfsJson')
-        ?.map((attr) => (
-          <Attribute key={attr[0]} name={attr[0]} value={attr[1]} />
-        ))}
+      {attributes?.map(({ title, tags }, index) => (
+        <AttributeRow key={`${title}${index}`}>
+          <Text size="m" weight="light" color="grey-500">
+            {title}
+          </Text>
+          <TagsRow>
+            {tags.map((value, index) => (
+              <Tag key={`${value}${index}`} label={value} />
+            ))}
+          </TagsRow>
+        </AttributeRow>
+      ))}
     </>
   );
 };

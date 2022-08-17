@@ -1,5 +1,5 @@
 import { config } from '@app/config';
-import { ImagePath } from '@app/api/graphQL';
+import { ImagePath } from '@app/api/graphQL/types';
 
 const { IPFSGateway } = config;
 

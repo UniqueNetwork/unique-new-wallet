@@ -14,7 +14,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { PagePaper, StatusTransactionModal } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
-import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts } from '@app/hooks';
 import {
@@ -40,7 +39,7 @@ const tooltipAlign: TooltipAlign = {
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
-  const { collection, isCollectionFetching } = useCollectionContext() || {};
+  const { collection, collectionLoading } = useCollectionContext() || {};
   const { selectedAccount } = useAccounts();
   const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
   const navigate = useNavigate();
@@ -105,7 +104,7 @@ const CollectionSettings = () => {
   return (
     <PagePaper>
       <FormWrapper>
-        {isCollectionFetching ? (
+        {collectionLoading ? (
           <Loader />
         ) : (
           <>

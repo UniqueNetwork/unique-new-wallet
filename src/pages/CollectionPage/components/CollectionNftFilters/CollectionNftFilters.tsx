@@ -9,16 +9,13 @@ import {
   RadioOptionValueType,
 } from '@unique-nft/ui-kit';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery, gql } from '@apollo/client';
 
 import { iconDown, iconUp } from '@app/utils';
 import { ROUTE } from '@app/routes';
 import { useApi } from '@app/hooks';
-import { ViewCollection } from '@app/api';
 import { MintingBtn } from '@app/components';
-import { Direction } from '@app/api/graphQL/tokens';
+import { Direction } from '@app/api/graphQL/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { collectionsQuery } from '@app/api/graphQL/collections/collections';
 import {
   ListNftsFilterType,
   useNftFilterContext,

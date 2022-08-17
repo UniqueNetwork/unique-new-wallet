@@ -1,3 +1,22 @@
+export type Direction = 'asc' | 'desc';
+
+// depricated
+export type ImagePath = {
+  ipfs: string;
+  type: string;
+};
+
+export type Pagination = {
+  page: number;
+  limit: number;
+};
+
+export type QueryOptions = {
+  skip?: boolean;
+  direction?: Direction;
+  pagination: Pagination;
+};
+
 export interface QueryResponse<TData = void> {
   [key: string]: {
     count?: number;
@@ -7,7 +26,7 @@ export interface QueryResponse<TData = void> {
 
 export interface Attribute {
   name: { _: string };
-  value: { _: string };
+  value: { _: string } | { _: string }[];
   isEnum: boolean;
   isArray: boolean;
   type:
@@ -33,7 +52,7 @@ export interface Token {
   owner_mormalized: string;
   attributes: Record<string, Attribute>;
   date_of_creation: number;
-  image: {
+  image?: {
     fullUrl: string;
     ipfsCid: string;
   };
@@ -52,4 +71,10 @@ export interface Collection {
   description: string;
   owner: string;
   owner_mormalized: string;
+  owner_can_destroy: boolean;
+  token_prefix: string;
+  tokens_count: number;
+  token_limit: number;
+  name: string;
+  sponsorship: string;
 }

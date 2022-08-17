@@ -1,11 +1,11 @@
 import { createContext, useContext } from 'react';
 
-import { Direction } from '@app/api/graphQL/tokens';
+import { Direction } from '@app/api/graphQL/types';
 
 export type ListNftsFilterType = 'all' | 'owned' | 'disowned';
 
 type TListFilter = {
-  order_by: Direction;
+  direction: Direction;
   search: string;
   type: ListNftsFilterType;
   page: number;

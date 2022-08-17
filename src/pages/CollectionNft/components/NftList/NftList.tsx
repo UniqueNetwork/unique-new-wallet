@@ -10,7 +10,7 @@ interface NftListComponentProps {
 
 export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   const deviceSize = useDeviceSize();
-  const { search, order_by, page, onChangePagination, type } = useNftFilterContext();
+  const { search, direction, page, onChangePagination, type } = useNftFilterContext();
   const { selectedAccount } = useAccounts();
 
   // TODO: move method to utils
@@ -28,7 +28,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   };
 
   const { tokens, tokensCount, isLoadingTokens } = useGraphQlCollectionTokens({
-    collectionId,
+    collectionId: parseInt(collectionId || ''),
     collectionOwner: selectedAccount?.address,
     filter: {
       search,
@@ -36,7 +36,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     },
     options: {
       skip: !selectedAccount?.address,
-      order_by,
+      direction,
       pagination: {
         page,
         limit: getItems(),

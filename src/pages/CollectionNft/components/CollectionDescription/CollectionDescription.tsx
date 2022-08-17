@@ -13,7 +13,7 @@ import { maxTokenLimit } from '@app/pages/constants/token';
 const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
   collectionId,
 }) => {
-  const { collection, isCollectionFetching } = useCollectionContext() || {};
+  const { collection, collectionLoading } = useCollectionContext() || {};
   const {
     description,
     token_prefix,
@@ -33,7 +33,7 @@ const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
 
   return (
     <CollectionVerticalCard>
-      {isCollectionFetching ? (
+      {collectionLoading ? (
         <Loader />
       ) : (
         <>

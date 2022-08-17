@@ -2,11 +2,6 @@ export type Nullable<T> = T | null;
 
 export type QueryParams = Record<string, string | number | (string | number)[]>;
 
-export type Pagination = {
-  page: number;
-  limit: number;
-};
-
 export type Sortable = {
   sort?: string[];
 };

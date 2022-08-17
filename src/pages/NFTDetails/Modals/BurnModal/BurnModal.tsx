@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
-import { TokenApiService, useExtrinsicFlow, useExtrinsicFee, ViewToken } from '@app/api';
+import { TokenApiService, useExtrinsicFlow, useExtrinsicFee } from '@app/api';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
+import { Token } from '@app/api/graphQL/types';
 
 interface BurnModalProps {
   isVisible: boolean;
-  token?: ViewToken;
+  token?: Token;
   onClose(): void;
   onComplete(): void;
 }

@@ -2,8 +2,8 @@ import { gql, useQuery } from '@apollo/client';
 
 import { QueryResponse } from '../types';
 
-const accountCommonInfoQuery = gql`
-  query AccountCommonInfoQuery($accountId: String) {
+const ACCOUNT_COMMON_INFO_QUERY = gql`
+  query account_common_info_query($accountId: String) {
     tokens(
       where: {
         _or: [{ owner: { _eq: $accountId } }, { owner_normalized: { _eq: $accountId } }]
@@ -22,7 +22,7 @@ const accountCommonInfoQuery = gql`
 `;
 
 export const useGraphQlAccountCommonInfo = (accountId?: string) => {
-  const { data, loading } = useQuery<QueryResponse>(accountCommonInfoQuery, {
+  const { data, loading } = useQuery<QueryResponse>(ACCOUNT_COMMON_INFO_QUERY, {
     skip: !accountId,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',

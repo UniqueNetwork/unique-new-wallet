@@ -2,10 +2,8 @@ import { gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
-import { QueryResponse, Token } from '../types';
-import { OptionsTokenCollection, ViewToken } from './types';
+import { QueryResponse, Token, QueryOptions } from '../types';
 
-export type Direction = 'asc' | 'desc';
 export type TypeFilter = 'purchased' | 'createdByMe';
 
 type AdditionalFilters = {
@@ -14,23 +12,19 @@ type AdditionalFilters = {
   searchText?: string;
 };
 
-type OwnerTokensResponse = {
-  view_tokens: ViewToken[];
-  view_tokens_aggregate: {
-    aggregate: {
-      count: number;
-    };
-  };
-};
-
 const OWNER_TOKENS_QUERY = gql`
-  query GetGraphQlOwnerTokens(
+  query owner_tokens_query(
     $where: TokenWhereParams
     $offset: Int
     $limit: Int
-    $order_by: TokenOrderByParams
+    $direction: GQLOrderByParamsArgs
   ) {
-    tokens(where: $where, offset: $offset, limit: $limit, order_by: $order_by) {
+    tokens(
+      where: $where
+      offset: $offset
+      limit: $limit
+      order_by: { token_id: $direction }
+    ) {
       count
       data {
         token_id
@@ -53,10 +47,10 @@ const getConditionByTypesFilters = (
 
   const filters: Record<TypeFilter, OperationVariables> = {
     purchased: {
-      _and: [baseFilter, { is_sold: { _eq: true } }],
+      _and: [baseFilter, { is_sold: { _eq: 'true' } }],
     },
     createdByMe: {
-      _and: [baseFilter, { is_sold: { _eq: false } }],
+      _and: [baseFilter, { is_sold: { _eq: 'false' } }],
     },
   };
 
@@ -82,10 +76,10 @@ const getConditionByCollectionsIds = (collectionsIds: number[] | undefined) => {
 export const useGraphQlOwnerTokens = (
   owner: string | undefined,
   filters: AdditionalFilters,
-  options: OptionsTokenCollection,
+  options: QueryOptions,
 ) => {
   const { collectionsIds, typesFilters, searchText } = filters;
-  const { order_by, pagination, skip } = options ?? {
+  const { direction, pagination, skip } = options ?? {
     direction: 'desc',
     skip: !owner,
   };
@@ -103,7 +97,7 @@ export const useGraphQlOwnerTokens = (
     variables: {
       limit,
       offset: limit * page,
-      order_by,
+      direction,
       where: {
         ...getConditionBySearchText('token_name', searchText),
         ...getConditionByTypesFilters(owner, typesFilters),

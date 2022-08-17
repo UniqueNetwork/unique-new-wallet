@@ -2,8 +2,8 @@ import { gql, useQuery } from '@apollo/client';
 
 import { QueryResponse, Token } from '../types';
 
-const COLLECTIONS_BY_TOKENS_OWNER = gql`
-  query Collections($owner: String) {
+const COLLECTIONS_BY_TOKENS_OWNER_QUERY = gql`
+  query collections_by_tokens_owner_query($owner: String) {
     tokens(
       where: { _or: [{ owner: { _eq: $owner } }, { owner_normalized: { _eq: $owner } }] }
       distinct_on: collection_id
@@ -26,14 +26,12 @@ export const useGraphQlCollectionsByTokensOwner = (
     data: response,
     loading: userCollectionsLoading,
     error,
-  } = useQuery<QueryResponse<Token>>(COLLECTIONS_BY_TOKENS_OWNER, {
+  } = useQuery<QueryResponse<Token>>(COLLECTIONS_BY_TOKENS_OWNER_QUERY, {
     skip,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
     variables: { owner },
   });
-
-  console.log(response);
 
   return {
     collections: response?.tokens.data,

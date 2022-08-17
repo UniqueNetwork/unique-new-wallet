@@ -12,8 +12,6 @@ import {
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { TokenPreviewInfo } from '@app/api';
 import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
 import { NoItems } from '@app/components';
