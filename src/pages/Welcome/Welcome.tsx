@@ -31,22 +31,32 @@ export const Welcome = styled(WelcomeComponent)`
   font-family: var(--prop-font-family);
 
   .header-text {
-    font-family: var(--prop-font-family-heading);
     font-size: 36px;
     font-weight: 700;
+    font-family: var(--prop-font-family-heading);
+    line-height: 1.5;
+    text-align: center;
     margin: 0;
+
+    @media (max-width: 567px) {
+      font-size: 28px;
+    }
   }
 
   .description {
-    padding: 20px;
+    padding: 24px 0 32px;
     text-align: center;
 
     .text {
-      font-family: var(--prop-font-family);
       font-size: 16px;
+      font-family: var(--prop-font-family);
+      line-height: 1.5;
       margin: 0;
-      padding: 4px;
       color: var(--title-color);
+
+      &:not(:last-child) {
+        margin-bottom: 8px;
+      }
     }
   }
 
