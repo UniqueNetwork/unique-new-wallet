@@ -16,17 +16,16 @@ export interface ITokenLinkProps {
 
 const TokenLinkWrapper = styled.div`
   width: 100%;
-  max-width: 326px;
+  max-width: 460px;
   font-family: var(--prop-font-family);
   font-size: var(--prop-font-size);
   font-weight: var(--prop-font-weight);
   cursor: pointer;
 `;
 
-const TokenLinkText = styled(Text).attrs({ appearance: 'block', size: 'l' })`
-  margin-bottom: 2px;
-  max-height: 80px;
-  overflow: hidden;
+const TokenLinkTitle = styled(Text).attrs({ appearance: 'block', size: 'l' })`
+  margin-bottom: calc(var(--prop-gap) / 2);
+  word-break: break-all;
 `;
 
 const TokenLinkImageWrapper = styled.div`
@@ -63,7 +62,7 @@ const TokenLinkImageWrapper = styled.div`
       width: 100%;
       height: 100%;
       background-color: var(--color-blue-grey-100);
-      object-fit: contain;
+      object-fit: none;
     }
 
     &._loaded {
@@ -91,7 +90,8 @@ export const TokenLink = ({
   const renderImage = () => {
     const overflow: boolean =
       !!imgRef.current?.parentElement &&
-      imgRef.current.offsetWidth >= imgRef.current.parentElement.offsetWidth;
+      (imgRef.current.offsetWidth >= imgRef.current.parentElement.offsetWidth ||
+        imgRef.current.offsetHeight >= imgRef.current.parentElement.offsetWidth);
     setOverflow(overflow);
     setLoaded(true);
   };
@@ -112,7 +112,7 @@ export const TokenLink = ({
             onLoad={renderImage}
           />
         </TokenLinkImageWrapper>
-        <TokenLinkText>{title}</TokenLinkText>
+        <TokenLinkTitle>{title}</TokenLinkTitle>
       </div>
       <div onClick={onMetaClick}>{meta}</div>
     </TokenLinkWrapper>
