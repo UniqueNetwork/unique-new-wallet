@@ -1,8 +1,7 @@
 import { useEffect, VFC } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
 import { PagePaperNoPadding } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
@@ -17,12 +16,10 @@ interface MyCollectionsComponentProps {
 export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
 }) => {
-  const { currentChain } = useApi();
-  const location = useLocation();
-  const isCollectionsListPath =
-    location.pathname === `/${currentChain?.network}/my-collections`;
   const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
+
+  const isChildExist = useOutlet();
 
   useEffect(() => {
     setPageBreadcrumbs({ options: [] });
@@ -31,7 +28,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
 
   return (
     <PagePaperNoPadding className={classNames('data-grid', 'my-collections', className)}>
-      {isCollectionsListPath ? (
+      {!isChildExist ? (
         <>
           <MyCollectionsFilter />
           <MyCollectionsList
