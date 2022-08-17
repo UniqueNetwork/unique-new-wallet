@@ -14,6 +14,7 @@ import {
   InnerWrapper,
 } from '@app/pages/components/PageComponents';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
+import noImage from '@app/static/icons/no-collections.svg';
 
 import { useNFTsContext } from '../context';
 import { defaultLimit, defaultTypesFilters } from '../constants';
@@ -85,7 +86,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         defaultCollections?.find((c) => c.id === id && c) || {};
       chips.push({
         label,
-        iconLeft: { size: 22, file: getTokenIpfsUriByImagePath(icon) },
+        iconLeft: { size: 22, file: getTokenIpfsUriByImagePath(icon) || noImage },
         onClose: () => changeCollectionsIds(id),
       });
     });
