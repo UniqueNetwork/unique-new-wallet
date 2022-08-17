@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, VFC } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
@@ -7,13 +7,12 @@ import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
 import { networks } from '@app/utils';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
-import { defaultChainKey } from '@app/utils/configParser';
 import { UserEvents } from '@app/utils/logUserEvent';
 import { IdentityIcon } from '@app/components';
 
 import MenuLink from './MenuLink';
 
-export const Header: VFC = () => {
+export const Header = () => {
   const navigate = useNavigate();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
@@ -50,10 +49,8 @@ export const Header: VFC = () => {
   const createOrConnectAccountHandler = () => navigate(ROUTE.ACCOUNTS);
 
   const handleChangeNetwork = (val: INetwork) => {
-    setActiveNetwork(val);
     setCurrentChain(config.chains[val.id]);
-    localStorage.setItem(defaultChainKey, config.chains[val.id].network);
-    navigate(`${activeNetwork?.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
   };
 
   return (
