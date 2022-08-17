@@ -10,13 +10,14 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 567px) {
   .btn-container {
     display: block;
+    width: 100%;
 
     .create-account-btn {
       margin-right: 0;
-      margin-bottom: 15px;
+      margin-bottom: 16px;
     }
 
     & > *,
