@@ -54,7 +54,7 @@ export const Welcome = styled(WelcomeComponent)`
       margin: 0;
       color: var(--title-color);
 
-      &:not(:last-child) {
+      &:first-child {
         margin-bottom: 8px;
       }
     }
