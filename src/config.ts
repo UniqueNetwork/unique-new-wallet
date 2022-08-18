@@ -37,7 +37,7 @@ export const config: Config = {
   defaultChain: chains[getDefaultChain(window.ENV || process.env)],
   chains,
   telegramBot: window.ENV?.TELEGRAM_BOT || process.env.REACT_APP_NET_TELEGRAM_BOT,
-  mexcQTZUSDT: window.ENV?.MEXCQTZUSDT || process.env.REACT_APP_NET_MEXCQTZUSDT,
+  mexcQTZUSDT: window.ENV?.MEXC_QTZ_USDT || process.env.REACT_APP_NET_MEXC_QTZ_USDT,
   zenDeskToken:
     window.ENV?.ZENDESK_OAUTH_APP_TOKEN || process.env.REACT_APP_ZENDESK_OAUTH_APP_TOKEN,
   socialLinks: {
