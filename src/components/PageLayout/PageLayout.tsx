@@ -110,11 +110,9 @@ const LayoutStyled = styled.div`
   }
 
   header {
-    @media (max-width: 1024px) {
-      top: 0;
-      position: sticky !important;
-      z-index: 1000;
-    }
+    top: 0;
+    position: sticky !important;
+    z-index: 1000;
     @media (max-width: 620px) {
       height: 80px !important;
     }

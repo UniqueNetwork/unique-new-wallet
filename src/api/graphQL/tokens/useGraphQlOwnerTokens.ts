@@ -1,8 +1,8 @@
-import { gql, OperationVariables, useQuery } from '@apollo/client';
+import { FetchMoreOptions, gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
-import { QueryResponse, Token, QueryOptions } from '../types';
+import { QueryOptions, QueryResponse, Token } from '../types';
 
 export type TypeFilter = 'purchased' | 'createdByMe';
 
@@ -85,10 +85,25 @@ export const useGraphQlOwnerTokens = (
   };
   const { page, limit } = pagination;
 
+  const fetchMoreMethod = (variables: FetchMoreOptions) => {
+    console.log('variables', variables);
+    fetchMore({
+      ...variables,
+      updateQuery: (prev, { fetchMoreResult }) => {
+        console.log('fetchMoreResult', fetchMoreResult);
+        if (!fetchMoreResult) {
+          return prev;
+        }
+        return Object.assign(prev, fetchMoreResult);
+      },
+    });
+  };
+
   const {
     data: response,
     loading: tokensLoading,
     error,
+    fetchMore,
   } = useQuery<QueryResponse<Token>>(OWNER_TOKENS_QUERY, {
     skip: skip || !owner,
     fetchPolicy: 'network-only',
@@ -109,6 +124,7 @@ export const useGraphQlOwnerTokens = (
   return {
     tokensCount: response?.tokens.count,
     tokens: response?.tokens.data,
+    fetchMoreMethod,
     tokensLoading,
     error,
   };

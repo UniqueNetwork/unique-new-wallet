@@ -1,6 +1,6 @@
-import classNames from 'classnames';
-import styled from 'styled-components';
+import { FetchMoreOptions } from '@apollo/client';
 import {
+  Button,
   Chip,
   IconProps,
   IPaginationProps,
@@ -9,13 +9,17 @@ import {
   Pagination,
   Text,
 } from '@unique-nft/ui-kit';
+import classNames from 'classnames';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { useApi } from '@app/hooks';
-import { ROUTE } from '@app/routes';
-import { NoItems, TokenLink } from '@app/components';
-import { GridListCommon } from '@app/pages/components/PageComponents';
 import { Token } from '@app/api/graphQL/types';
+import { NoItems, TokenLink } from '@app/components';
+import { useApi } from '@app/hooks';
+import { GridListCommon } from '@app/pages/components/PageComponents';
+import { defaultLimit } from '@app/pages/MyTokens/constants';
+import { ROUTE } from '@app/routes';
 
 interface NFTsListComponentProps {
   className?: string;
@@ -28,13 +32,14 @@ interface NFTsListComponentProps {
     iconLeft?: IconProps;
     onClose?(): void;
   }[];
+  fetchMore?(variables?: any): void | undefined;
   onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
 }
 
 const renderItemsCount = (count = 0) => (
   <Text weight="light">
-    {count} {count === 1 ? 'item' : 'items'}
+    {count} {count === 1 ? 'result' : 'results'}
   </Text>
 );
 
@@ -45,11 +50,13 @@ const NFTsListComponent = ({
   page,
   isLoading,
   chips,
+  fetchMore,
   onPageChange,
   onChipsReset,
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
+  const [moreCount, setMoreCount] = useState(10);
 
   return (
     <div className={classNames('nft-list', className)}>
@@ -105,26 +112,76 @@ const NFTsListComponent = ({
       </div>
 
       {!!tokensCount && (
-        <div className="nft-list__footer">
-          {renderItemsCount(tokensCount)}
-          <Pagination
-            withIcons={true}
-            current={page}
-            size={tokensCount}
-            onPageChange={onPageChange}
-          />
-        </div>
+        <PaginatorWrapper className="nft-list__footer">
+          <DesktopPagination>
+            {renderItemsCount(tokensCount)}
+            <Pagination
+              withIcons={true}
+              current={page}
+              size={tokensCount}
+              onPageChange={onPageChange}
+            />
+          </DesktopPagination>
+          <MobilePagination>
+            {tokensCount >= defaultLimit + moreCount && (
+              <Button
+                wide
+                title="Load more"
+                iconRight={{
+                  color: 'var(--color-primary-500)',
+                  name: 'arrow-down',
+                  size: 16,
+                }}
+                onClick={() => {
+                  if (fetchMore) {
+                    fetchMore({
+                      variables: { page, limit: defaultLimit + moreCount },
+                    });
+                    setMoreCount(moreCount + 10);
+                  }
+                }}
+              />
+            )}
+          </MobilePagination>
+        </PaginatorWrapper>
       )}
     </div>
   );
 };
 
+export const DesktopPagination = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  @media (max-width: 1279px) {
+    margin-bottom: 40px;
+  }
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+export const MobilePagination = styled.div`
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+    width: 100%;
+  }
+`;
+export const PaginatorWrapper = styled.div`
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+  }
+`;
 export const NFTsTemplateList = styled(NFTsListComponent)`
   position: relative;
   display: flex;
   flex-direction: column;
   flex: 1 1 calc(100% - var(--prop-gap) * 4);
   padding: calc(var(--prop-gap) * 2);
+  @media (max-width: 1024px) {
+    padding: calc(var(--prop-gap) * 2) 0;
+  }
 
   .unique-text {
     word-break: break-all;

@@ -56,6 +56,9 @@ export const InnerSidebar = styled.div`
   flex: 0 0 235px;
   padding: calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 1.5) 0
     calc(var(--prop-gap) * 2);
+  @media (max-width: 1279px) {
+    display: none;
+  }
 `;
 
 export const InnerContent = styled.div`
@@ -74,6 +77,9 @@ export const TabsHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0 calc(var(--prop-gap) * 2);
+  @media (max-width: 1024px) {
+    padding: 0;
+  }
 `;
 
 export const TabsBody = styled.div`
