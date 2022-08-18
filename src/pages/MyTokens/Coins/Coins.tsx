@@ -69,7 +69,7 @@ export const CoinsComponent: FC = () => {
     QUARTZ: {
       getDisabled: false,
       onGet: () => {
-        window.open('https://www.mexc.com/exchange/QTZ_USDT', '_blank', 'noopener');
+        window.open(config.mexcQTZUSDT, '_blank', 'noopener');
       },
     },
     UNIQUE: { getDisabled: true },
