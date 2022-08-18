@@ -1,7 +1,5 @@
 export * from './availableNetworks';
 export * from './componentHelpers';
-export * from './getAttributes';
-export * from './getCollectionCover';
 export * from './helpers';
 export * from './jsonUtils';
 export * from './protobufUtils';

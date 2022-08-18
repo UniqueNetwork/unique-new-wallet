@@ -1,43 +1,34 @@
-import { useQuery, gql, ApolloError } from '@apollo/client';
+import { useQuery, gql } from '@apollo/client';
 
-import { OptionsTokenCollection, TokenPreviewInfo } from '@app/api';
-import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 import { ListNftsFilterType } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 
-const COLLECTION_TOKENS = gql`
-  query CollectionTokens(
-    $where: view_tokens_bool_exp
+import { QueryResponse, Token, QueryOptions } from '../types';
+
+const COLLECTION_TOKENS_QUERY = gql`
+  query CollectionTokensQuery(
     $offset: Int
     $limit: Int
-    $direction: order_by
+    $where: TokenWhereParams
+    $direction: GQLOrderByParamsArgs
   ) {
-    view_tokens(
+    tokens(
       where: $where
       offset: $offset
       limit: $limit
       order_by: { token_id: $direction }
     ) {
-      token_name
-      token_prefix
-      token_id
-      image_path
-      collection_id
-      collection_name
-    }
-    view_tokens_aggregate(where: $where) {
-      aggregate {
-        count
+      count
+      data {
+        token_id
+        token_name
+        token_prefix
+        collection_id
+        collection_name
+        image
       }
     }
   }
 `;
-
-type TokensListData = {
-  isLoadingTokens: boolean;
-  tokens: TokenPreviewInfo[] | undefined;
-  tokensCount: number | undefined;
-  errorTokens: ApolloError | undefined;
-};
 
 export const useGraphQlCollectionTokens = ({
   filter,
@@ -45,17 +36,21 @@ export const useGraphQlCollectionTokens = ({
   options,
   collectionId,
 }: {
-  collectionId: string;
+  collectionId: number;
   collectionOwner: string | undefined;
   filter: { search: string; type: ListNftsFilterType };
-  options: OptionsTokenCollection;
-}): TokensListData => {
+  options: QueryOptions;
+}) => {
   const {
     pagination: { page, limit },
     direction,
   } = options;
   const { search, type } = filter;
-  const { loading, data, error } = useQuery(COLLECTION_TOKENS, {
+  const {
+    data: response,
+    loading,
+    error,
+  } = useQuery<QueryResponse<Token>>(COLLECTION_TOKENS_QUERY, {
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
@@ -69,15 +64,15 @@ export const useGraphQlCollectionTokens = ({
           { collection_owner: { _eq: collectionOwner } },
           { collection_owner_normalized: { _eq: collectionOwner } },
         ],
-        ...(type !== 'all' && { is_sold: { _eq: type === 'disowned' } }),
-        ...getConditionBySearchText('token_name', search),
+        ...(type !== 'all' && { is_sold: { _eq: `${type === 'disowned'}` } }),
+        // ...getConditionBySearchText('token_name', search),
       },
     },
   });
   return {
     isLoadingTokens: loading,
-    tokens: data?.view_tokens,
-    tokensCount: data?.view_tokens_aggregate.aggregate.count,
+    tokens: response?.tokens.data,
+    tokensCount: response?.tokens.count,
     errorTokens: error,
   };
 };

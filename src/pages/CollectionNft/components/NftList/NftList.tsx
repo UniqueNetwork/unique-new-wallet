@@ -28,7 +28,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   };
 
   const { tokens, tokensCount, isLoadingTokens } = useGraphQlCollectionTokens({
-    collectionId,
+    collectionId: parseInt(collectionId || ''),
     collectionOwner: selectedAccount?.address,
     filter: {
       search,

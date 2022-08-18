@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, VFC } from 'react';
+import React, { useContext, useEffect, useMemo, useState, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
@@ -6,13 +6,13 @@ import { useParams } from 'react-router-dom';
 import { encodeAddress } from '@polkadot/util-crypto';
 
 import { usePageSettingContext } from '@app/context';
-import { getTokenIpfsUriByImagePath } from '@app/utils';
 import AccountContext from '@app/account/AccountContext';
 import { useGraphQlTokenById } from '@app/api/graphQL/tokens';
 import { PagePaper } from '@app/components';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
 
 import {
+  Attribute,
   CollectionInformation,
   Divider,
   NFTDetailsHeader,
@@ -34,7 +34,19 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
     parseInt(collectionId),
   );
 
-  const avatar = getTokenIpfsUriByImagePath(token?.image_path ?? '');
+  const attributes = useMemo<Attribute[]>(() => {
+    if (!token) {
+      return [];
+    }
+
+    const attrsValues = Object.values(token?.attributes);
+
+    return attrsValues.map(({ name, value }) => ({
+      title: name._,
+      tags: Array.isArray(value) ? value.map((val) => val._) : [value._],
+    }));
+  }, [token?.attributes]);
+
   const isCurrentAccountOwner =
     selectedAccount?.address &&
     token?.owner &&
@@ -68,7 +80,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
       ) : (
         <>
           <div className="nft-page__avatar">
-            <Avatar size={536} src={avatar} />
+            <Avatar size={536} src={token?.image?.fullUrl || undefined} />
           </div>
           <div className="nft-page__info-container">
             <NFTDetailsHeader
@@ -78,7 +90,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
               onShowModal={setCurrentModal}
             />
             <Divider />
-            <TokenInformation attributes={token?.data} />
+            <TokenInformation attributes={attributes} />
             <Divider />
             <CollectionInformation
               title={token?.collection_name}

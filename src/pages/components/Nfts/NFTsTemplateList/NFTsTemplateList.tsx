@@ -11,16 +11,15 @@ import {
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { TokenPreviewInfo } from '@app/api';
 import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
 import { NoItems, TokenLink } from '@app/components';
 import { GridListCommon } from '@app/pages/components/PageComponents';
+import { Token } from '@app/api/graphQL/types';
 
 interface NFTsListComponentProps {
   className?: string;
-  tokens?: TokenPreviewInfo[];
+  tokens?: Token[];
   tokensCount?: number;
   isLoading: boolean;
   page: number;
@@ -77,12 +76,12 @@ const NFTsListComponent = ({
         ) : (
           <GridList>
             {tokens.map(
-              ({ token_id, token_name, collection_name, collection_id, image_path }) => (
+              ({ token_id, token_name, collection_name, collection_id, image }) => (
                 <TokenLink
                   title={token_name}
                   key={`${collection_id}-${token_id}`}
-                  image={getTokenIpfsUriByImagePath(image_path)}
                   link={`${collection_name} [id ${collection_id}]`}
+                  image={image?.fullUrl || undefined}
                   meta={
                     <Text appearance="block" color="grey-500" size="s">
                       {collection_name} [id {collection_id}]
