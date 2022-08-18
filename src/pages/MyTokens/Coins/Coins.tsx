@@ -66,7 +66,12 @@ export const CoinsComponent: FC = () => {
       },
     },
     KUSAMA: { getDisabled: false, onGet: getCoinsHandler },
-    QUARTZ: { getDisabled: true },
+    QUARTZ: {
+      getDisabled: false,
+      onGet: () => {
+        window.open('https://www.mexc.com/exchange/QTZ_USDT', '_blank', 'noopener');
+      },
+    },
     UNIQUE: { getDisabled: true },
     POLKADOT: { getDisabled: true },
   };
