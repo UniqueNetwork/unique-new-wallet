@@ -1,6 +1,6 @@
+import classNames from 'classnames';
 import { VFC } from 'react';
 import { Link, useMatch, useResolvedPath } from 'react-router-dom';
-import classNames from 'classnames';
 import styled from 'styled-components';
 
 import { logUserEvent } from '@app/utils/logUserEvent';
@@ -20,11 +20,10 @@ const LinkStyled = styled(Link)`
   &._isMobile {
     border-radius: var(--prop-border-radius);
     padding: 0.5rem 1rem;
-    color: var(--color-additional-dark);
+    color: var(--color-primary-500);
 
     &._isActive {
-      background-color: var(--color-primary-500);
-      color: var(--color-additional-light);
+      color: var(--color-additional-dark);
     }
   }
 

@@ -1,16 +1,17 @@
+import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 import { useCallback, useEffect, useState, VFC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 
-import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
-import { networks } from '@app/utils';
-import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import { IdentityIcon } from '@app/components';
 import { config } from '@app/config';
+import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import { networks } from '@app/utils';
 import { defaultChainKey } from '@app/utils/configParser';
 import { UserEvents } from '@app/utils/logUserEvent';
-import { IdentityIcon } from '@app/components';
 
+import { BottomLinks } from './BottomLinks';
 import MenuLink from './MenuLink';
 
 export const Header: VFC = () => {
@@ -70,7 +71,6 @@ export const Header: VFC = () => {
             className={`${!accounts.length ? 'hidden-logo' : ''}`}
           />
         </Link>
-
         {!showMobileMenu && (
           <HeaderNav>
             <MenuLink
@@ -124,32 +124,35 @@ export const Header: VFC = () => {
       </RightSide>
 
       {showMobileMenu && mobileMenuIsOpen && (
-        <MobileMenu>
-          <MenuLink
-            name="My tokens"
-            path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
-            logEvent={UserEvents.HEADER_MY_TOKENS}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-          <MenuLink
-            name="My collections"
-            path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
-            logEvent={UserEvents.HEADER_MY_COLLECTION}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-          <MenuLink
-            name="My accounts"
-            path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
-            logEvent={UserEvents.HEADER_MY_ACCOUNTS}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-          <MenuLink
-            name="FAQ"
-            path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
-            logEvent={UserEvents.HEADER_FAQ}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-        </MobileMenu>
+        <MobileModal>
+          <MobileMenu>
+            <MenuLink
+              name="My tokens"
+              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+              logEvent={UserEvents.HEADER_MY_TOKENS}
+              mobileMenuToggle={mobileMenuToggle}
+            />
+            <MenuLink
+              name="My collections"
+              path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
+              logEvent={UserEvents.HEADER_MY_COLLECTION}
+              mobileMenuToggle={mobileMenuToggle}
+            />
+            <MenuLink
+              name="My accounts"
+              path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
+              logEvent={UserEvents.HEADER_MY_ACCOUNTS}
+              mobileMenuToggle={mobileMenuToggle}
+            />
+            <MenuLink
+              name="FAQ"
+              path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
+              logEvent={UserEvents.HEADER_FAQ}
+              mobileMenuToggle={mobileMenuToggle}
+            />
+          </MobileMenu>
+          <BottomLinks />
+        </MobileModal>
       )}
     </HeaderStyled>
   );
@@ -207,16 +210,20 @@ const RightSide = styled.div`
   align-items: center;
 `;
 
-const MobileMenu = styled.nav`
+const MobileModal = styled.div`
   position: absolute;
   top: 81px;
   left: 0;
   right: 0;
-  height: 100vh;
+  height: calc(100vh - 81px);
   background-color: var(--color-additional-light);
   box-shadow: inset 0 2px 8px rgb(0 0 0 / 6%);
   display: flex;
   flex-direction: column;
-  padding: var(--prop-gap);
   z-index: 9;
+`;
+
+const MobileMenu = styled.nav`
+  flex-direction: column;
+  margin: 15px 0;
 `;
