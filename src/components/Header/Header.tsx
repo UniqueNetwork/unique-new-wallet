@@ -17,7 +17,7 @@ export const Header: VFC = () => {
   const navigate = useNavigate();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
-  const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
+  const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(800);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
   const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
     networks.find(({ id }) => id === currentChain?.network),
@@ -65,7 +65,10 @@ export const Header: VFC = () => {
           </MenuIcon>
         )}
         <Link to={ROUTE.BASE} onClick={() => showMobileMenu && toggleMobileMenu(false)}>
-          <LogoIcon src="/logos/logo.svg" />
+          <LogoIcon
+            src="/logos/logo.svg"
+            className={`${!accounts.length ? 'hidden-logo' : ''}`}
+          />
         </Link>
 
         {!showMobileMenu && (
@@ -189,6 +192,14 @@ const MenuIcon = styled.button.attrs({ type: 'button' })`
 
 const LogoIcon = styled.img`
   margin-right: calc(var(--prop-gap) * 2);
+  @media (max-width: 700px) {
+    width: 100px;
+  }
+  &.hidden-logo {
+    @media (max-width: 500px) {
+      display: none;
+    }
+  }
 `;
 
 const RightSide = styled.div`
