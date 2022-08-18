@@ -53,8 +53,8 @@ export interface Token {
   attributes: Record<string, Attribute>;
   date_of_creation: number;
   image?: {
-    fullUrl: string;
-    ipfsCid: string;
+    fullUrl: string | null;
+    ipfsCid: string | null;
   };
 
   collection_id: number;

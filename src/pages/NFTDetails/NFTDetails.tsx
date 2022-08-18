@@ -80,7 +80,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
       ) : (
         <>
           <div className="nft-page__avatar">
-            <Avatar size={536} src={token?.image?.fullUrl} />
+            <Avatar size={536} src={token?.image?.fullUrl || undefined} />
           </div>
           <div className="nft-page__info-container">
             <NFTDetailsHeader

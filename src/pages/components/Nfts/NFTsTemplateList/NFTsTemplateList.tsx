@@ -82,7 +82,7 @@ const NFTsListComponent = ({
                   title={token_name}
                   key={`${collection_id}-${token_id}`}
                   link={`${collection_name} [id ${collection_id}]`}
-                  image={image?.fullUrl}
+                  image={image?.fullUrl || undefined}
                   meta={
                     <Text appearance="block" color="grey-500" size="s">
                       {collection_name} [id {collection_id}]
