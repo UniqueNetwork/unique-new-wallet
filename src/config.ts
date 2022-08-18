@@ -13,6 +13,14 @@ declare type Config = {
   chains: Record<string, Chain>;
   defaultChain: Chain;
   telegramBot: string | undefined;
+  zenDeskToken: string | undefined;
+  socialLinks: {
+    telegram: string;
+    twitter: string;
+    discord: string;
+    github: string;
+    subsocial: string;
+  };
 };
 
 declare global {
@@ -28,6 +36,15 @@ export const config: Config = {
   defaultChain: chains[getDefaultChain(window.ENV || process.env)],
   chains,
   telegramBot: window.ENV?.TELEGRAM_BOT || process.env.REACT_APP_NET_TELEGRAM_BOT,
+  zenDeskToken:
+    window.ENV?.ZENDESK_OAUTH_APP_TOKEN || process.env.REACT_APP_ZENDESK_OAUTH_APP_TOKEN,
+  socialLinks: {
+    telegram: window.ENV?.TELEGRAM_LINK || process.env.REACT_APP_TELEGRAM_LINK || '',
+    twitter: window.ENV?.TWITTER_LINK || process.env.REACT_APP_TWITTER_LINK || '',
+    discord: window.ENV?.DISCORD_LINK || process.env.REACT_APP_DISCORD_LINK || '',
+    github: window.ENV?.GITHUB_LINK || process.env.REACT_APP_GITHUB_LINK || '',
+    subsocial: window.ENV?.SUBSOCIAL_LINK || process.env.REACT_APP_SUBSOCIAL_LINK || '',
+  },
 };
 
 console.log(config);

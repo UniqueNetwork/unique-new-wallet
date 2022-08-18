@@ -1,9 +1,9 @@
-import { memo, useEffect, useState, VFC } from 'react';
+import { memo, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Checkbox } from '@unique-nft/ui-kit';
 
-import { getTokenIpfsUriByImagePath } from '@app/utils';
+import noImage from '@app/static/icons/no-collections.svg';
 
 export interface CollectionFilterItemComponentProps {
   id: number;
@@ -26,7 +26,7 @@ const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
     <Checkbox
       label={label}
       checked={checked}
-      iconLeft={{ size: 22, file: icon }}
+      iconLeft={{ size: 22, file: icon || noImage }}
       onChange={() => onChange(id)}
     />
   </div>

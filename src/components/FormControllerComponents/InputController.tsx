@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { InputText, InputTextProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
@@ -15,16 +15,15 @@ type InputControllerProps<
 
 export const InputController = <TInput extends string, TOutput>({
   name,
-  control: userControl,
+  control,
   rules,
   defaultValue,
   transform,
   ...inputProps
 }: InputControllerProps<TInput, TOutput>) => {
-  const { control } = useFormContext();
   return (
     <Controller
-      control={userControl || control}
+      control={control}
       render={({ field: { value, onChange, ...inputField } }) => (
         <InputText
           {...inputField}

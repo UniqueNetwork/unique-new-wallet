@@ -156,6 +156,9 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({ className }) => {
   const { fields, append, remove } = useFieldArray({
     name: 'attributes',
     keyName: 'key',
+    rules: {
+      required: false,
+    },
   });
   const advancedFields = fields.map((f) => ({ ...f, remove }));
 

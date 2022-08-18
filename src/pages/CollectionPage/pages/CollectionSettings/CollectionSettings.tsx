@@ -12,7 +12,7 @@ import {
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { PagePaper, StatusTransactionModal } from '@app/components';
+import { PagePaper, StatusTransactionModal, TooltipButtonWrapper } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts } from '@app/hooks';
@@ -56,8 +56,6 @@ const CollectionSettings = () => {
   } = collection || {};
   const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
 
-  const form: any = {};
-
   const handleBurnCollection = () => {
     if (!collection_id || !selectedAccount) {
       return;
@@ -87,18 +85,15 @@ const CollectionSettings = () => {
   };
 
   const handleTokenLimit = (value: string) => {
-    if (!value) {
-      form.setFieldValue('limit', '');
-      return;
-    }
-
-    const numVal = Number(value);
-
-    if (numVal > maxTokenLimit || numVal < 0) {
-      return;
-    }
-
-    form.setFieldValue('limit', numVal);
+    // if (!value) {
+    //   form.setFieldValue('limit', '');
+    //   return;
+    // }
+    // const numVal = Number(value);
+    // if (numVal > maxTokenLimit || numVal < 0) {
+    //   return;
+    // }
+    // form.setFieldValue('limit', numVal);
   };
 
   return (
@@ -116,7 +111,7 @@ const CollectionSettings = () => {
               </Text>
             </FormHeader>
             <FormBody>
-              <Form onSubmit={form.handleSubmit}>
+              <Form>
                 <SettingsRow>
                   <InputText
                     label={
@@ -139,9 +134,9 @@ const CollectionSettings = () => {
                     additionalText="The designated sponsor should approve the request"
                     id="address"
                     maxLength={49}
-                    value={form.values.address}
+                    value=""
                     onChange={(value) => {
-                      form.setFieldValue('address', value);
+                      // form.setFieldValue('address', value);
                     }}
                   />
                 </SettingsRow>
@@ -172,14 +167,14 @@ const CollectionSettings = () => {
                     }
                     additionalText="Unlimited by default"
                     id="limit"
-                    value={form.values.limit.toString()}
+                    value=""
                     role="number"
                     onChange={handleTokenLimit}
                   />
                 </SettingsRow>
                 <SettingsRow>
                   <Checkbox
-                    checked={form.values.ownerCanDestroy}
+                    checked={false}
                     label={
                       <>
                         Owner can burn collection
@@ -199,12 +194,14 @@ const CollectionSettings = () => {
                     }
                     disabled={!ownerCanDestroy}
                     onChange={(value) => {
-                      form.setFieldValue('ownerCanDestroy', value);
+                      // form.setFieldValue('ownerCanDestroy', value);
                     }}
                   />
                 </SettingsRow>
                 <ButtonGroup>
-                  <Button title="Save changes" disabled={true} type="submit" />
+                  <TooltipButtonWrapper message="The form in development progress">
+                    <Button title="Save changes" disabled={true} type="submit" />
+                  </TooltipButtonWrapper>
                   {/* TODO: WAL-343
                   {ownerCanDestroy && (
                     <Button

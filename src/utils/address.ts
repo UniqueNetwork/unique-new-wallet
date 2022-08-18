@@ -23,7 +23,9 @@ const isValidHttpUrl = (checkUrl: string): boolean => {
  * 2) https://www.ipfs-server/QmbuyQebXVQcZbaGmP4maWUqRiKYeAAyYZEiqL3rnev8i4
  * 3) "{\"ipfs\":\"QmZCuWx72x1ukhehLsg1qNjKhVj3d1feJjadUPJbyYfmpY\",\"type\":\"image\"}"
  * */
-export const getTokenIpfsUriByImagePath = (imagePath: string | null): string => {
+export const getTokenIpfsUriByImagePath = (
+  imagePath: string | null | undefined,
+): string => {
   if (!imagePath) {
     return '';
   }
