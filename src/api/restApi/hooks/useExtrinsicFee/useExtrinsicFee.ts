@@ -34,7 +34,7 @@ export const useExtrinsicFee = <
 
   const [extrinsicFeeState, setExtrinsicFeeState] = useReducer(extrinsicFeeReducer, {
     fee: '',
-    feeFormatted: undefined,
+    feeFormatted: '',
     error: undefined,
     isError: false,
     isLoading: false,
@@ -93,6 +93,7 @@ export const useExtrinsicFee = <
         },
       });
     } catch (e) {
+      console.log('ASD', e);
       let error: Error;
 
       if (axios.isAxiosError(e)) {
@@ -105,7 +106,10 @@ export const useExtrinsicFee = <
 
       error.message = error.message || UNKNOWN_ERROR_MSG;
 
-      setExtrinsicFeeState({ type: 'error', payload: { error, fee } });
+      setExtrinsicFeeState({
+        type: 'error',
+        payload: { error, fee: '', feeFormatted: '' },
+      });
     }
   };
 

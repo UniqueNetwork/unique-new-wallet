@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import './Alert.scss';
 import cn from 'classnames';
+import styled from 'styled-components';
 
 type AlertProps = {
   children: ReactNode;
@@ -10,8 +10,19 @@ type AlertProps = {
 
 export const Alert = ({ children, type, className }: AlertProps) => {
   return (
-    <div className={cn(`unique-alert type-${type}`, className)}>
+    <AlertStyledWrapper className={cn(`unique-alert ${type}`, className)}>
       <div>{children}</div>
-    </div>
+    </AlertStyledWrapper>
   );
 };
+
+const AlertStyledWrapper = styled.div`
+  padding: 10px 15px;
+  border-radius: 4px;
+  line-height: 20px;
+
+  &.warning {
+    background: var(--color-additional-warning-100);
+    color: var(--color-additional-warning-500);
+  }
+`;

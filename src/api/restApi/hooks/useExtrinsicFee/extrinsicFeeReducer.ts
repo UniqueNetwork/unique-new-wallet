@@ -1,6 +1,6 @@
 type ExtrinsicFeeState = {
   fee: string;
-  feeFormatted?: string;
+  feeFormatted: string;
   isError?: boolean;
   error?: Error | null;
   isLoading?: boolean;
@@ -23,9 +23,9 @@ export const extrinsicFeeReducer = (
       ...state,
       isLoading: false,
       fee: action?.payload?.fee || '',
-      feeFormatted: action?.payload?.feeFormatted,
+      feeFormatted: action?.payload?.feeFormatted || '',
     },
-    error: { ...state, isLoading: false, isError: true, error: action?.payload?.error },
+    error: { ...state, isLoading: false, isError: true, ...action.payload },
   };
 
   return reducer[action.type] ?? state;
