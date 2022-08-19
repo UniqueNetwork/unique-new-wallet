@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import axios from 'axios';
 
-import { useAccounts, useApi } from '@app/hooks';
+import { useApi } from '@app/hooks';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 import { truncateDecimalsBalanceSheet } from '@app/utils';
 import { BaseApi } from '@app/api';
@@ -27,8 +27,6 @@ export const useExtrinsicFee = <
   const { currentChain } = useApi();
 
   const api = new BaseApi(currentChain.apiEndpoint);
-
-  const { selectedAccount } = useAccounts();
 
   const { mutateAsync: obtainExtrinsic } = useApiMutation({
     endpoint,
@@ -118,10 +116,5 @@ export const useExtrinsicFee = <
     isFeeError: isError ?? false,
     isFeeLoading: isLoading ?? false,
     getFee,
-    // считаем баланс и определяем, хватает ли нам денег на совершение операции с учётом комиссии
-    isEnoughBalance:
-      !isLoading &&
-      !isError &&
-      Number(selectedAccount?.balance?.availableBalance.amount) - Number(fee) > 0,
   };
 };
