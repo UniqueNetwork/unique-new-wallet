@@ -57,7 +57,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   const collectionId = params.get('collectionId');
-  console.log(collectionId);
 
   const tokenForm = useForm<TokenForm>({
     mode: 'onChange',
