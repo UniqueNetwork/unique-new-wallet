@@ -105,7 +105,7 @@ export const TokenLink = ({
             src={image || emptyImage}
             alt={title}
             className={classNames({
-              _broken: image === '',
+              _broken: !image,
               _fullSize: isOverflow,
               _loaded: isLoaded,
             })}

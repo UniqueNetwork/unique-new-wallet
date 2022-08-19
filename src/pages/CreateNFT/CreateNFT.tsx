@@ -5,7 +5,6 @@ import { useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { DevTool } from '@hookform/devtools';
 
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
@@ -57,7 +56,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   const collectionId = params.get('collectionId');
-  console.log(collectionId);
 
   const tokenForm = useForm<TokenForm>({
     mode: 'onChange',
