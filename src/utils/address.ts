@@ -25,9 +25,9 @@ const isValidHttpUrl = (checkUrl: string): boolean => {
  * */
 export const getTokenIpfsUriByImagePath = (
   imagePath: string | null | undefined,
-): string => {
+): string | undefined => {
   if (!imagePath) {
-    return '';
+    return undefined;
   }
 
   const buildPath = (url: string) => {
@@ -48,5 +48,5 @@ export const getTokenIpfsUriByImagePath = (
     return buildPath(imagePath);
   }
 
-  return '';
+  return undefined;
 };

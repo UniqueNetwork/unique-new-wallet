@@ -218,7 +218,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           collectionDescription={collection?.description}
           collectionCoverUrl={collection?.schema?.coverPicture.fullUrl}
           tokenPrefix={collection?.tokenPrefix}
-          tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid || null)}
+          tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid)}
           attributes={tokenAttributes}
         />
       </MainWrapper>

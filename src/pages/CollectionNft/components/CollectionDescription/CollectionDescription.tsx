@@ -4,7 +4,6 @@ import { addSeconds, format } from 'date-fns';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
 
 import { AccountLinkComponent, CollectionScanLink } from '@app/components';
-import noCollections from '@app/static/icons/no-collections.svg';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
@@ -38,10 +37,7 @@ const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
       ) : (
         <>
           <Row>
-            <Avatar
-              src={getTokenIpfsUriByImagePath(collection_cover) || noCollections}
-              type="circle"
-            />
+            <Avatar src={getTokenIpfsUriByImagePath(collection_cover)} type="circle" />
             <Badge>ID: {collectionId}</Badge>
           </Row>
           <Row>

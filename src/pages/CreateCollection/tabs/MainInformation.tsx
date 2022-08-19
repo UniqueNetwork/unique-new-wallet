@@ -118,7 +118,7 @@ export const MainInformation: FC = () => {
                   render={({ field: { onChange, value } }) => (
                     <Upload
                       type="circle"
-                      upload={getTokenIpfsUriByImagePath(value || null)}
+                      upload={getTokenIpfsUriByImagePath(value)}
                       onChange={(data) => uploadCover(data, onChange)}
                     />
                   )}
