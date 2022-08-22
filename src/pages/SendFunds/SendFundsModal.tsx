@@ -1,12 +1,11 @@
 import { FC, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Heading, InputText, Loader, Modal } from '@unique-nft/ui-kit';
-import { keyring } from '@polkadot/ui-keyring';
 
 import { Account } from '@app/account';
 import { formatAmount } from '@app/utils';
 import { useAccounts } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
-import { ModalHeader, TextWarning } from '@app/pages/Accounts/Modals/commonComponents';
+import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
@@ -21,7 +20,7 @@ import {
 import { AccountSelector } from '@app/pages/SendFunds/components/AccountSelector';
 import { AccountSuggest } from '@app/pages/SendFunds/components/AccountSuggest';
 import { ChainPropertiesContext } from '@app/context';
-import { TransferBtn } from '@app/components';
+import { Alert, TransferBtn } from '@app/components';
 import { AccountUtils } from '@app/account/AccountUtils';
 
 import { SendFundsProps } from './SendFunds';
@@ -222,11 +221,12 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
           </InputAmount>
         </ContentRow>
         <ContentRow>
-          <TextWarning color="additional-warning-500" size="s">
+          <Alert type="warning">
             {recipient && amount && fee
-              ? `A fee of ~ ${fee} can be applied to the transaction, unless the transaction is sponsored`
+              ? `A fee of ~ ${fee} can be applied to the transaction, unless the transaction
+              is sponsored`
               : 'A fee will be calculated after entering the recipient and amount'}
-          </TextWarning>
+          </Alert>
         </ContentRow>
       </ModalContent>
       <ModalFooter>

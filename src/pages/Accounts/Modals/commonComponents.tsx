@@ -30,14 +30,6 @@ export const ModalHeader = styled.div`
   }
 `;
 
-export const TextWarning = styled(Text).attrs({
-  appearance: 'block',
-})`
-  border-radius: var(--prop-border-radius);
-  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
-  background-color: var(--color-additional-warning-100);
-`;
-
 export const AddressWrapper = styled.div`
   border: 1px solid var(--color-grey-300);
   border-radius: var(--prop-border-radius);

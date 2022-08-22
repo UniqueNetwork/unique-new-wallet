@@ -19,6 +19,7 @@ import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { ROUTE } from '@app/routes';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
@@ -190,11 +191,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
         <WrapperContent>
           <FormWrapper>
             {isolatedTokenForm}
-            <Alert className="alert" type="warning">
-              {isValid
-                ? `A fee of ~ ${feeFormatted} can be applied to the transaction`
-                : 'A fee will be calculated after corrected filling required fields'}
-            </Alert>
+            {feeFormatted && isValid ? (
+              <FeeInformationTransaction className="alert" fee={feeFormatted} />
+            ) : (
+              <Alert className="alert" type="warning">
+                A fee will be calculated after corrected filling required fields
+              </Alert>
+            )}
+
             <ButtonGroup className="buttons">
               <MintingBtn
                 role="primary"
