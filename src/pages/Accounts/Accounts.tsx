@@ -25,7 +25,7 @@ import {
 } from '@app/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 import { config } from '@app/config';
-import { usePageSettingContext } from '@app/context';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
@@ -160,10 +160,9 @@ const getAccountsColumns = ({
   },
 ];
 
-export const Accounts = () => {
+const AccountsComponent = () => {
   const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
@@ -215,20 +214,6 @@ export const Accounts = () => {
 
     void fetchAccounts();
   }, [fetchAccounts]);
-
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('My accounts');
-  }, []);
-
-  // const totalBalance = useMemo(
-  //   () =>
-  //     accounts.reduce<BN>(
-  //       (acc, account) => (account?.balance ? acc.add(new BN(account?.balance)) : acc),
-  //       new BN(0),
-  //     ),
-  //   [accounts],
-  // );
 
   return (
     <PagePaperNoPadding>
@@ -355,3 +340,5 @@ const ActionsWrapper = styled.div`
     }
   }
 `;
+
+export const Accounts = withPageTitle({ header: 'Accounts' })(AccountsComponent);

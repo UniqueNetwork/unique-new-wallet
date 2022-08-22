@@ -5,11 +5,11 @@ import { Avatar, Loader } from '@unique-nft/ui-kit';
 import { useParams } from 'react-router-dom';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { usePageSettingContext } from '@app/context';
 import AccountContext from '@app/account/AccountContext';
 import { useGraphQlTokenById } from '@app/api/graphQL/tokens';
 import { PagePaper } from '@app/components';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import {
   Attribute,
@@ -26,7 +26,6 @@ interface NFTDetailsProps {
 const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
   const { collectionId = '', tokenId = '' } = useParams();
   const { selectedAccount } = useContext(AccountContext);
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
 
   const { token, loading, refetch } = useGraphQlTokenById(
@@ -58,18 +57,6 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
     refetch();
     setCurrentModal('none');
   };
-
-  useEffect(() => {
-    setPageBreadcrumbs({
-      options: [
-        {
-          title: '🡠 back',
-          link: '/my-tokens/nft',
-        },
-      ],
-    });
-    setPageHeading('');
-  }, []);
 
   return (
     <PagePaper className={classNames(className, 'nft-page')}>
@@ -110,7 +97,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
   );
 };
 
-export const NFTDetails = styled(NFTDetailsComponent)`
+const NFTDetailsStyled = styled(NFTDetailsComponent)`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -130,3 +117,5 @@ export const NFTDetails = styled(NFTDetailsComponent)`
     }
   }
 `;
+
+export const NFTDetails = withPageTitle({ backLink: '/my-tokens/nft' })(NFTDetailsStyled);

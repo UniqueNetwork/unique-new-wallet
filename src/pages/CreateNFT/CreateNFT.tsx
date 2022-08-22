@@ -10,7 +10,6 @@ import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
-import { usePageSettingContext } from '@app/context';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
 import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
@@ -19,6 +18,7 @@ import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { ROUTE } from '@app/routes';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
@@ -38,7 +38,6 @@ const defaultOptions = {
 
 export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [closable, setClosable] = useState(false);
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -123,11 +122,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       })) ?? [],
     [collections],
   );
-
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('Create a NFT');
-  }, []);
 
   useEffect(() => {
     const { address, collectionId } = debouncedFormValues;
@@ -227,7 +221,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   );
 };
 
-export const CreateNFT = styled(CreateNFTComponent)`
+const CreateNFTStyled = styled(CreateNFTComponent)`
   .alert {
     margin-top: 32px;
   }
@@ -236,3 +230,5 @@ export const CreateNFT = styled(CreateNFTComponent)`
     margin-top: 32px;
   }
 `;
+
+export const CreateNFT = withPageTitle({ header: 'Create a NFT' })(CreateNFTStyled);

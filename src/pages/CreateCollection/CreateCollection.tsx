@@ -16,8 +16,8 @@ import {
   MintingBtn,
   StatusTransactionModal,
 } from '@app/components';
-import { usePageSettingContext } from '@app/context/PageSettingsContext';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -29,11 +29,9 @@ interface CreateCollectionProps {
   className?: string;
 }
 
-export const CreateCollection = ({ className }: CreateCollectionProps) => {
+const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
-
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
@@ -130,11 +128,6 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const isFirstStep = currentStep - 1 === 0;
   const isLastStep = currentStep === tabsUrls.length;
 
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('Create a collection');
-  }, []);
-
   const isolatedCollectionForm = useMemo(
     () => (
       <FormProvider {...collectionForm}>
@@ -215,3 +208,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     </MainWrapper>
   );
 };
+
+export const CreateCollection = withPageTitle({ header: 'Create a collection' })(
+  CreateCollectionComponent,
+);

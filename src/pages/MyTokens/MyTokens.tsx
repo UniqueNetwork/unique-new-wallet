@@ -4,9 +4,9 @@ import React, { useEffect, VFC } from 'react';
 import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { usePageSettingContext } from '@app/context';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { PagePaperNoPadding } from '@app/components';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { NFTFilters } from './NFTs';
 import { NFTsWrapper } from './context';
@@ -26,7 +26,6 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   useEffect(() => {
     if (location.pathname === basePath) {
@@ -35,8 +34,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
   }, [activeTab, basePath, location.pathname, navigate, tabUrls]);
 
   useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('My tokens');
+    navigate(tabUrls[activeTab]);
   }, []);
 
   const currentTabIndex = tabUrls.findIndex((tab) =>
@@ -46,10 +44,6 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);
   };
-
-  useEffect(() => {
-    navigate(tabUrls[activeTab]);
-  }, []);
 
   return (
     <NFTsWrapper>
@@ -77,4 +71,6 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
   );
 };
 
-export const MyTokens = styled(MyTokensComponent)``;
+const MyTokensStyled = styled(MyTokensComponent)``;
+
+export const MyTokens = withPageTitle({ header: 'My tokens' })(MyTokensStyled);
