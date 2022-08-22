@@ -2,12 +2,11 @@ import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { Button, Heading, Modal } from '@unique-nft/ui-kit';
 import { KeyringPair } from '@polkadot/keyring/types';
 
-import { PasswordInput, Upload } from '@app/components';
+import { Alert, PasswordInput, Upload } from '@app/components';
 import {
   AdditionalText,
   LabelText,
   ModalHeader,
-  TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
@@ -81,13 +80,13 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
           <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
         </ContentRow>
         <ContentRow>
-          <TextWarning color="additional-warning-500" size="s">
+          <Alert type="warning">
             Consider storing your account in a signer such as a browser extension,
             hardware device, QR-capable phone wallet (non-connected) or desktop
             application for optimal account security. Future versions of the web-only
             interface will drop support for non-external accounts, much like the IPFS
             version.
-          </TextWarning>
+          </Alert>
         </ContentRow>
       </ModalContent>
       <ModalFooter>
