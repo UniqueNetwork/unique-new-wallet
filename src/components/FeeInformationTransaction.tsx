@@ -1,5 +1,3 @@
-import cn from 'classnames';
-
 import { Alert } from '@app/components/Alert';
 
 type Props = {
@@ -9,7 +7,7 @@ type Props = {
 
 export const FeeInformationTransaction = ({ fee, className }: Props) => {
   return fee ? (
-    <Alert className={cn('alert', className)} type="warning">
+    <Alert className={className} type="warning">
       A fee of ~{fee} can be applied to the transaction
     </Alert>
   ) : null;

@@ -18,7 +18,7 @@ export const Alert = ({ children, type, className }: AlertProps) => {
 
 const AlertStyledWrapper = styled.div`
   padding: 10px 15px;
-  border-radius: 4px;
+  border-radius: var(--prop-border-radius);
   line-height: 20px;
 
   &.warning {

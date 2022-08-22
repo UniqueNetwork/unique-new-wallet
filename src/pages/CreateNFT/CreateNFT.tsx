@@ -192,7 +192,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           <FormWrapper>
             {isolatedTokenForm}
             {feeFormatted && isValid ? (
-              <FeeInformationTransaction fee={feeFormatted} />
+              <FeeInformationTransaction className="alert" fee={feeFormatted} />
             ) : (
               <Alert className="alert" type="warning">
                 A fee will be calculated after corrected filling required fields

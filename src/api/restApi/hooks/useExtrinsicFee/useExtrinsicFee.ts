@@ -93,7 +93,6 @@ export const useExtrinsicFee = <
         },
       });
     } catch (e) {
-      console.log('ASD', e);
       let error: Error;
 
       if (axios.isAxiosError(e)) {

@@ -28,15 +28,11 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
       <TextWrapper size="m" appearance="block">
         You will not be able to undo this action.
       </TextWrapper>
-      <AlertStyled fee={fee} />
+      <FeeInformationTransaction fee={fee} />
     </Confirm>
   );
 };
 
 const TextWrapper = styled(Text)`
-  margin-bottom: calc(var(--prop-gap) / 2);
-`;
-
-const AlertStyled = styled(FeeInformationTransaction)`
-  margin-top: 20px;
+  margin-bottom: calc(var(--prop-gap));
 `;
