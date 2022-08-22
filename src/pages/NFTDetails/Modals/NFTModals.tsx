@@ -1,14 +1,14 @@
 import React, { VFC } from 'react';
 
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
-import { ViewToken } from '@app/api';
 import { TransferModal } from '@app/pages/NFTDetails/Modals/TransferModal';
 import { BurnModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { ShareModal } from '@app/pages/NFTDetails/Modals/ShareModal';
+import { Token } from '@app/api/graphQL/types';
 
 interface NFTModalsProps {
   modalType: TNFTModalType;
-  token?: ViewToken;
+  token?: Token;
   onComplete(): void;
   onClose(): void;
 }

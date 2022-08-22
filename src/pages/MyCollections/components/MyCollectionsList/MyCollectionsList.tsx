@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
-import { Collection, TOrderBy } from '@app/api';
+import { TOrderBy } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
@@ -12,6 +12,7 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { NoItems, TokenLink } from '@app/components';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
+import { Collection } from '@app/api/graphQL/types';
 
 interface MyCollectionsListProps {
   className?: string;

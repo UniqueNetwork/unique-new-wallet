@@ -5,10 +5,9 @@ import { useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { DevTool } from '@hookform/devtools';
 
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { Collection, TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
 import { usePageSettingContext } from '@app/context';
@@ -57,7 +56,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   const collectionId = params.get('collectionId');
-  console.log(collectionId);
 
   const tokenForm = useForm<TokenForm>({
     mode: 'onChange',
@@ -117,7 +115,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const collectionsOptions = useMemo(
     () =>
-      collections?.map<Option>((collection: Collection) => ({
+      collections?.map<Option>((collection) => ({
         id: collection.collection_id,
         title: collection.name,
         description: collection.description,
@@ -220,7 +218,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           collectionDescription={collection?.description}
           collectionCoverUrl={collection?.schema?.coverPicture.fullUrl}
           tokenPrefix={collection?.tokenPrefix}
-          tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid || null)}
+          tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid)}
           attributes={tokenAttributes}
         />
       </MainWrapper>

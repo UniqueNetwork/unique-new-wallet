@@ -1,7 +1,5 @@
 export * from './availableNetworks';
 export * from './componentHelpers';
-export * from './getAttributes';
-export * from './getCollectionCover';
 export * from './helpers';
 export * from './jsonUtils';
 export * from './protobufUtils';
@@ -10,3 +8,4 @@ export * from './textUtils';
 export * from './timestampUtils';
 export * from './address';
 export * from './dictionary';
+export * from './table';

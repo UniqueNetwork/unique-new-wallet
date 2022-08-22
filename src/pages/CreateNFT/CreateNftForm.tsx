@@ -136,7 +136,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                 render={({ field: { onChange, value } }) => (
                   <Upload
                     type="square"
-                    upload={getTokenIpfsUriByImagePath(value || null)}
+                    upload={getTokenIpfsUriByImagePath(value)}
                     onChange={(data) => uploadCover(data, onChange)}
                   />
                 )}

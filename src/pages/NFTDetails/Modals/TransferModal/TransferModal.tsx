@@ -6,12 +6,13 @@ import {
   AskTransferModal,
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { useExtrinsicFee, useExtrinsicFlow, ViewToken } from '@app/api';
+import { useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { TokenApiService } from '@app/api/restApi/token';
+import { Token } from '@app/api/graphQL/types';
 
 interface TransferModalProps {
   isVisible: boolean;
-  token?: ViewToken;
+  token?: Token;
   onComplete(): void;
   onClose(): void;
 }

@@ -1,6 +1,7 @@
 import { FC, useCallback, useState } from 'react';
 
-import { Direction, TypeFilter } from '@app/api/graphQL/tokens';
+import { Direction } from '@app/api/graphQL/types';
+import { TypeFilter } from '@app/api/graphQL/tokens';
 
 import NTFsContext from './NFTsContext';
 import { defaultPage } from '../constants';
