@@ -195,6 +195,35 @@ const AccountTitle = () => {
   );
 };
 
+const getButtonRedenr = (unit?: string) => {
+  switch (unit) {
+    case 'OPL':
+      return (
+        <ButtonGet
+          title="Get"
+          role="outlined"
+          link={config.telegramBot}
+          onClick={() => {
+            window.open(config.telegramBot, '_blank', 'noopener');
+          }}
+        />
+      );
+    case 'QTZ':
+      return (
+        <ButtonGet
+          title="Get"
+          role="outlined"
+          link={config.telegramBot}
+          onClick={() => {
+            window.open(config.mexcQTZUSDT, '_blank', 'noopener');
+          }}
+        />
+      );
+    default:
+      return <Button disabled title="Get" />;
+  }
+};
+
 const BlockExplorer = ({ account }: { account: Account }) => {
   const { currentChain } = useApi();
   return (
@@ -279,12 +308,7 @@ const getAccountsColumns = ({
             disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}
           />
-          {rowData.balance?.availableBalance.unit === 'OPL' ? (
-            <ButtonGet title="Get" role="outlined" link={config.telegramBot} />
-          ) : (
-            <Button disabled title="Get" />
-          )}
-
+          {getButtonRedenr(rowData.balance?.availableBalance.unit)}
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
               placement="right"
