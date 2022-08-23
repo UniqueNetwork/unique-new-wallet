@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 import {
+  Loader,
   SortQuery,
   Table as UITable,
   TableColumnProps,
   TableProps,
-  Loader,
 } from '@unique-nft/ui-kit';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
@@ -16,16 +16,24 @@ interface UITableProps {
   columns: TableColumnProps[];
   columnPadding?: TableProps['columnPadding'];
   data?: any[];
+  desktopCaption?: ReactNode;
   loading?: boolean;
+  mobileCaption?: ReactNode;
   noDataMessage?: string | null;
   onSort?(sorting: SortQuery): void;
 }
 
+const TableCaption = styled.div`
+  margin-bottom: calc(var(--prop-gap) * 1.5);
+`;
+
 export const Table: FC<UITableProps> = ({
   columns,
   columnPadding,
+  desktopCaption,
   data,
   loading,
+  mobileCaption,
   noDataMessage,
   onSort,
 }) => {
@@ -35,17 +43,25 @@ export const Table: FC<UITableProps> = ({
     <TableWrapper>
       {deviceSize > DeviceSize.md ? (
         <>
+          {desktopCaption && (
+            <TableCaption className="table-caption">{desktopCaption}</TableCaption>
+          )}
           <UITable
-            noDataMessage={noDataMessage}
             columns={columns}
             columnPadding={columnPadding}
             data={data || []}
+            noDataMessage={noDataMessage}
             onSort={onSort}
           />
           {loading && <Loader isFullPage={true} size="middle" />}
         </>
       ) : (
-        <MobileTable columns={columns} data={!loading ? data : []} loading={loading} />
+        <>
+          {mobileCaption && (
+            <TableCaption className="table-caption">{mobileCaption}</TableCaption>
+          )}
+          <MobileTable columns={columns} data={!loading ? data : []} loading={loading} />
+        </>
       )}
     </TableWrapper>
   );
