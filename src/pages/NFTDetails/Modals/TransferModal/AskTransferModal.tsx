@@ -1,8 +1,9 @@
 import { VFC } from 'react';
-import { Button, Heading, InputText, Modal, Text } from '@unique-nft/ui-kit';
+import { Button, Heading, InputText, Modal } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { AdditionalWarning100 } from '@app/styles/colors';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { Alert } from '@app/components/Alert';
 
 interface AskTransferModalProps {
   fee?: string;
@@ -32,20 +33,22 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
         value={recipient}
         onChange={onRecipientChange}
       />
-      {fee && (
-        <TextStyled appearance="block" color="additional-warning-500" size="s">
-          A fee of ~ {fee} can be applied to the transaction
-        </TextStyled>
+
+      <FeeInformationTransaction fee={fee} />
+      {!fee && (
+        <AlertStyle type="warning">
+          A fee will be calculated after entering the address
+        </AlertStyle>
       )}
-      <TextStyled appearance="block" color="additional-warning-500" size="s">
+      <AlertStyle type="warning">
         Proceed with caution, once confirmed the transaction cannot be reverted.
-      </TextStyled>
-      <TextStyled appearance="block" color="additional-warning-500" size="s">
+      </AlertStyle>
+      <AlertStyle type="warning">
         Make sure to use a Substrate address created with a Polkadot.&#123;js&#125;
         wallet. There is no guarantee that third-party wallets, exchanges or hardware
         wallets can successfully sign and process your transfer which will result in a
         possible loss of the NFT.
-      </TextStyled>
+      </AlertStyle>
       <ButtonWrapper>
         <Button
           role="primary"
@@ -58,14 +61,8 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
   );
 };
 
-const TextStyled = styled(Text)`
-  box-sizing: border-box;
-  display: flex;
-  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
-  margin-bottom: var(--prop-gap);
-  border-radius: 4px;
-  background-color: ${AdditionalWarning100};
-  width: 100%;
+const AlertStyle = styled(Alert)`
+  margin-top: var(--prop-gap);
 `;
 
 const InputWrapper = styled(InputText)`
