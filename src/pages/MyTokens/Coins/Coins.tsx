@@ -93,7 +93,6 @@ export const CoinsComponent: FC = () => {
     <CoinsContainer>
       <Heading size="4">Network</Heading>
       {Object.values(config.chains).map((chain, idx) => {
-        console.log(chain);
         if (!coinConfig[chain.network]) {
           return null;
         }
