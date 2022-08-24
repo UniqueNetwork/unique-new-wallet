@@ -16,10 +16,10 @@ export const PageLayout: FC = () => {
     <Wrapper className="page-layout">
       <LayoutStyled>
         <Layout
-          breadcrumbs={breadcrumbs}
-          footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
           header={<Header />}
-          heading={heading}
+          footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
+          breadcrumbs={breadcrumbs}
+          heading={heading || undefined}
         >
           <Outlet />
         </Layout>

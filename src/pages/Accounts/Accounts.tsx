@@ -35,6 +35,7 @@ import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 import { config } from '@app/config';
 import { usePageSettingContext } from '@app/context';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
@@ -52,16 +53,13 @@ const AccountsPageHeader = styled.div`
   flex-wrap: wrap;
   align-items: center;
   padding-bottom: calc(var(--prop-gap) * 2);
-
   @media screen and (min-width: 1024px) {
     border-bottom: 1px solid var(--color-grey-300);
     padding: calc(var(--prop-gap) * 2);
-
     /* TODO: uncomment when AccountsTotalBalance will be ready
       padding: calc(var(--prop-gap) * 1.3) calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 2);
     */
   }
-
   @media screen and (min-width: 1280px) {
     min-height: 105px;
     padding: var(--prop-gap) calc(var(--prop-gap) * 2);
@@ -71,27 +69,22 @@ const AccountsPageHeader = styled.div`
 const AccountsPageContent = styled.div`
   display: flex;
   flex: 1 1 auto;
-
   @media screen and (min-width: 1024px) {
     padding: calc(var(--prop-gap) * 2);
   }
-
   & > div {
     flex: 1 1 100%;
     max-width: 100%;
   }
-
   .unique-loader {
     z-index: auto;
   }
-
   .unique-table-data-row {
     & > div {
       padding-top: calc(var(--prop-gap) / 2);
       padding-bottom: calc(var(--prop-gap) / 2);
     }
   }
-
   .mobile-table-row {
     .accounts-table-title {
       display: none;
@@ -114,12 +107,10 @@ const AccountsPageContent = styled.div`
 const SearchInputStyled = styled(InputText)`
   flex: 1 1 100%;
   margin-bottom: calc(var(--prop-gap) * 1.5);
-
   @media screen and (min-width: 1024px) {
     flex: 1 1 auto;
     margin-bottom: 0;
   }
-
   @media screen and (min-width: 1280px) {
     max-width: 500px;
     margin-left: auto;
@@ -129,16 +120,13 @@ const SearchInputStyled = styled(InputText)`
 const ButtonGroup = styled.div`
   flex: 1 1 100%;
   display: flex;
-
   @media screen and (min-width: 1024px) {
     flex: 0 0 auto;
     margin-left: calc(var(--prop-gap) * 3);
   }
-
   @media screen and (min-width: 1280px) {
     margin-left: calc(var(--prop-gap) * 2);
   }
-
   .btn-container {
     flex: 1 1 100%;
   }
@@ -149,7 +137,6 @@ const ExternalLink = styled.a`
   display: inline-block;
   padding-right: 18px;
   color: var(--color-primary-500);
-
   .icon {
     display: block;
     position: absolute;
@@ -174,7 +161,6 @@ const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
   column-gap: var(--prop-gap);
-
   .unique-dropdown {
     .dropdown-wrapper,
     .dropdown-options {
@@ -366,10 +352,9 @@ const getAccountsColumns = ({
   },
 ];
 
-export const Accounts: VFC<{ className?: string }> = ({ className }) => {
+const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
   const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
@@ -421,11 +406,6 @@ export const Accounts: VFC<{ className?: string }> = ({ className }) => {
 
     void fetchAccounts();
   }, [fetchAccounts]);
-
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('Manage accounts');
-  }, []);
 
   // const totalBalance = useMemo(
   //   () =>
@@ -508,3 +488,5 @@ export const Accounts: VFC<{ className?: string }> = ({ className }) => {
     </>
   );
 };
+
+export const Accounts = withPageTitle({ header: 'Manage accounts' })(AccountsComponent);

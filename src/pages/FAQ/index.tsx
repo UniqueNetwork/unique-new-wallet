@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components/macro';
 import { Accordion } from '@unique-nft/ui-kit';
 
-import { usePageSettingContext } from '@app/context';
 import {
   MainWrapper,
   WrapperContent,
   WrapperSidebar,
 } from '@app/pages/components/PageComponents';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { AskQuestion, faqItems } from './components';
 
@@ -58,14 +58,7 @@ const WrapperContentStyled = styled(WrapperContent)`
   }
 `;
 
-export const Faq = (): React.ReactElement<void> => {
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
-
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('FAQ');
-  }, []);
-
+const FaqComponent = (): React.ReactElement<void> => {
   return (
     <MainWrapperStyled>
       <WrapperContentStyled>
@@ -110,4 +103,4 @@ const MainWrapperStyled = styled(MainWrapper)`
   }
 `;
 
-export default Faq;
+export const Faq = withPageTitle({ header: 'FAQ' })(FaqComponent);
