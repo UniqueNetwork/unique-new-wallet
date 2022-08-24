@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState, VFC } from 'react';
+import React, { useContext, useMemo, useState, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
@@ -7,6 +7,7 @@ import { encodeAddress } from '@polkadot/util-crypto';
 
 import AccountContext from '@app/account/AccountContext';
 import { useGraphQlTokenById } from '@app/api/graphQL/tokens';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { PagePaper } from '@app/components';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
@@ -118,4 +119,6 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
   }
 `;
 
-export const NFTDetails = withPageTitle({ backLink: '/my-tokens/nft' })(NFTDetailsStyled);
+export const NFTDetails = withPageTitle({
+  backLink: `${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+})(NFTDetailsStyled);

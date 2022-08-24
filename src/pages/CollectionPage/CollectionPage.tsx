@@ -5,6 +5,7 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAccounts, useApi } from '@app/hooks';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useGraphQlCollectionById } from '@app/api/graphQL/collections';
+import { ROUTE } from '@app/routes';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
@@ -72,6 +73,6 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
   );
 };
 
-export const CollectionPage = withPageTitle({ backLink: '/my-collections' })(
+export const CollectionPage = withPageTitle({ backLink: ROUTE.MY_COLLECTIONS })(
   CollectionPageComponent,
 );
