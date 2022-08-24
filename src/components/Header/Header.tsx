@@ -46,11 +46,13 @@ export const Header = () => {
     }
   };
 
-  const createOrConnectAccountHandler = () => navigate(ROUTE.ACCOUNTS);
-
   const handleChangeNetwork = (val: INetwork) => {
     setCurrentChain(config.chains[val.id]);
     navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+  };
+
+  const gotoManageBalance = () => {
+    navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`);
   };
 
   return (
@@ -78,11 +80,6 @@ export const Header = () => {
               logEvent={UserEvents.HEADER_MY_COLLECTION}
             />
             <MenuLink
-              name="My accounts"
-              path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
-              logEvent={UserEvents.HEADER_MY_ACCOUNTS}
-            />
-            <MenuLink
               name="FAQ"
               path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
               logEvent={UserEvents.HEADER_FAQ}
@@ -98,21 +95,23 @@ export const Header = () => {
             activeNetwork={activeNetwork}
             balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
             isLoading={isLoading}
+            manageBalanceLinkTitle="Manage my balance"
             networks={networks}
             selectedAccount={{
               address: selectedAccount?.address,
               name: selectedAccount?.meta.name,
             }}
             symbol={selectedAccount?.unitBalance ?? ''}
-            onNetworkChange={(val) => handleChangeNetwork(val)}
             onAccountChange={onAccountChange}
+            onManageBalanceClick={gotoManageBalance}
+            onNetworkChange={(val) => handleChangeNetwork(val)}
           />
         )}
         {!isLoading && !accounts.length && (
           <Button
             title="Create or connect account"
             className="create-account-btn account-group-btn-medium-font"
-            onClick={createOrConnectAccountHandler}
+            onClick={gotoManageBalance}
           />
         )}
       </RightSide>
