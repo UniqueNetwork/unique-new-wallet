@@ -5,23 +5,31 @@ import { Avatar, Loader } from '@unique-nft/ui-kit';
 import { useParams } from 'react-router-dom';
 import { encodeAddress } from '@polkadot/util-crypto';
 
+import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { PagePaper } from '@app/components';
 import { usePageSettingContext } from '@app/context';
 import AccountContext from '@app/account/AccountContext';
 import { useGraphQlTokenById } from '@app/api/graphQL/tokens';
-import { PagePaper } from '@app/components';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
 
-import {
-  Attribute,
-  CollectionInformation,
-  Divider,
-  NFTDetailsHeader,
-  TokenInformation,
-} from './components';
+import { Attribute, Divider, NFTDetailsHeader, TokenInformation } from './components';
 
 interface NFTDetailsProps {
   className?: string;
 }
+
+const FlexibleAvatar: VFC<{ url?: string }> = ({ url }) => {
+  const size = useDeviceSize();
+  const sides: Record<keyof typeof DeviceSize | string, string> = {
+    xl: '536px',
+    lg: '536px',
+    md: '224px',
+    sm: '100%',
+    xs: '100%',
+  };
+
+  return <Avatar size={sides[DeviceSize[size]]} src={url} />;
+};
 
 const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
   const { collectionId = '', tokenId = '' } = useParams();
@@ -79,24 +87,18 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
         </div>
       ) : (
         <>
-          <div className="nft-page__avatar">
-            <Avatar size={536} src={token?.image?.fullUrl || undefined} />
-          </div>
+          <FlexibleAvatar url={token?.image?.fullUrl || undefined} />
           <div className="nft-page__info-container">
             <NFTDetailsHeader
               title={token?.token_name}
+              collectionId={token?.collection_id}
+              collectionName={token?.collection_name}
               ownerAddress={token?.owner}
               isCurrentAccountOwner={isCurrentAccountOwner}
               onShowModal={setCurrentModal}
             />
             <Divider />
             <TokenInformation attributes={attributes} />
-            <Divider />
-            <CollectionInformation
-              title={token?.collection_name}
-              avatar={token?.collection_cover}
-              description={token?.collection_description}
-            />
           </div>
         </>
       )}
@@ -114,7 +116,7 @@ export const NFTDetails = styled(NFTDetailsComponent)`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  min-height: 500px;
+  gap: 24px;
 
   .nft-page {
     &__loader {
@@ -127,6 +129,12 @@ export const NFTDetails = styled(NFTDetailsComponent)`
 
     &__info-container {
       flex-grow: 1;
+      min-width: 0;
     }
+  }
+
+  @media (max-width: 767.98px) {
+    flex-direction: column;
+    align-items: stretch;
   }
 `;
