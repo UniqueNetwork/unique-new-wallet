@@ -2,7 +2,6 @@ import { FC, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'r
 import { Heading, InputText, Loader, Modal } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
-import { formatAmount } from '@app/utils';
 import { useAccounts } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
 import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
@@ -203,17 +202,12 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
             <InputText
               placeholder="Enter the amount"
               role="decimal"
-              value={formatAmount(amount, '')}
+              value={amount}
               onChange={amountChangeHandler}
             />
             <InputAmountButton
               onClick={() =>
-                setAmount(
-                  (senderData?.availableBalance.amount?.toString() || '').replace(
-                    /\D/g,
-                    '',
-                  ),
-                )
+                setAmount(senderData?.availableBalance.amount?.toString() || '')
               }
             >
               {senderData ? 'Max' : <Loader size="small" />}
