@@ -1,4 +1,12 @@
-import React, { createRef, useCallback, useEffect, useMemo, useState, VFC } from 'react';
+import React, {
+  createRef,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  VFC,
+} from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
@@ -84,19 +92,9 @@ const AccountsPageContent = styled.div`
     }
   }
 
-  .mobile-table-row,
-  .mobile-table-cell {
+  .mobile-table-row {
     .accounts-table-title {
-      margin-bottom: var(--prop-gap);
-      color: var(--color-blue-grey-600);
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    &:not(:first-child) {
-      .accounts-table-title {
-        display: none;
-      }
+      display: none;
     }
   }
 `;
@@ -146,12 +144,26 @@ const ButtonGroup = styled.div`
   }
 `;
 
-const LinksWrapper = styled.div``;
+const ExternalLink = styled.a`
+  position: relative;
+  display: inline-block;
+  padding-right: 18px;
+  color: var(--color-primary-500);
 
-const LinkStyled = styled.a`
-  display: inline-flex;
-  align-items: center;
-  column-gap: 4px;
+  .icon {
+    display: block;
+    position: absolute;
+    bottom: 0.2em;
+    right: 0;
+  }
+`;
+
+const LinksWrapper = styled.div`
+  ${ExternalLink} {
+    &:not(:last-child) {
+      margin-right: calc(var(--prop-gap) / 2);
+    }
+  }
 `;
 
 const ButtonGet = styled(Button)`
@@ -173,6 +185,35 @@ const ActionsWrapper = styled.div`
   }
 `;
 
+const CaptionText: FC = () => {
+  const { currentChain } = useApi();
+
+  return (
+    <>
+      Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may
+      be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
+      be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
+      can be&nbsp;converted between each other because they share the same public key.
+      {currentChain.network !== 'OPAL' && (
+        <>
+          You can see all transformations for any given address{' '}
+          <span style={{ whiteSpace: 'nowrap' }}>
+            on
+            <ExternalLink
+              href="https://polkadot.subscan.io/tools/ss58_transform"
+              rel="noreferrer"
+              target="_blank"
+            >
+              SubScan
+              <Icon size={16} name="arrow-up-right" color="currentColor" />
+            </ExternalLink>
+          </span>
+        </>
+      )}
+    </>
+  );
+};
+
 const TableTitle = styled.span.attrs({ className: 'accounts-table-title' })`
   display: flex;
   align-items: center;
@@ -181,14 +222,12 @@ const TableTitle = styled.span.attrs({ className: 'accounts-table-title' })`
 
 const AccountTitle = () => {
   const tooltipRef = createRef<HTMLDivElement>();
+
   return (
     <>
       Account
       <Tooltip targetRef={tooltipRef}>
-        Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
-        represented by a different address character sequence, but they can be converted
-        between each other because they share the same public key. You can see all
-        transformations for any given address on Subscan.
+        <CaptionText />
       </Tooltip>
       <Icon ref={tooltipRef} name="question" size={20} color="var(--color-primary-500)" />
     </>
@@ -197,27 +236,28 @@ const AccountTitle = () => {
 
 const BlockExplorer = ({ account }: { account: Account }) => {
   const { currentChain } = useApi();
+
   return (
     <LinksWrapper>
       {currentChain.subscanAddress && (
-        <LinkStyled
+        <ExternalLink
           target="_blank"
           rel="noreferrer"
           href={`${currentChain.subscanAddress}/${account?.address}`}
         >
           <Text color="primary-500">Subscan</Text>
-          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-        </LinkStyled>
+          <Icon size={16} name="arrow-up-right" color="currentColor" />
+        </ExternalLink>
       )}
       {currentChain.uniquescanAddress && (
-        <LinkStyled
+        <ExternalLink
           target="_blank"
           rel="noreferrer"
           href={`${currentChain.uniquescanAddress}/${account?.address}`}
         >
           <Text color="primary-500">UniqueScan</Text>
-          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-        </LinkStyled>
+          <Icon size={16} name="arrow-up-right" color="currentColor" />
+        </ExternalLink>
       )}
     </LinksWrapper>
   );
@@ -399,8 +439,13 @@ export const Accounts: VFC<{ className?: string }> = ({ className }) => {
               onShowSendFundsModal: onSendFundsClick,
               onForgetWalletClick,
             })}
-            loading={isLoadingBalances}
             data={filteredAccounts}
+            loading={isLoadingBalances}
+            mobileCaption={
+              <Text color="grey-500" weight="light">
+                <CaptionText />
+              </Text>
+            }
           />
         </AccountsPageContent>
       </PagePaperNoPadding>

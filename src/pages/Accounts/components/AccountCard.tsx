@@ -43,6 +43,7 @@ const AccountInfoText = styled.span`
   align-items: center;
   font-size: 1rem;
   font-weight: 500;
+  color: var(--color-additional-dark);
 `;
 
 const AccountInfoParams = styled.span`
