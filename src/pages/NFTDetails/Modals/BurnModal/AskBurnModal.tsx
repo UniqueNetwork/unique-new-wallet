@@ -2,8 +2,8 @@ import React, { VFC } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { AdditionalWarning100 } from '@app/styles/colors';
 import { Confirm } from '@app/components';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
 interface AskBurnModalProps {
   fee: string;
@@ -28,25 +28,11 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
       <TextWrapper size="m" appearance="block">
         You will not be able to undo this action.
       </TextWrapper>
-      {fee && (
-        <TextStyled color="additional-warning-500" size="s">
-          A fee of ~ {fee} can be applied to the transaction
-        </TextStyled>
-      )}
+      <FeeInformationTransaction fee={fee} />
     </Confirm>
   );
 };
 
 const TextWrapper = styled(Text)`
-  margin-bottom: calc(var(--prop-gap) / 2);
-`;
-
-const TextStyled = styled(Text)`
-  box-sizing: border-box;
-  display: flex;
-  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
-  margin: var(--prop-gap) 0;
-  border-radius: 4px;
-  background-color: ${AdditionalWarning100};
-  width: 100%;
+  margin-bottom: calc(var(--prop-gap));
 `;

@@ -1,4 +1,5 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
+import { Text } from '@unique-nft/ui-kit';
 
 import { NetworkType } from '@app/types';
 
@@ -8,6 +9,19 @@ export type TNetworkBalances = {
   balanceTransferable?: string;
   symbol: NetworkType;
 };
+
+const Wrapper = styled.div``;
+
+const BalanceLocked = styled(Text).attrs({
+  appearance: 'block',
+  color: 'grey-500',
+  size: 's',
+  weight: 'light',
+})`
+  &:not(:last-of-type) {
+    margin-top: calc(var(--prop-gap) / 4);
+  }
+`;
 
 export const NetworkBalances = ({
   balanceTransferable,
@@ -26,39 +40,14 @@ export const NetworkBalances = ({
   };
 
   return (
-    <NetworkBalancesWrapper>
-      <div className="balance-full">
+    <Wrapper>
+      <Text appearance="block">
         {balanceFull || '0'} {symbol}
-      </div>
-      <div className="balance-transferable">{calculateBalanceTransferable()}</div>
-      {Number(balanceLocked) ? (
-        <div className="balance-locked">{`${balanceLocked} ${symbol} locked`}</div>
+      </Text>
+      <BalanceLocked>{calculateBalanceTransferable()}</BalanceLocked>
+      {!Number(balanceLocked) ? (
+        <BalanceLocked>{`${balanceLocked} ${symbol} locked`}</BalanceLocked>
       ) : null}
-    </NetworkBalancesWrapper>
+    </Wrapper>
   );
 };
-
-const Bold = css`
-  font-family: var(--prop-font-family);
-  font-size: 16px;
-  font-weight: 500;
-`;
-
-const BoldMargin4 = css`
-  ${Bold};
-  margin-bottom: calc(var(--prop-gap) / 4);
-`;
-
-const NetworkBalancesWrapper = styled.div`
-  .balance-full {
-    min-width: 300px;
-    ${BoldMargin4};
-    color: var(--color-secondary-500);
-  }
-
-  .balance-transferable,
-  .balance-locked {
-    color: var(--color-grey-500);
-    line-height: 22px;
-  }
-`;

@@ -25,6 +25,8 @@ const findNetworkParamByName = (
 };
 
 export const getNetworkList = (config: Record<string, string | undefined>): string[] => {
+  const networkValues = Object.entries(config);
+
   return Object.keys(config).reduce<string[]>((acc, key) => {
     if (!key.includes('NET_') || key.includes('NET_DEFAULT')) {
       return acc;
@@ -32,7 +34,14 @@ export const getNetworkList = (config: Record<string, string | undefined>): stri
 
     const { network } = configKeyRegexp.exec(key)?.groups || {};
 
-    if (network) {
+    const isSwitchingNetwork = network
+      ? networkValues.find(
+          ([name, value]) =>
+            name.includes(`${network}_SWITCHING_ENABLED`) && value === 'true',
+        )
+      : undefined;
+
+    if (network && isSwitchingNetwork?.length) {
       acc.push(network);
     }
 
@@ -44,6 +53,10 @@ export const getDefaultChain = (config: Record<string, string | undefined>) => {
   const storedChain = localStorage.getItem(defaultChainKey);
   const networkList = getNetworkList(config);
 
+  if (networkList.length === 0) {
+    throw new Error('No active networks specified');
+  }
+
   // make sure that we are trying to use an config-existing chain, otherwise go with default one
   if (storedChain) {
     const isExist = !!networkList.find((network) => network === storedChain);
@@ -53,11 +66,20 @@ export const getDefaultChain = (config: Record<string, string | undefined>) => {
     }
   }
 
-  const newChain = config.REACT_APP_NET_DEFAULT || getNetworkList(config)[0];
+  let chain = getNetworkList(config)[0];
 
-  localStorage.setItem(defaultChainKey, newChain);
+  const defaultNetwork = config.NET_DEFAULT || config.REACT_APP_NET_DEFAULT;
 
-  return newChain;
+  if (defaultNetwork) {
+    const isExist = !!networkList.find((network) => network === defaultNetwork);
+    if (isExist) {
+      chain = defaultNetwork;
+    }
+  }
+
+  localStorage.setItem(defaultChainKey, chain);
+
+  return chain;
 };
 
 export const getNetworkParams = (

@@ -12,13 +12,12 @@ import {
 import styled from 'styled-components/macro';
 
 import { addressFromSeed } from '@app/utils';
-import { IdentityIcon, Tooltip } from '@app/components';
+import { Alert, IdentityIcon, Tooltip } from '@app/components';
 import {
   AddressText,
   AddressWrapper,
   ButtonGroup,
   StepsTextStyled,
-  TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
@@ -106,10 +105,10 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
                 <Icon size={24} name="reload" color="inherit" />
               </ControlIcon>
             </ControlWrapper>
-            <TextWarning color="additional-warning-500" size="s">
+            <Alert type="warning">
               Ensure that you keep this seed in a safe place. Anyone with access to it can
               re-create the account and gain full access to it.
-            </TextWarning>
+            </Alert>
             <Checkbox
               label="I have saved my mnemonic seed safely"
               checked={confirmSeedSaved}

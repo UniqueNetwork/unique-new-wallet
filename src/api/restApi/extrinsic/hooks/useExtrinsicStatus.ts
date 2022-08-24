@@ -30,10 +30,7 @@ export const useExtrinsicStatus = (
               query.queryKey.includes('balance') || query.queryKey.includes('balances'),
           });
           apolloClient.refetchQueries({
-            include: ['getAccountCommonInfo'],
-          });
-          apolloClient.refetchQueries({
-            include: ['getAccountCommonInfo'],
+            include: ['account_common_info_query'],
           });
         }
       },

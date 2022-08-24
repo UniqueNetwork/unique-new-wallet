@@ -7,14 +7,13 @@ import {
   ButtonGroup,
   LabelText,
   StepsTextStyled,
-  TextWarning,
 } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
-import { IdentityIcon } from '@app/components';
+import { Alert, IdentityIcon } from '@app/components';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
@@ -113,13 +112,13 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <InputText value={derivePath || 'None provided'} disabled={true} />
         </ContentRow>
         <ContentRow>
-          <TextWarning color="additional-warning-500" size="s">
+          <Alert type="warning">
             Consider storing your account in&nbsp;a&nbsp;signer such
             as&nbsp;a&nbsp;browser extension, hardware device, QR-capable phone wallet
             (non-connected) or&nbsp;desktop application for optimal account security.
             Future versions of&nbsp;the web-only interface will drop support for
             non-external accounts, much like the IPFS version.
-          </TextWarning>
+          </Alert>
         </ContentRow>
       </ModalContent>
       <ModalFooter>

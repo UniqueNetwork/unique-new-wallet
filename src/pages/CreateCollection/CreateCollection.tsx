@@ -9,7 +9,6 @@ import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
-  Alert,
   CollectionSidebar,
   CollectionStepper,
   Confirm,
@@ -18,6 +17,7 @@ import {
 } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
 import { NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -143,9 +143,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         <FormWrapper>
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
-          <Alert type="warning">
-            A fee of ~{feeFormatted} can be applied to the transaction
-          </Alert>
+          <FeeInformationTransaction fee={feeFormatted} />
           <ButtonGroup>
             {!isLastStep && (
               <MintingBtn
