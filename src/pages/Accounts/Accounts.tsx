@@ -195,7 +195,7 @@ const AccountTitle = () => {
   );
 };
 
-const getButtonRedenr = (unit?: string) => {
+const getButtonRender = (unit?: string) => {
   switch (unit) {
     case 'OPL':
       return (
@@ -213,7 +213,6 @@ const getButtonRedenr = (unit?: string) => {
         <ButtonGet
           title="Get"
           role="outlined"
-          link={config.telegramBot}
           onClick={() => {
             window.open(config.mexcQTZUSDT, '_blank', 'noopener');
           }}
@@ -308,7 +307,7 @@ const getAccountsColumns = ({
             disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}
           />
-          {getButtonRedenr(rowData.balance?.availableBalance.unit)}
+          {getButtonRender(rowData.balance?.availableBalance.unit)}
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
               placement="right"
