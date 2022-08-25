@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
-import { PagePaperNoPadding } from '@app/components';
+import { PagePaper } from '@app/components';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { NFTFilters } from './NFTs';
@@ -47,7 +47,11 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 
   return (
     <NFTsWrapper>
-      <PagePaperNoPadding className={classNames('data-grid', 'my-tokens', className)}>
+      <PagePaper
+        noPadding
+        flexLayout="column"
+        className={classNames('my-tokens', className)}
+      >
         <TabsHeader>
           <Tabs
             activeIndex={currentTabIndex}
@@ -66,7 +70,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
             <Outlet />
           </Tabs>
         </TabsBody>
-      </PagePaperNoPadding>
+      </PagePaper>
     </NFTsWrapper>
   );
 };
