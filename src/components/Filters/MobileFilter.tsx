@@ -41,7 +41,6 @@ export const MobileFilters = ({
   const searchHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
       changeSearchText(search.trim());
-      console.log('enter', search);
     }
   };
 

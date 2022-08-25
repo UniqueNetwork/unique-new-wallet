@@ -86,11 +86,9 @@ export const useGraphQlOwnerTokens = (
   const { page, limit } = pagination;
 
   const fetchMoreMethod = (variables: FetchMoreOptions) => {
-    console.log('variables', variables);
     fetchMore({
       ...variables,
       updateQuery: (prev, { fetchMoreResult }) => {
-        console.log('fetchMoreResult', fetchMoreResult);
         if (!fetchMoreResult) {
           return prev;
         }
