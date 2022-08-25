@@ -6,12 +6,13 @@ import { Text } from '@unique-nft/ui-kit';
 import emptyImage from '@app/static/icons/empty-image.svg';
 
 export interface ITokenLinkProps {
-  title: string;
+  alt?: string;
+  title: ReactNode;
   image?: string;
   link?: string;
   meta?: ReactNode;
-  onTokenClick(): void;
-  onMetaClick(): void;
+  onTokenClick?: () => void;
+  onMetaClick?: () => void;
 }
 
 const TokenLinkWrapper = styled.div`
@@ -31,7 +32,7 @@ const TokenLinkTitle = styled(Text).attrs({ appearance: 'block', size: 'l' })`
 const TokenLinkImageWrapper = styled.div`
   overflow: hidden;
   position: relative;
-  margin-bottom: var(--prop-gap);
+  margin-bottom: calc(var(--prop-gap) / 2);
   transform: translate3d(0, 0, 0);
 
   &::before {
@@ -72,14 +73,11 @@ const TokenLinkImageWrapper = styled.div`
 `;
 
 export const TokenLink = ({
+  alt,
   image,
   title,
   link,
-  meta = (
-    <Text size="s" color="primary-500" appearance="block">
-      {link}
-    </Text>
-  ),
+  meta,
   onTokenClick,
   onMetaClick,
 }: ITokenLinkProps) => {
@@ -102,8 +100,8 @@ export const TokenLink = ({
         <TokenLinkImageWrapper>
           <img
             ref={imgRef}
+            alt={alt}
             src={image || emptyImage}
-            alt={title}
             className={classNames({
               _broken: !image,
               _fullSize: isOverflow,
@@ -112,9 +110,9 @@ export const TokenLink = ({
             onLoad={renderImage}
           />
         </TokenLinkImageWrapper>
-        <TokenLinkTitle>{title}</TokenLinkTitle>
+        {typeof title === 'string' ? <TokenLinkTitle>{title}</TokenLinkTitle> : title}
       </div>
-      <div onClick={onMetaClick}>{meta}</div>
+      {meta && <div onClick={onMetaClick}>{meta}</div>}
     </TokenLinkWrapper>
   );
 };
