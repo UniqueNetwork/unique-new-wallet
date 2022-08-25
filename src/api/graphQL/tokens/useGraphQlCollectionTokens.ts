@@ -3,6 +3,7 @@ import { useQuery, gql } from '@apollo/client';
 import { ListNftsFilterType } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 
 import { QueryResponse, Token, QueryOptions } from '../types';
+import { getConditionBySearchText } from './utils';
 
 const COLLECTION_TOKENS_QUERY = gql`
   query CollectionTokensQuery(
@@ -65,7 +66,7 @@ export const useGraphQlCollectionTokens = ({
           { collection_owner_normalized: { _eq: collectionOwner } },
         ],
         ...(type !== 'all' && { is_sold: { _eq: `${type === 'disowned'}` } }),
-        // ...getConditionBySearchText('token_name', search),
+        ...getConditionBySearchText('token_name', search),
       },
     },
   });
