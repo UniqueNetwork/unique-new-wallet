@@ -1,8 +1,6 @@
 import { createRef } from 'react';
 import { Button, ButtonProps, IconProps, Tooltip } from '@unique-nft/ui-kit';
 
-const tooltipRef = createRef<HTMLDivElement>();
-
 export const BaseActionBtn = ({
   actionEnabled,
   actionText,
@@ -12,6 +10,8 @@ export const BaseActionBtn = ({
   actionText: string;
   tooltip?: string | null;
 }) => {
+  const tooltipRef = createRef<HTMLDivElement>();
+
   const iconRender = (icon?: IconProps) => {
     return icon ? { ...icon, color: 'currentColor' } : undefined;
   };
