@@ -20,6 +20,7 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { config } from '@app/config';
 
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
@@ -44,7 +45,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [params] = useSearchParams();
   const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
-  const { error, info } = useNotifications();
+  const { error, warning, info } = useNotifications();
   const mapper = useTokenFormMapper();
 
   const { getFee, fee, feeFormatted, feeError, isFeeError } = useExtrinsicFee(
@@ -80,6 +81,19 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     options: defaultOptions,
   });
   const { data: collection } = useCollectionQuery(formValues.collectionId ?? 0);
+
+  const isOldCollection = collection?.schema?.schemaName === '_old_';
+
+  const mintingButtonTooltip = (() => {
+    if (isBalanceInsufficient) {
+      return NO_BALANCE_MESSAGE;
+    }
+    if (isOldCollection) {
+      return config.oldCollectionMessage;
+    }
+
+    return undefined;
+  })();
 
   const tokenAttributes: AttributeView[] | undefined = useMemo(() => {
     const attrsSchema = collection?.schema?.attributesSchema;
@@ -125,9 +139,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   );
 
   useEffect(() => {
+    if (isOldCollection) {
+      warning(config.oldCollectionMessage);
+    }
+  }, [collection]);
+
+  useEffect(() => {
     const { address, collectionId } = debouncedFormValues;
 
-    if (collectionId && address && isValid) {
+    if (collectionId && address && isValid && !isOldCollection) {
       getFee({ token: mapper(debouncedFormValues as FilledTokenForm) });
     }
   }, [debouncedFormValues]);
@@ -155,7 +175,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const confirmFormHandler = (closable?: boolean) => {
     const { address, collectionId } = debouncedFormValues;
 
-    if (address && collectionId && isValid) {
+    if (address && collectionId && isValid && !isOldCollection) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
       setClosable(!!closable);
@@ -197,14 +217,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               <MintingBtn
                 role="primary"
                 title="Confirm and create more"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid || isBalanceInsufficient}
+                tooltip={mintingButtonTooltip}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
                 onClick={() => confirmFormHandler()}
               />
               <MintingBtn
                 title="Confirm and close"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid || isBalanceInsufficient}
+                tooltip={mintingButtonTooltip}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
                 onClick={() => confirmFormHandler(true)}
               />
             </ButtonGroup>

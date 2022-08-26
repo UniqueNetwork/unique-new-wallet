@@ -61,7 +61,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   className,
 }) => {
   const { error } = useNotifications();
-  const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
+  const { uploadFile } = useFileUpload();
 
   const { resetField } = useFormContext();
 

@@ -38,14 +38,6 @@ export type AttributeItemType = {
   values: string[];
 };
 
-export type ArtificialAttributeItemType = {
-  id: string;
-  optional?: boolean;
-  type?: string;
-  isArray?: boolean;
-  enumValues?: Record<string, unknown>[];
-};
-
 export type EnumElemType = {
   options: { [key: string]: string };
   values: { [key: string]: number };
