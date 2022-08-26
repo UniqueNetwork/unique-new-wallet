@@ -116,7 +116,7 @@ export const NFTDetails = styled(NFTDetailsComponent)`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 24px;
+  gap: calc(var(--prop-gap) * 1.5);
 
   .nft-page {
     &__loader {
