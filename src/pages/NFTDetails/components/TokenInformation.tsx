@@ -38,10 +38,7 @@ const TokenInformationComponent: VFC<TokenInformationProps> = ({
 };
 
 const TokenInformationStyled = styled(TokenInformationComponent)`
-  .attributes-header {
-    margin-bottom: var(--prop-gap);
-  }
-
+  .attributes-header,
   .attribute-row {
     margin-bottom: var(--prop-gap);
   }
