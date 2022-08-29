@@ -63,6 +63,11 @@ const LayoutStyled = styled.div`
     padding-left: 24px;
     padding-right: 24px;
 
+    @media screen and (max-width: 567px) {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
     @media screen and (min-width: 1024px) {
       padding-left: 32px;
       padding-right: 32px;
@@ -96,11 +101,9 @@ const LayoutStyled = styled.div`
   }
 
   header {
-    @media (max-width: 1024px) {
-      top: 0;
-      position: sticky !important;
-      z-index: 1000;
-    }
+    top: 0;
+    position: sticky !important;
+    z-index: 1000;
     @media (max-width: 620px) {
       height: 80px !important;
     }

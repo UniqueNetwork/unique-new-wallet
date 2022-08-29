@@ -1,16 +1,16 @@
+import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 
 import { IdentityIcon } from '@app/components';
+import { config } from '@app/config';
 import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
-import { config } from '@app/config';
-import { UserEvents } from '@app/utils/logUserEvent';
 import { networks } from '@app/utils';
+import { UserEvents } from '@app/utils/logUserEvent';
 
-import { BottomLinks } from './BottomLinks';
+import { Footer } from '../Footer';
 import MenuLink from './MenuLink';
 
 export const Header = () => {
@@ -140,19 +140,15 @@ export const Header = () => {
               mobileMenuToggle={mobileMenuToggle}
             />
             <MenuLink
-              name="My accounts"
-              path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
-              logEvent={UserEvents.HEADER_MY_ACCOUNTS}
-              mobileMenuToggle={mobileMenuToggle}
-            />
-            <MenuLink
               name="FAQ"
               path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
               logEvent={UserEvents.HEADER_FAQ}
               mobileMenuToggle={mobileMenuToggle}
             />
           </MobileMenu>
-          <BottomLinks />
+          <FooterWrapper>
+            <Footer />
+          </FooterWrapper>
         </MobileModal>
       )}
     </HeaderStyled>
@@ -213,10 +209,10 @@ const RightSide = styled.div`
 
 const MobileModal = styled.div`
   position: absolute;
-  top: 81px;
+  top: 80px;
   left: 0;
   right: 0;
-  height: calc(100vh - 81px);
+  height: calc(100vh - 80px);
   background-color: var(--color-additional-light);
   box-shadow: inset 0 2px 8px rgb(0 0 0 / 6%);
   display: flex;
@@ -227,4 +223,10 @@ const MobileModal = styled.div`
 const MobileMenu = styled.nav`
   flex-direction: column;
   margin: 15px 0;
+`;
+
+const FooterWrapper = styled.div`
+  display: flex;
+  margin-top: auto;
+  border-top: 1px solid var(--color-grey-300);
 `;
