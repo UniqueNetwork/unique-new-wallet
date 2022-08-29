@@ -72,6 +72,9 @@ export const MyCollectionsList = ({
         <Loader isFullPage={true} size="middle" />
       ) : collectionsCount > 0 ? (
         <ListContent>
+          <Result size="m">
+            {`${collectionsCount} ${collectionsCount === 1 ? 'result' : 'results'}`}
+          </Result>
           <GridList>
             {collections?.map((collection) => (
               <TokenLink
@@ -93,7 +96,7 @@ export const MyCollectionsList = ({
           </GridList>
           <Footer>
             <Text size="m">
-              {`${collectionsCount} ${collectionsCount === 1 ? 'item' : 'items'}`}
+              {`${collectionsCount} ${collectionsCount === 1 ? 'result' : 'results'}`}
             </Text>
             <Pagination
               withIcons
@@ -135,6 +138,10 @@ const ListContent = styled.div`
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+`;
+
+const Result = styled(Text)`
+  margin-bottom: 24px;
 `;
 
 const GridList = styled(GridListCommon)`
