@@ -3,8 +3,8 @@ import { BreadcrumbsProps } from '@unique-nft/ui-kit';
 
 interface PageSettingContextState {
   breadcrumbs?: BreadcrumbsProps;
-  heading?: string;
-  setPageHeading: (heading: string) => void;
+  heading?: string | null;
+  setPageHeading: (heading?: string | null) => void;
   setPageBreadcrumbs: (breadcrumbs: BreadcrumbsProps) => void;
 }
 

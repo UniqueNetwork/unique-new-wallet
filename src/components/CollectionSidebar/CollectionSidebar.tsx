@@ -20,11 +20,7 @@ const CollectionSidebarComponent: VFC<{
         <Card
           title={name || 'Name'}
           description={description || 'Description'}
-          picture={
-            coverPictureIpfsCid
-              ? getTokenIpfsUriByImagePath(coverPictureIpfsCid)
-              : undefined
-          }
+          picture={getTokenIpfsUriByImagePath(coverPictureIpfsCid)}
         />
       </SidebarRow>
       <SidebarRow>

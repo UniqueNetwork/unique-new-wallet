@@ -8,7 +8,7 @@ export const commonPlateCss = css`
 `;
 
 export const MainWrapper = styled.div`
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 1025px) {
     display: flex;
     align-items: flex-start;
   }
@@ -17,7 +17,7 @@ export const MainWrapper = styled.div`
 export const WrapperContent = styled.div`
   box-sizing: border-box;
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 1025px) {
     ${commonPlateCss};
     flex: 1 1 66.6666%;
   }
@@ -26,13 +26,17 @@ export const WrapperContent = styled.div`
 export const WrapperSidebar = styled.aside`
   box-sizing: border-box;
   overflow: hidden;
-  margin: calc(var(--prop-gap) * 3) 0;
+  margin: calc(var(--prop-gap) * 2) 0;
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 1025px) {
     ${commonPlateCss};
     flex: 1 1 33.3333%;
     max-width: 600px;
     margin: 0 0 0 calc(var(--prop-gap) * 2);
+  }
+
+  @media only screen and (min-width: 1025px) and (max-width: 1500px) {
+    margin: 0 0 0 calc(var(--prop-gap) * 1.5);
   }
 `;
 
@@ -58,7 +62,7 @@ export const InnerContent = styled.div`
   display: flex;
   flex: 1 1 auto;
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1025px) {
     padding-left: 0;
   }
 `;
@@ -84,21 +88,9 @@ export const TabsBody = styled.div`
   }
 `;
 
-export const GridList = styled.div`
+export const GridListCommon = styled.div`
   flex: 1 1 auto;
   display: grid;
   align-content: baseline;
   gap: calc(var(--prop-gap) * 2);
-
-  @media screen and (min-width: 520px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (min-width: 1000px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (min-width: 1500px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
 `;

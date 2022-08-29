@@ -8,20 +8,18 @@ import {
   Loader,
   Pagination,
   Text,
-  TokenLink,
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { TokenPreviewInfo } from '@app/api';
 import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
-import { NoItems } from '@app/components';
-import { GridList } from '@app/pages/components/PageComponents';
+import { NoItems, TokenLink } from '@app/components';
+import { GridListCommon } from '@app/pages/components/PageComponents';
+import { Token } from '@app/api/graphQL/types';
 
 interface NFTsListComponentProps {
   className?: string;
-  tokens?: TokenPreviewInfo[];
+  tokens?: Token[];
   tokensCount?: number;
   isLoading: boolean;
   page: number;
@@ -78,25 +76,25 @@ const NFTsListComponent = ({
         ) : (
           <GridList>
             {tokens.map(
-              ({ token_id, token_name, collection_name, collection_id, image_path }) => (
+              ({ token_id, token_name, collection_name, collection_id, image }) => (
                 <TokenLink
-                  title={token_name}
+                  alt={token_name}
                   key={`${collection_id}-${token_id}`}
-                  image={getTokenIpfsUriByImagePath(image_path)}
                   link={`${collection_name} [id ${collection_id}]`}
-                  meta={
-                    <Text appearance="block" color="grey-500" size="s">
-                      {collection_name} [id {collection_id}]
-                    </Text>
+                  image={image?.fullUrl || undefined}
+                  title={
+                    <>
+                      <Text appearance="block" size="l">
+                        {token_name}
+                      </Text>
+                      <Text appearance="block" weight="light" size="s">
+                        {collection_name} [id {collection_id}]
+                      </Text>
+                    </>
                   }
                   onTokenClick={() =>
                     navigate(
                       `/${currentChain?.network}/token/${collection_id}/${token_id}`,
-                    )
-                  }
-                  onMetaClick={() =>
-                    navigate(
-                      `/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection_id}`,
                     )
                   }
                 />
@@ -128,6 +126,11 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
   flex: 1 1 calc(100% - var(--prop-gap) * 4);
   padding: calc(var(--prop-gap) * 2);
 
+  .unique-text {
+    word-break: break-all;
+    overflow: initial;
+  }
+
   .nft-list {
     &__header {
       min-height: 32px;
@@ -158,5 +161,23 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
         align-items: center;
       }
     }
+  }
+`;
+
+const GridList = styled(GridListCommon)`
+  @media screen and (min-width: 820px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and (min-width: 1100px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (min-width: 1400px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media screen and (min-width: 1500px) {
+    grid-template-columns: repeat(5, 1fr);
   }
 `;

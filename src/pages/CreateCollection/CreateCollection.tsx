@@ -9,15 +9,15 @@ import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
-  Alert,
   CollectionSidebar,
   CollectionStepper,
   Confirm,
   MintingBtn,
   StatusTransactionModal,
 } from '@app/components';
-import { usePageSettingContext } from '@app/context/PageSettingsContext';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
 import { NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -29,11 +29,9 @@ interface CreateCollectionProps {
   className?: string;
 }
 
-export const CreateCollection = ({ className }: CreateCollectionProps) => {
+const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
-
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
@@ -130,11 +128,6 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const isFirstStep = currentStep - 1 === 0;
   const isLastStep = currentStep === tabsUrls.length;
 
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('Create a collection');
-  }, []);
-
   const isolatedCollectionForm = useMemo(
     () => (
       <FormProvider {...collectionForm}>
@@ -150,9 +143,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
         <FormWrapper>
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
-          <Alert type="warning">
-            A fee of ~{feeFormatted} can be applied to the transaction
-          </Alert>
+          <FeeInformationTransaction fee={feeFormatted} />
           <ButtonGroup>
             {!isLastStep && (
               <MintingBtn
@@ -181,7 +172,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
                 role="primary"
                 title="Create collection"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid}
+                disabled={!isValid || isBalanceInsufficient}
                 onClick={handleSubmit(onSubmit)}
               />
             )}
@@ -215,3 +206,7 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     </MainWrapper>
   );
 };
+
+export const CreateCollection = withPageTitle({ header: 'Create a collection' })(
+  CreateCollectionComponent,
+);

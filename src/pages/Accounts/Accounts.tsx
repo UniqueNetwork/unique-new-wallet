@@ -1,4 +1,14 @@
-import React, { createRef, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  createRef,
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  VFC,
+} from 'react';
+import styled from 'styled-components';
+import classNames from 'classnames';
 import {
   Button,
   Dropdown,
@@ -8,14 +18,11 @@ import {
   Text,
   Tooltip,
 } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import AccountCard from '@app/pages/Accounts/components/AccountCard';
-import { AccountContextMenu } from '@app/pages/Accounts/components/AccountContextMenu';
 import {
   AccountsGroupButton,
   Confirm,
@@ -23,9 +30,12 @@ import {
   Table,
   TransferBtn,
 } from '@app/components';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 import { config } from '@app/config';
 import { usePageSettingContext } from '@app/context';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
@@ -35,45 +45,233 @@ type AccountsColumnsProps = {
   onForgetWalletClick(address: string): () => void;
 };
 
+const AccountsPageHeader = styled.div`
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-bottom: calc(var(--prop-gap) * 2);
+  @media screen and (min-width: 1024px) {
+    border-bottom: 1px solid var(--color-grey-300);
+    padding: calc(var(--prop-gap) * 2);
+    /* TODO: uncomment when AccountsTotalBalance will be ready
+      padding: calc(var(--prop-gap) * 1.3) calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 2);
+    */
+  }
+  @media screen and (min-width: 1280px) {
+    min-height: 105px;
+    padding: var(--prop-gap) calc(var(--prop-gap) * 2);
+  }
+`;
+
+const AccountsPageContent = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  @media screen and (min-width: 1024px) {
+    padding: calc(var(--prop-gap) * 2);
+  }
+  & > div {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  .unique-loader {
+    z-index: auto;
+  }
+  .unique-table-data-row {
+    & > div {
+      padding-top: calc(var(--prop-gap) / 2);
+      padding-bottom: calc(var(--prop-gap) / 2);
+    }
+  }
+  .mobile-table-row {
+    .accounts-table-title {
+      display: none;
+    }
+  }
+`;
+
+/* TODO: uncomment when AccountsTotalBalance will be ready
+  const AccountsTotalBalanceStyled = styled(AccountsTotalBalance)`
+    flex: 1 1 100%;
+    margin-bottom: calc(var(--prop-gap) * 1.5);
+  
+    @media screen and (min-width: 1280px) {
+      flex: 0 0 auto;
+      margin: 0 calc(var(--prop-gap) * 3) 0 0;
+    }
+  `;
+*/
+
+const SearchInputStyled = styled(InputText)`
+  flex: 1 1 100%;
+  margin-bottom: calc(var(--prop-gap) * 1.5);
+  @media screen and (min-width: 1024px) {
+    flex: 1 1 auto;
+    margin-bottom: 0;
+  }
+  @media screen and (min-width: 1280px) {
+    max-width: 500px;
+    margin-left: auto;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  flex: 1 1 100%;
+  display: flex;
+  @media screen and (min-width: 1024px) {
+    flex: 0 0 auto;
+    margin-left: calc(var(--prop-gap) * 3);
+  }
+  @media screen and (min-width: 1280px) {
+    margin-left: calc(var(--prop-gap) * 2);
+  }
+  .btn-container {
+    flex: 1 1 100%;
+  }
+`;
+
+const ExternalLink = styled.a`
+  position: relative;
+  display: inline-block;
+  padding-right: 18px;
+  color: var(--color-primary-500);
+  .icon {
+    display: block;
+    position: absolute;
+    bottom: 0.2em;
+    right: 0;
+  }
+`;
+
+const LinksWrapper = styled.div`
+  ${ExternalLink} {
+    &:not(:last-child) {
+      margin-right: calc(var(--prop-gap) / 2);
+    }
+  }
+`;
+
+const ButtonGet = styled(Button)`
+  box-sizing: border-box;
+`;
+
+const ActionsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: var(--prop-gap);
+  .unique-dropdown {
+    .dropdown-wrapper,
+    .dropdown-options {
+      overflow: hidden;
+      padding: 0;
+      cursor: pointer;
+    }
+  }
+`;
+
+const CaptionText: FC = () => {
+  const { currentChain } = useApi();
+
+  return (
+    <>
+      Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may
+      be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
+      be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
+      can be&nbsp;converted between each other because they share the same public key.
+      {currentChain.network !== 'OPAL' && (
+        <>
+          You can see all transformations for any given address{' '}
+          <span style={{ whiteSpace: 'nowrap' }}>
+            on
+            <ExternalLink
+              href="https://polkadot.subscan.io/tools/ss58_transform"
+              rel="noreferrer"
+              target="_blank"
+            >
+              SubScan
+              <Icon size={16} name="arrow-up-right" color="currentColor" />
+            </ExternalLink>
+          </span>
+        </>
+      )}
+    </>
+  );
+};
+
+const TableTitle = styled.span.attrs({ className: 'accounts-table-title' })`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+`;
+
 const AccountTitle = () => {
   const tooltipRef = createRef<HTMLDivElement>();
+
   return (
     <>
       Account
       <Tooltip targetRef={tooltipRef}>
-        Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may be
-        represented by a different address character sequence, but they can be converted
-        between each other because they share the same public key. You can see all
-        transformations for any given address on Subscan.
+        <CaptionText />
       </Tooltip>
       <Icon ref={tooltipRef} name="question" size={20} color="var(--color-primary-500)" />
     </>
   );
 };
 
+const getButtonRender = (unit?: string) => {
+  switch (unit) {
+    case 'OPL':
+      return (
+        <ButtonGet
+          title="Get"
+          role="outlined"
+          link={config.telegramBot}
+          onClick={() => {
+            window.open(config.telegramBot, '_blank', 'noopener');
+          }}
+        />
+      );
+    case 'QTZ':
+      return (
+        <ButtonGet
+          title="Get"
+          role="outlined"
+          onClick={() => {
+            window.open(config.mexcQTZUSDT, '_blank', 'noopener');
+          }}
+        />
+      );
+    default:
+      return <Button disabled title="Get" />;
+  }
+};
+
 const BlockExplorer = ({ account }: { account: Account }) => {
   const { currentChain } = useApi();
+
   return (
     <LinksWrapper>
       {currentChain.subscanAddress && (
-        <LinkStyled
+        <ExternalLink
           target="_blank"
           rel="noreferrer"
           href={`${currentChain.subscanAddress}/${account?.address}`}
         >
           <Text color="primary-500">Subscan</Text>
-          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-        </LinkStyled>
+          <Icon size={16} name="arrow-up-right" color="currentColor" />
+        </ExternalLink>
       )}
       {currentChain.uniquescanAddress && (
-        <LinkStyled
+        <ExternalLink
           target="_blank"
           rel="noreferrer"
           href={`${currentChain.uniquescanAddress}/${account?.address}`}
         >
           <Text color="primary-500">UniqueScan</Text>
-          <Icon size={16} name="arrow-up-right" color="var(--color-primary-500)" />
-        </LinkStyled>
+          <Icon size={16} name="arrow-up-right" color="currentColor" />
+        </ExternalLink>
       )}
     </LinksWrapper>
   );
@@ -84,27 +282,26 @@ const getAccountsColumns = ({
   onForgetWalletClick,
 }: AccountsColumnsProps): TableColumnProps[] => [
   {
-    title: <AccountTitle />,
+    title: (
+      <TableTitle>
+        <AccountTitle />
+      </TableTitle>
+    ),
     width: '35%',
     field: 'accountInfo',
     render(address, rowData: Account) {
       return (
-        <AccountCellWrapper>
-          <AccountCard
-            canCopy
-            accountAddress={rowData?.address}
-            accountName={
-              `${rowData?.meta.name} ${
-                rowData?.signerType && `(${rowData.signerType.toLowerCase()})`
-              }` || ''
-            }
-          />
-        </AccountCellWrapper>
+        <AccountCard
+          canCopy
+          accountAddress={`${rowData?.address}`}
+          accountName={`${rowData?.meta.name}`}
+          accountType={`${rowData?.signerType.toLowerCase()}`}
+        />
       );
     },
   },
   {
-    title: 'Balance',
+    title: <TableTitle>Balance</TableTitle>,
     width: '20%',
     field: 'balance',
     render(balance?: AllBalancesResponse) {
@@ -119,13 +316,13 @@ const getAccountsColumns = ({
     },
   },
   {
-    title: 'Block explorer',
+    title: <TableTitle>Block explorer</TableTitle>,
     width: '23%',
     field: 'explorer',
     render: (_, account: Account) => <BlockExplorer account={account} />,
   },
   {
-    title: 'Actions',
+    title: <TableTitle>Actions</TableTitle>,
     width: '22%',
     field: 'actions',
     render(address, rowData: Account) {
@@ -136,12 +333,7 @@ const getAccountsColumns = ({
             disabled={!Number(rowData.balance?.availableBalance.amount)}
             onClick={onShowSendFundsModal(rowData)}
           />
-          {rowData.balance?.availableBalance.unit === 'OPL' ? (
-            <ButtonGet title="Get" role="outlined" link={config.telegramBot} />
-          ) : (
-            <Button disabled title="Get" />
-          )}
-
+          {getButtonRender(rowData.balance?.availableBalance.unit)}
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
               placement="right"
@@ -160,10 +352,9 @@ const getAccountsColumns = ({
   },
 ];
 
-export const Accounts = () => {
+const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
   const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
@@ -216,11 +407,6 @@ export const Accounts = () => {
     void fetchAccounts();
   }, [fetchAccounts]);
 
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('My accounts');
-  }, []);
-
   // const totalBalance = useMemo(
   //   () =>
   //     accounts.reduce<BN>(
@@ -231,30 +417,41 @@ export const Accounts = () => {
   // );
 
   return (
-    <PagePaperNoPadding>
-      <AccountsPageHeader>
-        {/* <AccountsTotalBalance balance={totalBalance} /> */}
-        <SearchInputWrapper>
+    <>
+      <PagePaperNoPadding
+        className={classNames('data-grid', 'manage-accounts', className)}
+      >
+        <AccountsPageHeader>
+          {/* TODO: uncomment when AccountsTotalBalance will be ready
+            <AccountsTotalBalanceStyled balance={totalBalance} />
+          */}
           <SearchInputStyled
             placeholder="Search"
             iconLeft={{ name: 'magnify', size: 18 }}
             value={searchString}
             onChange={setSearchString}
           />
-        </SearchInputWrapper>
-        <AccountsGroupButton />
-      </AccountsPageHeader>
-      <AccountsPageContent>
-        <Table
-          columnPadding={32}
-          columns={getAccountsColumns({
-            onShowSendFundsModal: onSendFundsClick,
-            onForgetWalletClick,
-          })}
-          loading={isLoadingBalances}
-          data={filteredAccounts}
-        />
-      </AccountsPageContent>
+          <ButtonGroup>
+            <AccountsGroupButton />
+          </ButtonGroup>
+        </AccountsPageHeader>
+        <AccountsPageContent>
+          <Table
+            columnPadding={32}
+            columns={getAccountsColumns({
+              onShowSendFundsModal: onSendFundsClick,
+              onForgetWalletClick,
+            })}
+            data={filteredAccounts}
+            loading={isLoadingBalances}
+            mobileCaption={
+              <Text color="grey-500" weight="light">
+                <CaptionText />
+              </Text>
+            }
+          />
+        </AccountsPageContent>
+      </PagePaperNoPadding>
       {isOpenModal && (
         <SendFunds
           chain={currentChain}
@@ -288,70 +485,8 @@ export const Accounts = () => {
           with your seed password using the &rsquo;Add account via&rsquo; button
         </Text>
       </Confirm>
-    </PagePaperNoPadding>
+    </>
   );
 };
 
-const AccountsPageHeader = styled.div`
-  display: flex;
-  column-gap: var(--prop-gap);
-  align-items: center;
-  padding: calc(var(--prop-gap) * 2);
-  border-bottom: 1px solid var(--color-grey-300);
-`;
-
-const AccountsPageContent = styled.div`
-  display: flex;
-  column-gap: var(--prop-gap);
-  margin-top: calc(var(--prop-gap) * 2);
-  padding: 0 calc(var(--prop-gap) * 2);
-  min-height: 679px;
-
-  & > div {
-    width: 100%;
-  }
-`;
-
-const SearchInputWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-grow: 1;
-`;
-
-const SearchInputStyled = styled(InputText)`
-  flex-basis: 500px;
-`;
-
-const AccountCellWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 20px 0;
-`;
-
-const LinksWrapper = styled.div``;
-
-const LinkStyled = styled.a`
-  display: flex;
-  align-items: center;
-  column-gap: 4px;
-`;
-
-const ButtonGet = styled(Button)`
-  box-sizing: border-box;
-`;
-
-const ActionsWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  column-gap: var(--prop-gap);
-
-  .unique-dropdown {
-    .dropdown-wrapper,
-    .dropdown-options {
-      overflow: hidden;
-      padding: 0;
-      cursor: pointer;
-    }
-  }
-`;
+export const Accounts = withPageTitle({ header: 'Manage accounts' })(AccountsComponent);

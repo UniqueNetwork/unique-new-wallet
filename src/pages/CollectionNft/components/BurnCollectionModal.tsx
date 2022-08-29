@@ -1,17 +1,16 @@
 import { Button, Heading, Modal, Text, ModalProps } from '@unique-nft/ui-kit';
 
-import { Alert } from '@app/components';
 import {
   ContentRow,
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
 type BurnCollectionModalProps = Omit<ModalProps, 'children'> & {
   onConfirm(): void;
 };
 
-// TODO: wait rest api for fee https://cryptousetech.atlassian.net/browse/SDK-50
 export const BurnCollectionModal = ({
   onConfirm,
   ...modalProps
@@ -23,9 +22,7 @@ export const BurnCollectionModal = ({
         <Text>You will not be able to undo this action.</Text>
       </ContentRow>
       <ContentRow>
-        <Alert type="warning">
-          A fee of ~ 2.073447 QTZ can be applied to the transaction
-        </Alert>
+        <FeeInformationTransaction fee="2.073447 QTZ" />
       </ContentRow>
       <ModalFooter>
         <Button role="primary" title="Confirm" onClick={onConfirm} />

@@ -13,7 +13,11 @@ export const PageLayout: FC = () => {
   return (
     <Wrapper className="page-layout">
       <LayoutStyled>
-        <Layout breadcrumbs={breadcrumbs} header={<Header />} heading={heading}>
+        <Layout
+          breadcrumbs={breadcrumbs}
+          header={<Header />}
+          heading={heading || undefined}
+        >
           <Outlet />
         </Layout>
       </LayoutStyled>

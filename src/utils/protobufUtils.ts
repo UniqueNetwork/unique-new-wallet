@@ -1,7 +1,6 @@
 import { Root, Type } from 'protobufjs';
 
 import {
-  ArtificialAttributeItemType,
   AttributeItemType,
   EnumElemType,
   FieldRuleType,

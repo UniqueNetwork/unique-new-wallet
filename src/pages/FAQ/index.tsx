@@ -1,19 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components/macro';
 import { Accordion } from '@unique-nft/ui-kit';
 
-import { usePageSettingContext } from '@app/context';
 import {
   MainWrapper,
   WrapperContent,
   WrapperSidebar,
 } from '@app/pages/components/PageComponents';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { AskQuestion, faqItems } from './components';
 
 const WrapperContentStyled = styled(WrapperContent)`
-  padding-bottom: calc(var(--prop-gap) * 2);
-
   .faq-item {
     border-bottom: 1px dashed var(--color-blue-grey-300);
     font-size: 1rem;
@@ -60,16 +58,9 @@ const WrapperContentStyled = styled(WrapperContent)`
   }
 `;
 
-export const Faq = (): React.ReactElement<void> => {
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
-
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('FAQ');
-  }, []);
-
+const FaqComponent = (): React.ReactElement<void> => {
   return (
-    <MainWrapper>
+    <MainWrapperStyled>
       <WrapperContentStyled>
         {faqItems.map((item, i) => {
           return (
@@ -82,8 +73,34 @@ export const Faq = (): React.ReactElement<void> => {
       <WrapperSidebar>
         <AskQuestion />
       </WrapperSidebar>
-    </MainWrapper>
+    </MainWrapperStyled>
   );
 };
 
-export default Faq;
+const MainWrapperStyled = styled(MainWrapper)`
+  @media only screen and (min-width: 800px) and (max-width: 1024px) {
+    width: 85%;
+  }
+
+  .unique-modal-wrapper {
+    padding: calc(var(--prop-gap) * 5) 5%;
+    box-sizing: border-box;
+
+    @media screen and (max-width: 567px) {
+      .unique-modal {
+        padding: calc(var(--prop-gap));
+
+        .unique-font-heading {
+          font-size: 24px;
+          text-align: left;
+        }
+
+        .close-button {
+          top: 20px;
+        }
+      }
+    }
+  }
+`;
+
+export const Faq = withPageTitle({ header: 'FAQ' })(FaqComponent);

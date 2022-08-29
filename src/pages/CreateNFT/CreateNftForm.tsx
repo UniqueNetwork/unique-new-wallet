@@ -61,7 +61,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   className,
 }) => {
   const { error } = useNotifications();
-  const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
+  const { uploadFile } = useFileUpload();
 
   const { resetField } = useFormContext();
 
@@ -136,7 +136,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                 render={({ field: { onChange, value } }) => (
                   <Upload
                     type="square"
-                    upload={getTokenIpfsUriByImagePath(value || null)}
+                    upload={getTokenIpfsUriByImagePath(value)}
                     onChange={(data) => uploadCover(data, onChange)}
                   />
                 )}

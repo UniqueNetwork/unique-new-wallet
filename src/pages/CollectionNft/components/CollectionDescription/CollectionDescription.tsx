@@ -4,7 +4,6 @@ import { addSeconds, format } from 'date-fns';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
 
 import { AccountLinkComponent, CollectionScanLink } from '@app/components';
-import noCollections from '@app/static/icons/no-collections.svg';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
@@ -13,7 +12,7 @@ import { maxTokenLimit } from '@app/pages/constants/token';
 const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
   collectionId,
 }) => {
-  const { collection, isCollectionFetching } = useCollectionContext() || {};
+  const { collection, collectionLoading } = useCollectionContext() || {};
   const {
     description,
     token_prefix,
@@ -33,15 +32,12 @@ const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
 
   return (
     <CollectionVerticalCard>
-      {isCollectionFetching ? (
+      {collectionLoading ? (
         <Loader />
       ) : (
         <>
           <Row>
-            <Avatar
-              src={getTokenIpfsUriByImagePath(collection_cover) || noCollections}
-              type="circle"
-            />
+            <Avatar src={getTokenIpfsUriByImagePath(collection_cover)} type="circle" />
             <Badge>ID: {collectionId}</Badge>
           </Row>
           <Row>

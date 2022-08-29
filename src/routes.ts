@@ -17,6 +17,7 @@ export const enum MY_TOKENS_TABS_ROUTE {
 
 export const enum MY_COLLECTIONS_ROUTE {
   COLLECTION = ':collectionId',
+  NFT = 'nft',
 }
 
 export const NETWORK_ROUTE = ':network/';

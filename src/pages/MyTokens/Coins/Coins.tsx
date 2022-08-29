@@ -16,6 +16,7 @@ import { CoinsRow } from './components';
 export const CoinsComponent: FC = () => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
+  const [rampModalToken, setRampModalToken] = useState('KSM');
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
   const [selectedChain, setSelectedChain] = useState<Chain>(config.defaultChain);
 
@@ -65,10 +66,27 @@ export const CoinsComponent: FC = () => {
         window.open(config.telegramBot, '_blank', 'noopener');
       },
     },
-    KUSAMA: { getDisabled: false, onGet: getCoinsHandler },
-    QUARTZ: { getDisabled: true },
+    KUSAMA: {
+      getDisabled: false,
+      onGet: () => {
+        getCoinsHandler();
+        setRampModalToken('KSM');
+      },
+    },
+    QUARTZ: {
+      getDisabled: false,
+      onGet: () => {
+        window.open(config.mexcQTZUSDT, '_blank', 'noopener');
+      },
+    },
     UNIQUE: { getDisabled: true },
-    POLKADOT: { getDisabled: true },
+    POLKADOT: {
+      getDisabled: false,
+      onGet: () => {
+        getCoinsHandler();
+        setRampModalToken('DOT');
+      },
+    },
   };
 
   return (
@@ -109,7 +127,11 @@ export const CoinsComponent: FC = () => {
           />
         </ApiWrapper>
       )}
-      <RampModal isVisible={rampModalVisible} onClose={closeRampModalHandler} />
+      <RampModal
+        isVisible={rampModalVisible}
+        swapAsset={rampModalToken}
+        onClose={closeRampModalHandler}
+      />
     </CoinsContainer>
   );
 };

@@ -7,4 +7,4 @@ export const defaultTypesFilters: Option<TypeFilter>[] = [
 ];
 
 export const defaultPage = 0;
-export const defaultLimit = 9;
+export const defaultLimit = 10;

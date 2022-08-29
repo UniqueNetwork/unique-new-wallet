@@ -4,10 +4,10 @@ import axios from 'axios';
 import { useApi } from '@app/hooks';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 import { truncateDecimalsBalanceSheet } from '@app/utils';
+import { BaseApi } from '@app/api';
 
 import { EndpointMutation } from '../../request';
 import { useApiMutation } from '../useApiMutation';
-import { ExtrinsicApiService } from '../../extrinsic';
 import { extrinsicFeeReducer } from './extrinsicFeeReducer';
 import { UNKNOWN_ERROR_MSG } from '../constants';
 
@@ -18,37 +18,29 @@ export const useExtrinsicFee = <
   >,
 >(
   endpoint: ConcreteEndpointMutation,
-  defaultPayload?: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
 ) => {
   const [payload, setPayload] = useState<Omit<
     Parameters<ConcreteEndpointMutation['request']>[0],
     'api'
-  > | null>();
+  > | null>(null);
 
-  const { api } = useApi();
+  const { currentChain } = useApi();
+
+  const api = new BaseApi(currentChain.apiEndpoint);
 
   const { mutateAsync: obtainExtrinsic } = useApiMutation({
     endpoint,
   });
-  const { mutateAsync: obtainFee } = useApiMutation({
-    endpoint: ExtrinsicApiService.calculateFee,
-  });
 
   const [extrinsicFeeState, setExtrinsicFeeState] = useReducer(extrinsicFeeReducer, {
     fee: '',
-    feeFormatted: undefined,
+    feeFormatted: '',
     error: undefined,
     isError: false,
     isLoading: false,
   });
 
   const { error, fee, feeFormatted, isError, isLoading } = extrinsicFeeState;
-
-  useEffect(() => {
-    if (defaultPayload) {
-      setPayload(defaultPayload);
-    }
-  }, []);
 
   useEffect(() => {
     if (payload) {
@@ -75,15 +67,20 @@ export const useExtrinsicFee = <
         throw new Error('Api is not found');
       }
 
+      api.instance.defaults.params = {
+        withFee: true,
+      };
+
       const extrinsic: UnsignedTxPayloadResponse = await obtainExtrinsic({
         api,
         ...payload,
       });
+
       if (!extrinsic) {
         throw new Error('Getting extrinsic error');
       }
 
-      const fee = await obtainFee({ api, extrinsic });
+      const { fee } = extrinsic;
       if (!fee) {
         throw new Error('Fee is not define');
       }
@@ -108,7 +105,10 @@ export const useExtrinsicFee = <
 
       error.message = error.message || UNKNOWN_ERROR_MSG;
 
-      setExtrinsicFeeState({ type: 'error', payload: { error, fee } });
+      setExtrinsicFeeState({
+        type: 'error',
+        payload: { error, fee: '', feeFormatted: '' },
+      });
     }
   };
 

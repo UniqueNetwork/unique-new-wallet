@@ -1,6 +1,7 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 import {
+  Loader,
   SortQuery,
   Table as UITable,
   TableColumnProps,
@@ -10,22 +11,29 @@ import {
 import { DeviceSize, useDeviceSize } from '@app/hooks';
 
 import MobileTable from './MobileTable/MobileTable';
-import Loading from './Loading';
 
 interface UITableProps {
   columns: TableColumnProps[];
   columnPadding?: TableProps['columnPadding'];
   data?: any[];
+  desktopCaption?: ReactNode;
   loading?: boolean;
+  mobileCaption?: ReactNode;
   noDataMessage?: string | null;
   onSort?(sorting: SortQuery): void;
 }
 
+const TableCaption = styled.div`
+  margin-bottom: calc(var(--prop-gap) * 1.5);
+`;
+
 export const Table: FC<UITableProps> = ({
   columns,
   columnPadding,
+  desktopCaption,
   data,
   loading,
+  mobileCaption,
   noDataMessage,
   onSort,
 }) => {
@@ -33,33 +41,32 @@ export const Table: FC<UITableProps> = ({
 
   return (
     <TableWrapper>
-      {deviceSize > DeviceSize.sm && (
+      {deviceSize > DeviceSize.md ? (
         <>
+          {desktopCaption && (
+            <TableCaption className="table-caption">{desktopCaption}</TableCaption>
+          )}
           <UITable
-            noDataMessage={noDataMessage}
             columns={columns}
             columnPadding={columnPadding}
             data={data || []}
+            noDataMessage={noDataMessage}
             onSort={onSort}
           />
-          {loading && <TableLoading />}
+          {loading && <Loader isFullPage={true} size="middle" />}
         </>
-      )}
-      {deviceSize <= DeviceSize.sm && (
-        <MobileTable columns={columns} data={!loading ? data : []} loading={loading} />
+      ) : (
+        <>
+          {mobileCaption && (
+            <TableCaption className="table-caption">{mobileCaption}</TableCaption>
+          )}
+          <MobileTable columns={columns} data={!loading ? data : []} loading={loading} />
+        </>
       )}
     </TableWrapper>
   );
 };
 
-const TableWrapper = styled.div``;
-
-const TableLoading = styled(Loading)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-  background-color: rgba(255, 255, 255, 0.7);
+const TableWrapper = styled.div`
+  position: relative;
 `;
