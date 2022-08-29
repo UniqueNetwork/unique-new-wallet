@@ -1,16 +1,17 @@
+import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
-import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 
-import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
-import { networks } from '@app/utils';
-import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
-import { config } from '@app/config';
-import { UserEvents } from '@app/utils/logUserEvent';
 import { IdentityIcon } from '@app/components';
+import { config } from '@app/config';
+import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import { networks } from '@app/utils';
+import { UserEvents } from '@app/utils/logUserEvent';
 
 import MenuLink from './MenuLink';
+import { Footer } from '../Footer/Footer';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -67,9 +68,11 @@ export const Header = () => {
           </MenuIcon>
         )}
         <Link to={ROUTE.BASE} onClick={() => showMobileMenu && toggleMobileMenu(false)}>
-          <LogoIcon src="/logos/logo.svg" />
+          <LogoIcon
+            src="/logos/logo.svg"
+            className={`${!accounts.length ? 'hidden-logo' : ''}`}
+          />
         </Link>
-
         {!showMobileMenu && (
           <HeaderNav>
             <MenuLink
@@ -122,32 +125,31 @@ export const Header = () => {
       </RightSide>
 
       {showMobileMenu && mobileMenuIsOpen && (
-        <MobileMenu>
-          <MenuLink
-            name="My tokens"
-            path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
-            logEvent={UserEvents.HEADER_MY_TOKENS}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-          <MenuLink
-            name="My collections"
-            path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
-            logEvent={UserEvents.HEADER_MY_COLLECTION}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-          <MenuLink
-            name="My accounts"
-            path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
-            logEvent={UserEvents.HEADER_MY_ACCOUNTS}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-          <MenuLink
-            name="FAQ"
-            path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
-            logEvent={UserEvents.HEADER_FAQ}
-            mobileMenuToggle={mobileMenuToggle}
-          />
-        </MobileMenu>
+        <MobileModal>
+          <MobileMenu>
+            <MenuLink
+              name="My tokens"
+              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+              logEvent={UserEvents.HEADER_MY_TOKENS}
+              mobileMenuToggle={mobileMenuToggle}
+            />
+            <MenuLink
+              name="My collections"
+              path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
+              logEvent={UserEvents.HEADER_MY_COLLECTION}
+              mobileMenuToggle={mobileMenuToggle}
+            />
+            <MenuLink
+              name="FAQ"
+              path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
+              logEvent={UserEvents.HEADER_FAQ}
+              mobileMenuToggle={mobileMenuToggle}
+            />
+          </MobileMenu>
+          <FooterWrapper>
+            <Footer />
+          </FooterWrapper>
+        </MobileModal>
       )}
     </HeaderStyled>
   );
@@ -190,6 +192,14 @@ const MenuIcon = styled.button.attrs({ type: 'button' })`
 
 const LogoIcon = styled.img`
   margin-right: calc(var(--prop-gap) * 2);
+  @media (max-width: 700px) {
+    width: 100px;
+  }
+  &.hidden-logo {
+    @media (max-width: 500px) {
+      display: none;
+    }
+  }
 `;
 
 const RightSide = styled.div`
@@ -197,16 +207,26 @@ const RightSide = styled.div`
   align-items: center;
 `;
 
-const MobileMenu = styled.nav`
+const MobileModal = styled.div`
   position: absolute;
-  top: 81px;
+  top: 80px;
   left: 0;
   right: 0;
-  height: 100vh;
+  height: calc(100vh - 80px);
   background-color: var(--color-additional-light);
   box-shadow: inset 0 2px 8px rgb(0 0 0 / 6%);
   display: flex;
   flex-direction: column;
-  padding: var(--prop-gap);
   z-index: 9;
+`;
+
+const MobileMenu = styled.nav`
+  flex-direction: column;
+  margin: 15px 0;
+`;
+
+const FooterWrapper = styled.div`
+  display: flex;
+  margin-top: auto;
+  border-top: 1px solid var(--color-grey-300);
 `;
