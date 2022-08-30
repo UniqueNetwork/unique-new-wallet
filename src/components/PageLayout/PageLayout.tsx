@@ -114,13 +114,14 @@ const LayoutStyled = styled.div`
   }
 
   .unique-layout footer {
-    display: flex;
-    margin-top: 40px;
-    width: 100%;
-    justify-content: center;
-    padding: 0;
-    @media (max-width: 1279px) {
-      display: none;
+    display: none;
+
+    @media screen and (min-width: 1280px) {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 40px;
+      padding: 0;
     }
   }
   .unique-tabs-labels {
