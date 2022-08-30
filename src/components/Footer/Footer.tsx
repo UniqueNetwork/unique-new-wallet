@@ -39,14 +39,14 @@ export const Footer: FC = () => {
 export const FooterWrapper = styled.div`
   flex-direction: column;
   align-items: start;
-  gap: 15px;
-  padding: 15px;
+  gap: var(--gap);
+  padding: var(--gap);
   display: flex;
   @media screen and (min-width: 567px) {
     justify-content: space-between;
     flex-direction: row;
     align-items: center;
-    gap: 32px;
+    gap: calc(var(--gap) * 2);
     width: 100%;
     padding: 10px 24px;
     max-width: calc(var(--prop-container-width) - 64px);
@@ -58,7 +58,7 @@ export const FooterText = styled.div`
 `;
 export const FooterLinks = styled.div`
   display: flex;
-  gap: 16px;
+  gap: var(--gap);
 `;
 export const TextLink = styled.a`
   color: var(--color-primary-500);
