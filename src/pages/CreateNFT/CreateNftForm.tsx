@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import {
   Avatar,
   Heading,
+  Loader,
   Suggest,
   Text,
   Upload,
@@ -22,9 +23,9 @@ import {
   SuggestOption,
   UploadWidget,
 } from '@app/pages/components/FormComponents';
-import { useFileUpload } from '@app/api';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
+import { FileUploadMutationResponse } from '@app/api/FileApi/FileUploadMutation';
 
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
@@ -34,6 +35,7 @@ interface CreateNftFormProps {
   collectionsOptionsLoading: boolean;
   selectedCollection?: CollectionInfoWithSchemaResponse;
   className?: string;
+  fileUploader: (file: Blob) => Promise<FileUploadMutationResponse | undefined>;
 }
 
 const CollectionSuggestion: FC<{
@@ -59,9 +61,9 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   collectionsOptionsLoading,
   selectedCollection,
   className,
+  fileUploader,
 }) => {
   const { error } = useNotifications();
-  const { uploadFile } = useFileUpload();
 
   const { resetField } = useFormContext();
 
@@ -85,7 +87,9 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
         return;
       }
 
-      const response = await uploadFile(data.file);
+      const response = await fileUploader(data.file);
+
+      console.log(response);
 
       response && callbackFn(response.cid);
     },
