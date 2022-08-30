@@ -222,6 +222,7 @@ const RightSide = styled.div`
     .dropdown-options.touch {
       padding: 24px 16px;
       top: 100%;
+      min-width: calc(100% - 32px);
     }
   }
 `;
