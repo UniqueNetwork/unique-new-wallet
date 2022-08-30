@@ -9,6 +9,7 @@ import {
 } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
+import { useOutletContext } from 'react-router-dom';
 
 import { useFileUpload } from '@app/api';
 import {
@@ -21,10 +22,12 @@ import {
   UploadWidget,
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { FileUploadMutationResponse } from '@app/api/FileApi/FileUploadMutation';
 
 export const MainInformation: FC = () => {
   const { error } = useNotifications();
-  const { uploadFile, isLoading: isLoadingFileUpload } = useFileUpload();
+  const fileUploader =
+    useOutletContext<(file: Blob) => Promise<FileUploadMutationResponse | undefined>>();
 
   const uploadCover = useCallback(
     async (
@@ -41,7 +44,7 @@ export const MainInformation: FC = () => {
         return;
       }
 
-      const response = await uploadFile(data.file);
+      const response = await fileUploader(data.file);
 
       response && callbackFn(response.cid);
     },

@@ -7,7 +7,12 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import {
+  TokenApiService,
+  useExtrinsicFee,
+  useExtrinsicFlow,
+  useFileUpload,
+} from '@app/api';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
@@ -76,6 +81,8 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const formValues = useWatch({ control });
   const [debouncedFormValues] = useDebounce(formValues, 500);
+
+  const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
@@ -90,6 +97,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
     if (isOldCollection) {
       return config.oldCollectionMessage;
+    }
+
+    if (fileIsLoading) {
+      return 'Button is disabled while a file is loading';
     }
 
     return undefined;
@@ -172,6 +183,12 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
   }, [isFeeError]);
 
+  useEffect(() => {
+    if (fileIsLoading) {
+      warning('File is loading. Please, wait for a few seconds.');
+    }
+  }, [fileIsLoading]);
+
   const confirmFormHandler = (closable?: boolean) => {
     const { address, collectionId } = debouncedFormValues;
 
@@ -193,6 +210,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           selectedCollection={collection}
           collectionsOptions={collectionsOptions}
           collectionsOptionsLoading={isCollectionsLoading}
+          fileUploader={uploadFile}
         />
       </FormProvider>
     ),
@@ -218,13 +236,17 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 role="primary"
                 title="Confirm and create more"
                 tooltip={mintingButtonTooltip}
-                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                disabled={
+                  !isValid || isBalanceInsufficient || isOldCollection || fileIsLoading
+                }
                 onClick={() => confirmFormHandler()}
               />
               <MintingBtn
                 title="Confirm and close"
                 tooltip={mintingButtonTooltip}
-                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                disabled={
+                  !isValid || isBalanceInsufficient || isOldCollection || fileIsLoading
+                }
                 onClick={() => confirmFormHandler(true)}
               />
             </ButtonGroup>
