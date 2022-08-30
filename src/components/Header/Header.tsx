@@ -5,16 +5,23 @@ import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian
 
 import { IdentityIcon } from '@app/components';
 import { config } from '@app/config';
-import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
+import {
+  DeviceSize,
+  useAccounts,
+  useApi,
+  useDeviceSize,
+  useScreenWidthFromThreshold,
+} from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
 
-import MenuLink from './MenuLink';
 import { Footer } from '../Footer/Footer';
+import MenuLink from './MenuLink';
 
 export const Header = () => {
   const navigate = useNavigate();
+  const deviceSize = useDeviceSize();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
@@ -64,7 +71,11 @@ export const Header = () => {
       <LeftSideColumn>
         {showMobileMenu && (
           <MenuIcon onClick={mobileMenuToggle}>
-            <Icon name="menu" size={32} />
+            {mobileMenuIsOpen ? (
+              <Icon name="close" size={20} color="var(--color-secondary-400)" />
+            ) : (
+              <Icon name="menu" size={24} />
+            )}
           </MenuIcon>
         )}
         <Link to={ROUTE.BASE} onClick={() => showMobileMenu && toggleMobileMenu(false)}>
@@ -103,6 +114,7 @@ export const Header = () => {
             isLoading={isLoading}
             manageBalanceLinkTitle="Manage my balance"
             networks={networks}
+            isTouch={deviceSize < DeviceSize.md}
             open={isAccountManagerOpen}
             selectedAccount={{
               address: selectedAccount?.address,
@@ -205,6 +217,13 @@ const LogoIcon = styled.img`
 const RightSide = styled.div`
   display: flex;
   align-items: center;
+  .unique-dropdown.touch {
+    position: unset;
+    .dropdown-options.touch {
+      padding: 24px 16px;
+      top: 100%;
+    }
+  }
 `;
 
 const MobileModal = styled.div`
