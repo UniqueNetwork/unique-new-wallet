@@ -64,6 +64,7 @@ const RampModalComponent: VFC<RampModalProps> = ({
     }
   }, [isVisible]);
 
+  // TODO: remove span to use className prop
   return (
     <span className={className}>
       <Modal isClosable isVisible={isVisible} onClose={onClose}>
