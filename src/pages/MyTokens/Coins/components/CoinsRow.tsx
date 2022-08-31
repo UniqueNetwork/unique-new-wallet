@@ -1,12 +1,13 @@
-import React, { memo, useCallback, VFC } from 'react';
+import React, { memo, VFC } from 'react';
 import classNames from 'classnames';
-import styled, { css } from 'styled-components';
-import { Button, Icon, useNotifications, Loader } from '@unique-nft/ui-kit';
+import styled from 'styled-components';
+import { Button, Loader } from '@unique-nft/ui-kit';
 
-import { Chain, NetworkType } from '@app/types';
-import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
-import { TransferBtn } from '@app/components';
+import { Chain } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { TransferBtn } from '@app/components';
+import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 type CoinsRowComponentProps = TNetworkBalances & {
   address?: string;
@@ -16,10 +17,66 @@ type CoinsRowComponentProps = TNetworkBalances & {
   name: string;
   sendDisabled?: boolean;
   getDisabled?: boolean;
-  onSend: (network: NetworkType, chain: Chain) => void;
-  onGet: () => void;
+  onSend: (network: string, chain: Chain) => void;
+  onGet?: () => void;
   chain: Chain;
 };
+
+const Wrapper = styled.div`
+  margin-bottom: var(--prop-gap);
+
+  @media screen and (min-width: 1024px) {
+    border: 0;
+    display: table-row;
+    margin-bottom: 0;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px dashed var(--color-grey-300);
+  }
+`;
+
+const Column = styled.div<{ width: string; align?: 'left' | 'right' | 'center' }>`
+  box-sizing: border-box;
+  padding-bottom: var(--prop-gap);
+
+  @media screen and (min-width: 1024px) {
+    border-bottom: 1px dashed var(--color-grey-300);
+    display: table-cell;
+    vertical-align: middle;
+    width: ${(p) => p.width};
+    padding: var(--prop-gap);
+    text-align: ${(p) => p.align};
+  }
+
+  &:first-child {
+    padding-left: 0;
+  }
+
+  &:last-child {
+    padding-right: 0;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+
+  @media screen and (min-width: 568px) {
+    display: inline-block;
+  }
+
+  .unique-button {
+    flex: 1 1 auto;
+
+    @media screen and (min-width: 568px) {
+      flex-grow: 0;
+    }
+
+    & + .unique-button {
+      margin-left: calc(var(--prop-gap) / 2);
+    }
+  }
+`;
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
   const {
@@ -39,108 +96,50 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     chain,
   } = props;
 
-  const { info, error } = useNotifications();
-
-  const copyAddressHandler = useCallback(() => {
-    if (address) {
-      navigator.clipboard.writeText(address);
-
-      info('address copied');
-    } else {
-      error('address is not found');
-    }
-  }, []);
-
   return (
-    <div className={classNames('coins-row', className)}>
-      <NetworkAddress>
-        <Icon name={iconName} size={24} />
-        <div>
-          <div className="network-name">{name}</div>
-          <div className="network-address-copy">
-            <span>{address}</span>
-            <div onClick={copyAddressHandler}>
-              <Icon name="copy" size={24} />
-            </div>
-          </div>
-        </div>
-      </NetworkAddress>
-      {loading ? (
-        <Loader />
-      ) : (
-        <NetworkBalances
-          balanceFull={balanceFull}
-          balanceTransferable={balanceTransferable}
-          balanceLocked={balanceLocked}
-          symbol={symbol}
+    <Wrapper className={classNames('coins-row', className)}>
+      <Column width="50%">
+        <AccountCard
+          accountAddress={address}
+          accountName={name}
+          canCopy={true}
+          chainLogo={iconName}
         />
-      )}
-      <NetworkActions>
-        <TransferBtn
-          disabled={sendDisabled}
-          title="Send"
-          onClick={() => {
-            logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
-            onSend(symbol, chain);
-          }}
-        />
-        <Button
-          disabled={getDisabled}
-          title="Get"
-          onClick={() => {
-            logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
-            onGet();
-          }}
-        />
-      </NetworkActions>
-    </div>
+      </Column>
+      <Column width="25%">
+        {loading ? (
+          <Loader />
+        ) : (
+          <NetworkBalances
+            balanceFull={balanceFull}
+            balanceTransferable={balanceTransferable}
+            balanceLocked={balanceLocked}
+            symbol={symbol}
+          />
+        )}
+      </Column>
+      <Column align="right" width="25%">
+        <ButtonGroup>
+          <TransferBtn
+            disabled={sendDisabled}
+            title="Send"
+            onClick={() => {
+              logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
+              onSend(symbol, chain);
+            }}
+          />
+          <Button
+            disabled={getDisabled}
+            title="Get"
+            onClick={() => {
+              logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
+              onGet?.();
+            }}
+          />
+        </ButtonGroup>
+      </Column>
+    </Wrapper>
   );
 };
 
-const FlexColumn = css`
-  align-items: center;
-  display: flex;
-  grid-column-gap: calc(var(--prop-gap) / 2);
-`;
-
-const NetworkActions = styled.div`
-  ${FlexColumn};
-`;
-
-const Bold = css`
-  font-family: var(--prop-font-family);
-  font-size: 16px;
-  font-weight: 500;
-`;
-
-const BoldMargin4 = css`
-  ${Bold};
-  margin-bottom: calc(var(--prop-gap) / 4);
-`;
-
-const NetworkAddress = styled.div`
-  ${FlexColumn};
-
-  .network-name {
-    ${BoldMargin4};
-  }
-
-  .network-address-copy {
-    ${FlexColumn};
-    color: var(--color-grey-500);
-    font-size: 14px;
-
-    img {
-      cursor: pointer;
-    }
-  }
-`;
-
-export const CoinsRowStyled = styled(CoinsRowComponent)`
-  display: flex;
-  justify-content: space-between;
-  padding: var(--prop-gap) 0;
-  border-bottom: 1px solid var(--color-grey-300);
-`;
-
-export const CoinsRow = memo(CoinsRowStyled);
+export const CoinsRow = memo(CoinsRowComponent);
