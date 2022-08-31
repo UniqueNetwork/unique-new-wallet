@@ -49,7 +49,7 @@ export const Header = () => {
 
   const handleChangeNetwork = (val: INetwork) => {
     setAccountManagerOpen(false);
-    setCurrentChain(config.chains[val.id]);
+    setCurrentChain(config.activeChains[val.id]);
     navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
   };
 
