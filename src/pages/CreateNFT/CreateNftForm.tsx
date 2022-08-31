@@ -25,17 +25,17 @@ import {
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
-import { FileUploadMutationResponse } from '@app/api/FileApi/FileUploadMutation';
+import { useFileUpload } from '@app/api';
 
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
+import { _10MB, FILE_SIZE_LIMIT_ERROR } from '../constants';
 
 interface CreateNftFormProps {
   collectionsOptions: Option[];
   collectionsOptionsLoading: boolean;
   selectedCollection?: CollectionInfoWithSchemaResponse;
   className?: string;
-  fileUploader: (file: Blob) => Promise<FileUploadMutationResponse | undefined>;
 }
 
 const CollectionSuggestion: FC<{
@@ -61,18 +61,29 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   collectionsOptionsLoading,
   selectedCollection,
   className,
-  fileUploader,
 }) => {
   const { error } = useNotifications();
 
   const { resetField } = useFormContext();
+
+  const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
 
   const attributes = useMemo(
     () => Object.values(selectedCollection?.schema?.attributesSchema ?? []),
     [selectedCollection],
   );
 
-  const uploadCover = useCallback(
+  const beforeUploadHandler = useCallback((data: { url: string; file: Blob }) => {
+    if (data.file.size > _10MB) {
+      error(FILE_SIZE_LIMIT_ERROR);
+
+      return false;
+    }
+
+    return true;
+  }, []);
+
+  const onFileChangeHandler = useCallback(
     async (
       data: { url: string; file: Blob } | null,
       callbackFn: (cid: string) => void,
@@ -81,15 +92,8 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
         callbackFn('');
         return;
       }
-      const _10MB = 10000000;
-      if (data.file.size > _10MB) {
-        error('File size more 10MB');
-        return;
-      }
 
-      const response = await fileUploader(data.file);
-
-      console.log(response);
+      const response = await uploadFile(data.file);
 
       response && callbackFn(response.cid);
     },
@@ -138,11 +142,15 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                 name="imageIpfsCid"
                 rules={{ required: true }}
                 render={({ field: { onChange, value } }) => (
-                  <Upload
-                    type="square"
-                    upload={getTokenIpfsUriByImagePath(value)}
-                    onChange={(data) => uploadCover(data, onChange)}
-                  />
+                  <div className="upload-container">
+                    <Upload
+                      type="square"
+                      upload={getTokenIpfsUriByImagePath(value)}
+                      beforeUpload={beforeUploadHandler}
+                      onChange={(data) => onFileChangeHandler(data, onChange)}
+                    />
+                    {fileIsLoading && <Loader isFullPage size="middle" />}
+                  </div>
                 )}
               />
             </UploadWidget>
@@ -185,5 +193,10 @@ export const CreateNftForm = styled(CreateNftFormComponent)`
   .unique-suggestion-wrapper {
     display: block;
     width: auto;
+  }
+
+  .upload-container {
+    position: relative;
+    max-width: fit-content;
   }
 `;

@@ -1,15 +1,15 @@
-import React, { FC, useCallback, useEffect } from 'react';
+import React, { VFC, useCallback } from 'react';
 import {
   Heading,
   InputText,
   Text,
   Textarea,
   Upload,
+  Loader,
   useNotifications,
 } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
-import { useOutletContext } from 'react-router-dom';
 
 import { useFileUpload } from '@app/api';
 import {
@@ -22,14 +22,27 @@ import {
   UploadWidget,
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { FileUploadMutationResponse } from '@app/api/FileApi/FileUploadMutation';
+import { _10MB, FILE_SIZE_LIMIT_ERROR } from '@app/pages/constants';
 
-export const MainInformation: FC = () => {
+interface MainInformationProps {
+  className?: string;
+}
+
+const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
   const { error } = useNotifications();
-  const fileUploader =
-    useOutletContext<(file: Blob) => Promise<FileUploadMutationResponse | undefined>>();
+  const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
 
-  const uploadCover = useCallback(
+  const beforeUploadHandler = useCallback((data: { url: string; file: Blob }) => {
+    if (data.file.size > _10MB) {
+      error(FILE_SIZE_LIMIT_ERROR);
+
+      return false;
+    }
+
+    return true;
+  }, []);
+
+  const onFileChangeHandler = useCallback(
     async (
       data: { url: string; file: Blob } | null,
       callbackFn: (cid: string) => void,
@@ -38,13 +51,8 @@ export const MainInformation: FC = () => {
         callbackFn('');
         return;
       }
-      const _10MB = 10000000;
-      if (data.file.size > _10MB) {
-        error('File size more 10MB');
-        return;
-      }
 
-      const response = await fileUploader(data.file);
+      const response = await uploadFile(data.file);
 
       response && callbackFn(response.cid);
     },
@@ -61,7 +69,7 @@ export const MainInformation: FC = () => {
         </Text>
       </FormHeader>
       <FormBody>
-        <Form>
+        <Form className={className}>
           <FormRow>
             <Controller
               name="name"
@@ -119,15 +127,18 @@ export const MainInformation: FC = () => {
                 <Controller
                   name="coverPictureIpfsCid"
                   render={({ field: { onChange, value } }) => (
-                    <Upload
-                      type="circle"
-                      upload={getTokenIpfsUriByImagePath(value)}
-                      onChange={(data) => uploadCover(data, onChange)}
-                    />
+                    <div className="upload-container">
+                      <Upload
+                        type="circle"
+                        upload={getTokenIpfsUriByImagePath(value)}
+                        beforeUpload={beforeUploadHandler}
+                        onChange={(data) => onFileChangeHandler(data, onChange)}
+                      />
+                      {fileIsLoading && <Loader isFullPage size="middle" />}
+                    </div>
                   )}
                 />
               </UploadWidget>
-              {/* {isLoadingFileUpload && <Loader label="Download image..." />} */}
             </DownloadCover>
           </FormRow>
         </Form>
@@ -140,4 +151,11 @@ const DownloadCover = styled.div`
   display: flex;
   align-items: center;
   gap: 30px;
+`;
+
+export const MainInformation = styled(MainInformationComponent)`
+  .upload-container {
+    position: relative;
+    max-width: fit-content;
+  }
 `;

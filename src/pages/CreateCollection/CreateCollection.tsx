@@ -6,12 +6,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
-import {
-  CollectionApiService,
-  useExtrinsicFee,
-  useExtrinsicFlow,
-  useFileUpload,
-} from '@app/api';
+import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
   CollectionSidebar,
@@ -40,7 +35,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
-  const { error, info, warning: warningNotification } = useNotifications();
+  const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
   const formMapper = useCollectionFormMapper();
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
@@ -49,7 +44,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     CollectionApiService.collectionCreateMutation,
   );
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
-  const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
 
   const collectionForm = useForm<CollectionForm>({
     mode: 'onChange',
@@ -71,13 +65,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   });
 
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
-
-  const loadingFileMsg = 'File is loading. Please, wait for a few seconds.';
-  useEffect(() => {
-    if (fileIsLoading) {
-      warningNotification(loadingFileMsg);
-    }
-  }, [fileIsLoading]);
 
   useEffect(() => {
     if (isFeeError) {
@@ -144,7 +131,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const isolatedCollectionForm = useMemo(
     () => (
       <FormProvider {...collectionForm}>
-        <Outlet context={uploadFile} />
+        <Outlet />
       </FormProvider>
     ),
     [collectionForm],
@@ -166,8 +153,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                   size: 12,
                 }}
                 title="Next step"
-                disabled={fileIsLoading}
-                tooltip={fileIsLoading ? loadingFileMsg : undefined}
                 onClick={handleSubmit(onNextStep)}
               />
             )}
@@ -187,7 +172,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 role="primary"
                 title="Create collection"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid || isBalanceInsufficient || fileIsLoading}
+                disabled={!isValid || isBalanceInsufficient}
                 onClick={handleSubmit(onSubmit)}
               />
             )}

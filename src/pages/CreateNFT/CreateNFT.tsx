@@ -76,13 +76,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const {
     control,
     reset,
+    handleSubmit,
     formState: { isValid },
   } = tokenForm;
 
   const formValues = useWatch({ control });
   const [debouncedFormValues] = useDebounce(formValues, 500);
 
-  const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
@@ -97,10 +97,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
     if (isOldCollection) {
       return config.oldCollectionMessage;
-    }
-
-    if (fileIsLoading) {
-      return 'Button is disabled while a file is loading';
     }
 
     return undefined;
@@ -183,22 +179,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
   }, [isFeeError]);
 
-  useEffect(() => {
-    if (fileIsLoading) {
-      warning('File is loading. Please, wait for a few seconds.');
-    }
-  }, [fileIsLoading]);
-
-  const confirmFormHandler = (closable?: boolean) => {
-    const { address, collectionId } = debouncedFormValues;
-
-    if (address && collectionId && isValid && !isOldCollection) {
+  const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
+    if (isValid) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
       setClosable(!!closable);
 
       signAndSubmitExtrinsic({
-        token: mapper(debouncedFormValues as FilledTokenForm),
+        token: mapper(tokenForm as FilledTokenForm),
       });
     }
   };
@@ -210,7 +198,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           selectedCollection={collection}
           collectionsOptions={collectionsOptions}
           collectionsOptionsLoading={isCollectionsLoading}
-          fileUploader={uploadFile}
         />
       </FormProvider>
     ),
@@ -236,18 +223,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 role="primary"
                 title="Confirm and create more"
                 tooltip={mintingButtonTooltip}
-                disabled={
-                  !isValid || isBalanceInsufficient || isOldCollection || fileIsLoading
-                }
-                onClick={() => confirmFormHandler()}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
               <MintingBtn
                 title="Confirm and close"
                 tooltip={mintingButtonTooltip}
-                disabled={
-                  !isValid || isBalanceInsufficient || isOldCollection || fileIsLoading
-                }
-                onClick={() => confirmFormHandler(true)}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
               />
             </ButtonGroup>
           </FormWrapper>
