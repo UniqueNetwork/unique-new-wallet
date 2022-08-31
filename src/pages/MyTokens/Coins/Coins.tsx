@@ -27,7 +27,7 @@ export const CoinsComponent: FC = () => {
     data: chainsBalance,
     refetch: refetchChainsBalance,
   } = useAccountBalancesService(
-    Object.values(config.chains).map((chain) => chain.apiEndpoint),
+    Object.values(config.allChains).map((chain) => chain.apiEndpoint),
     selectedAccount?.address,
   );
 
@@ -92,7 +92,7 @@ export const CoinsComponent: FC = () => {
   return (
     <CoinsContainer>
       <Heading size="4">Network</Heading>
-      {Object.values(config.chains).map((chain, idx) => {
+      {Object.values(config.allChains).map((chain, idx) => {
         if (!coinConfig[chain.network]) {
           return null;
         }

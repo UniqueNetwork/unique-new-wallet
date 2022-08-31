@@ -16,7 +16,7 @@ interface ChainProviderProps {
 export const ApiWrapper = ({ children }: ChainProviderProps) => {
   const [currentChain, setCurrentChain] = useState<Chain>(() => {
     const network = window.location.pathname.split('/')[1];
-    const chain = network ? config.chains[network.toUpperCase()] : null;
+    const chain = network ? config.activeChains[network.toUpperCase()] : null;
     return chain || config.defaultChain;
   });
   const [apiInstance, setApiInstance] = useState<IBaseApi>();
