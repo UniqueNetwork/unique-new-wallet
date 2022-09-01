@@ -1,13 +1,14 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Icon, useNotifications } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
 
 import { shortcutText } from '@app/utils';
 import { IdentityIcon } from '@app/components';
 
 interface AccountCardProps {
   accountName: string;
-  accountType: string;
+  chainLogo?: string;
+  accountType?: string;
   accountAddress: string;
   isShort?: boolean;
   canCopy?: boolean;
@@ -97,36 +98,47 @@ const AccountCard = ({
   accountAddress = '',
   isShort = false,
   canCopy = true,
+  chainLogo,
   hideAddress = false,
 }: AccountCardProps) => {
   const address = isShort ? shortcutText(accountAddress) : accountAddress;
-  const { info } = useNotifications();
+  const { info, error } = useNotifications();
 
   const onCopyAddress = (account: string) => () => {
-    info(
-      <NotificationInfo>
-        Address <i>{account}</i>
-        <br />
-        successfully copied
-      </NotificationInfo>,
-    );
+    if (account) {
+      info(
+        <NotificationInfo>
+          Address <i>{account}</i>
+          <br />
+          successfully copied
+        </NotificationInfo>,
+      );
 
-    navigator.clipboard.writeText(account);
+      navigator.clipboard.writeText(account);
+    } else {
+      error(<NotificationInfo>Address not found</NotificationInfo>);
+    }
   };
 
   return (
     <Wrapper>
-      <IdentityIcon address={address} />
+      {chainLogo ? (
+        <Icon name={chainLogo} size={24} />
+      ) : (
+        <IdentityIcon address={address} />
+      )}
       <AccountInfoWrapper>
         <AccountInfoText>
           <span className="truncate-text">{accountName}</span>
-          <AccountInfoParams>
-            ({accountType})
-            {/* TODO: no functionality
-            <ActionButton>
-              <Icon name="pencil" size={16} />
-            </ActionButton> */}
-          </AccountInfoParams>
+          {accountType && (
+            <AccountInfoParams>
+              ({accountType})
+              {/* TODO: no functionality
+              <ActionButton>
+                <Icon name="pencil" size={16} />
+              </ActionButton> */}
+            </AccountInfoParams>
+          )}
         </AccountInfoText>
         {!hideAddress && (
           <AddressRow>

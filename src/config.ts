@@ -10,7 +10,8 @@ declare type Env = {
 
 declare type Config = {
   IPFSGateway: string | undefined;
-  chains: Record<string, Chain>;
+  allChains: Record<string, Chain>;
+  activeChains: Record<string, Chain>;
   defaultChain: Chain;
   telegramBot: string | undefined;
   mexcQTZUSDT: string | undefined;
@@ -33,12 +34,14 @@ declare global {
   }
 }
 
-const chains = getChainList(window.ENV || process.env);
+const allChains = getChainList(window.ENV || process.env);
+const activeChains = getChainList(window.ENV || process.env, true);
 
 export const config: Config = {
+  allChains,
+  activeChains,
   IPFSGateway: window.ENV?.IPFS_GATEWAY_URL || process.env.REACT_APP_IPFS_GATEWAY_URL,
-  defaultChain: chains[getDefaultChain(window.ENV || process.env)],
-  chains,
+  defaultChain: activeChains[getDefaultChain(window.ENV || process.env)],
   telegramBot: window.ENV?.TELEGRAM_BOT || process.env.REACT_APP_NET_TELEGRAM_BOT,
   mexcQTZUSDT: window.ENV?.MEXC_QTZ_USDT || process.env.REACT_APP_NET_MEXC_QTZ_USDT,
   zenDeskToken:
@@ -55,5 +58,3 @@ export const config: Config = {
   },
   version: window.ENV?.VERSION || process.env.REACT_APP_VERSION || '',
 };
-
-console.log(config);
