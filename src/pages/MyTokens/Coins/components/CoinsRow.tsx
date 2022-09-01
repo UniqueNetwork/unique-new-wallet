@@ -64,10 +64,6 @@ const ButtonGroup = styled.div`
   display: flex;
   gap: calc(var(--prop-gap) / 2);
 
-  @media screen and (min-width: 568px) {
-    // flex-direction:
-  }
-
   .unique-button {
     flex: 1 1 auto;
 
