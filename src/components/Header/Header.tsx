@@ -220,9 +220,10 @@ const RightSide = styled.div`
   .unique-dropdown.touch {
     position: unset;
     .dropdown-options.touch {
-      padding: 24px 16px;
+      padding: calc(var(--prop-gap) * 1.5) var(--prop-gap);
       top: 100%;
-      min-width: calc(100% - 32px);
+      min-width: calc(100% - calc(var(--prop-gap) * 2));
+      z-index: 3;
     }
   }
 `;
@@ -237,7 +238,7 @@ const MobileModal = styled.div`
   box-shadow: inset 0 2px 8px rgb(0 0 0 / 6%);
   display: flex;
   flex-direction: column;
-  z-index: 9;
+  z-index: 2;
 `;
 
 const MobileMenu = styled.nav`
