@@ -7,12 +7,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import {
-  TokenApiService,
-  useExtrinsicFee,
-  useExtrinsicFlow,
-  useFileUpload,
-} from '@app/api';
+import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
@@ -29,7 +24,7 @@ import { config } from '@app/config';
 
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
-import { AttributeView, Option, TokenForm, FilledTokenForm } from './types';
+import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
 
 interface ICreateNFTProps {
   className?: string;
