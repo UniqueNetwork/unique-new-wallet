@@ -48,8 +48,7 @@ export const Header = () => {
   };
 
   const handleChangeNetwork = (val: INetwork) => {
-    setAccountManagerOpen(false);
-    setCurrentChain(config.chains[val.id]);
+    setCurrentChain(config.activeChains[val.id]);
     navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
   };
 
@@ -125,7 +124,7 @@ export const Header = () => {
         <MobileMenu>
           <MenuLink
             name="My tokens"
-            path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+            path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`}
             logEvent={UserEvents.HEADER_MY_TOKENS}
             mobileMenuToggle={mobileMenuToggle}
           />

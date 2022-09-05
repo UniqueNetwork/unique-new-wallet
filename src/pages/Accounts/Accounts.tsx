@@ -1,12 +1,4 @@
-import React, {
-  createRef,
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  VFC,
-} from 'react';
+import React, { createRef, FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
@@ -26,7 +18,7 @@ import { AllBalancesResponse } from '@app/types/Api';
 import {
   AccountsGroupButton,
   Confirm,
-  PagePaperNoPadding,
+  PagePaper,
   Table,
   TransferBtn,
 } from '@app/components';
@@ -34,7 +26,6 @@ import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
 import { config } from '@app/config';
-import { usePageSettingContext } from '@app/context';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { SendFunds } from '../SendFunds';
@@ -178,13 +169,12 @@ const CaptionText: FC = () => {
     <>
       Substrate account addresses (Kusama, Quartz, Polkadot, Unique, etc.) may
       be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
-      be&nbsp;represented by&nbsp;a&nbsp;different address character sequence, but they
-      can be&nbsp;converted between each other because they share the same public key.
+      can be&nbsp;converted between each other because they share the same public key.{' '}
       {currentChain.network !== 'OPAL' && (
         <>
           You can see all transformations for any given address{' '}
           <span style={{ whiteSpace: 'nowrap' }}>
-            on
+            on{' '}
             <ExternalLink
               href="https://polkadot.subscan.io/tools/ss58_transform"
               rel="noreferrer"
@@ -418,8 +408,10 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
 
   return (
     <>
-      <PagePaperNoPadding
-        className={classNames('data-grid', 'manage-accounts', className)}
+      <PagePaper
+        noPadding
+        className={classNames('manage-accounts', className)}
+        flexLayout="column"
       >
         <AccountsPageHeader>
           {/* TODO: uncomment when AccountsTotalBalance will be ready
@@ -451,7 +443,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
             }
           />
         </AccountsPageContent>
-      </PagePaperNoPadding>
+      </PagePaper>
       {isOpenModal && (
         <SendFunds
           chain={currentChain}

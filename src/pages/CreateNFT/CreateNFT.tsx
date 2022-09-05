@@ -7,7 +7,12 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import {
+  TokenApiService,
+  useExtrinsicFee,
+  useExtrinsicFlow,
+  useFileUpload,
+} from '@app/api';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
@@ -71,11 +76,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const {
     control,
     reset,
+    handleSubmit,
     formState: { isValid },
   } = tokenForm;
 
   const formValues = useWatch({ control });
   const [debouncedFormValues] = useDebounce(formValues, 500);
+
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
@@ -172,16 +179,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
   }, [isFeeError]);
 
-  const confirmFormHandler = (closable?: boolean) => {
-    const { address, collectionId } = debouncedFormValues;
-
-    if (address && collectionId && isValid && !isOldCollection) {
+  const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
+    if (isValid) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
       setClosable(!!closable);
 
       signAndSubmitExtrinsic({
-        token: mapper(debouncedFormValues as FilledTokenForm),
+        token: mapper(tokenForm as FilledTokenForm),
       });
     }
   };
@@ -219,13 +224,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 title="Confirm and create more"
                 tooltip={mintingButtonTooltip}
                 disabled={!isValid || isBalanceInsufficient || isOldCollection}
-                onClick={() => confirmFormHandler()}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
               <MintingBtn
                 title="Confirm and close"
                 tooltip={mintingButtonTooltip}
                 disabled={!isValid || isBalanceInsufficient || isOldCollection}
-                onClick={() => confirmFormHandler(true)}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
               />
             </ButtonGroup>
           </FormWrapper>

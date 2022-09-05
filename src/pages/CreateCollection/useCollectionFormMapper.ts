@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/*eslint-disable @typescript-eslint/no-unnecessary-type-assertion*/
 import { config } from '@app/config';
 import { CreateCollectionNewRequest } from '@app/types/Api';
 
@@ -33,8 +35,6 @@ export const useCollectionFormMapper = () => {
         coverPicture: {
           ipfsCid: coverPictureIpfsCid || '',
         },
-        attributesSchema: {},
-        attributesSchemaVersion: '1.0.0',
         image: {
           urlTemplate: `${config.IPFSGateway}/{infix}`,
         },
@@ -43,26 +43,31 @@ export const useCollectionFormMapper = () => {
       },
     };
 
-    form.attributes?.forEach((attr, index) => {
-      request.schema.attributesSchema[index] = {
-        type: 'string',
-        name: { _: attr.name } as any,
-        optional: attr.optional.id === 'optional',
-        isArray: attr.type.id === 'repeated',
-      };
+    if (form.attributes?.length) {
+      request.schema.attributesSchema = {};
+      request.schema.attributesSchemaVersion = '1.0.0';
 
-      if (attr.values?.length) {
-        request.schema.attributesSchema[index].enumValues = attr.values.reduce(
-          (acc, val, index) => {
-            return {
-              ...acc,
-              [index]: { _: val },
-            };
-          },
-          {},
-        );
-      }
-    });
+      form.attributes.forEach((attr, index) => {
+        request.schema.attributesSchema![index] = {
+          type: 'string',
+          name: { _: attr.name } as any,
+          optional: attr.optional.id === 'optional',
+          isArray: attr.type.id === 'repeated',
+        };
+
+        if (attr.values?.length) {
+          request.schema.attributesSchema![index].enumValues = attr.values.reduce(
+            (acc, val, index) => {
+              return {
+                ...acc,
+                [index]: { _: val },
+              };
+            },
+            {},
+          );
+        }
+      });
+    }
 
     return request;
   };

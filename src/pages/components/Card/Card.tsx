@@ -15,6 +15,7 @@ interface IPreviewCard {
 
 const PreviewCard = styled.div`
   display: flex;
+  word-break: break-all;
 
   .unique-text {
     display: block;
@@ -115,7 +116,10 @@ export const Card: VFC<IPreviewCard> = ({
             <Text size="m">{attributesInline ? 'Attribute names' : 'Attributes'}</Text>
             {attributesInline && (
               <PreviewCardDescription>
-                {attributesInline?.join(', ')}
+                {attributesInline.map(
+                  (el, i) =>
+                    el && `${el}${i !== attributesInline?.length - 1 ? ', ' : ''}`,
+                )}
               </PreviewCardDescription>
             )}
             {attributes?.map((item, i) => {

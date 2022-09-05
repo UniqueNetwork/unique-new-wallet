@@ -85,6 +85,7 @@ export const TabsBody = styled.div`
     display: flex;
     padding-top: 0;
     padding-bottom: 0;
+    max-width: 100%;
   }
 `;
 
