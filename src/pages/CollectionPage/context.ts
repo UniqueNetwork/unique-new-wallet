@@ -1,5 +1,10 @@
 import { createContext } from 'react';
 
-import { QLCollectionResponse } from '@app/api/graphQL/collections/collections';
+import { Collection } from '@app/api/graphQL/types';
 
-export const collectionContext = createContext<QLCollectionResponse | null>(null);
+interface CollectionContextProps {
+  collection?: Collection;
+  collectionLoading: boolean;
+}
+
+export const collectionContext = createContext<CollectionContextProps | null>(null);

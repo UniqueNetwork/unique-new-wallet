@@ -1,62 +1,35 @@
-import {
-  Avatar,
-  Button,
-  Heading,
-  Suggest,
-  Text,
-  Upload,
-  useNotifications,
-} from '@unique-nft/ui-kit';
+import { useEffect, useMemo, useState, VFC } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNotifications } from '@unique-nft/ui-kit';
+import { useDebounce } from 'use-debounce';
+import styled from 'styled-components';
 import classNames from 'classnames';
-import get from 'lodash/get';
-import { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
-import { useNavigate } from 'react-router-dom';
 
+import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import {
-  Collection,
   TokenApiService,
   useExtrinsicFee,
   useExtrinsicFlow,
   useFileUpload,
 } from '@app/api';
-import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
-import {
-  Alert,
-  MintingBtn,
-  StatusTransactionModal,
-  TooltipButtonWrapper,
-} from '@app/components';
-import { TokenFormContext, usePageSettingContext } from '@app/context';
+import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
 import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
-import {
-  AdditionalText,
-  ButtonGroup,
-  Form,
-  FormBody,
-  FormHeader,
-  FormRow,
-  FormRowEmpty,
-  FormWrapper,
-  LabelText,
-  SuggestOption,
-  UploadWidget,
-} from '@app/pages/components/FormComponents';
+import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
-import { AttributesRow } from '@app/pages/CreateNFT/AttributesRow';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { ROUTE } from '@app/routes';
-import { TokenField } from '@app/types';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { config } from '@app/config';
 
-interface Option {
-  id: number;
-  title: string;
-  description: string | undefined;
-  img: string | undefined;
-}
+import { CreateNftForm } from './CreateNftForm';
+import { useTokenFormMapper } from './useTokenFormMapper';
+import { AttributeView, Option, TokenForm, FilledTokenForm } from './types';
 
 interface ICreateNFTProps {
   className?: string;
@@ -70,43 +43,100 @@ const defaultOptions = {
   },
 };
 
-export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
-  const { currentChain } = useApi();
+export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [closable, setClosable] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState<Option | null>(null);
 
   const navigate = useNavigate();
-  const { uploadFile } = useFileUpload();
+  const [params] = useSearchParams();
+  const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
-  const { error, info } = useNotifications();
-  const { initializeTokenForm, setTokenImg, tokenForm, mapFormToTokenDto } =
-    useContext(TokenFormContext);
-
-  // TODO - use searchOnType here
-  const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
-    accountAddress: selectedAccount?.address,
-    options: defaultOptions,
-  });
-
-  const { data: collection } = useCollectionQuery(selectedCollection?.id ?? 0);
+  const { error, warning, info } = useNotifications();
+  const mapper = useTokenFormMapper();
 
   const { getFee, fee, feeFormatted, feeError, isFeeError } = useExtrinsicFee(
     TokenApiService.tokenCreateMutation,
   );
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
     useExtrinsicFlow(TokenApiService.tokenCreateMutation);
-  const { dirty, isValid, setFieldValue, submitForm, values } = tokenForm;
-  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('Create a NFT');
-  }, []);
+  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+
+  const collectionId = params.get('collectionId');
+
+  const tokenForm = useForm<TokenForm>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      owner: selectedAccount?.address,
+      address: selectedAccount?.address,
+      collectionId: collectionId ? Number(collectionId) : null,
+    },
+  });
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { isValid },
+  } = tokenForm;
+
+  const formValues = useWatch({ control });
+  const [debouncedFormValues] = useDebounce(formValues, 500);
+
+  const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
+    accountAddress: selectedAccount?.address,
+    options: defaultOptions,
+  });
+  const { data: collection } = useCollectionQuery(formValues.collectionId ?? 0);
+
+  const isOldCollection = collection?.schema?.schemaName === '_old_';
+
+  const mintingButtonTooltip = (() => {
+    if (isBalanceInsufficient) {
+      return NO_BALANCE_MESSAGE;
+    }
+    if (isOldCollection) {
+      return config.oldCollectionMessage;
+    }
+
+    return undefined;
+  })();
+
+  const tokenAttributes: AttributeView[] | undefined = useMemo(() => {
+    const attrsSchema = collection?.schema?.attributesSchema;
+    const formAttrs = formValues.attributes;
+
+    if (!attrsSchema || !formAttrs?.length) {
+      return [];
+    }
+
+    const attrs: AttributeView[] = [];
+
+    for (let i = 0; i < formAttrs.length; i++) {
+      let values: string[] = [];
+      const attr = formAttrs[i];
+
+      if (!attr) {
+        continue;
+      }
+
+      if (Array.isArray(attr)) {
+        values = attr.map((val) => val.title || '');
+      } else if (typeof attr === 'string') {
+        values = [attr];
+      } else if (typeof attr === 'object') {
+        values = [attr.title || ''];
+      }
+
+      attrs.push({ values, group: attrsSchema[i].name._ });
+    }
+
+    return attrs;
+  }, [collection, formValues]);
 
   const collectionsOptions = useMemo(
     () =>
-      collections?.map<Option>((collection: Collection) => ({
+      collections?.map<Option>((collection) => ({
         id: collection.collection_id,
         title: collection.name,
         description: collection.description,
@@ -115,32 +145,27 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     [collections],
   );
 
-  const tokenFields = get(collection, 'properties.fields', []);
+  useEffect(() => {
+    if (isOldCollection) {
+      warning(config.oldCollectionMessage);
+    }
+  }, [collection]);
 
   useEffect(() => {
-    if (tokenFields?.length) {
-      initializeTokenForm(tokenFields);
-    }
-  }, [tokenFields]);
+    const { address, collectionId } = debouncedFormValues;
 
-  useEffect(() => {
-    if (!selectedCollection || !selectedAccount) {
-      return;
+    if (collectionId && address && isValid && !isOldCollection) {
+      getFee({ token: mapper(debouncedFormValues as FilledTokenForm) });
     }
-
-    const tokenDTO = mapFormToTokenDto(selectedCollection.id, selectedAccount?.address);
-    if (!tokenDTO) {
-      return;
-    }
-
-    getFee({ token: tokenDTO });
-  }, [values]);
+  }, [debouncedFormValues]);
 
   useEffect(() => {
     if (flowStatus === 'success') {
       info('NFT created successfully');
 
-      closable && navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+      closable
+        ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
+        : reset(undefined, { keepDefaultValues: true });
     }
 
     if (flowStatus === 'error') {
@@ -154,177 +179,85 @@ export const CreateNFT: VFC<ICreateNFTProps> = ({ className }) => {
     }
   }, [isFeeError]);
 
-  const uploadImage = async (file: Blob) => {
-    const response = await uploadFile(file);
+  const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
+    if (isValid) {
+      logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
-    setFieldValue('ipfsJson', JSON.stringify({ ipfs: response?.cid, type: 'image' }));
-  };
+      setClosable(!!closable);
 
-  const setImage = useCallback((data: { url: string; file: Blob } | null) => {
-    if (data?.file) {
-      const file: Blob = data?.file;
-
-      setTokenImg(file);
-
-      void uploadImage(file);
-    }
-  }, []);
-
-  const confirmFormHandler = (closable?: boolean) => {
-    if (closable) {
-      logUserEvent(UserEvents.CONFIRM_CLOSE);
-    } else {
-      logUserEvent(UserEvents.CONFIRM_MORE);
-    }
-    if (!selectedCollection) {
-      error('Collection is not chosen');
-
-      return;
-    }
-    if (!selectedAccount) {
-      error('Account is not found');
-
-      return;
-    }
-
-    const tokenDTO = mapFormToTokenDto(selectedCollection.id, selectedAccount?.address);
-    if (!tokenDTO) {
-      error('Token wasnt formed');
-
-      return;
-    }
-
-    setClosable(!!closable);
-
-    submitForm().then(() =>
       signAndSubmitExtrinsic({
-        token: tokenDTO,
-      }),
-    );
+        token: mapper(tokenForm as FilledTokenForm),
+      });
+    }
   };
 
-  const disabled = !values.ipfsJson || !dirty || !isValid || isBalanceInsufficient;
+  const isolatedTokenForm = useMemo(
+    () => (
+      <FormProvider {...tokenForm}>
+        <CreateNftForm
+          selectedCollection={collection}
+          collectionsOptions={collectionsOptions}
+          collectionsOptionsLoading={isCollectionsLoading}
+        />
+      </FormProvider>
+    ),
+    [collection, collectionsOptions, isCollectionsLoading, tokenForm],
+  );
 
   return (
     <>
       <MainWrapper className={classNames('create-nft-page', className)}>
         <WrapperContent>
           <FormWrapper>
-            <FormHeader>
-              <Heading size="2">Main information</Heading>
-            </FormHeader>
-            <FormBody>
-              <Form>
-                <FormRow>
-                  <LabelText>Collection*</LabelText>
-                  <Suggest
-                    components={{
-                      SuggestItem: ({
-                        suggestion,
-                        isActive,
-                      }: {
-                        suggestion: Option;
-                        isActive?: boolean;
-                      }) => {
-                        return (
-                          <SuggestOption
-                            className={classNames('suggestion-item', {
-                              isActive,
-                            })}
-                          >
-                            <Avatar
-                              size={24}
-                              type="circle"
-                              src={suggestion.img || undefined}
-                            />
-                            {suggestion?.title} [id {suggestion?.id}]
-                          </SuggestOption>
-                        );
-                      },
-                    }}
-                    isLoading={isCollectionsLoading}
-                    suggestions={collectionsOptions}
-                    getActiveSuggestOption={(option: Option, activeOption: Option) =>
-                      option.id === activeOption.id
-                    }
-                    getSuggestionValue={({ title }: Option) => title}
-                    onChange={setSelectedCollection}
-                  />
-                </FormRow>
-                <FormRow className="has_uploader">
-                  <UploadWidget>
-                    <LabelText>Upload image*</LabelText>
-                    <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
-                    {/* TODO - fix UI kit Upload problems: set value as url from file, reloading */}
-                    <Upload
-                      disabled={!selectedCollection?.id}
-                      type="square"
-                      onChange={setImage}
-                    />
-                  </UploadWidget>
-                </FormRow>
-                <Heading size="3">Attributes</Heading>
-                {selectedCollection ? (
-                  tokenFields
-                    .filter((tokenField: TokenField) => tokenField.name !== 'ipfsJson')
-                    .map((tokenField: TokenField, index: number) => (
-                      <AttributesRow
-                        // generateExtrinsic={generateExtrinsic}
-                        tokenField={tokenField}
-                        key={`${tokenField.name}-${index}`}
-                        maxLength={64}
-                      />
-                    ))
-                ) : (
-                  <FormRowEmpty>
-                    <Text color="grey-500" size="s">
-                      Will become available after selecting a collection
-                    </Text>
-                  </FormRowEmpty>
-                )}
-                {feeFormatted && (
-                  <Alert type="warning">
-                    A fee of ~ {feeFormatted} can be applied to the transaction
-                  </Alert>
-                )}
-                <ButtonGroup>
-                  {isBalanceInsufficient ? (
-                    <>
-                      <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
-                        <Button
-                          role="primary"
-                          title="Confirm and create more"
-                          type="button"
-                          disabled={true}
-                        />
-                      </TooltipButtonWrapper>
-                      <TooltipButtonWrapper message={NO_BALANCE_MESSAGE}>
-                        <Button title="Confirm and close" type="button" disabled={true} />
-                      </TooltipButtonWrapper>
-                    </>
-                  ) : (
-                    <>
-                      <MintingBtn
-                        role="primary"
-                        title="Confirm and create more"
-                        disabled={!selectedCollection?.id || disabled}
-                        onClick={() => confirmFormHandler()}
-                      />
-                      <MintingBtn
-                        title="Confirm and close"
-                        disabled={!selectedCollection?.id || disabled}
-                        onClick={() => confirmFormHandler(true)}
-                      />
-                    </>
-                  )}
-                </ButtonGroup>
-              </Form>
-            </FormBody>
+            {isolatedTokenForm}
+            {feeFormatted && isValid ? (
+              <FeeInformationTransaction className="alert" fee={feeFormatted} />
+            ) : (
+              <Alert className="alert" type="warning">
+                A fee will be calculated after corrected filling required fields
+              </Alert>
+            )}
+
+            <ButtonGroup className="buttons">
+              <MintingBtn
+                role="primary"
+                title="Confirm and create more"
+                tooltip={mintingButtonTooltip}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
+              />
+              <MintingBtn
+                title="Confirm and close"
+                tooltip={mintingButtonTooltip}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
+              />
+            </ButtonGroup>
           </FormWrapper>
         </WrapperContent>
-        <Sidebar collectionId={selectedCollection?.id} />
+        <Sidebar
+          hidden={!collection}
+          collectionName={collection?.name}
+          collectionDescription={collection?.description}
+          collectionCoverUrl={collection?.schema?.coverPicture.fullUrl}
+          tokenPrefix={collection?.tokenPrefix}
+          tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid)}
+          attributes={tokenAttributes}
+        />
       </MainWrapper>
       <StatusTransactionModal isVisible={isFlowLoading} description="Creating NFT" />
     </>
   );
 };
+
+const CreateNFTStyled = styled(CreateNFTComponent)`
+  .alert {
+    margin-top: 32px;
+  }
+
+  .buttons {
+    margin-top: 32px;
+  }
+`;
+
+export const CreateNFT = withPageTitle({ header: 'Create a NFT' })(CreateNFTStyled);

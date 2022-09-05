@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, VFC } from 'react';
 import { Text, Heading, Dropdown, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { BN } from '@polkadot/util';
@@ -25,13 +25,16 @@ const currencies = [
   { id: 'JPY', title: 'JPY', symbol: '¥', icon: 'jpy-flag' },
 ];
 
-export const AccountsTotalBalance = ({ balance }: AccountsTotalBalanceProps) => {
+export const AccountsTotalBalance: VFC<{
+  className?: string;
+  balance: AccountsTotalBalanceProps;
+}> = ({ className, balance }) => {
   const [currency, setCurrency] = useState<ICurrency>(currencies[0]);
 
   // TODO: get converted balance to fiat currency
 
   return (
-    <AccountsTotalBalanceWrapper>
+    <AccountsTotalBalanceWrapper className={className}>
       <Text color="grey-500" size="s">
         Total balance (QTZ)
       </Text>
@@ -54,7 +57,9 @@ export const AccountsTotalBalance = ({ balance }: AccountsTotalBalanceProps) => 
         >
           <CurrencyOption title={currency.title} icon={currency.icon} />
         </Dropdown>
-        <Icon size={24} name="reload" />
+        <ButtonReload type="button">
+          <Icon size={24} name="reload" />
+        </ButtonReload>
       </AccountsTotalBalanceValue>
     </AccountsTotalBalanceWrapper>
   );
@@ -87,4 +92,17 @@ const CurrencyOptionWrapper = styled.div`
   column-gap: calc(var(--prop-gap) / 2);
   padding-right: calc(var(--prop-gap) * 2);
   cursor: pointer;
+`;
+
+const ButtonReload = styled.button`
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: 0 none;
+  cursor: pointer;
+
+  .icon {
+    display: block;
+  }
 `;

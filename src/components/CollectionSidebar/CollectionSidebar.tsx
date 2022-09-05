@@ -1,20 +1,17 @@
-import { useContext, useMemo } from 'react';
+import { memo, VFC } from 'react';
 import { Heading } from '@unique-nft/ui-kit';
 
-import { CollectionFormContext } from '@app/context';
-import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { Card } from '@app/pages/components/Card';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
+import { CollectionForm } from '@app/pages/CreateCollection/types';
 
-export const CollectionSidebar = () => {
-  const { attributes, coverImgFile, mainInformationForm } =
-    useContext(CollectionFormContext);
-  const { values } = mainInformationForm;
-  const { name, description, tokenPrefix } = values;
+const CollectionSidebarComponent: VFC<{
+  collectionForm: CollectionForm;
+}> = ({ collectionForm }) => {
+  const { name, description, symbol, coverPictureIpfsCid, attributes } = collectionForm;
 
-  const tags = useMemo(
-    () => attributes.filter((attr) => attr.name !== 'ipfsJson').map(({ name }) => name),
-    [attributes],
-  );
+  const attributesInline = attributes?.map<string>((attr) => attr.name || '');
 
   return (
     <WrapperSidebar>
@@ -23,14 +20,15 @@ export const CollectionSidebar = () => {
         <Card
           title={name || 'Name'}
           description={description || 'Description'}
-          picture={coverImgFile ? URL.createObjectURL(coverImgFile) : undefined}
+          picture={getTokenIpfsUriByImagePath(coverPictureIpfsCid)}
         />
       </SidebarRow>
       <SidebarRow>
         <Heading size="3">NFT preview</Heading>
         <Card
-          attributesInline={tags}
-          title={tokenPrefix || 'Symbol'}
+          // TODO: пустой массив
+          attributesInline={attributesInline}
+          title={symbol || 'Symbol'}
           description={name || 'Collection name'}
           geometry="square"
           picture={undefined}
@@ -39,3 +37,5 @@ export const CollectionSidebar = () => {
     </WrapperSidebar>
   );
 };
+
+export const CollectionSidebar = memo(CollectionSidebarComponent);

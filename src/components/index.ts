@@ -20,3 +20,4 @@ export * from './Stages';
 export * from './ActionBtn';
 export * from './TooltipWrapper';
 export * from './IdentityIcon';
+export * from './TokenLink';

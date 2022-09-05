@@ -8,18 +8,18 @@ import {
   Select,
   RadioOptionValueType,
 } from '@unique-nft/ui-kit';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { iconDown, iconUp } from '@app/utils';
+import { ROUTE } from '@app/routes';
+import { useApi } from '@app/hooks';
+import { MintingBtn } from '@app/components';
+import { Direction } from '@app/api/graphQL/types';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import {
   ListNftsFilterType,
   useNftFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { Direction } from '@app/api/graphQL/tokens';
-import { ROUTE } from '@app/routes';
-import { useApi } from '@app/hooks';
-import { MintingBtn } from '@app/components';
-import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -61,6 +61,8 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
   className,
 }) => {
   const navigate = useNavigate();
+  const { collectionId } = useParams<{ collectionId: string }>();
+
   const { currentChain } = useApi();
   const [search, setSearch] = useState('');
   const { direction, onChangeSearch, onChangeDirection, onChangeType } =
@@ -101,7 +103,9 @@ const CollectionNftFiltersComponent: VFC<CollectionNftFiltersComponentProps> = (
         role="primary"
         onClick={() => {
           logUserEvent(UserEvents.CREATE_NFT);
-          navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`);
+          navigate(
+            `/${currentChain?.network}/${ROUTE.CREATE_NFT}?collectionId=${collectionId}`,
+          );
         }}
       />
     </div>

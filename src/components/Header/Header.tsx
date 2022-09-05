@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useState, VFC } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components/macro'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
+import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 
 import { useAccounts, useApi, useScreenWidthFromThreshold } from '@app/hooks';
 import { networks } from '@app/utils';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
-import { defaultChainKey } from '@app/utils/configParser';
 import { UserEvents } from '@app/utils/logUserEvent';
 import { IdentityIcon } from '@app/components';
 
 import MenuLink from './MenuLink';
 
-export const Header: VFC = () => {
+export const Header = () => {
   const navigate = useNavigate();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
   const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
+  const [isAccountManagerOpen, setAccountManagerOpen] = useState<boolean>(false);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
   const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
     networks.find(({ id }) => id === currentChain?.network),
@@ -47,13 +47,15 @@ export const Header: VFC = () => {
     }
   };
 
-  const createOrConnectAccountHandler = () => navigate(ROUTE.ACCOUNTS);
-
   const handleChangeNetwork = (val: INetwork) => {
-    setActiveNetwork(val);
-    setCurrentChain(config.chains[val.id]);
-    localStorage.setItem(defaultChainKey, config.chains[val.id].network);
-    navigate(`${activeNetwork?.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    setAccountManagerOpen(false);
+    setCurrentChain(config.activeChains[val.id]);
+    navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+  };
+
+  const gotoManageBalance = () => {
+    setAccountManagerOpen(false);
+    navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`);
   };
 
   return (
@@ -81,11 +83,6 @@ export const Header: VFC = () => {
               logEvent={UserEvents.HEADER_MY_COLLECTION}
             />
             <MenuLink
-              name="My accounts"
-              path={`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
-              logEvent={UserEvents.HEADER_MY_ACCOUNTS}
-            />
-            <MenuLink
               name="FAQ"
               path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
               logEvent={UserEvents.HEADER_FAQ}
@@ -101,21 +98,25 @@ export const Header: VFC = () => {
             activeNetwork={activeNetwork}
             balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
             isLoading={isLoading}
+            manageBalanceLinkTitle="Manage my balance"
             networks={networks}
+            open={isAccountManagerOpen}
             selectedAccount={{
               address: selectedAccount?.address,
               name: selectedAccount?.meta.name,
             }}
             symbol={selectedAccount?.unitBalance ?? ''}
-            onNetworkChange={(val) => handleChangeNetwork(val)}
             onAccountChange={onAccountChange}
+            onManageBalanceClick={gotoManageBalance}
+            onNetworkChange={(val) => handleChangeNetwork(val)}
+            onOpenChange={(open) => setAccountManagerOpen(open)}
           />
         )}
         {!isLoading && !accounts.length && (
           <Button
             title="Create or connect account"
             className="create-account-btn account-group-btn-medium-font"
-            onClick={createOrConnectAccountHandler}
+            onClick={gotoManageBalance}
           />
         )}
       </RightSide>

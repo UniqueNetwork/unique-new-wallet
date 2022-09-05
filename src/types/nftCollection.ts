@@ -40,7 +40,7 @@ export interface NftCollectionLimits {
     ownerCanDestroy?: boolean;
   };
 }
-
+// TODO: удалить после перехода на новые схемы
 export interface NftCollectionBase extends NftCollectionLimits {
   description: number[];
   mode: {

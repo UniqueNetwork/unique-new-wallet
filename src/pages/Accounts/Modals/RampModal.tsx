@@ -14,10 +14,16 @@ const rampContainerId = 'ramp-container';
 interface RampModalProps {
   className?: string;
   isVisible: boolean;
+  swapAsset: 'KSM' | 'DOT';
   onClose: () => void;
 }
 
-const RampModalComponent: VFC<RampModalProps> = ({ className, isVisible, onClose }) => {
+const RampModalComponent: VFC<RampModalProps> = ({
+  className,
+  isVisible,
+  swapAsset,
+  onClose,
+}) => {
   useLayoutEffect(() => {
     if (isVisible) {
       const body = document.getElementsByTagName('body')[0];
@@ -40,7 +46,7 @@ const RampModalComponent: VFC<RampModalProps> = ({ className, isVisible, onClose
           variant: 'embedded-mobile',
           hostLogoUrl: logoUrl,
           containerNode: rampContainer,
-          swapAsset: 'KSM',
+          swapAsset,
         });
 
         rampContainer.style.height = convenientHeight;
@@ -58,6 +64,7 @@ const RampModalComponent: VFC<RampModalProps> = ({ className, isVisible, onClose
     }
   }, [isVisible]);
 
+  // TODO: remove span to use className prop
   return (
     <span className={className}>
       <Modal isClosable isVisible={isVisible} onClose={onClose}>

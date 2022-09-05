@@ -10,12 +10,10 @@ import {
   Tooltip,
   TooltipAlign,
 } from '@unique-nft/ui-kit';
-import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
-import { PagePaper, StatusTransactionModal } from '@app/components';
+import { PagePaper, StatusTransactionModal, TooltipButtonWrapper } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
-import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts } from '@app/hooks';
 import {
@@ -41,7 +39,7 @@ const tooltipAlign: TooltipAlign = {
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
-  const { collection, isCollectionFetching } = useCollectionContext() || {};
+  const { collection, collectionLoading } = useCollectionContext() || {};
   const { selectedAccount } = useAccounts();
   const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
   const navigate = useNavigate();
@@ -57,18 +55,6 @@ const CollectionSettings = () => {
     collection_id,
   } = collection || {};
   const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
-
-  const form = useFormik({
-    initialValues: {
-      address: getSponsorShip(sponsorship)?.value || '',
-      limit: token_limit || 0,
-      ownerCanDestroy,
-    },
-    enableReinitialize: true,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
 
   const handleBurnCollection = () => {
     if (!collection_id || !selectedAccount) {
@@ -99,24 +85,21 @@ const CollectionSettings = () => {
   };
 
   const handleTokenLimit = (value: string) => {
-    if (!value) {
-      form.setFieldValue('limit', '');
-      return;
-    }
-
-    const numVal = Number(value);
-
-    if (numVal > maxTokenLimit || numVal < 0) {
-      return;
-    }
-
-    form.setFieldValue('limit', numVal);
+    // if (!value) {
+    //   form.setFieldValue('limit', '');
+    //   return;
+    // }
+    // const numVal = Number(value);
+    // if (numVal > maxTokenLimit || numVal < 0) {
+    //   return;
+    // }
+    // form.setFieldValue('limit', numVal);
   };
 
   return (
     <PagePaper>
       <FormWrapper>
-        {isCollectionFetching ? (
+        {collectionLoading ? (
           <Loader />
         ) : (
           <>
@@ -128,18 +111,17 @@ const CollectionSettings = () => {
               </Text>
             </FormHeader>
             <FormBody>
-              <Form onSubmit={form.handleSubmit}>
+              <Form>
                 <SettingsRow>
                   <InputText
                     label={
                       <>
                         Collection sponsor address
                         <Tooltip align={tooltipAlign} targetRef={addressTooltip}>
-                          The collection sponsor pays for all transactions related
-                          to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
-                          a&nbsp;regular account or&nbsp;a&nbsp;market contract. The
-                          sponsor will need to&nbsp;confirm the sponsorship before the
-                          sponsoring begins
+                          The collection sponsor pays for all transactions related to this
+                          collection. You can set as a sponsor a regular account or a
+                          market contract. The sponsor will need to confirm the
+                          sponsorship before the sponsoring begins
                         </Tooltip>
                         <Icon
                           ref={addressTooltip}
@@ -152,9 +134,9 @@ const CollectionSettings = () => {
                     additionalText="The designated sponsor should approve the request"
                     id="address"
                     maxLength={49}
-                    value={form.values.address}
+                    value=""
                     onChange={(value) => {
-                      form.setFieldValue('address', value);
+                      // form.setFieldValue('address', value);
                     }}
                   />
                 </SettingsRow>
@@ -172,9 +154,8 @@ const CollectionSettings = () => {
                       <>
                         Token limit
                         <Tooltip align={tooltipAlign} targetRef={tokenTooltip}>
-                          The token limit (collection size) is&nbsp;a&nbsp;mandatory
-                          parameter if&nbsp;you want to&nbsp;list your collection
-                          on&nbsp;a&nbsp;marketplace.
+                          The token limit (collection size) is a mandatory parameter if
+                          you want to list your collection on a marketplace.
                         </Tooltip>
                         <Icon
                           ref={tokenTooltip}
@@ -186,23 +167,22 @@ const CollectionSettings = () => {
                     }
                     additionalText="Unlimited by default"
                     id="limit"
-                    value={form.values.limit.toString()}
+                    value=""
                     role="number"
                     onChange={handleTokenLimit}
                   />
                 </SettingsRow>
                 <SettingsRow>
                   <Checkbox
-                    checked={form.values.ownerCanDestroy}
+                    checked={false}
                     label={
                       <>
                         Owner can burn collection
                         <Tooltip align={tooltipAlign} targetRef={destroyTooltip}>
-                          Should you decide to&nbsp;keep the right to&nbsp;destroy the
-                          collection, a&nbsp;marketplace could reject it&nbsp;depending
-                          on&nbsp;its policies as&nbsp;it&nbsp;gives the author the power
-                          to&nbsp;arbitrarily destroy a&nbsp;collection at&nbsp;any moment
-                          in&nbsp;the future
+                          Should you decide to keep the right to destroy the collection, a
+                          marketplace could reject it depending on its policies as it
+                          gives the author the power to arbitrarily destroy a collection
+                          at any moment in the future
                         </Tooltip>
                         <Icon
                           ref={destroyTooltip}
@@ -214,12 +194,14 @@ const CollectionSettings = () => {
                     }
                     disabled={!ownerCanDestroy}
                     onChange={(value) => {
-                      form.setFieldValue('ownerCanDestroy', value);
+                      // form.setFieldValue('ownerCanDestroy', value);
                     }}
                   />
                 </SettingsRow>
                 <ButtonGroup>
-                  <Button title="Save changes" disabled={true} type="submit" />
+                  <TooltipButtonWrapper message="The form in development progress">
+                    <Button title="Save changes" disabled={true} type="submit" />
+                  </TooltipButtonWrapper>
                   {/* TODO: WAL-343
                   {ownerCanDestroy && (
                     <Button

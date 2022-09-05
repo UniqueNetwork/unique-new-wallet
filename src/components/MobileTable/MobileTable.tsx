@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Text, TableColumnProps, TableRowProps } from '@unique-nft/ui-kit';
+import { Loader, TableColumnProps, TableRowProps, Text } from '@unique-nft/ui-kit';
 
-import Loading from '../Loading';
+import { getDeepValue } from '@app/utils';
+import { NoItems } from '@app/components';
 
 interface MobileTableProps {
   className?: string;
@@ -11,37 +12,51 @@ interface MobileTableProps {
   loading?: boolean;
 }
 
-export const getDeepValue = <T extends Record<string, any>>(object: T, path: string) => {
-  return path
-    .split(/[.[\]'"]/)
-    .filter((p) => p)
-    .reduce((o, p) => {
-      return o ? o[p] : undefined;
-    }, object);
-};
+const MobileTableWrapper = styled.div``;
+
+const MobileTableRow = styled.div`
+  margin-bottom: var(--prop-gap);
+
+  &:not(:last-child) {
+    border-bottom: 1px dashed var(--color-grey-300);
+  }
+`;
+
+const MobileTableCell = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--prop-gap);
+`;
+
+const NoItemsStyled = styled(NoItems)`
+  padding-top: 80px;
+`;
 
 const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
-  let children = <Loading />;
+  let children = <Loader isFullPage={true} size="middle" />;
 
   if (!loading && data?.length === 0) {
-    children = <Text className="text_grey">No data</Text>;
+    children = <NoItemsStyled iconName="no-accounts" iconSize={40} />;
   } else if (!loading) {
     children = (
       <>
         {data?.map((item, rowIdx) => (
-          <MobileTableRow key={rowIdx}>
+          <MobileTableRow className="mobile-table-row" key={rowIdx}>
             {columns?.map((column, colIdx) => (
-              <div key={`column-${column.field || colIdx}`}>
+              <MobileTableCell
+                className="mobile-table-cell"
+                key={`column-${column.field || colIdx}`}
+              >
                 {typeof column?.title === 'object' ? (
                   column.title
                 ) : (
                   <Text color="grey-500">{column?.title}</Text>
                 )}
                 {column.render?.(getDeepValue(item, column.field), item, {
-                  rowIndex: rowIdx,
                   columnIndex: colIdx,
+                  rowIndex: 0,
                 }) || getDeepValue(item, column.field)}
-              </div>
+              </MobileTableCell>
             ))}
           </MobileTableRow>
         ))}
@@ -49,29 +64,7 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
     );
   }
 
-  return <MobileTableWrapper>{children}</MobileTableWrapper>;
+  return <MobileTableWrapper className="mobile-table">{children}</MobileTableWrapper>;
 };
-
-const MobileTableWrapper = styled.div`
-  margin: var(--prop-gap) 0;
-`;
-
-const MobileTableRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-bottom: 1px dashed var(--border-color);
-  gap: var(--prop-gap) calc(var(--prop-gap) / 2);
-  padding: var(--prop-gap) 0;
-
-  & > div {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  @media (max-width: 320px) {
-    grid-template-columns: 1fr;
-  }
-`;
 
 export default MobileTable;

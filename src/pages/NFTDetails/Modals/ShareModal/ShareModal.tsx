@@ -2,8 +2,8 @@ import React, { useMemo, VFC } from 'react';
 import { Button, Heading, IconProps, Modal } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { ViewToken } from '@app/api';
 import getSocialLink from '@app/pages/NFTDetails/Modals/utils/getSocialLink';
+import { Token } from '@app/api/graphQL/types';
 
 // TODO: need to move these icons to ui-kit
 import RedditLogo from '../../../../static/icons/reddit.svg';
@@ -11,7 +11,7 @@ import FacebookLogo from '../../../../static/icons/facebook.svg';
 
 interface ShareModalProps {
   isVisible: boolean;
-  token: ViewToken;
+  token: Token;
   onClose(): void;
 }
 

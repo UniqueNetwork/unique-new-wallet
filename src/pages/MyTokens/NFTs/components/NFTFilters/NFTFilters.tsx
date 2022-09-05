@@ -7,9 +7,9 @@ import { InputText, Select } from '@unique-nft/ui-kit';
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
 import { MintingBtn } from '@app/components';
-import { Direction } from '@app/api/graphQL/tokens';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
+import { Direction } from '@app/api/graphQL/types';
 
 interface NFTFiltersComponentProps {
   className?: string;

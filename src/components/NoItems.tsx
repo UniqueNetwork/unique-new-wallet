@@ -3,7 +3,9 @@ import styled from 'styled-components/macro';
 import { Icon, IconProps, Text } from '@unique-nft/ui-kit';
 
 interface NoItemsProps {
+  className?: string;
   iconName?: IconProps['name'];
+  iconSize?: number;
   title?: string;
 }
 
@@ -21,12 +23,14 @@ const Title = styled(Text).attrs({ color: 'grey-500', weight: 'light' })`
 `;
 
 const NoItemsComponent: FC<NoItemsProps> = ({
+  className,
   iconName = 'no-items',
-  title = 'No items found',
+  iconSize = 80,
+  title = 'Nothing found',
 }) => {
   return (
-    <Wrapper>
-      <Icon name={iconName} size={80} />
+    <Wrapper className={className}>
+      <Icon name={iconName} size={iconSize} />
       <Title>{title}</Title>
     </Wrapper>
   );

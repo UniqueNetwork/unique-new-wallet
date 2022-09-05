@@ -4,7 +4,7 @@ import {
   ListNftsFilterType,
   nftListFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { Direction } from '@app/api/graphQL/tokens';
+import { Direction } from '@app/api/graphQL/types';
 
 type CollectionFilterType = {
   children: ReactNode;

@@ -15,7 +15,7 @@ export enum MinterType {
 }
 
 export type ArtificialFieldType = 'string' | 'enum' | 'repeated';
-export type ArtificialFieldRuleType = 'optional' | 'required';
+// export type ArtificialFieldRuleType = 'optional' | 'required';
 
 export type TokenField = {
   id: number;
@@ -35,14 +35,6 @@ export type AttributeItemType = {
   fieldType: FieldType;
   name: string;
   rule: FieldRuleType;
-  values: string[];
-};
-
-export type ArtificialAttributeItemType = {
-  id: number;
-  fieldType: ArtificialFieldType;
-  name: string;
-  rule: ArtificialFieldRuleType;
   values: string[];
 };
 

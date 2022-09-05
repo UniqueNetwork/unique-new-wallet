@@ -1,5 +1,5 @@
 import { config } from '@app/config';
-import { ImagePath } from '@app/api/graphQL';
+import { ImagePath } from '@app/api/graphQL/types';
 
 const { IPFSGateway } = config;
 
@@ -23,9 +23,11 @@ const isValidHttpUrl = (checkUrl: string): boolean => {
  * 2) https://www.ipfs-server/QmbuyQebXVQcZbaGmP4maWUqRiKYeAAyYZEiqL3rnev8i4
  * 3) "{\"ipfs\":\"QmZCuWx72x1ukhehLsg1qNjKhVj3d1feJjadUPJbyYfmpY\",\"type\":\"image\"}"
  * */
-export const getTokenIpfsUriByImagePath = (imagePath: string | null): string => {
+export const getTokenIpfsUriByImagePath = (
+  imagePath: string | null | undefined,
+): string | undefined => {
   if (!imagePath) {
-    return '';
+    return undefined;
   }
 
   const buildPath = (url: string) => {
@@ -46,5 +48,5 @@ export const getTokenIpfsUriByImagePath = (imagePath: string | null): string => 
     return buildPath(imagePath);
   }
 
-  return '';
+  return undefined;
 };

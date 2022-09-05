@@ -16,10 +16,10 @@ export const PageLayout: FC = () => {
     <Wrapper className="page-layout">
       <LayoutStyled>
         <Layout
-          breadcrumbs={breadcrumbs}
-          footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
           header={<Header />}
-          heading={heading}
+          footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
+          breadcrumbs={breadcrumbs}
+          heading={heading || undefined}
         >
           <Outlet />
         </Layout>
@@ -71,6 +71,11 @@ const LayoutStyled = styled.div`
     margin-right: auto;
     padding-left: 24px;
     padding-right: 24px;
+
+    @media screen and (max-width: 567px) {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
 
     @media screen and (min-width: 1024px) {
       padding-left: 32px;

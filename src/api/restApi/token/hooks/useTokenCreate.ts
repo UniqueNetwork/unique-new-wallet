@@ -1,6 +1,6 @@
 import { useApiMutation } from '@app/api';
-import { NftTokenDTO } from '@app/types';
 import { useApi, useMessage } from '@app/hooks';
+import { CreateTokenNewDto } from '@app/types/Api';
 
 import { TokenApiService } from '../TokenApiService';
 
@@ -12,7 +12,7 @@ export const useTokenCreate = () => {
     endpoint: TokenApiService.tokenCreateMutation,
   });
 
-  const createToken = async (token: NftTokenDTO) => {
+  const createToken = async (token: CreateTokenNewDto) => {
     if (!api) {
       showError({ name: 'Create token api not exists', text: 'Create token' });
       return;

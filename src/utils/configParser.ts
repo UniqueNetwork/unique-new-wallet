@@ -31,7 +31,6 @@ export const getNetworkList = (config: Record<string, string | undefined>): stri
     }
 
     const { network } = configKeyRegexp.exec(key)?.groups || {};
-
     if (network) {
       acc.push(network);
     }
@@ -42,7 +41,11 @@ export const getNetworkList = (config: Record<string, string | undefined>): stri
 
 export const getDefaultChain = (config: Record<string, string | undefined>) => {
   const storedChain = localStorage.getItem(defaultChainKey);
-  const networkList = getNetworkList(config);
+  const networkList = Object.keys(getChainList(config, true));
+
+  if (networkList.length === 0) {
+    throw new Error('No active networks specified');
+  }
 
   // make sure that we are trying to use an config-existing chain, otherwise go with default one
   if (storedChain) {
@@ -53,11 +56,20 @@ export const getDefaultChain = (config: Record<string, string | undefined>) => {
     }
   }
 
-  const newChain = config.REACT_APP_NET_DEFAULT || getNetworkList(config)[0];
+  let chain = networkList[0];
 
-  localStorage.setItem(defaultChainKey, newChain);
+  const defaultNetwork = config.NET_DEFAULT || config.REACT_APP_NET_DEFAULT;
 
-  return newChain;
+  if (defaultNetwork) {
+    const isExist = !!networkList.find((network) => network === defaultNetwork);
+    if (isExist) {
+      chain = defaultNetwork;
+    }
+  }
+
+  localStorage.setItem(defaultChainKey, chain);
+
+  return chain;
 };
 
 export const getNetworkParams = (
@@ -80,9 +92,14 @@ export const getNetworkParams = (
 
 export const getChainList = (
   config: Record<string, string | undefined>,
+  active?: boolean,
 ): Record<string, Chain> => {
   return getNetworkList(config).reduce<Record<string, Chain>>((acc, network) => {
     const { apiEndpoint, gqlEndpoint, ...params } = getNetworkParams(config, network);
+
+    if (active && !params.switchingEnabled) {
+      return acc;
+    }
 
     if (apiEndpoint) {
       acc[network] = {

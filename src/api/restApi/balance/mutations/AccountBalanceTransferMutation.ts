@@ -24,7 +24,7 @@ export class AccountBalanceTransferMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = '/balance/transfer?withFee=true';
+    this.baseUrl = '/balance/transfer';
 
     this.request = this.request.bind(this);
   }

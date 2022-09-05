@@ -1,11 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, VFC } from 'react';
+import classNames from 'classnames';
 import { Button, Dropdown } from '@unique-nft/ui-kit';
 
 import {
   CreateAccountModal,
-  ImportViaSeedAccountModal,
   ImportViaJSONAccountModal,
   ImportViaQRCodeAccountModal,
+  ImportViaSeedAccountModal,
 } from '@app/pages';
 import './AccountsGroupButton.scss';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
@@ -23,7 +24,7 @@ const dropdownItems = [
   { title: 'QR-code', modal: AccountModal.VIA_QR },
 ];
 
-export const AccountsGroupButton = () => {
+export const AccountsGroupButton: VFC<{ className?: string }> = ({ className }) => {
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
 
   const onCreateAccountClick = useCallback(() => {
@@ -36,7 +37,7 @@ export const AccountsGroupButton = () => {
   }, []);
 
   return (
-    <div className="btn-container">
+    <div className={classNames('btn-container', className)}>
       <Button
         title="Create substrate account"
         className="create-account-btn account-group-btn-medium-font"

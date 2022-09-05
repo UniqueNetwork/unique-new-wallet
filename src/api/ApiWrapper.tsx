@@ -3,6 +3,7 @@ import { ApolloProvider } from '@apollo/client';
 
 import { Chain } from '@app/types';
 import { BaseApi, IBaseApi } from '@app/api';
+import { defaultChainKey } from '@app/utils/configParser';
 
 import { GqlClient } from './graphQL/gqlClient';
 import { ApiContextProps, ApiProvider } from './ApiContext';
@@ -13,7 +14,11 @@ interface ChainProviderProps {
 }
 
 export const ApiWrapper = ({ children }: ChainProviderProps) => {
-  const [currentChain, setCurrentChain] = useState<Chain>(() => config.defaultChain);
+  const [currentChain, setCurrentChain] = useState<Chain>(() => {
+    const network = window.location.pathname.split('/')[1];
+    const chain = network ? config.activeChains[network.toUpperCase()] : null;
+    return chain || config.defaultChain;
+  });
   const [apiInstance, setApiInstance] = useState<IBaseApi>();
   const [gqlClient, setGqlClient] = useState<GqlClient>(
     () => new GqlClient(currentChain.gqlEndpoint),
@@ -29,10 +34,12 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
   );
 
   useEffect(() => {
-    if (currentChain) {
-      setApiInstance(new BaseApi(currentChain.apiEndpoint));
-      setGqlClient(new GqlClient(currentChain.gqlEndpoint));
+    if (!currentChain) {
+      return;
     }
+    localStorage.setItem(defaultChainKey, currentChain.network);
+    setApiInstance(new BaseApi(currentChain.apiEndpoint));
+    setGqlClient(new GqlClient(currentChain.gqlEndpoint));
   }, [currentChain]);
 
   return (
