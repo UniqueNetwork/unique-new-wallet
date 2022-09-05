@@ -1,11 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import classNames from 'classnames';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Text, Button, useNotifications } from '@unique-nft/ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import styled from 'styled-components';
+import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
+import { Button, Text, useNotifications } from '@unique-nft/ui-kit';
 
-import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
+import {
+  DeviceSize,
+  useAccounts,
+  useApi,
+  useBalanceInsufficient,
+  useDeviceSize,
+} from '@app/hooks';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
@@ -18,6 +25,7 @@ import {
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { PreviewBar } from '@app/pages/components/PreviewBar';
 
 import { NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -29,7 +37,16 @@ interface CreateCollectionProps {
   className?: string;
 }
 
+const WrapperContentStyled = styled(WrapperContent)`
+  margin-bottom: calc(var(--prop-gap) * 2.5);
+
+  @media screen and (min-width: 1025px) {
+    margin-bottom: 0;
+  }
+`;
+
 const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
+  const deviceSize = useDeviceSize();
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
 
@@ -137,9 +154,11 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
+  const root = document.getElementById('root');
+
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
-      <WrapperContent>
+      <WrapperContentStyled>
         <FormWrapper>
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
@@ -201,8 +220,14 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
             description="Creating collection"
           />
         </FormWrapper>
-      </WrapperContent>
-      <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+      </WrapperContentStyled>
+      {deviceSize >= DeviceSize.lg ? (
+        <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+      ) : (
+        <PreviewBar parent={root as Element}>
+          <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+        </PreviewBar>
+      )}
     </MainWrapper>
   );
 };

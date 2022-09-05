@@ -24,7 +24,7 @@ const ColumnTitle: VFC<{ title: string; tooltip: string }> = ({ title, tooltip }
   const valuesTooltip = createRef<HTMLDivElement>();
 
   return (
-    <span>
+    <TableTitle>
       {title}
       <Tooltip targetRef={valuesTooltip}>{tooltip}</Tooltip>
       <Icon
@@ -33,7 +33,7 @@ const ColumnTitle: VFC<{ title: string; tooltip: string }> = ({ title, tooltip }
         size={18}
         color="var(--color-primary-500)"
       />
-    </span>
+    </TableTitle>
   );
 };
 
@@ -186,8 +186,21 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({ className }) => {
   );
 };
 
+const TableTitle = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: var(--prop-gap);
+
+  @media screen and (min-width: 1024px) {
+    margin-bottom: 0;
+  }
+`;
+
 const AddButtonWrapper = styled.div`
-  margin-top: var(--prop-gap);
+  @media screen and (min-width: 1024px) {
+    margin-top: var(--prop-gap);
+  }
 
   & > button.unique-button.ghost {
     background-color: transparent;
@@ -201,47 +214,63 @@ export const AttributesTable = styled(AttributesTableComponent)`
   margin-bottom: calc(var(--prop-gap) * 2.5);
 
   .unique-table {
-    .unique-table-header {
-      .table-header-cell {
-        & > span {
-          flex: 1 1 auto;
-          padding-left: calc(var(--prop-gap) / 2);
-          padding-right: calc(var(--prop-gap) / 2);
-
-          .icon {
-            display: inline-block;
-            vertical-align: middle;
-            margin: -0.125em 0 0 0.2em;
-          }
-        }
-      }
-    }
-
     .unique-table-data-row {
-      & > div {
-        padding-top: calc(var(--prop-gap) / 4);
-        padding-bottom: calc(var(--prop-gap) / 4);
-      }
+      padding-top: calc(var(--prop-gap) / 4);
+      padding-bottom: calc(var(--prop-gap) / 4);
     }
 
-    .unique-input-text {
-      &,
-      .input-wrapper {
-        padding: 0;
-      }
+    .unique-input-text,
+    .input-wrapper,
+    .unique-select,
+    .select-wrapper,
+    .unique-button {
+      padding: 0;
     }
 
     .unique-select {
       width: 100%;
-
-      &,
-      .select-wrapper {
-        padding: 0;
-      }
     }
+  }
 
-    .unique-button {
-      padding: 0;
+  .mobile-table {
+    .mobile-table-row {
+      border-bottom: 1px solid #ececec;
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: calc(var(--prop-gap) * 2);
+
+      &:last-child {
+        margin-bottom: calc(var(--prop-gap) * 1.5);
+      }
+
+      & > .mobile-table-cell {
+        box-sizing: border-box;
+        flex: 0 0 100%;
+        padding-bottom: calc(var(--prop-gap) * 1.5);
+
+        &:nth-child(2),
+        &:nth-child(3) {
+          flex: 0 1 50%;
+          width: 50%;
+        }
+
+        &:nth-child(2) {
+          padding-right: calc(var(--prop-gap) / 4);
+        }
+
+        &:nth-child(3) {
+          padding-left: calc(var(--prop-gap) / 4);
+        }
+
+        &:last-child {
+          display: block;
+
+          .unique-button {
+            height: auto;
+            padding: 0;
+          }
+        }
+      }
     }
   }
 `;
