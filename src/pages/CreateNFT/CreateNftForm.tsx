@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, memo, VFC, useCallback } from 'react';
+import { FC, useCallback, useMemo, VFC } from 'react';
 import classNames from 'classnames';
 import {
   Avatar,

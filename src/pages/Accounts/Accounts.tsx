@@ -180,7 +180,7 @@ const CaptionText: FC = () => {
               rel="noreferrer"
               target="_blank"
             >
-              SubScan
+              Subscan
               <Icon size={16} name="arrow-up-right" color="currentColor" />
             </ExternalLink>
           </span>
