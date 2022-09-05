@@ -2,7 +2,7 @@ import { VFC } from 'react';
 import { Outlet, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { PagePaperNoPadding } from '@app/components';
+import { PagePaper } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 
@@ -21,7 +21,11 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const isChildExist = useOutlet();
 
   return (
-    <PagePaperNoPadding className={classNames('data-grid', 'my-collections', className)}>
+    <PagePaper
+      noPadding
+      flexLayout="column"
+      className={classNames('my-collections', className)}
+    >
       {!isChildExist ? (
         <>
           <MyCollectionsFilter />
@@ -35,7 +39,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       ) : (
         <Outlet />
       )}
-    </PagePaperNoPadding>
+    </PagePaper>
   );
 };
 

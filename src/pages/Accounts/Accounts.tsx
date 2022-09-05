@@ -18,7 +18,7 @@ import { AllBalancesResponse } from '@app/types/Api';
 import {
   AccountsGroupButton,
   Confirm,
-  PagePaperNoPadding,
+  PagePaper,
   Table,
   TransferBtn,
 } from '@app/components';
@@ -408,8 +408,10 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
 
   return (
     <>
-      <PagePaperNoPadding
-        className={classNames('data-grid', 'manage-accounts', className)}
+      <PagePaper
+        noPadding
+        className={classNames('manage-accounts', className)}
+        flexLayout="column"
       >
         <AccountsPageHeader>
           {/* TODO: uncomment when AccountsTotalBalance will be ready
@@ -441,7 +443,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
             }
           />
         </AccountsPageContent>
-      </PagePaperNoPadding>
+      </PagePaper>
       {isOpenModal && (
         <SendFunds
           chain={currentChain}
