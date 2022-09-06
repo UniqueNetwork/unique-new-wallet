@@ -1,23 +1,22 @@
+import { Layout } from '@unique-nft/ui-kit';
 import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Layout } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { usePageSettingContext } from '@app/context';
-import { useFooter } from '@app/hooks';
 
 import { Header } from '../';
+import { Footer } from '../Footer/Footer';
 
 export const PageLayout: FC = () => {
   const { breadcrumbs, heading } = usePageSettingContext();
-  const footer = useFooter();
 
   return (
     <Wrapper className="page-layout">
       <LayoutStyled>
         <Layout
           header={<Header />}
-          footer={<div dangerouslySetInnerHTML={{ __html: footer }} />}
+          footer={<Footer />}
           breadcrumbs={breadcrumbs}
           heading={heading || undefined}
         >
@@ -29,12 +28,6 @@ export const PageLayout: FC = () => {
 };
 
 export const Wrapper = styled.div`
-  footer {
-    .footer__text {
-      max-width: 100%;
-    }
-  }
-
   .unique-layout__content {
     width: 100%;
     margin: 0 auto;
@@ -118,24 +111,17 @@ const LayoutStyled = styled.div`
     }
   }
 
-  footer {
-    @media (max-width: 568px) {
-      height: unset;
-    }
-    & > div {
+  .unique-layout footer {
+    display: none;
+
+    @media screen and (min-width: 1280px) {
       display: flex;
-      align-items: center;
-      height: 64px;
-      justify-content: space-between;
+      justify-content: center;
       width: 100%;
-      @media (max-width: 568px) {
-        padding: var(--prop-gap) 0;
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      margin-top: 40px;
+      padding: 0;
     }
   }
-
   .unique-tabs-labels {
     flex-wrap: nowrap;
   }

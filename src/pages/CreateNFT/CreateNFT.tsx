@@ -20,10 +20,11 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { config } from '@app/config';
 
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
-import { AttributeView, Option, TokenForm, FilledTokenForm } from './types';
+import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
 
 interface ICreateNFTProps {
   className?: string;
@@ -44,7 +45,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [params] = useSearchParams();
   const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
-  const { error, info } = useNotifications();
+  const { error, warning, info } = useNotifications();
   const mapper = useTokenFormMapper();
 
   const { getFee, fee, feeFormatted, feeError, isFeeError } = useExtrinsicFee(
@@ -70,16 +71,31 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const {
     control,
     reset,
+    handleSubmit,
     formState: { isValid },
   } = tokenForm;
 
   const formValues = useWatch({ control });
   const [debouncedFormValues] = useDebounce(formValues, 500);
+
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
   });
   const { data: collection } = useCollectionQuery(formValues.collectionId ?? 0);
+
+  const isOldCollection = collection?.schema?.schemaName === '_old_';
+
+  const mintingButtonTooltip = (() => {
+    if (isBalanceInsufficient) {
+      return NO_BALANCE_MESSAGE;
+    }
+    if (isOldCollection) {
+      return config.oldCollectionMessage;
+    }
+
+    return undefined;
+  })();
 
   const tokenAttributes: AttributeView[] | undefined = useMemo(() => {
     const attrsSchema = collection?.schema?.attributesSchema;
@@ -125,9 +141,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   );
 
   useEffect(() => {
+    if (isOldCollection) {
+      warning(config.oldCollectionMessage);
+    }
+  }, [collection]);
+
+  useEffect(() => {
     const { address, collectionId } = debouncedFormValues;
 
-    if (collectionId && address && isValid) {
+    if (collectionId && address && isValid && !isOldCollection) {
       getFee({ token: mapper(debouncedFormValues as FilledTokenForm) });
     }
   }, [debouncedFormValues]);
@@ -152,16 +174,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
   }, [isFeeError]);
 
-  const confirmFormHandler = (closable?: boolean) => {
-    const { address, collectionId } = debouncedFormValues;
-
-    if (address && collectionId && isValid) {
+  const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
+    if (isValid) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
       setClosable(!!closable);
 
       signAndSubmitExtrinsic({
-        token: mapper(debouncedFormValues as FilledTokenForm),
+        token: mapper(tokenForm as FilledTokenForm),
       });
     }
   };
@@ -197,15 +217,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               <MintingBtn
                 role="primary"
                 title="Confirm and create more"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid || isBalanceInsufficient}
-                onClick={() => confirmFormHandler()}
+                tooltip={mintingButtonTooltip}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
               <MintingBtn
                 title="Confirm and close"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid || isBalanceInsufficient}
-                onClick={() => confirmFormHandler(true)}
+                tooltip={mintingButtonTooltip}
+                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
               />
             </ButtonGroup>
           </FormWrapper>

@@ -21,3 +21,4 @@ export * from './ActionBtn';
 export * from './TooltipWrapper';
 export * from './IdentityIcon';
 export * from './TokenLink';
+export * from './ErrorPage';
