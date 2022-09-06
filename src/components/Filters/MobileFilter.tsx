@@ -48,6 +48,14 @@ export const MobileFilters = ({
     setSearch(searchText);
   }, [searchText]);
 
+  useEffect(() => {
+    document.body.style.overflow = isVisible ? 'hidden' : '';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  });
+
   return (
     <>
       <MobileFilterActionsWrapper>
@@ -152,12 +160,13 @@ const FilterControls = styled.div`
 `;
 
 const MobileFilterModal = styled.div`
+  box-sizing: border-box;
   display: none;
   position: fixed;
   background-color: var(--color-additional-light);
-  padding: calc(var(--prop-gap) * 1.5);
-  height: calc(100vh - 180px);
-  top: 80px;
+  padding: 80px calc(var(--prop-gap) * 1.5) 60px;
+  top: 0;
+  bottom: 0;
   right: 0;
   left: 0;
   overflow-y: auto;
@@ -167,7 +176,7 @@ const MobileFilterModal = styled.div`
   }
 
   .back-button {
-    padding: 0px;
+    padding: 0;
   }
 `;
 
