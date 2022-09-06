@@ -49,6 +49,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const deviceSize = useDeviceSize();
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
@@ -224,7 +225,17 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       {deviceSize >= DeviceSize.lg ? (
         <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
       ) : (
-        <PreviewBar parent={root as Element}>
+        <PreviewBar
+          buttons={[
+            <Button
+              title={isDrawerOpen ? 'Back' : 'Preview'}
+              key="toggleDrawer"
+              onClick={() => setDrawerOpen(!isDrawerOpen)}
+            />,
+          ]}
+          isOpen={isDrawerOpen}
+          parent={root as Element}
+        >
           <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
         </PreviewBar>
       )}

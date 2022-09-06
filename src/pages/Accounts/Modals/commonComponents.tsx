@@ -57,23 +57,10 @@ export const ButtonGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  gap: var(--prop-gap);
 
   @media screen and (min-width: 320px) {
     flex-grow: 0;
     flex-wrap: nowrap;
-  }
-
-  .unique-button {
-    margin-top: var(--prop-gap);
-
-    @media screen and (min-width: 320px) {
-      margin-top: 0;
-    }
-
-    & + .unique-button {
-      @media screen and (min-width: 320px) {
-        margin-left: var(--prop-gap);
-      }
-    }
   }
 `;
