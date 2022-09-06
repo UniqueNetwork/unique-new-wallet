@@ -164,7 +164,7 @@ const MobileFilterModal = styled.div`
   display: none;
   position: fixed;
   background-color: var(--color-additional-light);
-  padding: 80px calc(var(--prop-gap) * 1.5) 60px;
+  padding: 110px calc(var(--prop-gap) * 1.5) 60px;
   top: 0;
   bottom: 0;
   right: 0;
@@ -193,5 +193,8 @@ const FiltersWrapper = styled.div`
   .filter-input {
     max-width: 100%;
     width: unset;
+  }
+  .collections-filter {
+    margin: 0;
   }
 `;
