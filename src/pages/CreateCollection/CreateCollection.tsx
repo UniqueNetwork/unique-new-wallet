@@ -173,6 +173,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                   size: 12,
                 }}
                 title="Next step"
+                disabled={!isValid}
                 onClick={handleSubmit(onNextStep)}
               />
             )}
@@ -243,6 +244,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   );
 };
 
-export const CreateCollection = withPageTitle({ header: 'Create a collection' })(
-  CreateCollectionComponent,
-);
+export const CreateCollection = withPageTitle({
+  header: 'Create a collection',
+  backLink: ROUTE.MY_COLLECTIONS,
+})(CreateCollectionComponent);
