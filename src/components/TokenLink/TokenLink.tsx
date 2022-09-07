@@ -9,7 +9,6 @@ export interface ITokenLinkProps {
   alt?: string;
   title: ReactNode;
   image?: string;
-  link?: string;
   meta?: ReactNode;
   onTokenClick?: () => void;
   onMetaClick?: () => void;
@@ -31,7 +30,9 @@ const TokenLinkTitle = styled(Text).attrs({ appearance: 'block', size: 'l' })`
 
 const TokenLinkImageWrapper = styled.div`
   overflow: hidden;
+  border-radius: var(--prop-border-radius);
   position: relative;
+  background-color: var(--color-blue-grey-100);
   margin-bottom: calc(var(--prop-gap) / 2);
   transform: translate3d(0, 0, 0);
 
@@ -42,7 +43,6 @@ const TokenLinkImageWrapper = styled.div`
   }
 
   & > img {
-    border-radius: var(--prop-border-radius);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -56,7 +56,7 @@ const TokenLinkImageWrapper = styled.div`
       width: 100%;
       height: 100%;
       transform: none;
-      object-fit: cover;
+      object-fit: contain;
     }
 
     &._broken {
@@ -76,7 +76,6 @@ export const TokenLink = ({
   alt,
   image,
   title,
-  link,
   meta,
   onTokenClick,
   onMetaClick,
