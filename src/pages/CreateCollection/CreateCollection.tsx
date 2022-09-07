@@ -1,23 +1,31 @@
 import { useEffect, useMemo, useState } from 'react';
-import classNames from 'classnames';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Text, Button, useNotifications } from '@unique-nft/ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import styled from 'styled-components';
+import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
+import { Button, Text, useNotifications } from '@unique-nft/ui-kit';
 
-import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
+import {
+  DeviceSize,
+  useAccounts,
+  useApi,
+  useBalanceInsufficient,
+  useDeviceSize,
+} from '@app/hooks';
 import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
-  Alert,
   CollectionSidebar,
   CollectionStepper,
   Confirm,
   MintingBtn,
   StatusTransactionModal,
 } from '@app/components';
-import { usePageSettingContext } from '@app/context/PageSettingsContext';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { PreviewBar } from '@app/pages/components/PreviewBar';
 
 import { NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -29,11 +37,18 @@ interface CreateCollectionProps {
   className?: string;
 }
 
-export const CreateCollection = ({ className }: CreateCollectionProps) => {
+const WrapperContentStyled = styled(WrapperContent)`
+  margin-bottom: calc(var(--prop-gap) * 2.5);
+
+  @media screen and (min-width: 1025px) {
+    margin-bottom: 0;
+  }
+`;
+
+const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
+  const deviceSize = useDeviceSize();
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
-
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
@@ -130,11 +145,6 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
   const isFirstStep = currentStep - 1 === 0;
   const isLastStep = currentStep === tabsUrls.length;
 
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('Create a collection');
-  }, []);
-
   const isolatedCollectionForm = useMemo(
     () => (
       <FormProvider {...collectionForm}>
@@ -144,15 +154,15 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
+  const root = document.getElementById('root');
+
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
-      <WrapperContent>
+      <WrapperContentStyled>
         <FormWrapper>
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
-          <Alert type="warning">
-            A fee of ~{feeFormatted} can be applied to the transaction
-          </Alert>
+          <FeeInformationTransaction fee={feeFormatted} />
           <ButtonGroup>
             {!isLastStep && (
               <MintingBtn
@@ -210,8 +220,18 @@ export const CreateCollection = ({ className }: CreateCollectionProps) => {
             description="Creating collection"
           />
         </FormWrapper>
-      </WrapperContent>
-      <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+      </WrapperContentStyled>
+      {deviceSize >= DeviceSize.lg ? (
+        <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+      ) : (
+        <PreviewBar parent={root as Element}>
+          <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+        </PreviewBar>
+      )}
     </MainWrapper>
   );
 };
+
+export const CreateCollection = withPageTitle({ header: 'Create a collection' })(
+  CreateCollectionComponent,
+);

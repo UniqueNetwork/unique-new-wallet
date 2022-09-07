@@ -1,81 +1,57 @@
 import React from 'react';
-import { Text, Icon, useNotifications } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
+import { Icon, useNotifications } from '@unique-nft/ui-kit';
 
 import { shortcutText } from '@app/utils';
 import { IdentityIcon } from '@app/components';
 
 interface AccountCardProps {
   accountName: string;
+  chainLogo?: string;
+  accountType?: string;
   accountAddress: string;
   isShort?: boolean;
   canCopy?: boolean;
   hideAddress?: boolean;
 }
 
-const AccountCard = ({
-  accountName,
-  accountAddress = '',
-  isShort = false,
-  canCopy = true,
-  hideAddress = false,
-}: AccountCardProps) => {
-  const address = isShort ? shortcutText(accountAddress) : accountAddress;
-  const { info } = useNotifications();
-
-  const onCopyAddress = (account: string) => () => {
-    info(
-      <NotificationInfo>
-        Address <i>{account}</i>
-        <br />
-        successfully copied
-      </NotificationInfo>,
-    );
-
-    navigator.clipboard.writeText(account);
-  };
-
-  return (
-    <>
-      <IdentityIcon address={address} />
-      <AccountInfoWrapper>
-        <Text>
-          {accountName}
-          {/* TODO: no functionality
-           <ActionButton>
-            <Icon name="pencil" size={16} />
-          </ActionButton> */}
-        </Text>
-        {!hideAddress && (
-          <AddressRow>
-            {address}
-            {canCopy && (
-              <ActionButton onClick={onCopyAddress(accountAddress)}>
-                <Icon color="currentColor" name="copy" size={16} />
-              </ActionButton>
-            )}
-          </AddressRow>
-        )}
-      </AccountInfoWrapper>
-    </>
-  );
-};
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const NotificationInfo = styled.p`
   word-break: break-all;
 `;
 
 const AccountInfoWrapper = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  width: calc(100% - 24px);
   padding-left: calc(var(--prop-gap) / 2);
 
-  span {
+  .truncate-text {
     overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 2rem;
     white-space: nowrap;
+    text-overflow: ellipsis;
   }
+`;
+
+const AccountInfoText = styled.span`
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-additional-dark);
+`;
+
+const AccountInfoParams = styled.span`
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  margin-left: 0.25em;
 `;
 
 // TODO: no functionality
@@ -115,5 +91,68 @@ const ActionButton = styled.button.attrs({ type: 'button' })`
     display: block;
   }
 `;
+
+const AccountCard = ({
+  accountName,
+  accountType,
+  accountAddress = '',
+  isShort = false,
+  canCopy = true,
+  chainLogo,
+  hideAddress = false,
+}: AccountCardProps) => {
+  const address = isShort ? shortcutText(accountAddress) : accountAddress;
+  const { info, error } = useNotifications();
+
+  const onCopyAddress = (account: string) => () => {
+    if (account) {
+      info(
+        <NotificationInfo>
+          Address <i>{account}</i>
+          <br />
+          successfully copied
+        </NotificationInfo>,
+      );
+
+      navigator.clipboard.writeText(account);
+    } else {
+      error(<NotificationInfo>Address not found</NotificationInfo>);
+    }
+  };
+
+  return (
+    <Wrapper>
+      {chainLogo ? (
+        <Icon name={chainLogo} size={24} />
+      ) : (
+        <IdentityIcon address={address} />
+      )}
+      <AccountInfoWrapper>
+        <AccountInfoText>
+          <span className="truncate-text">{accountName}</span>
+          {accountType && (
+            <AccountInfoParams>
+              ({accountType})
+              {/* TODO: no functionality
+              <ActionButton>
+                <Icon name="pencil" size={16} />
+              </ActionButton> */}
+            </AccountInfoParams>
+          )}
+        </AccountInfoText>
+        {!hideAddress && (
+          <AddressRow>
+            <span className="truncate-text">{address}</span>
+            {canCopy && (
+              <ActionButton onClick={onCopyAddress(accountAddress)}>
+                <Icon color="currentColor" name="copy" size={16} />
+              </ActionButton>
+            )}
+          </AddressRow>
+        )}
+      </AccountInfoWrapper>
+    </Wrapper>
+  );
+};
 
 export default AccountCard;

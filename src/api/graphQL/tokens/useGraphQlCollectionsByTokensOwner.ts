@@ -7,6 +7,7 @@ const COLLECTIONS_BY_TOKENS_OWNER_QUERY = gql`
     tokens(
       where: { _or: [{ owner: { _eq: $owner } }, { owner_normalized: { _eq: $owner } }] }
       distinct_on: collection_id
+      limit: 1000
     ) {
       count
       data {

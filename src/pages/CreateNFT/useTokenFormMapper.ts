@@ -37,6 +37,7 @@ export const useTokenFormMapper = () => {
         image: {
           ipfsCid: formData.imageIpfsCid,
         },
+        encodedAttributes: {},
       },
     };
 

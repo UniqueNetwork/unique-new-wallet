@@ -78,23 +78,23 @@ const NFTsListComponent = ({
             {tokens.map(
               ({ token_id, token_name, collection_name, collection_id, image }) => (
                 <TokenLink
-                  title={token_name}
+                  alt={token_name}
                   key={`${collection_id}-${token_id}`}
                   link={`${collection_name} [id ${collection_id}]`}
                   image={image?.fullUrl || undefined}
-                  meta={
-                    <Text appearance="block" color="grey-500" size="s">
-                      {collection_name} [id {collection_id}]
-                    </Text>
+                  title={
+                    <>
+                      <Text appearance="block" size="l">
+                        {token_name}
+                      </Text>
+                      <Text appearance="block" weight="light" size="s">
+                        {collection_name} [id {collection_id}]
+                      </Text>
+                    </>
                   }
                   onTokenClick={() =>
                     navigate(
                       `/${currentChain?.network}/token/${collection_id}/${token_id}`,
-                    )
-                  }
-                  onMetaClick={() =>
-                    navigate(
-                      `/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection_id}`,
                     )
                   }
                 />

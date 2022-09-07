@@ -31,7 +31,7 @@ export const useDeviceSize = (): DeviceSize => {
     if (windowWidth && windowWidth < 568) {
       return DeviceSize.xs;
     }
-    if (windowWidth && windowWidth < 768) {
+    if (windowWidth && windowWidth < 769) {
       return DeviceSize.sm;
     }
     if (windowWidth && windowWidth < 1024) {

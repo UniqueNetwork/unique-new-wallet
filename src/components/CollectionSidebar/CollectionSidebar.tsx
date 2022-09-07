@@ -8,13 +8,14 @@ import { CollectionForm } from '@app/pages/CreateCollection/types';
 
 const CollectionSidebarComponent: VFC<{
   collectionForm: CollectionForm;
-}> = ({ collectionForm }) => {
+  className?: string;
+}> = ({ collectionForm, className }) => {
   const { name, description, symbol, coverPictureIpfsCid, attributes } = collectionForm;
 
   const attributesInline = attributes?.map<string>((attr) => attr.name || '');
 
   return (
-    <WrapperSidebar>
+    <WrapperSidebar className={className}>
       <SidebarRow>
         <Heading size="3">Collection preview</Heading>
         <Card

@@ -1,10 +1,10 @@
-import { useEffect, VFC } from 'react';
+import { VFC } from 'react';
 import { Outlet, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { usePageSettingContext } from '@app/context';
-import { PagePaperNoPadding } from '@app/components';
+import { PagePaper } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { useMyCollectionsContext } from './context';
 import { MyCollectionsFilter, MyCollectionsList } from './components';
@@ -16,18 +16,16 @@ interface MyCollectionsComponentProps {
 export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
 }) => {
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
 
   const isChildExist = useOutlet();
 
-  useEffect(() => {
-    setPageBreadcrumbs({ options: [] });
-    setPageHeading('My collections');
-  }, []);
-
   return (
-    <PagePaperNoPadding className={classNames('data-grid', 'my-collections', className)}>
+    <PagePaper
+      noPadding
+      flexLayout="column"
+      className={classNames('my-collections', className)}
+    >
       {!isChildExist ? (
         <>
           <MyCollectionsFilter />
@@ -41,12 +39,16 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       ) : (
         <Outlet />
       )}
-    </PagePaperNoPadding>
+    </PagePaper>
   );
 };
 
-export const MyCollections = () => (
+const MyCollectionsWrapped = () => (
   <MyCollectionsWrapper>
     <MyCollectionsComponent />
   </MyCollectionsWrapper>
+);
+
+export const MyCollections = withPageTitle({ header: 'My collections' })(
+  MyCollectionsWrapped,
 );

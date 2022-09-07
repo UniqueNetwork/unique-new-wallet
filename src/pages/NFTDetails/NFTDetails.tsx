@@ -1,16 +1,18 @@
-import React, { useContext, useEffect, useMemo, useState, VFC } from 'react';
-import classNames from 'classnames';
-import styled from 'styled-components';
-import { Avatar, Loader } from '@unique-nft/ui-kit';
+import { useContext, useMemo, useState, VFC } from 'react';
 import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import classNames from 'classnames';
 import { encodeAddress } from '@polkadot/util-crypto';
+import { Avatar, Loader } from '@unique-nft/ui-kit';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { PagePaper } from '@app/components';
+import { ErrorPage, PagePaper } from '@app/components';
 import { usePageSettingContext } from '@app/context';
 import AccountContext from '@app/account/AccountContext';
 import { useGraphQlTokenById } from '@app/api/graphQL/tokens';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { Attribute, Divider, NFTDetailsHeader, TokenInformation } from './components';
 
@@ -18,23 +20,9 @@ interface NFTDetailsProps {
   className?: string;
 }
 
-const FlexibleAvatar: VFC<{ url?: string }> = ({ url }) => {
-  const size = useDeviceSize();
-  const sides: Record<keyof typeof DeviceSize | string, string> = {
-    xl: '536px',
-    lg: '536px',
-    md: '224px',
-    sm: '100%',
-    xs: '100%',
-  };
-
-  return <Avatar size={sides[DeviceSize[size]]} src={url} />;
-};
-
 const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
   const { collectionId = '', tokenId = '' } = useParams();
   const { selectedAccount } = useContext(AccountContext);
-  const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
   const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
 
   const { token, loading, refetch } = useGraphQlTokenById(
@@ -67,74 +55,105 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
     setCurrentModal('none');
   };
 
-  useEffect(() => {
-    setPageBreadcrumbs({
-      options: [
-        {
-          title: '🡠 back',
-          link: '/my-tokens/nft',
-        },
-      ],
-    });
-    setPageHeading('');
-  }, []);
-
   return (
-    <PagePaper className={classNames(className, 'nft-page')}>
-      {loading ? (
-        <div className="nft-page__loader">
-          <Loader size="middle" />
-        </div>
+    <PagePaper
+      className={classNames(className, 'nft-page', {
+        _empty: !token && !loading,
+      })}
+    >
+      {!loading && !token ? (
+        <ErrorPage />
       ) : (
         <>
-          <FlexibleAvatar url={token?.image?.fullUrl || undefined} />
-          <div className="nft-page__info-container">
-            <NFTDetailsHeader
-              title={token?.token_name}
-              collectionId={token?.collection_id}
-              collectionName={token?.collection_name}
-              ownerAddress={token?.owner}
-              isCurrentAccountOwner={isCurrentAccountOwner}
-              onShowModal={setCurrentModal}
-            />
-            <Divider />
-            <TokenInformation attributes={attributes} />
-          </div>
+          {loading ? (
+            <div className="nft-page__loader">
+              <Loader size="middle" />
+            </div>
+          ) : (
+            <>
+              <Avatar
+                fit="contain"
+                className="nft-page__avatar"
+                src={token?.image?.fullUrl || undefined}
+              />
+              <div className="nft-page__info-container">
+                <NFTDetailsHeader
+                  title={token?.token_name}
+                  collectionId={token?.collection_id}
+                  collectionName={token?.collection_name}
+                  ownerAddress={token?.owner}
+                  isCurrentAccountOwner={isCurrentAccountOwner}
+                  onShowModal={setCurrentModal}
+                />
+                <Divider />
+                <TokenInformation attributes={attributes} />
+              </div>
+            </>
+          )}
+          <NFTModals
+            modalType={currentModal}
+            token={token}
+            onComplete={onComplete}
+            onClose={onModalClose}
+          />
         </>
       )}
-      <NFTModals
-        modalType={currentModal}
-        token={token}
-        onComplete={onComplete}
-        onClose={onModalClose}
-      />
     </PagePaper>
   );
 };
 
-export const NFTDetails = styled(NFTDetailsComponent)`
+const NFTDetailsStyled = styled(NFTDetailsComponent)`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   gap: calc(var(--prop-gap) * 1.5);
 
-  .nft-page {
-    &__loader {
-      margin: auto;
-    }
-
-    &__avatar {
-      margin-right: calc(var(--prop-gap) * 2);
-    }
-
-    &__info-container {
-      flex-grow: 1;
-      min-width: 0;
-    }
+  @media (max-width: 1023.98px) {
+    padding: 0;
   }
 
   @media (max-width: 767.98px) {
     flex-direction: column;
     align-items: stretch;
   }
+
+  &:not(._empty) {
+    align-items: flex-start;
+  }
+
+  .nft-page {
+    &__loader {
+      margin: auto;
+    }
+
+    &__avatar-container {
+      position: relative;
+      max-width: 536px;
+      height: 0;
+    }
+
+    &__avatar {
+      flex: 4 0 0%;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+
+      @media (min-width: 768px) {
+        max-width: 536px;
+        margin-right: calc(var(--prop-gap) * 1.5);
+      }
+    }
+
+    &__info-container {
+      flex: 5 0 0%;
+
+      /* @media (min-width: 768px) {
+        min-width: 472px;
+      } */
+    }
+  }
 `;
+
+export const NFTDetails = withPageTitle({
+  backLink: `${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+})(NFTDetailsStyled);
