@@ -29,6 +29,7 @@ interface NFTsListComponentProps {
   }[];
   onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
+  isPagination: boolean;
 }
 
 const renderItemsCount = (count = 0) => (
@@ -46,6 +47,7 @@ const NFTsListComponent = ({
   chips,
   onPageChange,
   onChipsReset,
+  isPagination,
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
@@ -105,12 +107,14 @@ const NFTsListComponent = ({
       {!!tokensCount && (
         <div className="nft-list__footer">
           {renderItemsCount(tokensCount)}
-          <Pagination
-            withIcons={true}
-            current={page}
-            size={tokensCount}
-            onPageChange={onPageChange}
-          />
+          {isPagination && (
+            <Pagination
+              withIcons={true}
+              current={page}
+              size={tokensCount}
+              onPageChange={onPageChange}
+            />
+          )}
         </div>
       )}
     </div>
