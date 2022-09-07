@@ -24,6 +24,7 @@ export const FormWrapper = styled.div`
   }
 
   .unique-select,
+  .unique-suggestion-wrapper,
   .unique-suggestion,
   .suggest-input,
   .unique-input-text,
@@ -69,6 +70,11 @@ export const FormRowEmpty = styled.div`
 `;
 
 export const UploadWidget = styled.div`
+  .upload-container {
+    position: relative;
+    display: inline-block;
+  }
+
   .unique-text {
     &:first-of-type {
       margin-bottom: calc(var(--prop-gap) / 4);
