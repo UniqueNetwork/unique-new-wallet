@@ -12,7 +12,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { useApi } from '@app/hooks';
-import { ROUTE } from '@app/routes';
 import { NoItems, TokenLink } from '@app/components';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { Token } from '@app/api/graphQL/types';
@@ -80,7 +79,6 @@ const NFTsListComponent = ({
                 <TokenLink
                   alt={token_name}
                   key={`${collection_id}-${token_id}`}
-                  link={`${collection_name} [id ${collection_id}]`}
                   image={image?.fullUrl || undefined}
                   title={
                     <>

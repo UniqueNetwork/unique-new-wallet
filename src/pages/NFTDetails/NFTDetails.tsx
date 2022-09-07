@@ -5,26 +5,22 @@ import classNames from 'classnames';
 import { encodeAddress } from '@polkadot/util-crypto';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
 
+import { DeviceSize, useDeviceSize } from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
 import { useGraphQlTokenById } from '@app/api/graphQL/tokens';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { ErrorPage, PagePaper } from '@app/components';
-import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
 
-import {
-  Attribute,
-  CollectionInformation,
-  Divider,
-  NFTDetailsHeader,
-  TokenInformation,
-} from './components';
+import { Attribute, Divider, NFTDetailsHeader, TokenInformation } from './components';
 
 interface NFTDetailsProps {
   className?: string;
 }
 
 const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
+  const deviseSize = useDeviceSize();
   const { collectionId = '', tokenId = '' } = useParams();
   const { selectedAccount } = useContext(AccountContext);
   const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
@@ -61,6 +57,7 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
 
   return (
     <PagePaper
+      noPadding={deviseSize <= DeviceSize.md}
       className={classNames(className, 'nft-page', {
         _empty: !token && !loading,
       })}
@@ -76,23 +73,19 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
           ) : (
             <>
               <div className="nft-page__avatar">
-                <Avatar size={536} src={token?.image?.fullUrl || undefined} />
+                <Avatar fit="contain" src={token?.image?.fullUrl || undefined} />
               </div>
               <div className="nft-page__info-container">
                 <NFTDetailsHeader
                   title={token?.token_name}
+                  collectionId={token?.collection_id}
+                  collectionName={token?.collection_name}
                   ownerAddress={token?.owner}
                   isCurrentAccountOwner={isCurrentAccountOwner}
                   onShowModal={setCurrentModal}
                 />
                 <Divider />
                 <TokenInformation attributes={attributes} />
-                <Divider />
-                <CollectionInformation
-                  title={token?.collection_name}
-                  avatar={token?.collection_cover}
-                  description={token?.collection_description}
-                />
               </div>
             </>
           )}
@@ -110,8 +103,12 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
 
 const NFTDetailsStyled = styled(NFTDetailsComponent)`
   display: flex;
-  flex-direction: row;
-  min-height: 500px;
+  flex-wrap: wrap;
+  gap: calc(var(--prop-gap) * 1.5);
+
+  @media screen and (min-width: 768px) {
+    flex-wrap: nowrap;
+  }
 
   &:not(._empty) {
     align-items: flex-start;
@@ -123,11 +120,63 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
     }
 
     &__avatar {
-      margin-right: calc(var(--prop-gap) * 2);
+      overflow: hidden;
+      border-radius: calc(var(--prop-border-radius) * 2);
+      position: relative;
+      flex: 0 0 100%;
+      max-width: 100%;
+      background-color: var(--color-blue-grey-100);
+      transform: translateZ(0);
+
+      @media screen and (min-width: 768px) {
+        flex: 0 0 30%;
+        max-width: 536px;
+      }
+
+      @media screen and (min-width: 1024px) {
+        flex: 0 0 34%;
+      }
+
+      @media screen and (min-width: 1280px) {
+        flex: 3 0 0;
+      }
+
+      &::before {
+        display: block;
+        padding-bottom: 100%;
+        content: '';
+      }
+
+      & > img {
+        border-radius: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        transform: translate3d(-50%, -50%, 0);
+      }
     }
 
     &__info-container {
-      flex-grow: 1;
+      flex: 0 0 100%;
+      max-width: 100%;
+
+      @media screen and (min-width: 768px) {
+        flex: 1 1 auto;
+        max-width: 70%;
+      }
+
+      @media screen and (min-width: 1024px) {
+        max-width: 66%;
+      }
+
+      @media screen and (min-width: 1280px) {
+        flex: 4.5 0 0;
+        max-width: none;
+      }
     }
   }
 `;
