@@ -1,0 +1,20 @@
+.account-card {
+  display: flex;
+  align-items: center;
+  column-gap: calc(var(--prop-gap) / 2);
+  .account-card-content {
+    display: flex;
+    flex-direction: column;
+    & > .unique-text {
+      max-width: 130px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .account-card-address {
+      display: flex;
+      align-items: center;
+      column-gap: calc(var(--prop-gap) / 4);
+    }
+  }
+}

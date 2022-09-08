@@ -1,4 +1,4 @@
-import { AccountsManager, Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
+import { Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
@@ -16,6 +16,7 @@ import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
 
+import { AccountsManager } from '../AccountsManager';
 import { Footer } from '../Footer/Footer';
 import MenuLink from './MenuLink';
 
