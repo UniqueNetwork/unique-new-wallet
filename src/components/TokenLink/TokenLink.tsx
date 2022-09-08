@@ -20,6 +20,7 @@ const TokenLinkWrapper = styled.div`
   font-family: var(--prop-font-family);
   font-size: var(--prop-font-size);
   font-weight: var(--prop-font-weight);
+  word-break: break-all;
   cursor: pointer;
 `;
 

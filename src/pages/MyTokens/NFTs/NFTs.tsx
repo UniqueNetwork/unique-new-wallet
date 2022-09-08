@@ -1,25 +1,17 @@
-import classNames from 'classnames';
 import { useContext, useMemo, VFC } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 
 import AccountContext from '@app/account/AccountContext';
 import {
   useGraphQlCollectionsByTokensOwner,
   useGraphQlOwnerTokens,
 } from '@app/api/graphQL/tokens';
-import { MintingBtn } from '@app/components';
+import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
+import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { PagePaper } from '@app/components';
 import { MobileFilters } from '@app/components/Filters/MobileFilter';
-import { useApi } from '@app/hooks';
 import { CollectionsFilter, TypeFilter } from '@app/pages';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
-import {
-  InnerContent,
-  InnerSidebar,
-  InnerWrapper,
-} from '@app/pages/components/PageComponents';
-import { ROUTE } from '@app/routes';
-import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
+// import {InnerContent, InnerSidebar, InnerWrapper } from '@app/pages/components/PageComponents';
 
 import { defaultLimit, defaultTypesFilters } from '../constants';
 import { useNFTsContext } from '../context';
@@ -29,8 +21,7 @@ export interface NFTsComponentProps {
 }
 
 export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
-  const navigate = useNavigate();
-  const { currentChain } = useApi();
+  const deviceSize = useDeviceSize();
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
   const {
@@ -108,29 +99,18 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   };
 
   return (
-    <InnerWrapperStyled className={classNames('my-tokens-nft', className)}>
-      <InnerSidebar>
-        <TypeFilter defaultTypes={defaultTypesFilters} />
-        <CollectionsFilter collections={defaultCollections} />
-      </InnerSidebar>
-      <MintingBtn
-        iconLeft={{
-          name: 'plus',
-          size: 12,
-          color: 'currentColor',
-        }}
-        role="primary"
-        title="Create an NFT"
-        disabled={!Number(selectedAccount?.collectionsTotal)}
-        className="minitng-btn-mobile"
-        tooltip={
-          !Number(selectedAccount?.collectionsTotal)
-            ? 'Please create a collection first'
-            : null
+    <>
+      <PagePaper.Layout
+        className={className}
+        sidebar={
+          collectionsLoading && (
+            <>
+              <TypeFilter defaultTypes={defaultTypesFilters} />
+              <CollectionsFilter collections={defaultCollections} />
+            </>
+          )
         }
-        onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
-      />
-      <InnerContent>
+      >
         <NFTsTemplateList
           tokens={tokens}
           isLoading={tokensLoading}
@@ -145,28 +125,11 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
           onChipsReset={resetFilters}
           onPageChange={changeTokensPage}
         />
-      </InnerContent>
-      <MobileFilters collections={defaultCollections} resetFilters={resetFilters} />
-    </InnerWrapperStyled>
+      </PagePaper.Layout>
+
+      {deviceSize <= DeviceSize.md && (
+        <MobileFilters collections={defaultCollections} resetFilters={resetFilters} />
+      )}
+    </>
   );
 };
-
-export const InnerWrapperStyled = styled(InnerWrapper)`
-  .minitng-btn-mobile {
-    display: none;
-    @media (max-width: 1279px) {
-      display: flex;
-      width: 185px;
-      margin: 25px 25px 0 25px;
-    }
-    @media (max-width: 1024px) {
-      margin: 25px 0 0;
-    }
-    @media (max-width: 567px) {
-      width: unset;
-    }
-  }
-  @media (max-width: 1279px) {
-    flex-direction: column;
-  }
-`;
