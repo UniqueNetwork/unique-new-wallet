@@ -3,6 +3,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 
 import { config } from '@app/config';
+import { Primary500 } from '@app/styles/colors';
 
 export const Footer: FC = () => {
   return (
@@ -17,19 +18,19 @@ export const Footer: FC = () => {
       </FooterText>
       <FooterLinks>
         <IconLink href={config.socialLinks.telegram} target="_blank" rel="noreferrer">
-          <Icon name="social-telegram" color="#009CF0" size={32} />
+          <Icon name="social-telegram" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.twitter} target="_blank" rel="noreferrer">
-          <Icon name="social-twitter" color="#009CF0" size={32} />
+          <Icon name="social-twitter" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.discord} target="_blank" rel="noreferrer">
-          <Icon name="social-discord" color="#009CF0" size={32} />
+          <Icon name="social-discord" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.github} target="_blank" rel="noreferrer">
-          <Icon name="social-github" color="#009CF0" size={32} />
+          <Icon name="social-github" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.subsocial} target="_blank" rel="noreferrer">
-          <Icon name="social-subsocial" color="#009CF0" size={32} />
+          <Icon name="social-subsocial" color={Primary500} size={32} />
         </IconLink>
       </FooterLinks>
     </FooterWrapper>
