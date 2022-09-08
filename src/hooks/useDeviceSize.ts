@@ -34,10 +34,10 @@ export const useDeviceSize = (): DeviceSize => {
     if (windowWidth && windowWidth < 769) {
       return DeviceSize.sm;
     }
-    if (windowWidth && windowWidth < 1025) {
+    if (windowWidth && windowWidth < 1024) {
       return DeviceSize.md;
     }
-    if (windowWidth && windowWidth < 1601) {
+    if (windowWidth && windowWidth < 1600) {
       return DeviceSize.lg;
     }
 

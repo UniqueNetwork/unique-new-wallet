@@ -1,35 +1,37 @@
 import { useEffect, useMemo, useState, VFC } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useNotifications } from '@unique-nft/ui-kit';
+import { Alert, Button, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import {
-  TokenApiService,
-  useExtrinsicFee,
-  useExtrinsicFlow,
-  useFileUpload,
-} from '@app/api';
+import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
-import { Alert, MintingBtn, StatusTransactionModal } from '@app/components';
-import { useAccounts, useApi, useBalanceInsufficient } from '@app/hooks';
+import { MintingBtn, StatusTransactionModal } from '@app/components';
+import {
+  DeviceSize,
+  useAccounts,
+  useApi,
+  useBalanceInsufficient,
+  useDeviceSize,
+} from '@app/hooks';
 import { NO_BALANCE_MESSAGE } from '@app/pages';
-import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
-import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
-import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
-import { ROUTE } from '@app/routes';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import { config } from '@app/config';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
-import { config } from '@app/config';
+import { PreviewBar } from '@app/pages/components/PreviewBar';
+import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
+import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
+import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
-import { AttributeView, Option, TokenForm, FilledTokenForm } from './types';
+import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
 
 interface ICreateNFTProps {
   className?: string;
@@ -43,8 +45,18 @@ const defaultOptions = {
   },
 };
 
+const WrapperContentStyled = styled(WrapperContent)`
+  margin-bottom: calc(var(--prop-gap) * 2.5);
+
+  @media screen and (min-width: 1025px) {
+    margin-bottom: 0;
+  }
+`;
+
 export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
+  const deviceSize = useDeviceSize();
   const [closable, setClosable] = useState(false);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -204,21 +216,33 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     [collection, collectionsOptions, isCollectionsLoading, tokenForm],
   );
 
+  const root = document.getElementById('root');
+  const renderSidebar = () => (
+    <Sidebar
+      hidden={!collection}
+      collectionName={collection?.name}
+      collectionDescription={collection?.description}
+      collectionCoverUrl={collection?.schema?.coverPicture.fullUrl}
+      tokenPrefix={collection?.tokenPrefix}
+      tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid)}
+      attributes={tokenAttributes}
+    />
+  );
+
   return (
     <>
       <MainWrapper className={classNames('create-nft-page', className)}>
-        <WrapperContent>
+        <WrapperContentStyled>
           <FormWrapper>
             {isolatedTokenForm}
             {feeFormatted && isValid ? (
-              <FeeInformationTransaction className="alert" fee={feeFormatted} />
+              <FeeInformationTransaction fee={feeFormatted} />
             ) : (
-              <Alert className="alert" type="warning">
+              <Alert type="warning">
                 A fee will be calculated after corrected filling required fields
               </Alert>
             )}
-
-            <ButtonGroup className="buttons">
+            <ButtonGroup>
               <MintingBtn
                 role="primary"
                 title="Confirm and create more"
@@ -234,30 +258,32 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               />
             </ButtonGroup>
           </FormWrapper>
-        </WrapperContent>
-        <Sidebar
-          hidden={!collection}
-          collectionName={collection?.name}
-          collectionDescription={collection?.description}
-          collectionCoverUrl={collection?.schema?.coverPicture.fullUrl}
-          tokenPrefix={collection?.tokenPrefix}
-          tokenImageUrl={getTokenIpfsUriByImagePath(formValues?.imageIpfsCid)}
-          attributes={tokenAttributes}
-        />
+        </WrapperContentStyled>
+        {collection &&
+          (deviceSize >= DeviceSize.lg ? (
+            renderSidebar()
+          ) : (
+            <PreviewBar
+              buttons={[
+                <Button
+                  title={isDrawerOpen ? 'Back' : 'Preview'}
+                  key="toggleDrawer"
+                  onClick={() => setDrawerOpen(!isDrawerOpen)}
+                />,
+              ]}
+              isOpen={isDrawerOpen}
+              parent={root as Element}
+            >
+              {renderSidebar()}
+            </PreviewBar>
+          ))}
       </MainWrapper>
       <StatusTransactionModal isVisible={isFlowLoading} description="Creating NFT" />
     </>
   );
 };
 
-const CreateNFTStyled = styled(CreateNFTComponent)`
-  .alert {
-    margin-top: 32px;
-  }
-
-  .buttons {
-    margin-top: 32px;
-  }
-`;
-
-export const CreateNFT = withPageTitle({ header: 'Create a NFT' })(CreateNFTStyled);
+export const CreateNFT = withPageTitle({
+  header: 'Create a NFT',
+  backLink: `${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+})(CreateNFTComponent);

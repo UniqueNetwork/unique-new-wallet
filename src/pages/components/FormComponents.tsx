@@ -24,6 +24,7 @@ export const FormWrapper = styled.div`
   }
 
   .unique-select,
+  .unique-suggestion-wrapper,
   .unique-suggestion,
   .suggest-input,
   .unique-input-text,
@@ -69,6 +70,11 @@ export const FormRowEmpty = styled.div`
 `;
 
 export const UploadWidget = styled.div`
+  .upload-container {
+    position: relative;
+    display: inline-block;
+  }
+
   .unique-text {
     &:first-of-type {
       margin-bottom: calc(var(--prop-gap) / 4);
@@ -143,21 +149,13 @@ export const AdditionalText = styled(Text).attrs({
 export const ButtonGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
+  gap: calc(var(--prop-gap) / 2) var(--prop-gap);
 
   & > * {
     flex: 1 1 100%;
 
-    @media screen and (min-width: 1024px) {
+    @media screen and (min-width: 568px) {
       flex: 0 0 auto;
-      margin-right: var(--prop-gap);
-    }
-
-    &:not(:first-child) {
-      margin-top: var(--prop-gap);
-
-      @media screen and (min-width: 1024px) {
-        margin-top: 0;
-      }
     }
 
     & > .unique-button {

@@ -1,18 +1,18 @@
+import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
+import classNames from 'classnames';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import classNames from 'classnames';
-import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
+import AccountContext from '@app/account/AccountContext';
 import { TOrderBy } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
-import AccountContext from '@app/account/AccountContext';
-import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { Collection } from '@app/api/graphQL/types';
 import { NoItems, TokenLink } from '@app/components';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
-import { Collection } from '@app/api/graphQL/types';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 interface MyCollectionsListProps {
   className?: string;
@@ -72,6 +72,9 @@ export const MyCollectionsList = ({
         <Loader isFullPage={true} size="middle" />
       ) : collectionsCount > 0 ? (
         <ListContent>
+          <Result size="m">
+            {`${collectionsCount} ${collectionsCount === 1 ? 'result' : 'results'}`}
+          </Result>
           <GridList>
             {collections?.map((collection) => (
               <TokenLink
@@ -93,7 +96,7 @@ export const MyCollectionsList = ({
           </GridList>
           <Footer>
             <Text size="m">
-              {`${collectionsCount} ${collectionsCount === 1 ? 'item' : 'items'}`}
+              {`${collectionsCount} ${collectionsCount === 1 ? 'result' : 'results'}`}
             </Text>
             <Pagination
               withIcons
@@ -135,6 +138,10 @@ const ListContent = styled.div`
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+`;
+
+const Result = styled(Text)`
+  margin-bottom: var(--prop-gap);
 `;
 
 const GridList = styled(GridListCommon)`

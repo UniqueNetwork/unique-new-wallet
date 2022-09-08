@@ -8,6 +8,8 @@ import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { TransferBtn } from '@app/components';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { shortAddress } from '@app/utils';
 
 type CoinsRowComponentProps = TNetworkBalances & {
   address?: string;
@@ -60,20 +62,13 @@ const Column = styled.div<{ width: string; align?: 'left' | 'right' | 'center' }
 
 const ButtonGroup = styled.div`
   display: flex;
-
-  @media screen and (min-width: 568px) {
-    display: inline-block;
-  }
+  gap: calc(var(--prop-gap) / 2);
 
   .unique-button {
     flex: 1 1 auto;
 
     @media screen and (min-width: 568px) {
       flex-grow: 0;
-    }
-
-    & + .unique-button {
-      margin-left: calc(var(--prop-gap) / 2);
     }
   }
 `;
@@ -96,11 +91,13 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     chain,
   } = props;
 
+  const deviceSize = useDeviceSize();
+
   return (
     <Wrapper className={classNames('coins-row', className)}>
       <Column width="50%">
         <AccountCard
-          accountAddress={address}
+          accountAddress={deviceSize === DeviceSize.xs ? shortAddress(address) : address}
           accountName={name}
           canCopy={true}
           chainLogo={iconName}

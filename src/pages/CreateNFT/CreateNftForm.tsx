@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, memo, VFC, useCallback } from 'react';
+import { FC, useCallback, useMemo, VFC } from 'react';
 import classNames from 'classnames';
 import {
   Avatar,
@@ -190,13 +190,5 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
 };
 
 export const CreateNftForm = styled(CreateNftFormComponent)`
-  .unique-suggestion-wrapper {
-    display: block;
-    width: auto;
-  }
-
-  .upload-container {
-    position: relative;
-    max-width: fit-content;
-  }
+  margin-bottom: calc(var(--prop-gap) * 2.5);
 `;

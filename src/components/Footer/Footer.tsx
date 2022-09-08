@@ -37,19 +37,18 @@ export const Footer = () => {
 };
 
 export const FooterWrapper = styled.div`
-  flex-direction: column;
-  align-items: start;
-  gap: var(--gap);
-  padding: var(--gap);
   display: flex;
-  @media screen and (min-width: 567px) {
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
-    gap: calc(var(--gap) * 2);
-    width: 100%;
-    padding: 10px 24px;
-    max-width: calc(var(--prop-container-width) - 64px);
+  align-items: center;
+  gap: calc(var(--prop-gap) * 2);
+  width: 100%;
+  padding: var(--prop-gap);
+  max-width: calc(var(--prop-container-width) - 64px);
+  justify-content: space-between;
+  @media screen and (min-width: 568px) {
+    padding: var(--prop-gap) calc(var(--prop-gap) * 2);
+  }
+  @media screen and (min-width: 1920px) {
+    padding: var(--prop-gap) calc(var(--prop-gap) * 3);
   }
 `;
 export const FooterText = styled.div`
@@ -58,7 +57,7 @@ export const FooterText = styled.div`
 `;
 export const FooterLinks = styled.div`
   display: flex;
-  gap: var(--gap);
+  gap: var(--prop-gap);
 `;
 export const TextLink = styled.a`
   color: var(--color-primary-500);
