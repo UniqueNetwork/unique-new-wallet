@@ -7,6 +7,5 @@ export * from './useFee';
 export * from './useFooter';
 export * from './useGetIcon';
 export * from './usePagination';
-export * from './useRestApi';
 export * from './useScreenWidthFromThreshold';
 export * from './useBalanceInsufficient';

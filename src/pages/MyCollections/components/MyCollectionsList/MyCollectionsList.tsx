@@ -48,7 +48,7 @@ export const MyCollectionsList = ({
     }
   };
 
-  const { collections, collectionsCount, isCollectionsLoading } =
+  const { collections, collectionsCount, isCollectionsLoading, isPagination } =
     useGraphQlCollectionsByAccount({
       accountAddress: selectedAccount?.address,
       options: {
@@ -98,12 +98,14 @@ export const MyCollectionsList = ({
             <Text size="m">
               {`${collectionsCount} ${collectionsCount === 1 ? 'result' : 'results'}`}
             </Text>
-            <Pagination
-              withIcons
-              size={collectionsCount}
-              current={page}
-              onPageChange={onPageChange}
-            />
+            {isPagination && (
+              <Pagination
+                withIcons={true}
+                size={collectionsCount}
+                current={page}
+                onPageChange={onPageChange}
+              />
+            )}
           </Footer>
         </ListContent>
       ) : (

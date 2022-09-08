@@ -43,7 +43,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     selectedAccount?.address,
     !selectedAccount?.address,
   );
-  const { tokens, tokensCount, tokensLoading } = useGraphQlOwnerTokens(
+  const { tokens, tokensCount, tokensLoading, isPagination } = useGraphQlOwnerTokens(
     selectedAccount?.address,
     {
       typesFilters,
@@ -114,6 +114,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
           tokensCount={tokensCount}
           page={tokensPage}
           chips={chips}
+          isPagination={isPagination}
           onChipsReset={handleChipsReset}
           onPageChange={changeTokensPage}
         />
