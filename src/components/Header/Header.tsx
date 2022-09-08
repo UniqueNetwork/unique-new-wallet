@@ -115,7 +115,7 @@ export const Header = () => {
             isLoading={isLoading}
             manageBalanceLinkTitle="Manage my balance"
             networks={networks}
-            isTouch={deviceSize < DeviceSize.md}
+            isTouch={deviceSize <= DeviceSize.xs}
             open={isAccountManagerOpen}
             selectedAccount={{
               address: selectedAccount?.address,
