@@ -57,15 +57,18 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
 
   return (
     <PagePaper
+      className={className}
+      flexLayout="row"
       noPadding={deviseSize <= DeviceSize.md}
-      className={classNames(className, 'nft-page', {
-        _empty: !token && !loading,
-      })}
     >
       {!loading && !token ? (
         <ErrorPage />
       ) : (
-        <>
+        <div
+          className={classNames('nft-page', {
+            _empty: !token && !loading,
+          })}
+        >
           {loading ? (
             <div className="nft-page__loader">
               <Loader size="middle" />
@@ -95,26 +98,31 @@ const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
             onComplete={onComplete}
             onClose={onModalClose}
           />
-        </>
+        </div>
       )}
     </PagePaper>
   );
 };
 
 const NFTDetailsStyled = styled(NFTDetailsComponent)`
-  display: flex;
-  flex-wrap: wrap;
-  gap: calc(var(--prop-gap) * 1.5);
-
-  @media screen and (min-width: 768px) {
-    flex-wrap: nowrap;
-  }
-
-  &:not(._empty) {
-    align-items: flex-start;
-  }
-
   .nft-page {
+    --page-gap: calc(var(--prop-gap) * 1.5);
+
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: var(--page-gap);
+    max-width: 100%;
+
+    @media screen and (min-width: 768px) {
+      flex-direction: row;
+      flex-wrap: nowrap;
+    }
+
+    &:not(._empty) {
+      align-items: flex-start;
+    }
+
     &__loader {
       margin: auto;
     }
@@ -123,8 +131,8 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
       overflow: hidden;
       border-radius: calc(var(--prop-border-radius) * 2);
       position: relative;
-      flex: 0 0 100%;
-      max-width: 100%;
+      flex: 0 0 auto;
+      width: 100%;
       background-color: var(--color-blue-grey-100);
       transform: translateZ(0);
 
@@ -165,12 +173,12 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
       max-width: 100%;
 
       @media screen and (min-width: 768px) {
-        flex: 1 1 auto;
-        max-width: 70%;
+        flex: 0 0 calc(70% - var(--page-gap));
+        max-width: calc(70% - var(--page-gap));
       }
 
       @media screen and (min-width: 1024px) {
-        max-width: 66%;
+        max-width: calc(66% - var(--page-gap));
       }
 
       @media screen and (min-width: 1280px) {

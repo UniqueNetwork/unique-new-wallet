@@ -1,2 +1,1 @@
-export * from './MyCollectionsFilter';
-export * from './MyCollectionsList';
+export { TopFilter } from './TopFilter';

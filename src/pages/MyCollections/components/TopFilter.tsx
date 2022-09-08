@@ -11,6 +11,7 @@ import { Direction } from '@app/api/graphQL/types';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
+import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 type SelectOption = {
   id: string;
@@ -18,8 +19,10 @@ type SelectOption = {
   iconRight: IconProps;
 };
 
-interface MyCollectionsFilterComponentProps {
+interface TopFilterComponentProps {
   className?: string;
+  showFilter?: boolean;
+  view?: 'column' | 'row';
 }
 
 const sortOptions: SelectOption[] = [
@@ -45,9 +48,11 @@ const sortOptions: SelectOption[] = [
   },
 ];
 
-export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps> = ({
+export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
   className,
-}) => {
+  showFilter,
+  view = 'row',
+}: TopFilterComponentProps) => {
   const navigate = useNavigate();
   const { currentChain } = useApi();
   const [searchString, setSearchString] = useState<string>('');
@@ -85,68 +90,81 @@ export const MyCollectionsFilterComponent: VFC<MyCollectionsFilterComponentProps
 
   return (
     <div className={classNames('my-collections-filter', className)}>
-      <LeftColumn>
-        <InputText
-          iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
-          value={searchString}
-          placeholder="Search"
-          onChange={setSearchString}
-          onKeyDown={handleSearchString}
-        />
-        <Select options={sortOptions} value={sort} onChange={onChange} />
-      </LeftColumn>
-      <MintingBtn
-        iconLeft={{
-          name: 'plus',
-          size: 12,
-          color: 'currentColor',
-        }}
-        title="Create collection"
-        role="primary"
-        onClick={onCreateCollection}
-      />
+      {showFilter && (
+        <ControlGroup className={'__as_' + view}>
+          <InputText
+            iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
+            value={searchString}
+            placeholder="Search"
+            onChange={setSearchString}
+            onKeyDown={handleSearchString}
+          />
+          <Select options={sortOptions} value={sort} onChange={onChange} />
+        </ControlGroup>
+      )}
+      {view === 'row' && (
+        <ButtonGroup as={ControlsContainer}>
+          <MintingBtn
+            iconLeft={{
+              name: 'plus',
+              size: 12,
+              color: 'currentColor',
+            }}
+            title="Create collection"
+            role="primary"
+            onClick={onCreateCollection}
+          />
+        </ButtonGroup>
+      )}
     </div>
   );
 };
 
-export const LeftColumn = styled.div`
+export const ControlGroup = styled.div`
   flex: 1 1 100%;
   display: grid;
   gap: var(--prop-gap);
-  margin-bottom: var(--prop-gap);
 
-  @media screen and (min-width: 768px) {
-    grid-template-columns: 2fr 1fr;
-  }
+  &.__as {
+    &_row {
+      @media screen and (min-width: 768px) {
+        grid-template-columns: 2fr 1fr;
+      }
 
-  @media screen and (min-width: 1024px) {
-    max-width: 786px;
-    margin-bottom: 0;
-    margin-right: var(--prop-gap);
+      @media screen and (min-width: 1024px) {
+        max-width: 786px;
+      }
+    }
+
+    &_column {
+      width: 100%;
+      max-width: 765px;
+      margin-right: auto;
+    }
   }
 `;
 
-export const MyCollectionsFilter = styled(MyCollectionsFilterComponent)`
-  &.my-collections-filter {
-    border-bottom: 1px solid var(--color-grey-300);
-    flex: 0 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    padding-bottom: var(--prop-gap);
+const ControlsContainer = styled.div`
+  @media screen and (min-width: 1024px) {
+    margin-left: auto;
+  }
+`;
 
-    @media screen and (min-width: 1024px) {
-      flex-wrap: nowrap;
-      padding: calc(var(--prop-gap) * 2);
-    }
+export const TopFilter = styled(TopFilterComponent)`
+  box-sizing: border-box;
+  flex: 1 1 100%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: ${(p) => p.view};
+  align-items: center;
+  width: 100%;
+  gap: var(--prop-gap) calc(var(--prop-gap) * 2);
 
-    .unique-input-text,
-    .unique-select {
-      width: 100%;
-    }
-    .unique-input-text .input-wrapper:hover {
-      border: 1px solid var(--color-grey-500);
-    }
+  .unique-input-text,
+  .unique-select {
+    width: 100%;
+  }
+  .unique-input-text .input-wrapper:hover {
+    border: 1px solid var(--color-grey-500);
   }
 `;
