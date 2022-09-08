@@ -1,11 +1,10 @@
 import { Icon } from '@unique-nft/ui-kit';
-import { FC } from 'react';
 import styled from 'styled-components';
 
 import { config } from '@app/config';
 import { Primary500 } from '@app/styles/colors';
 
-export const Footer: FC = () => {
+export const Footer = () => {
   return (
     <FooterWrapper>
       <FooterText>
