@@ -111,10 +111,13 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         <NFTsTemplateList
           tokens={tokens}
           isLoading={tokensLoading}
-          tokensCount={tokensCount}
-          page={tokensPage}
           chips={chips}
-          isPagination={isPagination}
+          paginationSettings={{
+            current: tokensPage,
+            pageSizes: [defaultLimit],
+            show: isPagination,
+            size: tokensCount,
+          }}
           onChipsReset={handleChipsReset}
           onPageChange={changeTokensPage}
         />

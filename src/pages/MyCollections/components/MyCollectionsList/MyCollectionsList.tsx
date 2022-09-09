@@ -100,9 +100,10 @@ export const MyCollectionsList = ({
             </Text>
             {isPagination && (
               <Pagination
-                withIcons={true}
-                size={collectionsCount}
+                withIcons
                 current={page}
+                pageSizes={[getItems()]}
+                size={collectionsCount}
                 onPageChange={onPageChange}
               />
             )}
