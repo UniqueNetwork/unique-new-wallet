@@ -47,12 +47,15 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
 
   return (
     <NFTsTemplateList
-      tokensCount={tokensCount}
-      page={page}
       isLoading={isLoadingTokens}
       tokens={tokens}
       className={className}
-      isPagination={isPagination}
+      paginationSettings={{
+        current: page,
+        pageSizes: [getItems()],
+        show: isPagination,
+        size: tokensCount,
+      }}
       onPageChange={onChangePagination}
     />
   );
