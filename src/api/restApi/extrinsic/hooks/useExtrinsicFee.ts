@@ -18,7 +18,7 @@ export const useCalculateFee = () => {
 
     return calculateFeeMutation.mutateAsync({
       api,
-      extrinsic,
+      payload: extrinsic,
     });
   };
 

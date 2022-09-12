@@ -109,7 +109,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     if (collectionDebounceValue) {
       const collection = formMapper(collectionDebounceValue);
       getFee({
-        collection,
+        payload: collection,
       });
     }
   }, [collectionDebounceValue, getFee]);
@@ -139,7 +139,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     const collection = formMapper(form);
 
     signAndSubmitExtrinsic({
-      collection,
+      payload: collection,
     });
   };
 

@@ -10,7 +10,7 @@ export type AskQuestionRequestType = {
 
 export type AskQuestionCreatePayload = {
   api: IBaseApi;
-  data: AskQuestionRequestType;
+  payload: AskQuestionRequestType;
 };
 
 type AskQuestionCreatePayloadRequest = {
@@ -39,7 +39,7 @@ export class AskQuestionRequestCreateMutation extends EndpointMutation<
 
   async request({
     api,
-    data: { question, email, name },
+    payload: { question, email, name },
   }: AskQuestionCreatePayload): Promise<unknown> {
     return api.post<any, AskQuestionCreatePayloadRequest>(
       `${this.baseUrl}/tickets`,

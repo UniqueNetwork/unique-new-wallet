@@ -6,7 +6,7 @@ import { CreateCollectionNewRequest, UnsignedTxPayloadResponse } from '@app/type
 
 export type CollectionCreatePayload = {
   api: IBaseApi;
-  collection: CreateCollectionNewRequest;
+  payload: CreateCollectionNewRequest;
 };
 
 export class CollectionCreateMutation extends EndpointMutation<
@@ -23,10 +23,13 @@ export class CollectionCreateMutation extends EndpointMutation<
     this.request = this.request.bind(this);
   }
 
-  async request(payload: CollectionCreatePayload): Promise<UnsignedTxPayloadResponse> {
-    return payload.api.post<UnsignedTxPayloadResponse, CreateCollectionNewRequest>(
+  async request({
+    api,
+    payload,
+  }: CollectionCreatePayload): Promise<UnsignedTxPayloadResponse> {
+    return api.post<UnsignedTxPayloadResponse, CreateCollectionNewRequest>(
       `${this.baseUrl}`,
-      payload.collection,
+      payload,
     );
   }
 

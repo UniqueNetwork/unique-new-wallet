@@ -34,17 +34,3 @@ export interface SubmittableExtrinsicDTO extends UnsignedExtrinsicDTO {
 export interface SubmitExtrinsicResult {
   hash: string; // '0xac99ae19030f95125daa0466b3b117da843e4e799bb15e853a9b4b0e7c3c82e2'
 }
-
-export interface ExtrinsicResultResponse {
-  status: string;
-  isCompleted: boolean;
-  isError: boolean;
-  blockHash: string;
-  blockIndex: number;
-  errorMessage: string;
-  events: {
-    section: string;
-    method: string;
-    data: object;
-  }[];
-}

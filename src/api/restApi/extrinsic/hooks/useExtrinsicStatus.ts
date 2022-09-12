@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client';
 
 import { useApiQuery, ExtrinsicApiService } from '@app/api';
 import { useApi } from '@app/hooks';
-import { ExtrinsicResultResponse } from '@app/types';
+import { ExtrinsicResultResponse } from '@app/types/Api';
 
 export const useExtrinsicStatus = (
   hash?: string | null,

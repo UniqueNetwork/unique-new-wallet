@@ -20,7 +20,7 @@ export const useCollectionCreate = () => {
 
     return createMutation.mutateAsync({
       api,
-      collection,
+      payload: collection,
     });
   };
 
