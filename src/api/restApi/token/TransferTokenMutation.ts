@@ -11,10 +11,12 @@ export class TransferTokenMutation extends EndpointMutation<
   UnsignedTxPayloadResponse,
   TransferTokenMutationPayload
 > {
-  baseUrl = '/token-new/transfer';
+  protected baseUrl;
 
   constructor() {
     super();
+
+    this.baseUrl = '/token-new/transfer';
 
     this.request = this.request.bind(this);
   }

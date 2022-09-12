@@ -1,5 +1,3 @@
-import { QueryClient } from 'react-query';
-
 import { EndpointMutation } from '@app/api/restApi/request';
 import { BurnTokenBody, UnsignedTxPayloadResponse } from '@app/types/Api';
 import { IBaseApi } from '@app/api';
