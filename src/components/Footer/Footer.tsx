@@ -38,13 +38,17 @@ export const Footer = () => {
 
 export const FooterWrapper = styled.div`
   display: flex;
-  align-items: center;
-  gap: calc(var(--prop-gap) * 2);
+  align-items: start;
+  flex-direction: column;
+  gap: calc(var(--prop-gap));
   width: 100%;
   padding: var(--prop-gap);
   max-width: calc(var(--prop-container-width) - 64px);
   justify-content: space-between;
   @media screen and (min-width: 568px) {
+    align-items: center;
+    flex-direction: row;
+    gap: calc(var(--prop-gap) * 2);
     padding: var(--prop-gap) calc(var(--prop-gap) * 2);
   }
   @media screen and (min-width: 1920px) {
