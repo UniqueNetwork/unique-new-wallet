@@ -16,7 +16,7 @@ export class TransferTokenMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = '/token-new/transfer';
+    this.baseUrl = '/tokens/transfer';
 
     this.request = this.request.bind(this);
   }
