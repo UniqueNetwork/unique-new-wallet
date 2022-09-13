@@ -104,10 +104,10 @@ const LayoutStyled = styled.div`
 
   header {
     top: 0;
-    position: sticky !important;
+    position: sticky;
     z-index: 1000;
     @media (max-width: 620px) {
-      height: 80px !important;
+      height: 80px;
     }
   }
 

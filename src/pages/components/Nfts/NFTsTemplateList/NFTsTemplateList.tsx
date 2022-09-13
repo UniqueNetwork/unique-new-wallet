@@ -21,12 +21,18 @@ import { GridListCommon } from '@app/pages/components/PageComponents';
 import { defaultLimit } from '@app/pages/MyTokens/constants';
 import { ROUTE } from '@app/routes';
 
-interface NFTsListComponentProps {
+type PaginationSettingsProps = Pick<
+  IPaginationProps,
+  'current' | 'pageSizes' | 'size'
+> & {
+  show?: boolean;
+};
+
+type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
   className?: string;
   tokens?: Token[];
-  tokensCount?: number;
   isLoading: boolean;
-  page: number;
+  paginationSettings: PaginationSettingsProps;
   chips?: {
     label: string;
     iconLeft?: IconProps;
@@ -35,7 +41,7 @@ interface NFTsListComponentProps {
   fetchMore?(variables?: any): void | undefined;
   onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
-}
+};
 
 const renderItemsCount = (count = 0) => (
   <Text weight="light">
@@ -46,24 +52,22 @@ const renderItemsCount = (count = 0) => (
 const NFTsListComponent = ({
   className,
   tokens = [],
-  tokensCount,
-  page,
   isLoading,
   chips,
+  paginationSettings,
   fetchMore,
   onPageChange,
   onChipsReset,
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
-  const [moreCount, setMoreCount] = useState(10);
 
   return (
     <div className={classNames('nft-list', className)}>
       {isLoading && <Loader isFullPage={true} size="middle" />}
-      {!isNaN(Number(tokensCount)) && (
+      {!isNaN(Number(paginationSettings.size)) && (
         <div className="nft-list__header">
-          {renderItemsCount(tokensCount)}
+          {renderItemsCount(paginationSettings.size)}
           {chips?.map((item, index) => (
             <Chip key={index} {...item} />
           ))}
@@ -75,10 +79,10 @@ const NFTsListComponent = ({
 
       <div
         className={classNames('nft-list__items', {
-          _empty: !tokensCount,
+          _empty: !paginationSettings.size,
         })}
       >
-        {tokensCount === 0 ? (
+        {paginationSettings.size === 0 ? (
           <NoItems iconName="not-found" />
         ) : (
           <GridList>
@@ -87,7 +91,6 @@ const NFTsListComponent = ({
                 <TokenLink
                   alt={token_name}
                   key={`${collection_id}-${token_id}`}
-                  link={`${collection_name} [id ${collection_id}]`}
                   image={image?.fullUrl || undefined}
                   title={
                     <>
@@ -110,40 +113,19 @@ const NFTsListComponent = ({
           </GridList>
         )}
       </div>
-
-      {!!tokensCount && (
-        <PaginatorWrapper className="nft-list__footer">
-          <DesktopPagination>
-            {renderItemsCount(tokensCount)}
+      {!!paginationSettings.size && (
+        <div className="nft-list__footer">
+          {renderItemsCount(paginationSettings.size)}
+          {paginationSettings.show && (
             <Pagination
-              withIcons={true}
-              current={page}
-              size={tokensCount}
+              withIcons
+              current={paginationSettings.current}
+              pageSizes={paginationSettings.pageSizes}
+              size={paginationSettings.size}
               onPageChange={onPageChange}
             />
-          </DesktopPagination>
-          <MobilePagination>
-            {tokensCount >= defaultLimit + moreCount && (
-              <Button
-                wide
-                title="Load more"
-                iconRight={{
-                  color: 'var(--color-primary-500)',
-                  name: 'arrow-down',
-                  size: 16,
-                }}
-                onClick={() => {
-                  if (fetchMore) {
-                    fetchMore({
-                      variables: { page, limit: defaultLimit + moreCount },
-                    });
-                    setMoreCount(moreCount + 10);
-                  }
-                }}
-              />
-            )}
-          </MobilePagination>
-        </PaginatorWrapper>
+          )}
+        </div>
       )}
     </div>
   );
@@ -181,6 +163,7 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
   padding: calc(var(--prop-gap) * 2);
   @media (max-width: 1024px) {
     padding: calc(var(--prop-gap) * 2) 0;
+    margin-bottom: 50px;
   }
 
   .unique-text {

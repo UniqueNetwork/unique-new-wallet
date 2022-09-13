@@ -51,19 +51,20 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     selectedAccount?.address,
     !selectedAccount?.address,
   );
-  const { tokens, tokensCount, tokensLoading, fetchMoreMethod } = useGraphQlOwnerTokens(
-    selectedAccount?.address,
-    {
-      typesFilters,
-      collectionsIds,
-      searchText,
-    },
-    {
-      skip: !selectedAccount?.address,
-      direction: sortByTokenId,
-      pagination: { page: tokensPage, limit: defaultLimit },
-    },
-  );
+  const { tokens, tokensCount, tokensLoading, isPagination, fetchMoreMethod } =
+    useGraphQlOwnerTokens(
+      selectedAccount?.address,
+      {
+        typesFilters,
+        collectionsIds,
+        searchText,
+      },
+      {
+        skip: !selectedAccount?.address,
+        direction: sortByTokenId,
+        pagination: { page: tokensPage, limit: defaultLimit },
+      },
+    );
 
   const defaultCollections = useMemo(
     () =>
@@ -133,10 +134,14 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         <NFTsTemplateList
           tokens={tokens}
           isLoading={tokensLoading}
-          tokensCount={tokensCount}
-          page={tokensPage}
           chips={chips}
           fetchMore={fetchMoreMethod}
+          paginationSettings={{
+            current: tokensPage,
+            pageSizes: [defaultLimit],
+            show: isPagination,
+            size: tokensCount,
+          }}
           onChipsReset={resetFilters}
           onPageChange={changeTokensPage}
         />

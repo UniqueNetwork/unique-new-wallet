@@ -49,6 +49,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const deviceSize = useDeviceSize();
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
@@ -172,6 +173,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                   size: 12,
                 }}
                 title="Next step"
+                disabled={!isValid}
                 onClick={handleSubmit(onNextStep)}
               />
             )}
@@ -224,7 +226,17 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       {deviceSize >= DeviceSize.lg ? (
         <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
       ) : (
-        <PreviewBar parent={root as Element}>
+        <PreviewBar
+          buttons={[
+            <Button
+              title={isDrawerOpen ? 'Back' : 'Preview'}
+              key="toggleDrawer"
+              onClick={() => setDrawerOpen(!isDrawerOpen)}
+            />,
+          ]}
+          isOpen={isDrawerOpen}
+          parent={root as Element}
+        >
           <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
         </PreviewBar>
       )}
@@ -232,6 +244,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   );
 };
 
-export const CreateCollection = withPageTitle({ header: 'Create a collection' })(
-  CreateCollectionComponent,
-);
+export const CreateCollection = withPageTitle({
+  header: 'Create a collection',
+  backLink: ROUTE.MY_COLLECTIONS,
+})(CreateCollectionComponent);

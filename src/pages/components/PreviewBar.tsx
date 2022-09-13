@@ -1,30 +1,29 @@
-import { ReactNode, useEffect, useState, VFC } from 'react';
+import { ReactNode, useEffect, useRef, VFC } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { Button } from '@unique-nft/ui-kit';
 
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 const PreviewDrawer = styled.div`
   position: fixed;
   z-index: 8;
   overflow: auto;
-  top: 80px; // 64px
-  bottom: 60px;
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
   margin: 0;
-  background-color: #fff;
-  padding: 0 var(--prop-gap);
+  background-color: var(--color-additional-light);
+  padding: 80px var(--prop-gap) 60px;
 
   @media screen and (min-width: 768px) {
-    top: 80px;
-    padding: 0 calc(var(--prop-gap) * 1.5);
+    padding-left: calc(var(--prop-gap) * 1.5);
+    padding-right: calc(var(--prop-gap) * 1.5);
   }
 `;
 
-const BottomPanelWrapper = styled.div`
-  height: 60px;
+const BottomPanelWrapper = styled.div<{ height: number }>`
+  height: ${(p) => `${p.height}px`};
 `;
 
 const BottomPanel = styled.div`
@@ -37,37 +36,42 @@ const BottomPanel = styled.div`
   padding: calc(var(--prop-gap) / 1.6) var(--prop-gap);
   background-color: var(--color-additional-light);
 
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 568px) {
     padding-left: calc(var(--prop-gap) * 1.5);
     padding-right: calc(var(--prop-gap) * 1.5);
   }
 `;
 
-export const PreviewBar: VFC<{ children: ReactNode; parent: Element }> = ({
+interface PreviewBarProps {
+  buttons: ReactNode[];
+  children: ReactNode;
+  isOpen: boolean;
+  parent: Element;
+}
+
+export const PreviewBar: VFC<PreviewBarProps> = ({
+  buttons,
   children,
+  isOpen,
   parent,
-}) => {
-  const deviceSize = useDeviceSize();
-  const [isVisible, setVisible] = useState<boolean>(false);
+}: PreviewBarProps) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const panelHeight = panelRef.current?.offsetHeight || 0;
 
   useEffect(() => {
-    document.body.style.overflow = isVisible ? 'hidden' : '';
+    document.body.style.overflow = isOpen ? 'hidden' : '';
 
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isVisible]);
+  }, [isOpen]);
 
   return createPortal(
     <>
-      {isVisible && <PreviewDrawer>{children}</PreviewDrawer>}
-      <BottomPanelWrapper>
-        <BottomPanel>
-          <Button
-            title={isVisible ? 'Back' : 'Preview'}
-            wide={deviceSize < DeviceSize.md}
-            onClick={() => setVisible(!isVisible)}
-          />
+      {isOpen && <PreviewDrawer>{children}</PreviewDrawer>}
+      <BottomPanelWrapper height={panelHeight}>
+        <BottomPanel ref={panelRef}>
+          <ButtonGroup>{buttons}</ButtonGroup>
         </BottomPanel>
       </BottomPanelWrapper>
     </>,

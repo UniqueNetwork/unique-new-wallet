@@ -75,7 +75,7 @@ export const MobileFilters = ({
       </MobileFilterActionsWrapper>
       {isVisible && (
         <MobileFilterModal>
-          <HeadingH2 size="2">Filter and sort</HeadingH2>
+          <HeadingH2>Filter and sort</HeadingH2>
           <Button
             iconLeft={{
               color: 'var(--color-grey-500)',
@@ -180,8 +180,13 @@ const MobileFilterModal = styled.div`
   }
 `;
 
-const HeadingH2 = styled(Heading)`
-  margin-bottom: 8px !important;
+const HeadingH2 = styled.h2`
+  font-family: "Raleway";
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 42px;
+  margin-bottom: 8px;
+}
 `;
 
 const FiltersWrapper = styled.div`

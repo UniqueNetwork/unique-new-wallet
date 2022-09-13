@@ -1,6 +1,6 @@
 import React, { memo, VFC } from 'react';
-import { Heading, Text, Tag } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
+import { Heading, Text, Tag } from '@unique-nft/ui-kit';
 
 export type Attribute = {
   title: string;
@@ -9,36 +9,46 @@ export type Attribute = {
 
 interface TokenInformationProps {
   attributes?: Attribute[];
+  className?: string;
 }
-const AttributeRow = styled.div`
-  margin-bottom: 16px;
-`;
 
-const TagsRow = styled.div`
-  display: flex;
-  flex-wrap: 'wrap';
-  margin-top: 8px;
-  gap: 8px;
-`;
-
-const TokenInformationComponent: VFC<TokenInformationProps> = ({ attributes }) => {
+const TokenInformationComponent: VFC<TokenInformationProps> = ({
+  attributes,
+  className,
+}) => {
   return (
-    <>
-      <Heading size="4">Attributes</Heading>
+    <div className={className}>
+      <Heading className="attributes-header" size="4">
+        Attributes
+      </Heading>
       {attributes?.map(({ title, tags }, index) => (
-        <AttributeRow key={`${title}${index}`}>
+        <div className="attribute-row" key={`${title}${index}`}>
           <Text size="m" weight="light" color="grey-500">
             {title}
           </Text>
-          <TagsRow>
+          <div className="tags-row">
             {tags.map((value, index) => (
               <Tag key={`${value}${index}`} label={value} />
             ))}
-          </TagsRow>
-        </AttributeRow>
+          </div>
+        </div>
       ))}
-    </>
+    </div>
   );
 };
 
-export const TokenInformation = memo(TokenInformationComponent);
+const TokenInformationStyled = styled(TokenInformationComponent)`
+  .attributes-header,
+  .attribute-row {
+    margin-bottom: var(--prop-gap);
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    gap: 8px;
+  }
+`;
+
+export const TokenInformation = memo(TokenInformationStyled);

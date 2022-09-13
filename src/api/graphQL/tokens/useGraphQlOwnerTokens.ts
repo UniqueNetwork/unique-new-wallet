@@ -92,7 +92,7 @@ export const useGraphQlOwnerTokens = (
         if (!fetchMoreResult) {
           return prev;
         }
-        return Object.assign(prev, fetchMoreResult);
+        return Object.assign({}, prev, fetchMoreResult);
       },
     });
   };
@@ -119,8 +119,11 @@ export const useGraphQlOwnerTokens = (
     },
   });
 
+  const tokensCount = response?.tokens.count ?? 0;
+
   return {
-    tokensCount: response?.tokens.count,
+    isPagination: tokensCount > limit,
+    tokensCount,
     tokens: response?.tokens.data,
     fetchMoreMethod,
     tokensLoading,
