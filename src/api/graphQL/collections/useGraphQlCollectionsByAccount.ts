@@ -60,9 +60,12 @@ export const useGraphQlCollectionsByAccount = ({
     },
   });
 
+  const collectionsCount = response?.collections.count ?? 0;
+
   return {
     collections: response?.collections.data ?? [],
-    collectionsCount: response?.collections.count ?? 0,
+    collectionsCount,
+    isPagination: collectionsCount > limit,
     isCollectionsLoading: loading,
     error,
   };

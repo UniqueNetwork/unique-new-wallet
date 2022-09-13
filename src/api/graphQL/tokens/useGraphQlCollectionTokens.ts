@@ -70,10 +70,13 @@ export const useGraphQlCollectionTokens = ({
       },
     },
   });
+  const tokensCount = response?.tokens.count ?? 0;
+
   return {
+    isPagination: tokensCount > limit,
     isLoadingTokens: loading,
-    tokens: response?.tokens.data,
-    tokensCount: response?.tokens.count,
+    tokens: response?.tokens.data ?? [],
+    tokensCount,
     errorTokens: error,
   };
 };

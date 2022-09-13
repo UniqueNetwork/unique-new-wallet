@@ -16,20 +16,25 @@ import { NoItems, TokenLink } from '@app/components';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { Token } from '@app/api/graphQL/types';
 
-interface NFTsListComponentProps {
+type PaginationSettingsProps = Pick<
+  IPaginationProps,
+  'current' | 'pageSizes' | 'size'
+> & {
+  show?: boolean;
+};
+
+type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
   className?: string;
   tokens?: Token[];
-  tokensCount?: number;
   isLoading: boolean;
-  page: number;
+  paginationSettings: PaginationSettingsProps;
   chips?: {
     label: string;
     iconLeft?: IconProps;
     onClose?(): void;
   }[];
-  onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
-}
+};
 
 const renderItemsCount = (count = 0) => (
   <Text weight="light">
@@ -40,10 +45,9 @@ const renderItemsCount = (count = 0) => (
 const NFTsListComponent = ({
   className,
   tokens = [],
-  tokensCount,
-  page,
   isLoading,
   chips,
+  paginationSettings,
   onPageChange,
   onChipsReset,
 }: NFTsListComponentProps) => {
@@ -53,9 +57,9 @@ const NFTsListComponent = ({
   return (
     <div className={classNames('nft-list', className)}>
       {isLoading && <Loader isFullPage={true} size="middle" />}
-      {!isNaN(Number(tokensCount)) && (
+      {!isNaN(Number(paginationSettings.size)) && (
         <div className="nft-list__header">
-          {renderItemsCount(tokensCount)}
+          {renderItemsCount(paginationSettings.size)}
           {chips?.map((item, index) => (
             <Chip key={index} {...item} />
           ))}
@@ -67,10 +71,10 @@ const NFTsListComponent = ({
 
       <div
         className={classNames('nft-list__items', {
-          _empty: !tokensCount,
+          _empty: !paginationSettings.size,
         })}
       >
-        {tokensCount === 0 ? (
+        {paginationSettings.size === 0 ? (
           <NoItems iconName="not-found" />
         ) : (
           <GridList>
@@ -102,15 +106,18 @@ const NFTsListComponent = ({
         )}
       </div>
 
-      {!!tokensCount && (
+      {!!paginationSettings.size && (
         <div className="nft-list__footer">
-          {renderItemsCount(tokensCount)}
-          <Pagination
-            withIcons={true}
-            current={page}
-            size={tokensCount}
-            onPageChange={onPageChange}
-          />
+          {renderItemsCount(paginationSettings.size)}
+          {paginationSettings.show && (
+            <Pagination
+              withIcons
+              current={paginationSettings.current}
+              pageSizes={paginationSettings.pageSizes}
+              size={paginationSettings.size}
+              onPageChange={onPageChange}
+            />
+          )}
         </div>
       )}
     </div>

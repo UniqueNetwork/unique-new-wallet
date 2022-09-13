@@ -27,30 +27,35 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     }
   };
 
-  const { tokens, tokensCount, isLoadingTokens } = useGraphQlCollectionTokens({
-    collectionId: parseInt(collectionId || ''),
-    collectionOwner: selectedAccount?.address,
-    filter: {
-      search,
-      type,
-    },
-    options: {
-      skip: !selectedAccount?.address,
-      direction,
-      pagination: {
-        page,
-        limit: getItems(),
+  const { tokens, tokensCount, isLoadingTokens, isPagination } =
+    useGraphQlCollectionTokens({
+      collectionId: parseInt(collectionId || ''),
+      collectionOwner: selectedAccount?.address,
+      filter: {
+        search,
+        type,
       },
-    },
-  });
+      options: {
+        skip: !selectedAccount?.address,
+        direction,
+        pagination: {
+          page,
+          limit: getItems(),
+        },
+      },
+    });
 
   return (
     <NFTsTemplateList
-      tokensCount={tokensCount}
-      page={page}
       isLoading={isLoadingTokens}
       tokens={tokens}
       className={className}
+      paginationSettings={{
+        current: page,
+        pageSizes: [getItems()],
+        show: isPagination,
+        size: tokensCount,
+      }}
       onPageChange={onChangePagination}
     />
   );
