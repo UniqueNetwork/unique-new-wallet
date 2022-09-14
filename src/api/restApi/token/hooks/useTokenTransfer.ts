@@ -10,7 +10,7 @@ export const useTokenTransfer = () => {
     endpoint: TokenApiService.transferMutation,
   });
 
-  const tokenTransfer = async (body: TransferTokenBody) => {
+  const tokenTransfer = async (payload: TransferTokenBody) => {
     if (!api) {
       // TODO - notify user
       return;
@@ -18,7 +18,7 @@ export const useTokenTransfer = () => {
 
     return mutateAsync({
       api,
-      body,
+      payload,
     });
   };
 

@@ -167,7 +167,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     const { address, collectionId } = debouncedFormValues;
 
     if (collectionId && address && isValid && !isOldCollection) {
-      getFee({ token: mapper(debouncedFormValues as FilledTokenForm) });
+      getFee({ payload: mapper(debouncedFormValues as FilledTokenForm) });
     }
   }, [debouncedFormValues]);
 
@@ -198,7 +198,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       setClosable(!!closable);
 
       signAndSubmitExtrinsic({
-        token: mapper(tokenForm as FilledTokenForm),
+        payload: mapper(tokenForm as FilledTokenForm),
       });
     }
   };

@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import get from 'lodash/get';
 
 import { config } from '@app/config';
-import { CollectionInfoWithPropertiesDto } from '@app/types/Api';
+import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
 
 const { IPFSGateway } = config;
 
 export const useCollectionCover = (
-  collection?: CollectionInfoWithPropertiesDto,
+  collection?: CollectionInfoWithSchemaResponse,
 ): string | undefined => {
   const [collectionCover, setCollectionCover] = useState<string>();
 

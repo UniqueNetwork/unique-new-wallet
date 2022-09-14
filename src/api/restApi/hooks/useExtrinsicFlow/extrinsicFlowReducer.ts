@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import { ExtrinsicResultResponse } from '@app/types/Api';
 
 type SignAndSubmitExtrinsicStatus =
   | 'idle'
@@ -9,7 +9,7 @@ type SignAndSubmitExtrinsicStatus =
   | 'success'
   | 'error';
 
-type ExtrinsicFlowState = {
+type ExtrinsicFlowState = Pick<ExtrinsicResultResponse, 'parsed'> & {
   isError?: boolean;
   error?: Error | null;
   isLoading?: boolean;
@@ -28,16 +28,30 @@ export const extrinsicFlowReducer = (
   action: ExtrinsicFlowAction,
 ): ExtrinsicFlowState => {
   const reducer: Record<ExtrinsicFlowActionType, ExtrinsicFlowState> = {
-    startflow: { ...state, error: null, isError: false, isLoading: true },
-    statusupdate: { ...state, status: action?.payload?.status },
+    startflow: {
+      ...state,
+      error: null,
+      isError: false,
+      isLoading: true,
+      parsed: undefined,
+    },
+    statusupdate: { ...state, status: action?.payload?.status, parsed: undefined },
     error: {
       ...state,
       error: action.payload?.error,
       isError: true,
       isLoading: false,
       status: 'error',
+      parsed: undefined,
     },
-    success: { ...state, status: 'success', isLoading: false },
+    success: {
+      ...state,
+      status: 'success',
+      isLoading: false,
+      parsed: action.payload?.parsed,
+      error: undefined,
+      isError: false,
+    },
   };
 
   return reducer[action.type] ?? state;

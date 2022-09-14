@@ -4,7 +4,7 @@ import { IBaseApi } from '@app/api';
 
 export type TransferTokenMutationPayload = {
   api: IBaseApi;
-  body: TransferTokenBody;
+  payload: TransferTokenBody;
 };
 
 export class TransferTokenMutation extends EndpointMutation<
@@ -22,12 +22,9 @@ export class TransferTokenMutation extends EndpointMutation<
   }
 
   request(
-    payload: TransferTokenMutationPayload,
+    { api, payload }: TransferTokenMutationPayload,
     signal: AbortSignal | undefined,
   ): Promise<UnsignedTxPayloadResponse> {
-    return payload.api.patch<UnsignedTxPayloadResponse, TransferTokenBody>(
-      this.baseUrl,
-      payload.body,
-    );
+    return api.patch<UnsignedTxPayloadResponse, TransferTokenBody>(this.baseUrl, payload);
   }
 }

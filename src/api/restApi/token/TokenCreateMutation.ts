@@ -1,13 +1,12 @@
 import { QueryClient } from 'react-query';
 
 import { EndpointMutation } from '@app/api/restApi/request';
-import { NftTokenDTO } from '@app/types';
 import { CreateTokenNewDto, UnsignedTxPayloadResponse } from '@app/types/Api';
 import { IBaseApi } from '@app/api';
 
 export type TokenCreatePayload = {
   api: IBaseApi;
-  token: CreateTokenNewDto;
+  payload: CreateTokenNewDto;
 };
 
 export class TokenCreateMutation extends EndpointMutation<
@@ -24,10 +23,13 @@ export class TokenCreateMutation extends EndpointMutation<
     this.request = this.request.bind(this);
   }
 
-  async request(payload: TokenCreatePayload): Promise<UnsignedTxPayloadResponse> {
-    return payload.api.post<UnsignedTxPayloadResponse, CreateTokenNewDto>(
+  async request({
+    api,
+    payload,
+  }: TokenCreatePayload): Promise<UnsignedTxPayloadResponse> {
+    return api.post<UnsignedTxPayloadResponse, CreateTokenNewDto>(
       `${this.baseUrl}`,
-      payload.token,
+      payload,
     );
   }
 
