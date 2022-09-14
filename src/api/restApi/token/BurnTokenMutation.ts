@@ -16,7 +16,7 @@ export class BurnTokenMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = '/token-new/';
+    this.baseUrl = '/tokens/';
 
     this.request = this.request.bind(this);
   }
