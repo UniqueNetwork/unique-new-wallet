@@ -1,14 +1,24 @@
 import { memo, useMemo, VFC } from 'react';
 import styled from 'styled-components';
-import { Button, Dropdown, Heading, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
+import {
+  Button,
+  Dropdown,
+  Heading,
+  Icon,
+  Link,
+  SelectOptionProps,
+  Text,
+} from '@unique-nft/ui-kit';
 
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
 import { BurnBtn, IdentityIcon, TransferBtn } from '@app/components';
-import { useApi } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 interface NFTDetailsHeaderProps {
   title?: string;
+  collectionId?: number;
+  collectionName?: string;
   ownerAddress?: string;
   isCurrentAccountOwner?: boolean;
   className?: string;
@@ -25,9 +35,26 @@ const HeaderContainer = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  gap: var(--prop-gap);
 `;
 
-const HeaderContent = styled.div``;
+const HeaderContent = styled.div`
+  min-width: 0;
+
+  .collection-link {
+    display: flex;
+    margin-bottom: calc(var(--prop-gap) / 2);
+
+    &-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  .collection-heading {
+    margin-bottom: var(--prop-gap);
+  }
+`;
 
 const MenuOptionContainer = styled.div<{ color?: string }>`
   margin: 0 calc(var(--prop-gap) / (-2));
@@ -52,7 +79,7 @@ const MenuOptionContainer = styled.div<{ color?: string }>`
 const TextOwner = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: var(--prop-gap);
+  margin-bottom: calc(var(--prop-gap) * 1.5);
   color: var(--color-grey-500);
 `;
 
@@ -103,12 +130,16 @@ const MenuOption = (
 
 const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   title = '',
+  collectionName = '',
+  collectionId,
   ownerAddress,
   isCurrentAccountOwner,
   className,
   onShowModal,
 }) => {
   const { currentChain } = useApi();
+  const size = useDeviceSize();
+
   const options = useMemo(() => {
     const items: SelectOptionProps[] = [
       {
@@ -133,7 +164,23 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   return (
     <HeaderContainer className={className}>
       <HeaderContent>
-        <Heading>{title}</Heading>
+        <Link
+          target="_blank"
+          rel="noreferrer"
+          color="primary"
+          href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
+          className="collection-link"
+        >
+          <Text className="collection-link-text" color="primary-500" weight="light">
+            {`${collectionName} [id ${collectionId}]`}
+          </Text>
+          <div>
+            <Icon color="var(--color-primary-500)" size={16} name="arrow-up-right" />
+          </div>
+        </Link>
+        <Heading size={size === DeviceSize.xs ? '2' : '1'} className="collection-heading">
+          {title}
+        </Heading>
         <TextOwner>
           {isCurrentAccountOwner ? (
             'You own it'
@@ -178,7 +225,11 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
           onShowModal((opt as MenuOptionItem).id);
         }}
       >
-        <Icon size={40} name="rounded-rectangle-more" />
+        <Icon
+          size={40}
+          name="rounded-rectangle-more"
+          color="var(--color-secondary-400)"
+        />
       </Dropdown>
     </HeaderContainer>
   );

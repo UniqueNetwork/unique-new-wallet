@@ -18,7 +18,7 @@ export class CollectionCreateMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = '/collection-new';
+    this.baseUrl = '/collections';
 
     this.request = this.request.bind(this);
   }

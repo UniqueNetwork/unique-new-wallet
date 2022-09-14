@@ -23,7 +23,9 @@ declare type Config = {
     discord: string;
     github: string;
     subsocial: string;
+    homepage: string;
   };
+  version: string;
 };
 
 declare global {
@@ -52,5 +54,7 @@ export const config: Config = {
     discord: window.ENV?.DISCORD_LINK || process.env.REACT_APP_DISCORD_LINK || '',
     github: window.ENV?.GITHUB_LINK || process.env.REACT_APP_GITHUB_LINK || '',
     subsocial: window.ENV?.SUBSOCIAL_LINK || process.env.REACT_APP_SUBSOCIAL_LINK || '',
+    homepage: window.ENV?.HOMEPAGE_LINK || process.env.REACT_APP_HOMEPAGE_LINK || '',
   },
+  version: window.ENV?.VERSION || process.env.REACT_APP_VERSION || '',
 };

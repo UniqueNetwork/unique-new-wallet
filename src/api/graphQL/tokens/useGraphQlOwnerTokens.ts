@@ -106,8 +106,11 @@ export const useGraphQlOwnerTokens = (
     },
   });
 
+  const tokensCount = response?.tokens.count ?? 0;
+
   return {
-    tokensCount: response?.tokens.count,
+    isPagination: tokensCount > limit,
+    tokensCount,
     tokens: response?.tokens.data,
     tokensLoading,
     error,
