@@ -1,11 +1,11 @@
 import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import AccountContext from '@app/account/AccountContext';
-import { TOrderBy } from '@app/api';
+import { TOrderBy, useExtrinsicCacheEntities } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection } from '@app/api/graphQL/types';
 import { NoItems, TokenLink } from '@app/components';
@@ -13,6 +13,7 @@ import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { useGraphQlCheckInExistCollectionsByAccount } from '@app/api/graphQL/collections/useGraphQlCheckInExistCollectionsByAccount';
 
 interface MyCollectionsListProps {
   className?: string;
@@ -48,6 +49,14 @@ export const MyCollectionsList = ({
     }
   };
 
+  const { collections: cacheCollections, excludeCollectionsCache } =
+    useExtrinsicCacheEntities();
+
+  const { refetchSynchronizedCollections, synchronizedCollectionsIds } =
+    useGraphQlCheckInExistCollectionsByAccount({
+      collections: cacheCollections,
+    });
+
   const { collections, collectionsCount, isCollectionsLoading, isPagination } =
     useGraphQlCollectionsByAccount({
       accountAddress: selectedAccount?.address,
@@ -60,6 +69,20 @@ export const MyCollectionsList = ({
         search,
       },
     });
+
+  useEffect(() => {
+    if (synchronizedCollectionsIds.length > 0) {
+      excludeCollectionsCache(synchronizedCollectionsIds);
+    }
+  }, [collections, synchronizedCollectionsIds, excludeCollectionsCache]);
+
+  useEffect(() => {
+    if (cacheCollections.length === 0) {
+      return;
+    }
+
+    refetchSynchronizedCollections();
+  }, [collections, cacheCollections, refetchSynchronizedCollections]);
 
   const onClickNavigate = (id: Collection['collection_id']) =>
     navigate(

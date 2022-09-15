@@ -32,3 +32,11 @@ export type UseEndpointQueryOptions<
   refetchOnReconnect?: boolean | 'always';
   useErrorBoundary?: boolean;
 };
+
+export type TExtrinsicType =
+  | 'create-token'
+  | 'create-collection'
+  | 'burn-token'
+  | 'burn-collection'
+  | 'transfer-token'
+  | 'transfer-balance';

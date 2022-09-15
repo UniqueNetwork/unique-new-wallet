@@ -1,10 +1,13 @@
 import { VFC } from 'react';
 import { Outlet, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
+import styled from 'styled-components';
 
 import { PagePaper } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
+import { useExtrinsicCacheEntities } from '@app/api';
 
 import { useMyCollectionsContext } from './context';
 import { MyCollectionsFilter, MyCollectionsList } from './components';
@@ -17,6 +20,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
 }) => {
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
+  const { collections } = useExtrinsicCacheEntities();
 
   const isChildExist = useOutlet();
 
@@ -29,6 +33,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       {!isChildExist ? (
         <>
           <MyCollectionsFilter />
+          <ListEntitiesCacheStyled entities={collections} />
           <MyCollectionsList
             order={order}
             page={page}
@@ -42,6 +47,10 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
     </PagePaper>
   );
 };
+
+const ListEntitiesCacheStyled = styled(ListEntitiesCache)`
+  margin: 30px 0 15px;
+`;
 
 const MyCollectionsWrapped = () => (
   <MyCollectionsWrapper>

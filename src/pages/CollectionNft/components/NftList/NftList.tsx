@@ -2,6 +2,7 @@ import { useGraphQlCollectionTokens } from '@app/api/graphQL/tokens/useGraphQlCo
 import { useNftFilterContext } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import { DeviceSize, useAccounts, useDeviceSize } from '@app/hooks';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
+import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 
 interface NftListComponentProps {
   className?: string;
@@ -45,8 +46,14 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
       },
     });
 
+  const { cacheTokens } = useCheckExistTokensByAccount({
+    tokens,
+    collectionId: parseInt(collectionId),
+  });
+
   return (
     <NFTsTemplateList
+      cacheTokens={cacheTokens}
       isLoading={isLoadingTokens}
       tokens={tokens}
       className={className}
