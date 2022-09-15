@@ -1,4 +1,3 @@
-import { FetchMoreOptions } from '@apollo/client';
 import {
   Button,
   Chip,
@@ -16,10 +15,9 @@ import styled from 'styled-components';
 
 import { Token } from '@app/api/graphQL/types';
 import { NoItems, TokenLink } from '@app/components';
-import { useApi } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { defaultLimit } from '@app/pages/MyTokens/constants';
-import { ROUTE } from '@app/routes';
 
 type PaginationSettingsProps = Pick<
   IPaginationProps,
@@ -38,7 +36,7 @@ type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
     iconLeft?: IconProps;
     onClose?(): void;
   }[];
-  fetchMore?(variables?: any): void | undefined;
+  fetchMore?(variables?: any): void;
   onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
 };
@@ -61,6 +59,20 @@ const NFTsListComponent = ({
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
+  const deviceSize = useDeviceSize();
+  const [limit, setLimit] = useState(defaultLimit);
+
+  const onFetchMore = () => {
+    if (fetchMore) {
+      const newLimit = limit + defaultLimit;
+      fetchMore({
+        variables: {
+          limit: newLimit,
+        },
+      });
+      setLimit(newLimit);
+    }
+  };
 
   return (
     <div className={classNames('nft-list', className)}>
@@ -113,6 +125,14 @@ const NFTsListComponent = ({
           </GridList>
         )}
       </div>
+      {fetchMore && paginationSettings.size >= limit && (
+        <ButtonMore
+          title="Load more"
+          iconRight={{ color: 'currentColor', name: 'arrow-down', size: 16 }}
+          wide={deviceSize <= DeviceSize.xs}
+          onClick={onFetchMore}
+        />
+      )}
       {!!paginationSettings.size && (
         <div className="nft-list__footer">
           {renderItemsCount(paginationSettings.size)}
@@ -188,6 +208,10 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
       align-items: center;
       justify-content: space-between;
       padding-top: calc(var(--prop-gap) * 2);
+      display: none;
+      @media screen and (min-width: 768px) {
+        display: flex;
+      }
     }
 
     &__items {
@@ -219,5 +243,13 @@ const GridList = styled(GridListCommon)`
 
   @media screen and (min-width: 1500px) {
     grid-template-columns: repeat(5, 1fr);
+  }
+`;
+
+const ButtonMore = styled(Button)`
+  margin: calc(var(--prop-gap) * 2) 0 calc(var(--prop-gap) / 2);
+  display: flex;
+  @media screen and (min-width: 768px) {
+    display: none;
   }
 `;
