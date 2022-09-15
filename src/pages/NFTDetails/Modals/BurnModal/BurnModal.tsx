@@ -43,7 +43,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     }
 
     getFee({
-      body: {
+      payload: {
         address: selectedAccount.address,
         collectionId: token.collection_id,
         tokenId: token.token_id,
@@ -57,7 +57,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     }
 
     signAndSubmitExtrinsic({
-      body: {
+      payload: {
         address: selectedAccount.address,
         collectionId: token.collection_id,
         tokenId: token.token_id,

@@ -12,7 +12,7 @@ export type BalanceTransferRequestDTO = {
 
 interface BalanceTransferPayload {
   api: IBaseApi;
-  balanceTransfer: BalanceTransferRequestDTO;
+  payload: BalanceTransferRequestDTO;
 }
 
 export class AccountBalanceTransferMutation extends EndpointMutation<
@@ -29,10 +29,10 @@ export class AccountBalanceTransferMutation extends EndpointMutation<
     this.request = this.request.bind(this);
   }
 
-  async request(payload: BalanceTransferPayload) {
-    return payload.api.post<UnsignedTxPayloadResponse, BalanceTransferRequestDTO>(
+  async request({ api, payload }: BalanceTransferPayload) {
+    return api.post<UnsignedTxPayloadResponse, BalanceTransferRequestDTO>(
       `${this.baseUrl}`,
-      payload.balanceTransfer,
+      payload,
     );
   }
 

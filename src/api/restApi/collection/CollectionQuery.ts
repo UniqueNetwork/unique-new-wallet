@@ -1,6 +1,6 @@
 import { QueryKey } from 'react-query';
 
-import { CollectionInfoWithPropertiesDto } from '@app/types/Api';
+import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
 import { IBaseApi } from '@app/api';
 
 import { EndpointQuery } from '../request';
@@ -10,7 +10,7 @@ interface RequestArgs {
 }
 
 export class CollectionQuery extends EndpointQuery<
-  CollectionInfoWithPropertiesDto,
+  CollectionInfoWithSchemaResponse,
   RequestArgs
 > {
   protected baseUrl;
@@ -18,7 +18,7 @@ export class CollectionQuery extends EndpointQuery<
   constructor() {
     super();
 
-    this.baseUrl = '/collection-new';
+    this.baseUrl = '/collections';
   }
 
   getKey({ collectionId }: RequestArgs): QueryKey {
@@ -28,8 +28,8 @@ export class CollectionQuery extends EndpointQuery<
   request(
     api: IBaseApi,
     { collectionId }: RequestArgs,
-  ): Promise<CollectionInfoWithPropertiesDto> {
-    return api.get<CollectionInfoWithPropertiesDto>(
+  ): Promise<CollectionInfoWithSchemaResponse> {
+    return api.get<CollectionInfoWithSchemaResponse>(
       `${this.baseUrl}?collectionId=${collectionId}`,
     );
   }

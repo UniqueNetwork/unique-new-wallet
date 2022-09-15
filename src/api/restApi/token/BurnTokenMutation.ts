@@ -4,7 +4,7 @@ import { IBaseApi } from '@app/api';
 
 export type BurnTokenMutationPayload = {
   api: IBaseApi;
-  body: BurnTokenBody;
+  payload: BurnTokenBody;
 };
 
 export class BurnTokenMutation extends EndpointMutation<
@@ -16,18 +16,15 @@ export class BurnTokenMutation extends EndpointMutation<
   constructor() {
     super();
 
-    this.baseUrl = '/token-new/';
+    this.baseUrl = '/tokens/';
 
     this.request = this.request.bind(this);
   }
 
   request(
-    payload: BurnTokenMutationPayload,
+    { api, payload }: BurnTokenMutationPayload,
     signal: AbortSignal | undefined,
   ): Promise<UnsignedTxPayloadResponse> {
-    return payload.api.delete<UnsignedTxPayloadResponse, BurnTokenBody>(
-      this.baseUrl,
-      payload.body,
-    );
+    return api.delete<UnsignedTxPayloadResponse, BurnTokenBody>(this.baseUrl, payload);
   }
 }
