@@ -6,7 +6,7 @@ import { SubmitExtrinsicResult, SubmittableExtrinsicDTO } from '@app/types';
 
 export type SubmitExtrinsicMutationPayload = {
   api: IBaseApi;
-  extrinsic: SubmittableExtrinsicDTO;
+  payload: SubmittableExtrinsicDTO;
 };
 
 export class SubmitExtrinsicMutation extends EndpointMutation<
@@ -23,10 +23,13 @@ export class SubmitExtrinsicMutation extends EndpointMutation<
     this.request = this.request.bind(this);
   }
 
-  async request(payload: SubmitExtrinsicMutationPayload): Promise<SubmitExtrinsicResult> {
-    return payload.api.post<SubmitExtrinsicResult, SubmittableExtrinsicDTO>(
+  async request({
+    api,
+    payload,
+  }: SubmitExtrinsicMutationPayload): Promise<SubmitExtrinsicResult> {
+    return api.post<SubmitExtrinsicResult, SubmittableExtrinsicDTO>(
       this.baseUrl,
-      payload.extrinsic,
+      payload,
     );
   }
 

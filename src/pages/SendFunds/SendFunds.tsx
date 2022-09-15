@@ -55,7 +55,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     amount: number,
   ) => {
     getFee({
-      balanceTransfer: {
+      payload: {
         address: senderAddress,
         destination: destinationAddress,
         amount,
@@ -86,7 +86,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   ) => {
     signAndSubmitExtrinsic(
       {
-        balanceTransfer: {
+        payload: {
           address: senderAddress,
           destination: destinationAddress,
           amount,

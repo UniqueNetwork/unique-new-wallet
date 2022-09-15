@@ -15,7 +15,8 @@ interface CombinedContext {
 export interface ApiMutationConfig<
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
-    Parameters<ConcreteEndpointMutation['request']>[0]
+    // TODO: fix type
+    Parameters<ConcreteEndpointMutation['request']>[0] & any
   >,
 > {
   endpoint: ConcreteEndpointMutation;
@@ -29,7 +30,8 @@ export interface ApiMutationConfig<
 export const useApiMutation = <
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
-    Parameters<ConcreteEndpointMutation['request']>[0]
+    // TODO: fix type
+    Parameters<ConcreteEndpointMutation['request']>[0] & any
   >,
 >(
   mutationConfig: ApiMutationConfig<ConcreteEndpointMutation>,

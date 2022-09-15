@@ -1,7 +1,7 @@
 import { QueryKey } from 'react-query';
 
 import { IBaseApi } from '@app/api';
-import { ExtrinsicResultResponse } from '@app/types';
+import { ExtrinsicResultResponse } from '@app/types/Api';
 
 import { EndpointQuery } from '../request';
 

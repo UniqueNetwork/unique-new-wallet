@@ -19,7 +19,7 @@ export const useExtrinsicSubmit = () => {
 
     return submitMutation.mutateAsync({
       api,
-      extrinsic,
+      payload: extrinsic,
     });
   };
 

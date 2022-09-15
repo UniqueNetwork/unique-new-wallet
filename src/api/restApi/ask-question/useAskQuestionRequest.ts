@@ -12,7 +12,7 @@ export const useAskQuestionRequest = () => {
   const createAskQuestionRequest = async (data: AskQuestionRequestType) => {
     return createMutation.mutateAsync({
       api,
-      data,
+      payload: data,
     });
   };
 

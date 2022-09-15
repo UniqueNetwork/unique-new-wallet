@@ -14,7 +14,8 @@ import { UNKNOWN_ERROR_MSG } from '../constants';
 export const useExtrinsicFee = <
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
-    Parameters<ConcreteEndpointMutation['request']>[0]
+    // TODO: fix type
+    Parameters<ConcreteEndpointMutation['request']>[0] & any
   >,
 >(
   endpoint: ConcreteEndpointMutation,

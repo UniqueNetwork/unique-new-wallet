@@ -37,7 +37,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
     }
 
     signAndSubmitExtrinsic({
-      body: {
+      payload: {
         to: recipient,
         from: selectedAccount.address,
         collectionId: token.collection_id,
@@ -53,7 +53,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
     }
 
     getFee({
-      body: {
+      payload: {
         to: recipient,
         from: selectedAccount.address,
         collectionId: token.collection_id,
