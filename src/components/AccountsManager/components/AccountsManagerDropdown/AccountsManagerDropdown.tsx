@@ -81,7 +81,7 @@ export const AccountsManagerDropdown = ({
           {depositDescription}
         </div>
       </div>
-      {stake && stake.visability && (
+      {stake?.visability && (
         <div className="wallet-accounts-stake">
           <Text size="xs" color="grey-500" weight="light">
             {stake.description}
