@@ -18,14 +18,12 @@ export const AccountsManagerDropdown = ({
   balance,
   symbol,
   isTouch,
-  stakeVisibility,
-  isStakeDisabled,
   avatarRender,
   onAccountChange,
   onNetworkChange,
   onManageBalanceClick,
+  stake,
   onCopyAddressClick,
-  onStakeClick,
 }: AccountsManagerProps) => {
   const [copied, copy] = useCopyToClipboard();
 
@@ -66,31 +64,38 @@ export const AccountsManagerDropdown = ({
         </Dropdown>
       </div>
       <div className="accounts-manager-wallet">
-        <Text color="grey-500" size="s">
-          Wallet
-        </Text>
+        <div className="wallet-link" data-testid="wallet-link">
+          <Link
+            title="Manage accounts"
+            color="primery-500"
+            className="wallet-link-balance"
+            onClick={onManageBalanceClick}
+          />
+        </div>
         <div className="wallet-content" data-testid="wallet-content">
+          <Text size="s" weight="light" color="grey-500">
+            Balance
+          </Text>
           <Text size="l">{`${balance} ${symbol}`}</Text>
           {deposit && <Text size="s">{`${deposit} ${symbol}`}</Text>}
           {depositDescription}
-          {manageBalanceLinkTitle && (
-            <div className="wallet-link" data-testid="wallet-link">
-              <Link title={manageBalanceLinkTitle} onClick={onManageBalanceClick} />
-              <Icon size={12} name="arrow-right" color="var(--color-primary-500)" />
-            </div>
-          )}
         </div>
       </div>
-      {stakeVisibility && (
-        <Button
-          title="Stake"
-          role="primary"
-          disabled={isStakeDisabled}
-          onClick={onStakeClick}
-        />
+      {stake?.visability && (
+        <div className="wallet-accounts-stake">
+          <Text size="xs" color="grey-500" weight="light">
+            {stake.description}
+          </Text>
+          <Button
+            disabled={stake.disabled}
+            title="Stake"
+            role="primary"
+            onClick={stake.onStake}
+          />
+        </div>
       )}
       <div className="accounts-manager-networks">
-        <Text color="grey-500" size="s">
+        <Text color="grey-500" size="s" weight="light">
           Active network
         </Text>
         {(!networks || networks.length === 0) && activeNetwork && (
