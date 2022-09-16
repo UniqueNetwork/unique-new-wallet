@@ -23,3 +23,5 @@ export const truncateDecimalsBalanceSheet = (balance: string) => {
   arrBalance[lastElem] = arrBalance[lastElem].slice(0, 4);
   return arrBalance.join('.');
 };
+
+export const isTouchDevice = 'ontouchstart' in document.documentElement;
