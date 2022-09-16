@@ -7,6 +7,20 @@
   .unique-dropdown {
     width: 100%;
   }
+  .accounts-manager-wallet {
+    .wallet-link-balance {
+      margin-bottom: var(--prop-gap);
+    }
+    .unique-link {
+      color: var(--color-primary-500);
+      font-size: 16px;
+    }
+  }
+  .wallet-accounts-stake {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--prop-gap) / 2);
+  }
 
   .accounts-manager-accounts {
     .unique-dropdown.touch > .dropdown-wrapper {
@@ -73,6 +87,16 @@
       flex-direction: column;
       row-gap: calc(var(--prop-gap) / 2);
       width: 100%;
+      .unique-toggle-wrapper .inner:after {
+        width: 10px;
+        height: 10px;
+        top: 4px;
+        left: 4px;
+      }
+      .unique-toggle-wrapper .inner.on:after {
+        right: 4px;
+        left: unset;
+      }
     }
   }
 }
