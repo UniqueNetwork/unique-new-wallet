@@ -229,19 +229,23 @@ export const NFTsTemplateList = styled(NFTsListComponent)`
 `;
 
 const GridList = styled(GridListCommon)`
-  @media screen and (min-width: 820px) {
+  @media screen and (min-width: 500px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media screen and (min-width: 1100px) {
+  @media screen and (min-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media screen and (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   @media screen and (min-width: 1400px) {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  @media screen and (min-width: 1500px) {
+  @media screen and (min-width: 1600px) {
     grid-template-columns: repeat(5, 1fr);
   }
 `;

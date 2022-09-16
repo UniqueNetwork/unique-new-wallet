@@ -92,7 +92,7 @@ export const useGraphQlOwnerTokens = (
         if (!fetchMoreResult) {
           return prev;
         }
-        return Object.assign({}, prev, fetchMoreResult);
+        return fetchMoreResult;
       },
     });
   };
