@@ -11,7 +11,6 @@ import { PagePaper } from '@app/components';
 import { MobileFilters } from '@app/components/Filters/MobileFilter';
 import { CollectionsFilter, TypeFilter } from '@app/pages';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
-// import {InnerContent, InnerSidebar, InnerWrapper } from '@app/pages/components/PageComponents';
 
 import { defaultLimit, defaultTypesFilters } from '../constants';
 import { useNFTsContext } from '../context';
@@ -42,6 +41,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     selectedAccount?.address,
     !selectedAccount?.address,
   );
+
   const { tokens, tokensCount, tokensLoading, isPagination, fetchMoreMethod } =
     useGraphQlOwnerTokens(
       selectedAccount?.address,
@@ -103,7 +103,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       <PagePaper.Layout
         className={className}
         sidebar={
-          collectionsLoading && (
+          !collectionsLoading && (
             <>
               <TypeFilter defaultTypes={defaultTypesFilters} />
               <CollectionsFilter collections={defaultCollections} />

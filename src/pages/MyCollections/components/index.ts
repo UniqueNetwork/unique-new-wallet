@@ -1,1 +1,1 @@
-export * from './TopFilter';
+export { TopFilter } from './TopFilter';

@@ -49,7 +49,8 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
     }
   };
 
-  const [limit, setLimit] = useState(getItems());
+  // TODO: get limit correctly
+  const [limit, setLimit] = useState(getItems);
 
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
 
