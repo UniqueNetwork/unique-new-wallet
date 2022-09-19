@@ -120,6 +120,15 @@ export const Header = () => {
             networks={networks}
             isTouch={deviceSize <= DeviceSize.xs}
             open={isAccountManagerOpen}
+            stake={{
+              visability: true,
+              disabled: true,
+              onStake: () => {
+                console.log('Stake!');
+              },
+              description:
+                'Soon you can stake some of your holdings and earn a percentage-rate reward over time.',
+            }}
             selectedAccount={{
               address: selectedAccount?.address,
               name: selectedAccount?.meta.name,

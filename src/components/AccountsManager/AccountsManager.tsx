@@ -36,16 +36,19 @@ export interface AccountsManagerProps {
   symbol: string;
   isLoading?: boolean;
   isTouch?: boolean;
+  stake?: {
+    visability?: boolean;
+    disabled?: boolean;
+    onStake?: () => void;
+    description?: string;
+  };
   verticalOffset?: number | string;
-  stakeVisibility?: boolean;
-  isStakeDisabled?: boolean;
   avatarRender?(address: string): ReactNode;
   onNetworkChange?(network: INetwork): void;
   onAccountChange?(account: IAccount): void;
   onManageBalanceClick?(): void;
   onOpenChange?(open: boolean): void;
   onCopyAddressClick?(address: string): void;
-  onStakeClick?(): void;
 }
 
 export const AccountsManager = (props: AccountsManagerProps) => {
