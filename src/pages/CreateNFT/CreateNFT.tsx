@@ -69,7 +69,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     TokenApiService.tokenCreateMutation,
   );
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(TokenApiService.tokenCreateMutation);
+    useExtrinsicFlow(TokenApiService.tokenCreateMutation, 'create-token');
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 

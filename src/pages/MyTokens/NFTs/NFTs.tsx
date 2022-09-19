@@ -14,6 +14,7 @@ import {
   InnerWrapper,
 } from '@app/pages/components/PageComponents';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
+import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 
 import { useNFTsContext } from '../context';
 import { defaultLimit, defaultTypesFilters } from '../constants';
@@ -56,6 +57,8 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       pagination: { page: tokensPage, limit: defaultLimit },
     },
   );
+
+  const { cacheTokens } = useCheckExistTokensByAccount({ tokens });
 
   const defaultCollections = useMemo(
     () =>
@@ -109,6 +112,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       </InnerSidebar>
       <InnerContent>
         <NFTsTemplateList
+          cacheTokens={cacheTokens}
           tokens={tokens}
           isLoading={tokensLoading}
           chips={chips}
