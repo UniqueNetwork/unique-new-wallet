@@ -4,6 +4,37 @@ import React from 'react';
 // TODO: add props rel, target to all Link component usages [WMS-871]
 export const faqItems = [
   {
+    title: 'How can I get coins?',
+    content: (
+      <p>
+        To obtain QTZ visit the{' '}
+        <Link
+          href="https://www.mexc.com/exchange/QTZ_USDT"
+          title="Visit the MEXC Exchange"
+          role="primary"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          MEXC Exchange
+        </Link>
+        <br />
+        You can get OPL in this Telegram bot{' '}
+        <Link
+          href="https://t.me/unique2faucet_opal_bot"
+          title="Get OPAL via Telegram bot"
+          role="primary"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          @unique2faucet_opal_bot
+        </Link>
+        .
+        <br />
+        UNQ coming soon on the exchange.
+      </p>
+    ),
+  },
+  {
     title: 'How can I create a wallet?',
     content: (
       <p>

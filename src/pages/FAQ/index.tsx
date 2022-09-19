@@ -43,13 +43,16 @@ const WrapperContentStyled = styled(WrapperContent)`
     ol,
     ul {
       padding-left: 1.5em;
-      list-style-position: inside;
 
       li {
         &:not(:first-child) {
           margin-top: 0.1em;
         }
       }
+    }
+
+    ol {
+      list-style-position: inside;
     }
 
     p + p {
