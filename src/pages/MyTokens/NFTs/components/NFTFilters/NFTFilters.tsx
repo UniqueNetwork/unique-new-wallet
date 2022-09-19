@@ -93,6 +93,9 @@ export const NFTFilters = styled(NFTFiltersComponent)`
     .unique-button {
       width: 100%;
     }
+    @media (max-width: 1279px) {
+      display: none;
+    }
   }
   .unique-select {
     .select-value {
