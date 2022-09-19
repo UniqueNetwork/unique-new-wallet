@@ -20,6 +20,7 @@ import {
 } from '@app/pages/components/PageComponents';
 import { ROUTE } from '@app/routes';
 import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
+import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 
 import { defaultLimit, defaultTypesFilters } from '../constants';
 import { useNFTsContext } from '../context';
@@ -65,6 +66,8 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         pagination: { page: tokensPage, limit: defaultLimit },
       },
     );
+
+  const { cacheTokens } = useCheckExistTokensByAccount({ tokens });
 
   const defaultCollections = useMemo(
     () =>
@@ -132,6 +135,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       />
       <InnerContent>
         <NFTsTemplateList
+          cacheTokens={cacheTokens}
           tokens={tokens}
           isLoading={tokensLoading}
           chips={chips}

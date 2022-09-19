@@ -18,6 +18,8 @@ import { NoItems, TokenLink } from '@app/components';
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { defaultLimit } from '@app/pages/MyTokens/constants';
+import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
+import { TTokensCacheVar } from '@app/api';
 
 type PaginationSettingsProps = Pick<
   IPaginationProps,
@@ -39,6 +41,7 @@ type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
   fetchMore?(variables?: any): void;
   onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
+  cacheTokens: TTokensCacheVar;
 };
 
 const renderItemsCount = (count = 0) => (
@@ -56,6 +59,7 @@ const NFTsListComponent = ({
   fetchMore,
   onPageChange,
   onChipsReset,
+  cacheTokens,
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
@@ -76,6 +80,7 @@ const NFTsListComponent = ({
 
   return (
     <div className={classNames('nft-list', className)}>
+      <ListEntitiesCacheStyle entities={cacheTokens} />
       {isLoading && <Loader isFullPage={true} size="middle" />}
       {!isNaN(Number(paginationSettings.size)) && (
         <div className="nft-list__header">
@@ -150,6 +155,10 @@ const NFTsListComponent = ({
     </div>
   );
 };
+
+const ListEntitiesCacheStyle = styled(ListEntitiesCache)`
+  margin-bottom: 30px;
+`;
 
 export const DesktopPagination = styled.div`
   display: flex;

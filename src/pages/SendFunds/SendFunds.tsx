@@ -40,7 +40,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   const { error, info } = useNotifications();
 
   const { isFlowLoading, flowError, flowStatus, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(AccountApiService.balanceTransfer);
+    useExtrinsicFlow(AccountApiService.balanceTransfer, 'transfer-balance');
   const { isFeeError, feeError, feeFormatted, getFee } = useExtrinsicFee(
     AccountApiService.balanceTransfer,
   );

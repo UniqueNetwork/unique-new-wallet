@@ -23,7 +23,7 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
 
   const { feeFormatted, getFee } = useExtrinsicFee(TokenApiService.burnMutation);
   const { flowStatus, isFlowLoading, flowError, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(TokenApiService.burnMutation);
+    useExtrinsicFlow(TokenApiService.burnMutation, 'burn-token');
 
   useEffect(() => {
     if (flowStatus === 'success') {

@@ -124,7 +124,7 @@ export const useGraphQlOwnerTokens = (
   return {
     isPagination: tokensCount > limit,
     tokensCount,
-    tokens: response?.tokens.data,
+    tokens: response?.tokens.data || [],
     fetchMoreMethod,
     tokensLoading,
     error,

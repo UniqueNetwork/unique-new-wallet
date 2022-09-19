@@ -27,7 +27,7 @@ export const Header = () => {
   const deviceSize = useDeviceSize();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
-  const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1279);
+  const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1024);
   const [isAccountManagerOpen, setAccountManagerOpen] = useState<boolean>(false);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
   const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
@@ -76,7 +76,7 @@ export const Header = () => {
             {mobileMenuIsOpen ? (
               <Icon name="close" size={20} color="var(--color-secondary-400)" />
             ) : (
-              <Icon name="menu" size={24} />
+              <Icon name="menu" size={32} />
             )}
           </MenuIcon>
         )}

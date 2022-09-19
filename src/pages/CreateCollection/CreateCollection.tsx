@@ -57,7 +57,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const { selectedAccount } = useAccounts();
   const formMapper = useCollectionFormMapper();
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(CollectionApiService.collectionCreateMutation);
+    useExtrinsicFlow(CollectionApiService.collectionCreateMutation, 'create-collection');
   const { feeError, isFeeError, fee, feeFormatted, getFee } = useExtrinsicFee(
     CollectionApiService.collectionCreateMutation,
   );
