@@ -117,6 +117,8 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
     @media screen and (min-width: 768px) {
       flex-direction: row;
       flex-wrap: nowrap;
+      max-width: none;
+      margin: 0;
     }
 
     &:not(._empty) {
@@ -169,7 +171,7 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
     }
 
     &__info-container {
-      flex: 0 0 100%;
+      flex: 1 1 auto;
       max-width: 100%;
 
       @media screen and (min-width: 768px) {

@@ -1,4 +1,5 @@
-import React, { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import { OperationVariables } from '@apollo/client/core/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Button, IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
@@ -29,11 +30,12 @@ interface IPanelSettings {
 export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
   className?: string;
   dataSource: T[];
+  fetchMore?: any;
   isLoading?: boolean;
-  loadMoreHandle?(): void;
+  // loadMoreHandle?(items: number): void;
   panelSettings: IPanelSettings;
   renderItem?: (item: T, index: number) => ReactNode;
-  showMore?: boolean;
+  visibleItems?: number;
 };
 
 const listClassName = 'unique-list';
@@ -125,15 +127,17 @@ const ButtonMoreWrapper = styled.div`
 function List<T>({
   className,
   dataSource,
+  fetchMore,
   isLoading,
   panelSettings,
   renderItem,
-  loadMoreHandle,
-  showMore,
+  // loadMoreHandle,
+  visibleItems,
   onPageChange,
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
   const listItemsKeys: { [index: number]: React.Key } = {};
+  // const [res, setRes] = useState<any>();
 
   const renderInnerItem = (item: T, index: number) => {
     if (!renderItem) {
@@ -182,6 +186,20 @@ function List<T>({
     }`}</Text>
   );
 
+  const handleMoreButton = async () => {
+    await fetchMore({
+      variables: {
+        limit: 100,
+      },
+      updateQuery: (prev: any, { fetchMoreResult }: OperationVariables) => {
+        if (!fetchMoreResult) {
+          return prev;
+        }
+        return fetchMoreResult;
+      },
+    });
+  };
+
   return (
     <Wrapper>
       {!!dataSource.length &&
@@ -192,7 +210,7 @@ function List<T>({
               {panelSettings.extraText && panelSettings.extraText}
             </ListExtra>
 
-            {!loadMoreHandle &&
+            {!fetchMore &&
               (panelSettings.pagination.viewMode === 'both' ||
                 panelSettings.pagination.viewMode === 'top') &&
               paginationContent}
@@ -203,12 +221,12 @@ function List<T>({
         {childrenContent}
 
         <ButtonMoreWrapper>
-          {showMore && deviceSize <= DeviceSize.md && (
+          {visibleItems && visibleItems > 0 && deviceSize <= DeviceSize.md && (
             <Button
               title="Load more"
               iconRight={{ color: 'currentColor', name: 'arrow-down', size: 16 }}
               wide={deviceSize <= DeviceSize.xs}
-              onClick={loadMoreHandle}
+              onClick={handleMoreButton}
             />
           )}
         </ButtonMoreWrapper>

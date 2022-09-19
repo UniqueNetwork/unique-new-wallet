@@ -1,4 +1,4 @@
-import { FetchMoreOptions, gql, useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 
 import { OptionsAccountCollection } from '@app/api';
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
@@ -38,18 +38,6 @@ export const useGraphQlCollectionsByAccount = ({
     search,
   } = options;
 
-  const fetchMoreMethod = (variables: FetchMoreOptions) => {
-    fetchMore({
-      ...variables,
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return prev;
-        }
-        return Object.assign({}, prev, fetchMoreResult);
-      },
-    });
-  };
-
   const {
     data: response,
     error,
@@ -79,7 +67,7 @@ export const useGraphQlCollectionsByAccount = ({
   return {
     collections: response?.collections.data ?? [],
     collectionsCount,
-    fetchMoreMethod,
+    fetchMore,
     isPagination: collectionsCount > limit,
     isCollectionsLoading: loading,
     error,

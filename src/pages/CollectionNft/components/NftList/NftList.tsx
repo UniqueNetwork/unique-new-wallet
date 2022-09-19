@@ -7,7 +7,7 @@ import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 import { Token } from '@app/api/graphQL/types';
 import List from '@app/components/List';
-import { TokenLink } from '@app/components';
+import { PagePaper, TokenLink } from '@app/components';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 
 interface NftListComponentProps {
@@ -23,13 +23,15 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   const { selectedAccount } = useAccounts();
 
   // TODO: move method to utils
-  const getItems = () => {
+  const getLimit = () => {
     switch (deviceSize) {
       case DeviceSize.sm:
       case DeviceSize.lg:
+      case DeviceSize.xl:
         return 8;
       case DeviceSize.md:
         return 9;
+      case DeviceSize.xxl:
       default:
         return 10;
     }
@@ -48,7 +50,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         direction,
         pagination: {
           page,
-          limit: getItems(),
+          limit: getLimit(),
         },
       },
     });
@@ -58,10 +60,8 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     collectionId: parseInt(collectionId),
   });
 
-  // TODO: WAS NFTsTemplateList prop cacheTokens={cacheTokens}
-
   return (
-    <>
+    <PagePaper.Processing>
       <ListEntitiesCache entities={cacheTokens} />
       <List
         className={className}
@@ -70,7 +70,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         panelSettings={{
           pagination: {
             current: page,
-            pageSizes: [getItems()],
+            pageSizes: [getLimit()],
             show: isPagination,
             size: tokensCount,
             viewMode: 'bottom',
@@ -99,8 +99,9 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
             }
           />
         )}
+        visibleItems={getLimit()}
         onPageChange={onChangePagination}
       />
-    </>
+    </PagePaper.Processing>
   );
 };

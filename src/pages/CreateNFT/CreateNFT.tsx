@@ -216,7 +216,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     [collection, collectionsOptions, isCollectionsLoading, tokenForm],
   );
 
-  const root = document.getElementById('root');
   const renderSidebar = () => (
     <Sidebar
       hidden={!collection}
@@ -272,7 +271,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 />,
               ]}
               isOpen={isDrawerOpen}
-              parent={root as Element}
+              parent={document.body}
             >
               {renderSidebar()}
             </BottomBar>

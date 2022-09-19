@@ -1,4 +1,4 @@
-import React, { useState, VFC } from 'react';
+import { useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { IconProps, InputText, Select } from '@unique-nft/ui-kit';
@@ -103,7 +103,7 @@ export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
         </ControlGroup>
       )}
       {view === 'row' && (
-        <ButtonGroup as={ControlsContainer}>
+        <ButtonGroup stack as={ControlsContainer}>
           <MintingBtn
             iconLeft={{
               name: 'plus',
@@ -159,6 +159,11 @@ export const TopFilter = styled(TopFilterComponent)`
   align-items: center;
   width: 100%;
   gap: var(--prop-gap) calc(var(--prop-gap) * 2);
+  padding-bottom: calc(var(--prop-gap) * 2);
+
+  @media screen and (min-width: 1024px) {
+    padding-bottom: 0;
+  }
 
   .unique-input-text,
   .unique-select {

@@ -34,6 +34,7 @@ const Content = styled.div`
 const Inner = styled.div`
   flex: 1 1 auto;
   display: flex;
+  overflow: hidden;
 
   @media screen and (min-width: 1024px) {
     padding: calc(var(--prop-gap) * 2);

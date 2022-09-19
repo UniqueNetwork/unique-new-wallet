@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { Chip, IconProps, IPaginationProps, Link, Text } from '@unique-nft/ui-kit';
@@ -7,7 +7,7 @@ import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
 import { useApi } from '@app/hooks';
 import { defaultLimit } from '@app/pages/MyTokens/constants';
-import { TokenLink } from '@app/components';
+import { PagePaper, TokenLink } from '@app/components';
 import List from '@app/components/List';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 
@@ -28,7 +28,7 @@ type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
     iconLeft?: IconProps;
     onClose?(): void;
   }[];
-  fetchMore?(variables?: any): void;
+  fetchMore?: any;
   onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
   cacheTokens: TTokensCacheVar;
@@ -47,29 +47,30 @@ export const NFTsTemplateList = ({
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
-  const [limit, setLimit] = useState(defaultLimit);
+  // const [limit, setLimit] = useState(defaultLimit);
 
-  const onFetchMore = () => {
-    if (fetchMore) {
-      const newLimit = limit + defaultLimit;
-
-      fetchMore({
-        variables: {
-          limit: newLimit,
-        },
-      });
-      setLimit(newLimit);
-    }
-  };
+  // const onFetchMore = () => {
+  //   if (fetchMore) {
+  //     const newLimit = limit + defaultLimit;
+  //
+  //     fetchMore({
+  //       variables: {
+  //         limit: newLimit,
+  //       },
+  //     });
+  //     setLimit(newLimit);
+  //   }
+  // };
 
   return (
-    <>
+    <PagePaper.Processing>
       <ListEntitiesCache entities={cacheTokens} />
       <List
         className={classNames('nft-list', className)}
         dataSource={tokens}
+        fetchMore={fetchMore}
         isLoading={isLoading}
-        loadMoreHandle={onFetchMore}
+        // loadMoreHandle={onFetchMore}
         panelSettings={{
           pagination: {
             current: paginationSettings.current,
@@ -112,9 +113,9 @@ export const NFTsTemplateList = ({
             }
           />
         )}
-        showMore={fetchMore && paginationSettings.size >= limit}
+        visibleItems={defaultLimit}
         onPageChange={onPageChange}
       />
-    </>
+    </PagePaper.Processing>
   );
 };

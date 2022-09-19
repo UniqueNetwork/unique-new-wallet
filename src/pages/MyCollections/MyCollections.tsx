@@ -1,4 +1,4 @@
-import { useContext, useState, VFC } from 'react';
+import { useContext, useEffect, useState, VFC } from 'react';
 import { Outlet, useNavigate, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
 import { Button, Text } from '@unique-nft/ui-kit';
@@ -9,8 +9,10 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
+import { useExtrinsicCacheEntities } from '@app/api';
 import { Collection } from '@app/api/graphQL/types';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
+import { useGraphQlCheckInExistCollectionsByAccount } from '@app/api/graphQL/collections/useGraphQlCheckInExistCollectionsByAccount';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import List from '@app/components/List';
 import {
@@ -36,42 +38,53 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const [isFilterOpen, setFilterOpen] = useState(false);
 
   // TODO: move method to utils
-  const getItems = () => {
+  const getLimit = () => {
     switch (deviceSize) {
       case DeviceSize.sm:
       case DeviceSize.lg:
+      case DeviceSize.xl:
         return 8;
       case DeviceSize.md:
         return 9;
+      case DeviceSize.xxl:
       default:
         return 10;
     }
   };
 
+  const { collections: cacheCollections, excludeCollectionsCache } =
+    useExtrinsicCacheEntities();
+
   // TODO: get limit correctly
-  const [limit, setLimit] = useState(getItems);
+  // const [limit, setLimit] = useState(getLimit);
 
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
 
   const isChildExist = useOutlet();
 
-  const {
-    collections,
-    collectionsCount,
-    isCollectionsLoading,
-    isPagination,
-    fetchMoreMethod,
-  } = useGraphQlCollectionsByAccount({
-    accountAddress: selectedAccount?.address,
-    options: {
-      order,
-      pagination: {
-        page,
-        limit: getItems(),
+  const { collections, collectionsCount, isCollectionsLoading, isPagination, fetchMore } =
+    useGraphQlCollectionsByAccount({
+      accountAddress: selectedAccount?.address,
+      options: {
+        order,
+        pagination: {
+          page,
+          limit: getLimit(),
+        },
+        search,
       },
-      search,
-    },
+    });
+
+  const { synchronizedCollectionsIds } = useGraphQlCheckInExistCollectionsByAccount({
+    collections: cacheCollections,
+    skip: [cacheCollections.length, collections.length].includes(0),
   });
+
+  useEffect(() => {
+    if (synchronizedCollectionsIds.length > 0) {
+      excludeCollectionsCache(synchronizedCollectionsIds);
+    }
+  }, [collections, synchronizedCollectionsIds, excludeCollectionsCache]);
 
   const onClickNavigate = (id: Collection['collection_id']) =>
     navigate(
@@ -102,20 +115,20 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
     ]);
   }
 
-  const onFetchMore = () => {
-    if (fetchMoreMethod) {
-      const newLimit = limit + getItems();
-
-      fetchMoreMethod({
-        // @ts-ignore
-        variables: {
-          limit: newLimit,
-        },
-      });
-
-      setLimit(newLimit);
-    }
-  };
+  // const onFetchMore = () => {
+  //   if (fetchMoreMethod) {
+  //     const newLimit = limit + getLimit();
+  //
+  //     fetchMoreMethod({
+  //       // @ts-ignore
+  //       variables: {
+  //         limit: newLimit,
+  //       },
+  //     });
+  //
+  //     setLimit(newLimit);
+  //   }
+  // };
 
   return (
     <PagePaper
@@ -126,48 +139,49 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       {!isChildExist ? (
         <PagePaper.Layout
           header={
-            deviceSize >= DeviceSize.lg && (
-              <TopFilter showFilter={collections.length > 0} />
-            )
+            <TopFilter
+              showFilter={collections.length > 0 && deviceSize >= DeviceSize.lg}
+            />
           }
         >
-          <List
-            isLoading={isCollectionsLoading}
-            dataSource={collections}
-            loadMoreHandle={onFetchMore}
-            panelSettings={{
-              pagination: {
-                current: page,
-                pageSizes: [getItems()],
-                show: isPagination,
-                size: collectionsCount,
-                viewMode: 'bottom',
-              },
-              viewMode: 'both',
-            }}
-            renderItem={(collection: Collection) => (
-              <List.Item key={collection.collection_id}>
-                <TokenLink
-                  image={getTokenIpfsUriByImagePath(collection.collection_cover)}
-                  title={`${collection.name} [${collection.collection_id}]`}
-                  meta={
-                    <>
-                      <Text color="grey-500" size="s">
-                        Items:{' '}
-                      </Text>
-                      <Text size="s">{collection.tokens_count || 0}</Text>
-                    </>
-                  }
-                  key={collection.collection_id}
-                  onTokenClick={() => onClickNavigate(collection.collection_id)}
-                  onMetaClick={() => onClickNavigate(collection.collection_id)}
-                />
-              </List.Item>
-            )}
-            //@ts-ignore
-            showMore={fetchMoreMethod && collectionsCount >= limit}
-            onPageChange={onChangePagination}
-          />
+          <PagePaper.Processing>
+            <List
+              isLoading={isCollectionsLoading}
+              dataSource={collections}
+              fetchMore={fetchMore}
+              panelSettings={{
+                pagination: {
+                  current: page,
+                  pageSizes: [getLimit()],
+                  show: isPagination,
+                  size: collectionsCount,
+                  viewMode: 'bottom',
+                },
+                viewMode: 'both',
+              }}
+              renderItem={(collection: Collection) => (
+                <List.Item key={collection.collection_id}>
+                  <TokenLink
+                    image={getTokenIpfsUriByImagePath(collection.collection_cover)}
+                    title={`${collection.name} [${collection.collection_id}]`}
+                    meta={
+                      <>
+                        <Text color="grey-500" size="s">
+                          Items:{' '}
+                        </Text>
+                        <Text size="s">{collection.tokens_count || 0}</Text>
+                      </>
+                    }
+                    key={collection.collection_id}
+                    onTokenClick={() => onClickNavigate(collection.collection_id)}
+                    onMetaClick={() => onClickNavigate(collection.collection_id)}
+                  />
+                </List.Item>
+              )}
+              visibleItems={getLimit()}
+              onPageChange={onChangePagination}
+            />
+          </PagePaper.Processing>
           {deviceSize <= DeviceSize.md && (
             <BottomBar
               header={

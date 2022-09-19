@@ -43,7 +43,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     !selectedAccount?.address,
   );
 
-  const { tokens, tokensCount, tokensLoading, isPagination, fetchMoreMethod } =
+  const { tokens, tokensCount, tokensLoading, isPagination, fetchMore } =
     useGraphQlOwnerTokens(
       selectedAccount?.address,
       {
@@ -114,13 +114,12 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
           )
         }
       >
-        {/* TODO: cacheTokens */}
         <NFTsTemplateList
           cacheTokens={cacheTokens}
           tokens={tokens}
           isLoading={tokensLoading}
           chips={chips}
-          fetchMore={fetchMoreMethod}
+          fetchMore={fetchMore}
           paginationSettings={{
             current: tokensPage,
             pageSizes: [defaultLimit],

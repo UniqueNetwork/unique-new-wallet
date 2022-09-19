@@ -5,6 +5,7 @@ import Header, { HeaderProps } from './Header';
 import Sidebar, { SidebarProps } from './Sidebar';
 import Layout, { LayoutProps } from './Layout';
 import Panel, { PanelProps } from './Panel';
+import Processing, { ProcessingProps } from './Processing';
 
 interface PagePaperProps {
   children?: ReactNode;
@@ -18,6 +19,7 @@ interface PagePaperComposition {
   Sidebar: FC<SidebarProps>;
   Layout: FC<LayoutProps>;
   Panel: FC<PanelProps>;
+  Processing: FC<ProcessingProps>;
 }
 
 export const PagePaperStyles = css`
@@ -53,3 +55,4 @@ PagePaper.Header = Header;
 PagePaper.Sidebar = Sidebar;
 PagePaper.Layout = Layout;
 PagePaper.Panel = Panel;
+PagePaper.Processing = Processing;

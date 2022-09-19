@@ -155,8 +155,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
-  const root = document.getElementById('root');
-
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
       <WrapperContentStyled>
@@ -235,7 +233,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
             />,
           ]}
           isOpen={isDrawerOpen}
-          parent={root as Element}
+          parent={document.body}
         >
           <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
         </BottomBar>

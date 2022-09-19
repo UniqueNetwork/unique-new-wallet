@@ -147,9 +147,14 @@ export const AdditionalText = styled(Text).attrs({
 `;
 
 export const ButtonGroup = styled.div<{ stack?: boolean }>`
+  flex: 1 1 auto;
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--prop-gap) / 2) var(--prop-gap);
+
+  @media screen and (min-width: 568px) {
+    flex: 0 0 auto;
+  }
 
   & > * {
     flex: ${(p) => (p.stack ? '1 1 auto' : '1 1 100%')};
