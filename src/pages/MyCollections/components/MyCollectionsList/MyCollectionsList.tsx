@@ -36,15 +36,15 @@ export const MyCollectionsList = ({
   const { selectedAccount } = useContext(AccountContext);
   const navigate = useNavigate();
 
-  // TODO: move method to utils
-  const getItems = () => {
+  const getLimit = () => {
     switch (deviceSize) {
       case DeviceSize.sm:
+      case DeviceSize.lg:
         return 8;
       case DeviceSize.md:
         return 9;
-      case DeviceSize.lg:
-        return 8;
+      case DeviceSize.xl:
+      case DeviceSize.xxl:
       default:
         return 10;
     }
@@ -60,7 +60,7 @@ export const MyCollectionsList = ({
         order,
         pagination: {
           page,
-          limit: getItems(),
+          limit: getLimit(),
         },
         search,
       },
@@ -119,7 +119,7 @@ export const MyCollectionsList = ({
               <Pagination
                 withIcons
                 current={page}
-                pageSizes={[getItems()]}
+                pageSizes={[getLimit()]}
                 size={collectionsCount}
                 onPageChange={onPageChange}
               />
