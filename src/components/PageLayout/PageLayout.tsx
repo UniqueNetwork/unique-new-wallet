@@ -64,6 +64,7 @@ const LayoutStyled = styled.div`
     margin-right: auto;
     padding-left: 24px;
     padding-right: 24px;
+    margin: 32px auto 0;
 
     @media screen and (max-width: 567px) {
       padding-left: 16px;
@@ -73,6 +74,7 @@ const LayoutStyled = styled.div`
     @media screen and (min-width: 1024px) {
       padding-left: 32px;
       padding-right: 32px;
+      min-height: calc(100vh - 80px - 32px);
     }
 
     > div {
