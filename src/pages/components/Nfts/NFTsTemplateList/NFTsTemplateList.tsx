@@ -74,6 +74,8 @@ const NFTsListComponent = ({
     }
   };
 
+  console.log('paginationSettings', paginationSettings);
+
   return (
     <div className={classNames('nft-list', className)}>
       {isLoading && <Loader isFullPage={true} size="middle" />}
@@ -125,7 +127,7 @@ const NFTsListComponent = ({
           </GridList>
         )}
       </div>
-      {fetchMore && paginationSettings.size >= limit && (
+      {fetchMore && paginationSettings.size > limit && (
         <ButtonMore
           title="Load more"
           iconRight={{ color: 'currentColor', name: 'arrow-down', size: 16 }}
