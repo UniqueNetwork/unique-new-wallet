@@ -1,6 +1,6 @@
 import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -34,8 +34,7 @@ export const MyCollectionsList = ({
   const { selectedAccount } = useContext(AccountContext);
   const navigate = useNavigate();
 
-  // TODO: move method to utils
-  const getItems = () => {
+  const getLimit = () => {
     switch (deviceSize) {
       case DeviceSize.sm:
         return 8;
@@ -43,6 +42,9 @@ export const MyCollectionsList = ({
         return 9;
       case DeviceSize.lg:
         return 8;
+      case DeviceSize.xl:
+      case DeviceSize.xxl:
+        return 10;
       default:
         return 10;
     }
@@ -55,7 +57,7 @@ export const MyCollectionsList = ({
         order,
         pagination: {
           page,
-          limit: getItems(),
+          limit: getLimit(),
         },
         search,
       },
@@ -102,7 +104,7 @@ export const MyCollectionsList = ({
               <Pagination
                 withIcons
                 current={page}
-                pageSizes={[getItems()]}
+                pageSizes={[getLimit()]}
                 size={collectionsCount}
                 onPageChange={onPageChange}
               />
