@@ -1,6 +1,6 @@
 import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -37,14 +37,12 @@ export const MyCollectionsList = ({
   const getLimit = () => {
     switch (deviceSize) {
       case DeviceSize.sm:
+      case DeviceSize.lg:
         return 8;
       case DeviceSize.md:
         return 9;
-      case DeviceSize.lg:
-        return 8;
       case DeviceSize.xl:
       case DeviceSize.xxl:
-        return 10;
       default:
         return 10;
     }
