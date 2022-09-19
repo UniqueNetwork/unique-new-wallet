@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components/macro';
 import { Accordion } from '@unique-nft/ui-kit';
 
+import { useApi } from '@app/hooks';
 import {
   MainWrapper,
   WrapperContent,
@@ -58,14 +59,32 @@ const WrapperContentStyled = styled(WrapperContent)`
     p + p {
       margin-top: 1.125em;
     }
+
+    a:not([class]),
+    .unique-link {
+      gap: 2px;
+      color: var(--color-primary-600);
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.3em;
+      }
+
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
+      }
+    }
   }
 `;
 
 const FaqComponent = (): React.ReactElement<void> => {
+  const { currentChain } = useApi();
+
   return (
     <MainWrapperStyled>
       <WrapperContentStyled>
-        {faqItems.map((item, i) => {
+        {faqItems(currentChain.network).map((item: Record<any, ReactNode>, i: number) => {
           return (
             <Accordion key={i} className="faq-item" expanded={i === 0} title={item.title}>
               {item.content}
