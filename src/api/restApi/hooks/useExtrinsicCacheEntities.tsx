@@ -1,30 +1,24 @@
 import { useCallback, useEffect } from 'react';
 import { makeVar, useReactiveVar } from '@apollo/client';
 
-import { TExtrinsicType } from '@app/api';
+import { TCollectionsCacheVar, TExtrinsicType, TTokensCacheVar } from '@app/api';
 import { Token } from '@app/api/graphQL/types';
 
 const CACHE_COLLECTIONS_STORAGE_KEY = 'wallet_cache_collections';
 const CACHE_TOKENS_STORAGE_KEY = 'wallet_cache_tokens';
 
-export type TCollectionsVar = { collectionId: number; path: string | undefined }[];
-export type TTokensVar = {
-  tokenId: number;
-  collectionId: number;
-  path: string | undefined;
-}[];
-
-const collectionsVar = makeVar<TCollectionsVar>(
+const collectionsVar = makeVar<TCollectionsCacheVar>(
   JSON.parse(
     localStorage.getItem(CACHE_COLLECTIONS_STORAGE_KEY) || '[]',
-  ) as TCollectionsVar,
+  ) as TCollectionsCacheVar,
 );
-const tokensVar = makeVar<TTokensVar>(
-  JSON.parse(localStorage.getItem(CACHE_TOKENS_STORAGE_KEY) || '[]') as TTokensVar,
+
+const tokensVar = makeVar<TTokensCacheVar>(
+  JSON.parse(localStorage.getItem(CACHE_TOKENS_STORAGE_KEY) || '[]') as TTokensCacheVar,
 );
 
 type TConcreteExtrinsic = Partial<
-  Record<TExtrinsicType, (data: TPayloadData) => TCollectionsVar | TTokensVar>
+  Record<TExtrinsicType, (data: TPayloadData) => TCollectionsCacheVar | TTokensCacheVar>
 >;
 
 type TPayloadData = {
@@ -33,7 +27,7 @@ type TPayloadData = {
   type: keyof TConcreteExtrinsic;
 };
 
-const _cacheEntities: TConcreteExtrinsic = {
+const cacheEntities: TConcreteExtrinsic = {
   'create-collection': ({ entityData, parsed }) => {
     const currentData = collectionsVar();
 
@@ -43,7 +37,10 @@ const _cacheEntities: TConcreteExtrinsic = {
 
     return collectionsVar([
       ...currentData,
-      { collectionId: parsed.collectionId, path: entityData.schema.coverPicture.ipfsCid },
+      {
+        collectionId: parsed.collectionId,
+        path: entityData.schema?.coverPicture?.ipfsCid,
+      },
     ]);
   },
   'create-token': ({ entityData, parsed }) => {
@@ -77,7 +74,7 @@ export const useExtrinsicCacheEntities = () => {
   }, [tokens]);
 
   const setPayloadEntity = (data: TPayloadData) => {
-    const reactiveEntitiesFn = _cacheEntities[data.type];
+    const reactiveEntitiesFn = cacheEntities[data.type];
     if (!reactiveEntitiesFn) {
       return;
     }

@@ -16,7 +16,7 @@ import { NoItems, TokenLink } from '@app/components';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { Token } from '@app/api/graphQL/types';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
-import { TTokensVar } from '@app/api';
+import { TTokensCacheVar } from '@app/api';
 
 type PaginationSettingsProps = Pick<
   IPaginationProps,
@@ -36,7 +36,7 @@ type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
     onClose?(): void;
   }[];
   onChipsReset?(): void;
-  cacheTokens: TTokensVar;
+  cacheTokens: TTokensCacheVar;
 };
 
 const renderItemsCount = (count = 0) => (

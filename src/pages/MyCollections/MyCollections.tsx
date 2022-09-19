@@ -7,7 +7,6 @@ import { PagePaper } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
-import { useExtrinsicCacheEntities } from '@app/api';
 
 import { useMyCollectionsContext } from './context';
 import { MyCollectionsFilter, MyCollectionsList } from './components';
@@ -20,7 +19,6 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
 }) => {
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
-  const { collections } = useExtrinsicCacheEntities();
 
   const isChildExist = useOutlet();
 
@@ -33,7 +31,6 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       {!isChildExist ? (
         <>
           <MyCollectionsFilter />
-          <ListEntitiesCacheStyled entities={collections} />
           <MyCollectionsList
             order={order}
             page={page}

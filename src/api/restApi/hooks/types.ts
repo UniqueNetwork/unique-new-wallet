@@ -1,7 +1,6 @@
 import { QueryObserverOptions } from 'react-query/types/core/types';
 
 import { IBaseApi } from '@app/api';
-import { UnsignedTxPayloadResponse } from '@app/types/Api';
 
 import { EndpointQuery, HttpError } from '../request';
 
@@ -9,10 +8,6 @@ export type Payload<TBody> = {
   api: IBaseApi;
   body: TBody;
 };
-
-export type UnsignedTxModelFetcher<TBody> = (
-  payload: Payload<TBody>,
-) => Promise<UnsignedTxPayloadResponse>;
 
 export type UseEndpointQueryOptions<
   ConcreteEndpointQuery extends EndpointQuery<
@@ -40,3 +35,10 @@ export type TExtrinsicType =
   | 'burn-collection'
   | 'transfer-token'
   | 'transfer-balance';
+
+export type TCollectionsCacheVar = { collectionId: number; path: string | undefined }[];
+export type TTokensCacheVar = {
+  tokenId: number;
+  collectionId: number;
+  path: string | undefined;
+}[];

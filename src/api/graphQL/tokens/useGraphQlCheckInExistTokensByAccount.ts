@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 
 import { QueryResponse, Token } from '@app/api/graphQL/types';
-import { TTokensVar } from '@app/api';
+import { TTokensCacheVar } from '@app/api';
 
 const TOKENS_QUERY = gql`
   query check_exist_tokens_account($where: TokenWhereParams) {
@@ -18,9 +18,11 @@ const TOKENS_QUERY = gql`
 export const useGraphQlCheckInExistTokensByAccount = ({
   tokens,
   collectionId,
+  skip,
 }: {
-  tokens: TTokensVar;
+  tokens: TTokensCacheVar;
   collectionId?: number;
+  skip: boolean;
 }) => {
   const groupsTokens = tokens.reduce<Record<number, number[]>>(
     (prev, { collectionId, tokenId }) => {
@@ -34,10 +36,10 @@ export const useGraphQlCheckInExistTokensByAccount = ({
     {},
   );
 
-  const { data: response, refetch } = useQuery<
+  const { data: response } = useQuery<
     QueryResponse<Pick<Token, 'token_id' | 'collection_id'>>
   >(TOKENS_QUERY, {
-    skip: tokens.length === 0,
+    skip,
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
     notifyOnNetworkStatusChange: true,
@@ -64,6 +66,5 @@ export const useGraphQlCheckInExistTokensByAccount = ({
 
   return {
     synchronizedTokensIds: response?.tokens.data || [],
-    refetchSynchronizedTokens: refetch,
   };
 };

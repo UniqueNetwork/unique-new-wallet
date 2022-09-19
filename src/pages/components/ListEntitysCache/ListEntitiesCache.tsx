@@ -14,10 +14,12 @@ type Props = {
 };
 
 export const ListEntitiesCache = ({ entities, className }: Props) => {
-  const tooltipRef = createRef<HTMLDivElement>();
   if (entities.length === 0) {
     return null;
   }
+
+  const tooltipRef = createRef<HTMLDivElement>();
+
   return (
     <ListEntitiesCacheWrapper className={className}>
       <Tooltip targetRef={tooltipRef}>

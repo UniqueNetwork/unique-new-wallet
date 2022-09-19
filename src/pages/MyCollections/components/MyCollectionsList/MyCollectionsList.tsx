@@ -14,6 +14,7 @@ import { GridListCommon } from '@app/pages/components/PageComponents';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { useGraphQlCheckInExistCollectionsByAccount } from '@app/api/graphQL/collections/useGraphQlCheckInExistCollectionsByAccount';
+import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 
 interface MyCollectionsListProps {
   className?: string;
@@ -52,11 +53,6 @@ export const MyCollectionsList = ({
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();
 
-  const { refetchSynchronizedCollections, synchronizedCollectionsIds } =
-    useGraphQlCheckInExistCollectionsByAccount({
-      collections: cacheCollections,
-    });
-
   const { collections, collectionsCount, isCollectionsLoading, isPagination } =
     useGraphQlCollectionsByAccount({
       accountAddress: selectedAccount?.address,
@@ -70,19 +66,16 @@ export const MyCollectionsList = ({
       },
     });
 
+  const { synchronizedCollectionsIds } = useGraphQlCheckInExistCollectionsByAccount({
+    collections: cacheCollections,
+    skip: [cacheCollections.length, collections.length].includes(0),
+  });
+
   useEffect(() => {
     if (synchronizedCollectionsIds.length > 0) {
       excludeCollectionsCache(synchronizedCollectionsIds);
     }
   }, [collections, synchronizedCollectionsIds, excludeCollectionsCache]);
-
-  useEffect(() => {
-    if (cacheCollections.length === 0) {
-      return;
-    }
-
-    refetchSynchronizedCollections();
-  }, [collections, cacheCollections, refetchSynchronizedCollections]);
 
   const onClickNavigate = (id: Collection['collection_id']) =>
     navigate(
@@ -91,6 +84,7 @@ export const MyCollectionsList = ({
 
   return (
     <ListWrapper className={classNames('my-collections-list', className)}>
+      <ListEntitiesCacheStyled entities={cacheCollections} />
       {isCollectionsLoading ? (
         <Loader isFullPage={true} size="middle" />
       ) : collectionsCount > 0 ? (
@@ -139,6 +133,10 @@ export const MyCollectionsList = ({
   );
 };
 
+const ListEntitiesCacheStyled = styled(ListEntitiesCache)`
+  margin: 15px 0 30px;
+`;
+
 const Footer = styled.div`
   display: flex;
   flex: 0 0 auto;
@@ -148,6 +146,7 @@ const Footer = styled.div`
 `;
 
 const ListWrapper = styled.div`
+  flex-direction: column;
   &.my-collections-list {
     position: relative;
     display: flex;

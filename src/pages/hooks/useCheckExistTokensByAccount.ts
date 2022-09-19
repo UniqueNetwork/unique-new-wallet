@@ -13,24 +13,17 @@ export const useCheckExistTokensByAccount = ({
 }) => {
   const { tokens: cacheTokens, excludeTokensCache } = useExtrinsicCacheEntities();
 
-  const { synchronizedTokensIds, refetchSynchronizedTokens } =
-    useGraphQlCheckInExistTokensByAccount({
-      tokens: cacheTokens,
-      collectionId,
-    });
+  const { synchronizedTokensIds } = useGraphQlCheckInExistTokensByAccount({
+    tokens: cacheTokens,
+    collectionId,
+    skip: [cacheTokens.length, tokens.length].includes(0),
+  });
 
   useEffect(() => {
     if (synchronizedTokensIds.length > 0) {
       excludeTokensCache(synchronizedTokensIds);
     }
   }, [tokens, excludeTokensCache, synchronizedTokensIds]);
-
-  useEffect(() => {
-    if (cacheTokens.length === 0) {
-      return;
-    }
-    refetchSynchronizedTokens();
-  }, [cacheTokens, refetchSynchronizedTokens, tokens]);
 
   return {
     cacheTokens: Number.isInteger(collectionId)
