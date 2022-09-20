@@ -7,7 +7,7 @@ import { PagePaper, TokenLink } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
-import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize, useItemsLimit } from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
 import { useExtrinsicCacheEntities } from '@app/api';
 import { Collection } from '@app/api/graphQL/types';
@@ -36,22 +36,8 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const { selectedAccount } = useContext(AccountContext);
   const deviceSize = useDeviceSize();
   const navigate = useNavigate();
+  const getLimit = useItemsLimit();
   const [isFilterOpen, setFilterOpen] = useState(false);
-
-  // TODO: move method to utils
-  const getLimit = () => {
-    switch (deviceSize) {
-      case DeviceSize.sm:
-      case DeviceSize.lg:
-      case DeviceSize.xl:
-        return 8;
-      case DeviceSize.md:
-        return 9;
-      case DeviceSize.xxl:
-      default:
-        return 10;
-    }
-  };
 
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();

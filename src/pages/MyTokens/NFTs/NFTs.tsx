@@ -6,7 +6,7 @@ import {
   useGraphQlOwnerTokens,
 } from '@app/api/graphQL/tokens';
 import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useDeviceSize, useItemsLimit } from '@app/hooks';
 import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 import { PagePaper } from '@app/components';
 import { MobileFilters } from '@app/components/Filters/MobileFilter';
@@ -22,6 +22,7 @@ export interface NFTsComponentProps {
 
 export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const deviceSize = useDeviceSize();
+  const getLimit = useItemsLimit();
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
   const {
@@ -42,21 +43,6 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     selectedAccount?.address,
     !selectedAccount?.address,
   );
-
-  // TODO: move method to utils
-  const getLimit = () => {
-    switch (deviceSize) {
-      case DeviceSize.sm:
-      case DeviceSize.lg:
-      case DeviceSize.xl:
-        return 8;
-      case DeviceSize.md:
-        return 9;
-      case DeviceSize.xxl:
-      default:
-        return 10;
-    }
-  };
 
   const { tokens, tokensCount, tokensLoading, isPagination, fetchMore } =
     useGraphQlOwnerTokens(

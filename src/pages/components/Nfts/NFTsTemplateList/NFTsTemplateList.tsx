@@ -4,7 +4,7 @@ import { Chip, IconProps, IPaginationProps, Link, Text } from '@unique-nft/ui-ki
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
-import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
+import { useApi, useItemsLimit } from '@app/hooks';
 import { PagePaper, TokenLink } from '@app/components';
 import List from '@app/components/List';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
@@ -45,22 +45,7 @@ export const NFTsTemplateList = ({
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
-  const deviceSize = useDeviceSize();
-
-  // TODO: move method to utils
-  const getLimit = () => {
-    switch (deviceSize) {
-      case DeviceSize.sm:
-      case DeviceSize.lg:
-      case DeviceSize.xl:
-        return 8;
-      case DeviceSize.md:
-        return 9;
-      case DeviceSize.xxl:
-      default:
-        return 10;
-    }
-  };
+  const getLimit = useItemsLimit();
 
   return (
     <PagePaper.Processing>

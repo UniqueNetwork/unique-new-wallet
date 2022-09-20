@@ -3,7 +3,7 @@ import { Text } from '@unique-nft/ui-kit';
 
 import { useGraphQlCollectionTokens } from '@app/api/graphQL/tokens/useGraphQlCollectionTokens';
 import { useNftFilterContext } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
+import { useAccounts, useApi, useItemsLimit } from '@app/hooks';
 import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 import { Token } from '@app/api/graphQL/types';
 import List from '@app/components/List';
@@ -16,26 +16,11 @@ interface NftListComponentProps {
 }
 
 export const NftList = ({ className, collectionId }: NftListComponentProps) => {
-  const deviceSize = useDeviceSize();
   const { currentChain } = useApi();
   const navigate = useNavigate();
+  const getLimit = useItemsLimit();
   const { search, direction, page, onChangePagination, type } = useNftFilterContext();
   const { selectedAccount } = useAccounts();
-
-  // TODO: move method to utils
-  const getLimit = () => {
-    switch (deviceSize) {
-      case DeviceSize.sm:
-      case DeviceSize.lg:
-      case DeviceSize.xl:
-        return 8;
-      case DeviceSize.md:
-        return 9;
-      case DeviceSize.xxl:
-      default:
-        return 10;
-    }
-  };
 
   const { tokens, tokensCount, isLoadingTokens, isPagination, fetchMore } =
     useGraphQlCollectionTokens({

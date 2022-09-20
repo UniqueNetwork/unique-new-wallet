@@ -1,12 +1,8 @@
 import { DeviceSize, useDeviceSize } from '@app/hooks/useDeviceSize';
 
-interface getLimitResult {
-  limit(): any;
-}
-
-export const getLimit = (): any => {
+export const useItemsLimit = (): any => {
   const deviceSize = useDeviceSize();
-  const getLimit = () => {
+  return () => {
     switch (deviceSize) {
       case DeviceSize.sm:
       case DeviceSize.lg:
@@ -19,6 +15,4 @@ export const getLimit = (): any => {
         return 10;
     }
   };
-
-  return getLimit;
 };
