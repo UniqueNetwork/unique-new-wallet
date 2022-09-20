@@ -66,6 +66,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
       <List
         className={className}
         dataSource={tokens}
+        // fetchMore={fetchMore}
         isLoading={isLoadingTokens}
         panelSettings={{
           pagination: {

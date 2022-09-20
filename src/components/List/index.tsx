@@ -32,7 +32,6 @@ export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
   dataSource: T[];
   fetchMore?: any;
   isLoading?: boolean;
-  // loadMoreHandle?(items: number): void;
   panelSettings: IPanelSettings;
   renderItem?: (item: T, index: number) => ReactNode;
   visibleItems?: number;
@@ -131,13 +130,11 @@ function List<T>({
   isLoading,
   panelSettings,
   renderItem,
-  // loadMoreHandle,
   visibleItems,
   onPageChange,
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
   const listItemsKeys: { [index: number]: React.Key } = {};
-  // const [res, setRes] = useState<any>();
 
   const renderInnerItem = (item: T, index: number) => {
     if (!renderItem) {
@@ -186,12 +183,18 @@ function List<T>({
     }`}</Text>
   );
 
+  const [count, setCount] = useState(2);
+  const currentLimit = visibleItems && visibleItems * count;
+
   const handleMoreButton = async () => {
     await fetchMore({
       variables: {
-        limit: 100,
+        offset: 0,
+        limit: currentLimit,
       },
       updateQuery: (prev: any, { fetchMoreResult }: OperationVariables) => {
+        setCount(count + 1);
+
         if (!fetchMoreResult) {
           return prev;
         }
@@ -219,16 +222,16 @@ function List<T>({
 
       <ListBody className={classNames({ __empty: !dataSource.length })}>
         {childrenContent}
-
         <ButtonMoreWrapper>
-          {visibleItems && visibleItems > 0 && deviceSize <= DeviceSize.md && (
-            <Button
-              title="Load more"
-              iconRight={{ color: 'currentColor', name: 'arrow-down', size: 16 }}
-              wide={deviceSize <= DeviceSize.xs}
-              onClick={handleMoreButton}
-            />
-          )}
+          {dataSource.length < panelSettings.pagination.size &&
+            deviceSize <= DeviceSize.md && (
+              <Button
+                title="Load more"
+                iconRight={{ color: 'currentColor', name: 'arrow-down', size: 16 }}
+                wide={deviceSize <= DeviceSize.xs}
+                onClick={handleMoreButton}
+              />
+            )}
         </ButtonMoreWrapper>
       </ListBody>
 

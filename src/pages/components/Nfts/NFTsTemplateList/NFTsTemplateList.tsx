@@ -1,4 +1,3 @@
-// import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { Chip, IconProps, IPaginationProps, Link, Text } from '@unique-nft/ui-kit';
@@ -47,20 +46,6 @@ export const NFTsTemplateList = ({
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
-  // const [limit, setLimit] = useState(defaultLimit);
-
-  // const onFetchMore = () => {
-  //   if (fetchMore) {
-  //     const newLimit = limit + defaultLimit;
-  //
-  //     fetchMore({
-  //       variables: {
-  //         limit: newLimit,
-  //       },
-  //     });
-  //     setLimit(newLimit);
-  //   }
-  // };
 
   return (
     <PagePaper.Processing>
@@ -70,7 +55,6 @@ export const NFTsTemplateList = ({
         dataSource={tokens}
         fetchMore={fetchMore}
         isLoading={isLoading}
-        // loadMoreHandle={onFetchMore}
         panelSettings={{
           pagination: {
             current: paginationSettings.current,

@@ -55,9 +55,6 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();
 
-  // TODO: get limit correctly
-  // const [limit, setLimit] = useState(getLimit);
-
   const { order, page, search, onChangePagination } = useMyCollectionsContext();
 
   const isChildExist = useOutlet();
@@ -114,21 +111,6 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       // <Button disabled key="Reset-button-filter" title="Reset" />,
     ]);
   }
-
-  // const onFetchMore = () => {
-  //   if (fetchMoreMethod) {
-  //     const newLimit = limit + getLimit();
-  //
-  //     fetchMoreMethod({
-  //       // @ts-ignore
-  //       variables: {
-  //         limit: newLimit,
-  //       },
-  //     });
-  //
-  //     setLimit(newLimit);
-  //   }
-  // };
 
   return (
     <PagePaper
