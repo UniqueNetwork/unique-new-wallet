@@ -4,8 +4,7 @@ import { Chip, IconProps, IPaginationProps, Link, Text } from '@unique-nft/ui-ki
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
-import { useApi } from '@app/hooks';
-import { defaultLimit } from '@app/pages/MyTokens/constants';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { PagePaper, TokenLink } from '@app/components';
 import List from '@app/components/List';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
@@ -27,7 +26,7 @@ type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
     iconLeft?: IconProps;
     onClose?(): void;
   }[];
-  fetchMore?: any;
+  fetchMore?(variables?: any): void;
   onPageChange: IPaginationProps['onPageChange'];
   onChipsReset?(): void;
   cacheTokens: TTokensCacheVar;
@@ -46,6 +45,22 @@ export const NFTsTemplateList = ({
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
+  const deviceSize = useDeviceSize();
+
+  // TODO: move method to utils
+  const getLimit = () => {
+    switch (deviceSize) {
+      case DeviceSize.sm:
+      case DeviceSize.lg:
+      case DeviceSize.xl:
+        return 8;
+      case DeviceSize.md:
+        return 9;
+      case DeviceSize.xxl:
+      default:
+        return 10;
+    }
+  };
 
   return (
     <PagePaper.Processing>
@@ -58,7 +73,7 @@ export const NFTsTemplateList = ({
         panelSettings={{
           pagination: {
             current: paginationSettings.current,
-            pageSizes: [defaultLimit],
+            pageSizes: [getLimit()],
             show: paginationSettings.show,
             size: paginationSettings.size,
             viewMode: 'bottom',
@@ -97,7 +112,7 @@ export const NFTsTemplateList = ({
             }
           />
         )}
-        visibleItems={defaultLimit}
+        visibleItems={getLimit()}
         onPageChange={onPageChange}
       />
     </PagePaper.Processing>

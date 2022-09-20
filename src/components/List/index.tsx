@@ -30,7 +30,7 @@ interface IPanelSettings {
 export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
   className?: string;
   dataSource: T[];
-  fetchMore?: any;
+  fetchMore?(variables?: any): void;
   isLoading?: boolean;
   panelSettings: IPanelSettings;
   renderItem?: (item: T, index: number) => ReactNode;
@@ -186,21 +186,23 @@ function List<T>({
   const [count, setCount] = useState(2);
   const currentLimit = visibleItems && visibleItems * count;
 
-  const handleMoreButton = async () => {
-    await fetchMore({
-      variables: {
-        offset: 0,
-        limit: currentLimit,
-      },
-      updateQuery: (prev: any, { fetchMoreResult }: OperationVariables) => {
-        setCount(count + 1);
+  const handleMoreButton = () => {
+    fetchMore &&
+      fetchMore({
+        variables: {
+          offset: 0,
+          limit: currentLimit,
+        },
+        updateQuery: (prev: any, { fetchMoreResult }: OperationVariables) => {
+          setCount(count + 1);
 
-        if (!fetchMoreResult) {
-          return prev;
-        }
-        return fetchMoreResult;
-      },
-    });
+          if (!fetchMoreResult) {
+            return prev;
+          }
+
+          return fetchMoreResult;
+        },
+      });
   };
 
   return (

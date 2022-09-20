@@ -37,7 +37,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     }
   };
 
-  const { tokens, tokensCount, isLoadingTokens, isPagination } =
+  const { tokens, tokensCount, isLoadingTokens, isPagination, fetchMore } =
     useGraphQlCollectionTokens({
       collectionId: parseInt(collectionId || ''),
       collectionOwner: selectedAccount?.address,
@@ -66,7 +66,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
       <List
         className={className}
         dataSource={tokens}
-        // fetchMore={fetchMore}
+        fetchMore={fetchMore}
         isLoading={isLoadingTokens}
         panelSettings={{
           pagination: {

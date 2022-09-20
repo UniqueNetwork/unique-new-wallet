@@ -13,7 +13,7 @@ import { MobileFilters } from '@app/components/Filters/MobileFilter';
 import { CollectionsFilter, TypeFilter } from '@app/pages';
 import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
 
-import { defaultLimit, defaultTypesFilters } from '../constants';
+import { defaultTypesFilters } from '../constants';
 import { useNFTsContext } from '../context';
 
 export interface NFTsComponentProps {
@@ -43,6 +43,21 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     !selectedAccount?.address,
   );
 
+  // TODO: move method to utils
+  const getLimit = () => {
+    switch (deviceSize) {
+      case DeviceSize.sm:
+      case DeviceSize.lg:
+      case DeviceSize.xl:
+        return 8;
+      case DeviceSize.md:
+        return 9;
+      case DeviceSize.xxl:
+      default:
+        return 10;
+    }
+  };
+
   const { tokens, tokensCount, tokensLoading, isPagination, fetchMore } =
     useGraphQlOwnerTokens(
       selectedAccount?.address,
@@ -54,7 +69,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       {
         skip: !selectedAccount?.address,
         direction: sortByTokenId,
-        pagination: { page: tokensPage, limit: defaultLimit },
+        pagination: { page: tokensPage, limit: getLimit() },
       },
     );
 
@@ -122,7 +137,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
           fetchMore={fetchMore}
           paginationSettings={{
             current: tokensPage,
-            pageSizes: [defaultLimit],
+            pageSizes: [getLimit()],
             show: isPagination,
             size: tokensCount,
           }}

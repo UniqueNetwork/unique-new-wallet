@@ -17,8 +17,6 @@ export const CollectionNft: VFC<CollectionNftProps> = ({ className }) => {
     return null;
   }
 
-  // TODO: fetchMore
-
   return (
     <PagePaper.Layout
       className={classNames('collection-nft', className)}
