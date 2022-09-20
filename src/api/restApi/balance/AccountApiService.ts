@@ -17,7 +17,7 @@ export class AccountApiService {
       freeBalance: { ...balance.freeBalance },
       lockedBalance: { ...balance.lockedBalance },
     };
-    const keys = Object.keys(balances) as (keyof AllBalancesResponse)[];
+    const keys = Object.keys(balances) as (keyof typeof balances)[];
 
     keys.forEach((property) => {
       balance[property].amount = truncateDecimalsBalanceSheet(balance[property].amount);

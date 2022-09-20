@@ -3,12 +3,14 @@ import axios from 'axios';
 
 import { useAccounts, useApi } from '@app/hooks';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
+import { SubmitExtrinsicResult } from '@app/types';
+import { BaseApi, TExtrinsicType, useExtrinsicCacheEntities } from '@app/api';
 
 import { EndpointMutation } from '../../request';
 import { UNKNOWN_ERROR_MSG } from '../constants';
 import { useApiMutation } from '../useApiMutation';
 import { extrinsicFlowReducer } from './extrinsicFlowReducer';
-import { useExtrinsicStatus, useExtrinsicSubmit } from '../../extrinsic';
+import { useExtrinsicStatus } from '../../extrinsic';
 
 type ExtrinsicRequest<TPayload> = {
   payload: TPayload;
@@ -18,20 +20,23 @@ type ExtrinsicRequest<TPayload> = {
 export const useExtrinsicFlow = <
   ConcreteEndpointMutation extends EndpointMutation<
     Awaited<ReturnType<ConcreteEndpointMutation['request']>>,
-    Parameters<ConcreteEndpointMutation['request']>[0]
+    // TODO: fix type
+    Parameters<ConcreteEndpointMutation['request']>[0] & any
   >,
 >(
   endpoint: ConcreteEndpointMutation,
+  type: TExtrinsicType,
 ) => {
+  const { setPayloadEntity } = useExtrinsicCacheEntities();
   const [txHash, setTxHash] = useState<string | null | undefined>();
   const [request, setRequest] = useState<ExtrinsicRequest<
     Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>
   > | null>();
 
-  const { api } = useApi();
+  const { currentChain } = useApi();
+
   const { signMessage } = useAccounts();
   const { data } = useExtrinsicStatus(txHash);
-  const { submitExtrinsic } = useExtrinsicSubmit();
   const { mutateAsync } = useApiMutation({
     endpoint,
   });
@@ -41,8 +46,9 @@ export const useExtrinsicFlow = <
     isLoading: false,
     error: undefined,
     status: 'idle',
+    parsed: undefined,
   });
-  const { isError, isLoading, status, error } = extrinsicFlowState;
+  const { isError, isLoading, status, error, parsed } = extrinsicFlowState;
 
   useEffect(() => {
     if (isLoading) {
@@ -62,12 +68,9 @@ export const useExtrinsicFlow = <
       return;
     }
 
-    const { isCompleted, isError, errorMessage } = data;
+    const { isCompleted, isError, errorMessage, parsed } = data;
 
     if (isCompleted) {
-      setTxHash(null);
-      setRequest(null);
-
       if (isError) {
         setExtrinsicFlowState({
           type: 'error',
@@ -76,8 +79,11 @@ export const useExtrinsicFlow = <
           },
         });
       } else {
-        setExtrinsicFlowState({ type: 'success' });
+        setPayloadEntity({ type, parsed, entityData: request?.payload.payload });
+        setExtrinsicFlowState({ type: 'success', payload: { parsed } });
       }
+      setTxHash(null);
+      setRequest(null);
     }
   }, [data]);
 
@@ -98,11 +104,16 @@ export const useExtrinsicFlow = <
     payload: Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>,
     accountAddress?: string,
   ) => {
+    const api = new BaseApi(currentChain.apiEndpoint);
+
+    api.instance.defaults.params = {
+      use: 'Build',
+    };
+
     setExtrinsicFlowState({ type: 'startflow' });
 
     try {
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'obtaining' } });
-
       const unsignedResult: UnsignedTxPayloadResponse = await mutateAsync({
         ...payload,
         api,
@@ -120,13 +131,17 @@ export const useExtrinsicFlow = <
 
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'submitting' } });
 
-      const submitResult = await submitExtrinsic({
-        signerPayloadJSON: unsignedResult.signerPayloadJSON,
-        signature: signResult,
+      api.instance.defaults.params = {
+        use: 'SubmitWatch',
+      };
+
+      const submitResult: SubmitExtrinsicResult = await mutateAsync({
+        payload: {
+          signerPayloadJSON: unsignedResult.signerPayloadJSON,
+          signature: signResult,
+        },
+        api,
       });
-      if (!submitResult) {
-        throw new Error('Submit result is not define');
-      }
 
       setExtrinsicFlowState({ type: 'statusupdate', payload: { status: 'checking' } });
       setTxHash(submitResult.hash);
@@ -136,7 +151,7 @@ export const useExtrinsicFlow = <
       let error: Error;
 
       if (axios.isAxiosError(e)) {
-        error = e?.response?.data.error;
+        error = e?.response?.data;
       } else if (e instanceof Error) {
         error = e;
       } else {
@@ -155,6 +170,7 @@ export const useExtrinsicFlow = <
   return {
     flowError: error,
     flowStatus: status,
+    flowParsed: parsed,
     isFlowError: isError ?? false,
     isFlowLoading: isLoading ?? false,
     signAndSubmitExtrinsic,

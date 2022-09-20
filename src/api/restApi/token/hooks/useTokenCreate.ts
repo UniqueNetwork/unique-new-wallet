@@ -12,7 +12,7 @@ export const useTokenCreate = () => {
     endpoint: TokenApiService.tokenCreateMutation,
   });
 
-  const createToken = async (token: CreateTokenNewDto) => {
+  const createToken = async (payload: CreateTokenNewDto) => {
     if (!api) {
       showError({ name: 'Create token api not exists', text: 'Create token' });
       return;
@@ -20,7 +20,7 @@ export const useTokenCreate = () => {
 
     return createMutation.mutateAsync({
       api,
-      token,
+      payload,
     });
   };
 

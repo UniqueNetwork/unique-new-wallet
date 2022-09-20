@@ -19,7 +19,7 @@ export const useFileUpload = () => {
 
     return fileUpload.mutateAsync({
       api,
-      file,
+      payload: file,
     });
   }, []);
 

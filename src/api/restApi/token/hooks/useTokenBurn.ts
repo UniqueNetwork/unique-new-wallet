@@ -13,7 +13,7 @@ export const useTokenBurn = () => {
     endpoint: TokenApiService.burnMutation,
   });
 
-  const tokenBurn = async (body: BurnTokenBody) => {
+  const tokenBurn = async (payload: BurnTokenBody) => {
     if (!api) {
       error('Api connection error', {
         name: 'Burn NFT',
@@ -26,7 +26,7 @@ export const useTokenBurn = () => {
 
     return mutateAsync({
       api,
-      body,
+      payload,
     });
   };
 

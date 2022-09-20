@@ -6,7 +6,7 @@ import { EndpointMutation } from '../restApi/request';
 
 export interface FileUploadMutationPayload {
   api: IBaseApi;
-  file: Blob;
+  payload: Blob;
 }
 
 export interface FileUploadMutationResponse {
@@ -28,14 +28,14 @@ export class FileUploadMutation extends EndpointMutation<
     this.request = this.request.bind(this);
   }
 
-  async request(payload: FileUploadMutationPayload): Promise<FileUploadMutationResponse> {
+  async request({
+    api,
+    payload,
+  }: FileUploadMutationPayload): Promise<FileUploadMutationResponse> {
     const formData = new FormData();
-    formData.append('file', payload.file, 'nftImage');
+    formData.append('file', payload, 'nftImage');
 
-    return payload.api.post<FileUploadMutationResponse, FormData>(
-      `${this.baseUrl}`,
-      formData,
-    );
+    return api.post<FileUploadMutationResponse, FormData>(`${this.baseUrl}`, formData);
   }
 
   afterMutationSuccess(

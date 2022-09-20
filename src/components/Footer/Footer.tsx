@@ -1,10 +1,10 @@
 import { Icon } from '@unique-nft/ui-kit';
-import { FC } from 'react';
 import styled from 'styled-components';
 
 import { config } from '@app/config';
+import { Primary500 } from '@app/styles/colors';
 
-export const Footer: FC = () => {
+export const Footer = () => {
   return (
     <FooterWrapper>
       <FooterText>
@@ -17,19 +17,19 @@ export const Footer: FC = () => {
       </FooterText>
       <FooterLinks>
         <IconLink href={config.socialLinks.telegram} target="_blank" rel="noreferrer">
-          <Icon name="social-telegram" color="#009CF0" size={32} />
+          <Icon name="social-telegram" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.twitter} target="_blank" rel="noreferrer">
-          <Icon name="social-twitter" color="#009CF0" size={32} />
+          <Icon name="social-twitter" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.discord} target="_blank" rel="noreferrer">
-          <Icon name="social-discord" color="#009CF0" size={32} />
+          <Icon name="social-discord" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.github} target="_blank" rel="noreferrer">
-          <Icon name="social-github" color="#009CF0" size={32} />
+          <Icon name="social-github" color={Primary500} size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.subsocial} target="_blank" rel="noreferrer">
-          <Icon name="social-subsocial" color="#009CF0" size={32} />
+          <Icon name="social-subsocial" color={Primary500} size={32} />
         </IconLink>
       </FooterLinks>
     </FooterWrapper>
@@ -38,13 +38,17 @@ export const Footer: FC = () => {
 
 export const FooterWrapper = styled.div`
   display: flex;
-  align-items: center;
-  gap: calc(var(--prop-gap) * 2);
+  align-items: start;
+  flex-direction: column;
+  gap: calc(var(--prop-gap));
   width: 100%;
   padding: var(--prop-gap);
   max-width: calc(var(--prop-container-width) - 64px);
   justify-content: space-between;
   @media screen and (min-width: 568px) {
+    align-items: center;
+    flex-direction: row;
+    gap: calc(var(--prop-gap) * 2);
     padding: var(--prop-gap) calc(var(--prop-gap) * 2);
   }
   @media screen and (min-width: 1920px) {

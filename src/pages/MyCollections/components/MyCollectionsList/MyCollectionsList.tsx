@@ -1,11 +1,11 @@
 import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import AccountContext from '@app/account/AccountContext';
-import { TOrderBy } from '@app/api';
+import { TOrderBy, useExtrinsicCacheEntities } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { Collection } from '@app/api/graphQL/types';
 import { NoItems, TokenLink } from '@app/components';
@@ -13,6 +13,8 @@ import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { GridListCommon } from '@app/pages/components/PageComponents';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { useGraphQlCheckInExistCollectionsByAccount } from '@app/api/graphQL/collections/useGraphQlCheckInExistCollectionsByAccount';
+import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 
 interface MyCollectionsListProps {
   className?: string;
@@ -34,19 +36,22 @@ export const MyCollectionsList = ({
   const { selectedAccount } = useContext(AccountContext);
   const navigate = useNavigate();
 
-  // TODO: move method to utils
-  const getItems = () => {
+  const getLimit = () => {
     switch (deviceSize) {
       case DeviceSize.sm:
+      case DeviceSize.lg:
         return 8;
       case DeviceSize.md:
         return 9;
-      case DeviceSize.lg:
-        return 8;
+      case DeviceSize.xl:
+      case DeviceSize.xxl:
       default:
         return 10;
     }
   };
+
+  const { collections: cacheCollections, excludeCollectionsCache } =
+    useExtrinsicCacheEntities();
 
   const { collections, collectionsCount, isCollectionsLoading, isPagination } =
     useGraphQlCollectionsByAccount({
@@ -55,11 +60,22 @@ export const MyCollectionsList = ({
         order,
         pagination: {
           page,
-          limit: getItems(),
+          limit: getLimit(),
         },
         search,
       },
     });
+
+  const { synchronizedCollectionsIds } = useGraphQlCheckInExistCollectionsByAccount({
+    collections: cacheCollections,
+    skip: [cacheCollections.length, collections.length].includes(0),
+  });
+
+  useEffect(() => {
+    if (synchronizedCollectionsIds.length > 0) {
+      excludeCollectionsCache(synchronizedCollectionsIds);
+    }
+  }, [collections, synchronizedCollectionsIds, excludeCollectionsCache]);
 
   const onClickNavigate = (id: Collection['collection_id']) =>
     navigate(
@@ -68,6 +84,7 @@ export const MyCollectionsList = ({
 
   return (
     <ListWrapper className={classNames('my-collections-list', className)}>
+      <ListEntitiesCacheStyled entities={cacheCollections} />
       {isCollectionsLoading ? (
         <Loader isFullPage={true} size="middle" />
       ) : collectionsCount > 0 ? (
@@ -102,7 +119,7 @@ export const MyCollectionsList = ({
               <Pagination
                 withIcons
                 current={page}
-                pageSizes={[getItems()]}
+                pageSizes={[getLimit()]}
                 size={collectionsCount}
                 onPageChange={onPageChange}
               />
@@ -116,6 +133,10 @@ export const MyCollectionsList = ({
   );
 };
 
+const ListEntitiesCacheStyled = styled(ListEntitiesCache)`
+  margin: 15px 0 30px;
+`;
+
 const Footer = styled.div`
   display: flex;
   flex: 0 0 auto;
@@ -125,6 +146,7 @@ const Footer = styled.div`
 `;
 
 const ListWrapper = styled.div`
+  flex-direction: column;
   &.my-collections-list {
     position: relative;
     display: flex;

@@ -44,11 +44,11 @@ export const useCollectionFormMapper = () => {
     };
 
     if (form.attributes?.length) {
-      request.schema.attributesSchema = {};
-      request.schema.attributesSchemaVersion = '1.0.0';
+      request.schema!.attributesSchema = {};
+      request.schema!.attributesSchemaVersion = '1.0.0';
 
       form.attributes.forEach((attr, index) => {
-        request.schema.attributesSchema![index] = {
+        request.schema!.attributesSchema![index] = {
           type: 'string',
           name: { _: attr.name } as any,
           optional: attr.optional.id === 'optional',
@@ -56,7 +56,7 @@ export const useCollectionFormMapper = () => {
         };
 
         if (attr.values?.length) {
-          request.schema.attributesSchema![index].enumValues = attr.values.reduce(
+          request.schema!.attributesSchema![index].enumValues = attr.values.reduce(
             (acc, val, index) => {
               return {
                 ...acc,

@@ -4,7 +4,10 @@ import { IBaseApi } from '@app/api';
 
 import { HttpError, Nullable } from './types';
 
-export abstract class EndpointMutation<ClientModel, RequestParams = void> {
+export abstract class EndpointMutation<
+  ClientModel,
+  RequestParams extends { payload: unknown },
+> {
   protected meta: MutationOptions<ClientModel, HttpError, RequestParams> = {};
 
   getMeta(): MutationOptions<ClientModel, HttpError, RequestParams> {
@@ -47,8 +50,5 @@ export abstract class EndpointMutation<ClientModel, RequestParams = void> {
     return;
   }
 
-  abstract request(
-    payload?: RequestParams,
-    signal?: AbortSignal
-  ): Promise<ClientModel>;
+  abstract request(payload?: RequestParams, signal?: AbortSignal): Promise<ClientModel>;
 }

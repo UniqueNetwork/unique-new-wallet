@@ -29,7 +29,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
   const { info, error } = useNotifications();
   const { feeFormatted, getFee } = useExtrinsicFee(TokenApiService.transferMutation);
   const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(TokenApiService.transferMutation);
+    useExtrinsicFlow(TokenApiService.transferMutation, 'transfer-token');
 
   const transferHandler = () => {
     if (!token || !recipient || !selectedAccount?.address) {
@@ -37,7 +37,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
     }
 
     signAndSubmitExtrinsic({
-      body: {
+      payload: {
         to: recipient,
         from: selectedAccount.address,
         collectionId: token.collection_id,
@@ -53,7 +53,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
     }
 
     getFee({
-      body: {
+      payload: {
         to: recipient,
         from: selectedAccount.address,
         collectionId: token.collection_id,
