@@ -20,6 +20,7 @@ import {
   BottomBarHeader,
   BottomBarProps,
 } from '@app/pages/components/BottomBar';
+import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 
 import { TopFilter } from './components';
 import { useMyCollectionsContext } from './context';
@@ -127,6 +128,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
           }
         >
           <PagePaper.Processing>
+            <ListEntitiesCache entities={cacheCollections} />
             <List
               isLoading={isCollectionsLoading}
               dataSource={collections}
