@@ -1,7 +1,7 @@
 .accounts-manager-dropdown {
   display: flex;
   flex-direction: column;
-  row-gap: calc(var(--prop-gap) * 1.5);
+  row-gap: 0;
   padding: calc(var(--prop-gap) * 1.5);
   min-width: 236px;
   .unique-dropdown {
@@ -14,15 +14,25 @@
     .unique-link {
       color: var(--color-primary-500);
       font-size: 16px;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
   .wallet-accounts-stake {
     display: flex;
     flex-direction: column;
     gap: calc(var(--prop-gap) / 2);
+    margin: 8px 0 24px;
+    .unique-button {
+      height: 32px;
+      font-size: 14px;
+      font-weight: 500;
+    }
   }
 
   .accounts-manager-accounts {
+    margin-bottom: 16px;
     .unique-dropdown.touch > .dropdown-wrapper {
       width: 100%;
     }
