@@ -16,7 +16,6 @@ export interface ITokenLinkProps {
 
 const TokenLinkWrapper = styled.div`
   width: 100%;
-  max-width: 460px;
   font-family: var(--prop-font-family);
   font-size: var(--prop-font-size);
   font-weight: var(--prop-font-weight);

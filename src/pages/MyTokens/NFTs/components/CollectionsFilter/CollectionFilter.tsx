@@ -11,20 +11,19 @@ import { CollectionFilterItem } from './CollectionFilterItem';
 
 export interface CollectionsFilterComponentProps {
   className?: string;
-  isLoading: boolean;
-  defaultCollections?: Option<number>[];
+  collections?: Option<number>[];
 }
 
 const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
   className,
-  defaultCollections,
+  collections,
 }) => {
   const { collectionsIds, changeCollectionsIds } = useNFTsContext();
 
   return (
     <div className={classNames('collections-filter', className)}>
       <Accordion expanded title="Collections">
-        {defaultCollections?.map((c) => (
+        {collections?.map((c) => (
           <CollectionFilterItem
             key={c.id}
             id={c.id}

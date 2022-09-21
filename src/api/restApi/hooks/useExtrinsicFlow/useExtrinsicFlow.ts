@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAccounts, useApi } from '@app/hooks';
 import { UnsignedTxPayloadResponse } from '@app/types/Api';
 import { SubmitExtrinsicResult } from '@app/types';
-import { BaseApi } from '@app/api';
+import { BaseApi, TExtrinsicType, useExtrinsicCacheEntities } from '@app/api';
 
 import { EndpointMutation } from '../../request';
 import { UNKNOWN_ERROR_MSG } from '../constants';
@@ -25,7 +25,9 @@ export const useExtrinsicFlow = <
   >,
 >(
   endpoint: ConcreteEndpointMutation,
+  type: TExtrinsicType,
 ) => {
+  const { setPayloadEntity } = useExtrinsicCacheEntities();
   const [txHash, setTxHash] = useState<string | null | undefined>();
   const [request, setRequest] = useState<ExtrinsicRequest<
     Omit<Parameters<ConcreteEndpointMutation['request']>[0], 'api'>
@@ -69,9 +71,6 @@ export const useExtrinsicFlow = <
     const { isCompleted, isError, errorMessage, parsed } = data;
 
     if (isCompleted) {
-      setTxHash(null);
-      setRequest(null);
-
       if (isError) {
         setExtrinsicFlowState({
           type: 'error',
@@ -80,8 +79,11 @@ export const useExtrinsicFlow = <
           },
         });
       } else {
+        setPayloadEntity({ type, parsed, entityData: request?.payload.payload });
         setExtrinsicFlowState({ type: 'success', payload: { parsed } });
       }
+      setTxHash(null);
+      setRequest(null);
     }
   }, [data]);
 

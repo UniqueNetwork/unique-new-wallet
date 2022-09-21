@@ -6,6 +6,7 @@ export enum DeviceSize {
   md,
   lg,
   xl,
+  xxl,
 }
 
 export const useDeviceSize = (): DeviceSize => {
@@ -28,19 +29,25 @@ export const useDeviceSize = (): DeviceSize => {
   }, []); // Empty array ensures that effect is only run on mount
 
   return useMemo(() => {
-    if (windowWidth && windowWidth < 567) {
+    if (windowWidth && windowWidth < 568) {
       return DeviceSize.xs;
     }
-    if (windowWidth && windowWidth < 769) {
+    if (windowWidth && windowWidth < 768) {
       return DeviceSize.sm;
     }
     if (windowWidth && windowWidth < 1024) {
       return DeviceSize.md;
     }
-    if (windowWidth && windowWidth < 1600) {
+    if (windowWidth && windowWidth < 1280) {
       return DeviceSize.lg;
     }
+    if (windowWidth && windowWidth < 1440) {
+      return DeviceSize.xl;
+    }
+    if (windowWidth && windowWidth < 1920) {
+      return DeviceSize.xxl;
+    }
 
-    return DeviceSize.xl;
+    return DeviceSize.xxl;
   }, [windowWidth]);
 };
