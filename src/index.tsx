@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
@@ -40,7 +41,7 @@ http
             <ApiWrapper>
               <ChainPropertiesWrapper initialProperties={properties}>
                 <AppRoutes />
-                {/*<ReactQueryDevtools />*/}
+                <ReactQueryDevtools />
               </ChainPropertiesWrapper>
             </ApiWrapper>
           </QueryClientProvider>

@@ -187,22 +187,21 @@ function List<T>({
   const currentLimit = visibleItems && visibleItems * count;
 
   const handleMoreButton = () => {
-    fetchMore &&
-      fetchMore({
-        variables: {
-          offset: 0,
-          limit: currentLimit,
-        },
-        updateQuery: (prev: any, { fetchMoreResult }: OperationVariables) => {
-          setCount(count + 1);
+    fetchMore?.({
+      variables: {
+        offset: 0,
+        limit: currentLimit,
+      },
+      updateQuery: (prev: any, { fetchMoreResult }: OperationVariables) => {
+        setCount(count + 1);
 
-          if (!fetchMoreResult) {
-            return prev;
-          }
+        if (!fetchMoreResult) {
+          return prev;
+        }
 
-          return fetchMoreResult;
-        },
-      });
+        return fetchMoreResult;
+      },
+    });
   };
 
   return (
