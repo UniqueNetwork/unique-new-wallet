@@ -86,7 +86,7 @@ export const AskQuestion = () => {
             <Icon name="social-telegram" color="currentColor" size={32} />
           </a>
           <a href={config.socialLinks.twitter} target="_blank" rel="noreferrer noopener">
-            <Icon name="social-twitter" color="red" size={32} />
+            <Icon name="social-twitter" color="currentColor" size={32} />
           </a>
           <a href={config.socialLinks.discord} target="_blank" rel="noreferrer noopener">
             <Icon name="social-discord" color="currentColor" size={32} />

@@ -84,13 +84,20 @@ const FaqComponent = (): React.ReactElement<void> => {
   return (
     <MainWrapperStyled>
       <WrapperContentStyled>
-        {faqItems(currentChain.network).map((item: Record<any, ReactNode>, i: number) => {
-          return (
-            <Accordion key={i} className="faq-item" expanded={i === 0} title={item.title}>
-              {item.content}
-            </Accordion>
-          );
-        })}
+        {faqItems(currentChain.network).map(
+          (item: Record<string, ReactNode>, i: number) => {
+            return (
+              <Accordion
+                key={i}
+                className="faq-item"
+                expanded={i === 0}
+                title={item.title}
+              >
+                {item.content}
+              </Accordion>
+            );
+          },
+        )}
       </WrapperContentStyled>
       <WrapperSidebar>
         <AskQuestion />
