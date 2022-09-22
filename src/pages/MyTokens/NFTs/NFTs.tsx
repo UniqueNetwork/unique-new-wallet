@@ -102,7 +102,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       });
     });
     return chips;
-  }, [searchText, typesFilters, collectionsIds]);
+  }, [searchText, typesFilters, collectionsIds, defaultCollections]);
 
   const resetFilters = () => {
     changeSearchText('');

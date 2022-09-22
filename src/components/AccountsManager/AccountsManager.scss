@@ -63,6 +63,10 @@
   padding: calc(var(--prop-gap) * 1.5 / 4) calc(var(--prop-gap) * 2)
     calc(var(--prop-gap) * 1.5 / 4) var(--prop-gap);
 
+  &:hover {
+    border: 1px solid var(--color-blue-grey-400);
+  }
+
   svg:not(.active-network-icon) {
     display: none;
   }
