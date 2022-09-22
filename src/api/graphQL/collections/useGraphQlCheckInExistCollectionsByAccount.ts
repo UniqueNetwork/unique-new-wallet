@@ -27,7 +27,7 @@ export const useGraphQlCheckInExistCollectionsByAccount = ({
     {
       skip,
       fetchPolicy: 'network-only',
-      nextFetchPolicy: 'cache-first',
+      nextFetchPolicy: 'network-only',
       notifyOnNetworkStatusChange: true,
       variables: {
         where: {
