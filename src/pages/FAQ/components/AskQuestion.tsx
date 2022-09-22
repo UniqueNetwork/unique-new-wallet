@@ -83,16 +83,16 @@ export const AskQuestion = () => {
         <Text>You can also find information in our community</Text>
         <SocialNav>
           <a href={config.socialLinks.telegram} target="_blank" rel="noreferrer noopener">
-            <Icon name="social-telegram" color="var(--color-primary-500)" size={32} />
+            <Icon name="social-telegram" color="currentColor" size={32} />
           </a>
           <a href={config.socialLinks.twitter} target="_blank" rel="noreferrer noopener">
-            <Icon name="social-twitter" color="var(--color-primary-500)" size={32} />
+            <Icon name="social-twitter" color="currentColor" size={32} />
           </a>
           <a href={config.socialLinks.discord} target="_blank" rel="noreferrer noopener">
-            <Icon name="social-discord" color="var(--color-primary-500)" size={32} />
+            <Icon name="social-discord" color="currentColor" size={32} />
           </a>
           <a href={config.socialLinks.github} target="_blank" rel="noreferrer noopener">
-            <Icon name="social-github" color="var(--color-primary-500)" size={32} />
+            <Icon name="social-github" color="currentColor" size={32} />
           </a>
           <a
             href={config.socialLinks.subsocial}
