@@ -49,6 +49,7 @@ export const useGraphQlCollectionTokens = ({
   const { search, type } = filter;
   const {
     data: response,
+    fetchMore,
     loading,
     error,
   } = useQuery<QueryResponse<Token>>(COLLECTION_TOKENS_QUERY, {
@@ -73,6 +74,7 @@ export const useGraphQlCollectionTokens = ({
   const tokensCount = response?.tokens.count ?? 0;
 
   return {
+    fetchMore,
     isPagination: tokensCount > limit,
     isLoadingTokens: loading,
     tokens: response?.tokens.data ?? [],

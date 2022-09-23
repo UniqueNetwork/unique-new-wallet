@@ -1,4 +1,4 @@
-import { FetchMoreOptions, gql, OperationVariables, useQuery } from '@apollo/client';
+import { gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
@@ -85,18 +85,6 @@ export const useGraphQlOwnerTokens = (
   };
   const { page, limit } = pagination;
 
-  const fetchMoreMethod = (variables: FetchMoreOptions) => {
-    fetchMore({
-      ...variables,
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return prev;
-        }
-        return fetchMoreResult;
-      },
-    });
-  };
-
   const {
     data: response,
     loading: tokensLoading,
@@ -125,7 +113,7 @@ export const useGraphQlOwnerTokens = (
     isPagination: tokensCount > limit,
     tokensCount,
     tokens: response?.tokens.data || [],
-    fetchMoreMethod,
+    fetchMore,
     tokensLoading,
     error,
   };
