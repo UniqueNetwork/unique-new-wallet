@@ -1,4 +1,12 @@
-import { FC, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Heading, InputText, Loader, Modal } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
@@ -37,18 +45,6 @@ export type SendFundsModalProps = SendFundsProps & {
     destinationAddress: string,
     amount: number,
   ) => void;
-};
-
-const parseAmount = (amount: string) => {
-  if (isNaN(Number(amount))) {
-    amount = amount.replace(/[^\d.]/g, '');
-
-    if (amount.split('.').length > 2) {
-      amount = amount.replace(/\.+$/, '');
-    }
-  }
-
-  return amount.trim();
 };
 
 export const SendFundsModal: FC<SendFundsModalProps> = ({
@@ -92,6 +88,28 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
   const { data: chainData } = useAccountBalanceService(
     recipient?.address,
     chain.apiEndpoint,
+  );
+
+  const parseAmount = useCallback(
+    (changedAmount: string) => {
+      const parsedAmount = Number(changedAmount);
+      const parsedAvailableAmount = Number(senderData?.availableBalance.amount);
+
+      if (isNaN(parsedAmount)) {
+        changedAmount = changedAmount.replace(/[^\d.]/g, '');
+
+        if (changedAmount.split('.').length > 2) {
+          changedAmount = changedAmount.replace(/\.+$/, '');
+        }
+      }
+
+      if (parsedAmount > parsedAvailableAmount) {
+        changedAmount = amount;
+      }
+
+      return changedAmount.trim();
+    },
+    [amount, senderData?.availableBalance.amount],
   );
 
   const amountChangeHandler = (amount: string) => setAmount(parseAmount(amount));
@@ -206,9 +224,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
               onChange={amountChangeHandler}
             />
             <InputAmountButton
-              onClick={() =>
-                setAmount(senderData?.availableBalance.amount?.toString() || '')
-              }
+              onClick={() => setAmount(senderData?.availableBalance.amount || '')}
             >
               {senderData ? 'Max' : <Loader size="small" />}
             </InputAmountButton>
