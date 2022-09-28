@@ -233,6 +233,16 @@ const getButtonRender = (unit?: string) => {
           }}
         />
       );
+    case 'UNQ':
+      return (
+        <ButtonGet
+          title="Get"
+          role="outlined"
+          onClick={() => {
+            window.open(config.cryptoExchangeUNQ, '_blank', 'noopener');
+          }}
+        />
+      );
     default:
       return <Button disabled title="Get" />;
   }
