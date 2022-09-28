@@ -1,6 +1,5 @@
-import React, { VFC, useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState, VFC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import classNames from 'classnames';
 import { InputText, Select } from '@unique-nft/ui-kit';
 
@@ -10,6 +9,7 @@ import { MintingBtn } from '@app/components';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { Direction } from '@app/api/graphQL/types';
+import { TabsFilter } from '@app/pages/components/TabsFilter';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -28,7 +28,7 @@ const sortOptions: Option[] = [
   },
 ];
 
-const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
+export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
   const { currentChain } = useApi();
   const [search, setSearch] = useState<string>('');
 
@@ -50,56 +50,42 @@ const NFTFiltersComponent: VFC<NFTFiltersComponentProps> = ({ className }) => {
   };
 
   return (
-    <div className={classNames('nft-filters', className)}>
-      <InputText
-        value={search}
-        placeholder="Search"
-        iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
-        onChange={setSearch}
-        onKeyDown={searchHandler}
-      />
-      <Select
-        options={sortOptions}
-        value={sortByTokenId}
-        onChange={sortByTokenIdHandler}
-      />
-      <MintingBtn
-        iconLeft={{
-          name: 'plus',
-          size: 12,
-          color: 'currentColor',
-        }}
-        role="primary"
-        title="Create an NFT"
-        disabled={!Number(selectedAccount?.collectionsTotal)}
-        tooltip={
-          !Number(selectedAccount?.collectionsTotal)
-            ? 'Please create a collection first'
-            : null
-        }
-        onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
-      />
-    </div>
+    <TabsFilter
+      buttons={
+        <MintingBtn
+          iconLeft={{
+            name: 'plus',
+            size: 12,
+            color: 'currentColor',
+          }}
+          role="primary"
+          title="Create an NFT"
+          disabled={!Number(selectedAccount?.collectionsTotal)}
+          tooltip={
+            !Number(selectedAccount?.collectionsTotal)
+              ? 'Please create a collection first'
+              : null
+          }
+          onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
+        />
+      }
+      controls={
+        <>
+          <InputText
+            value={search}
+            placeholder="Search"
+            iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
+            onChange={setSearch}
+            onKeyDown={searchHandler}
+          />
+          <Select
+            options={sortOptions}
+            value={sortByTokenId}
+            onChange={sortByTokenIdHandler}
+          />
+        </>
+      }
+      className={classNames('nft-filters', className)}
+    />
   );
 };
-
-export const NFTFilters = styled(NFTFiltersComponent)`
-  &.nft-filters {
-    display: grid;
-    grid-template-columns: 502px 268px 183px;
-    grid-column-gap: calc(var(--prop-gap) * 2);
-    .unique-input-text,
-    .unique-select,
-    .unique-button {
-      width: 100%;
-    }
-    @media (max-width: 1279px) {
-      display: none;
-    }
-  }
-  .unique-select {
-    .select-value {
-      grid-column-gap: 7px;
-    }
-  }
-`;

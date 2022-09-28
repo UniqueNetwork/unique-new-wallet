@@ -2,7 +2,7 @@ import { ErrorPage, PagePaper } from '@app/components';
 
 export const NotFound = () => {
   return (
-    <PagePaper noPadding flexLayout="row">
+    <PagePaper flexLayout="row">
       <ErrorPage />
     </PagePaper>
   );

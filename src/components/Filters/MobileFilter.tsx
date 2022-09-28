@@ -1,6 +1,6 @@
-import { Button, Heading, InputText, Select } from '@unique-nft/ui-kit';
-import React, { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
+import { Button, InputText, Select } from '@unique-nft/ui-kit';
 
 import { Direction } from '@app/api/graphQL/types';
 import { CollectionsFilter, TypeFilter } from '@app/pages';
@@ -8,6 +8,7 @@ import { defaultTypesFilters } from '@app/pages/MyTokens/constants';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { Option as CollectionOption } from '@app/types';
 import { iconDown, iconUp, Option } from '@app/utils';
+import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 
 export const MobileFilters = ({
   collections,
@@ -56,149 +57,84 @@ export const MobileFilters = ({
     };
   });
 
+  const barButtons: ReactNode[] = !isVisible
+    ? [
+        <Button
+          key="Filter-toggle-button"
+          role="primary"
+          title="Filter and sort"
+          onClick={onVisibleButtonClick}
+        />,
+      ]
+    : [
+        <Button key="Filter-apply-button" title="Apply" onClick={onShowButtonClick} />,
+        <Button
+          key="Filter-reset-button"
+          role="danger"
+          title="Reset All"
+          onClick={onResetButtonClick}
+        />,
+      ];
+
   return (
     <>
-      <MobileFilterActionsWrapper>
-        {!isVisible && (
-          <FilterButton
-            role="primary"
-            title="Filter and sort"
-            onClick={onVisibleButtonClick}
-          />
-        )}
-        {isVisible && (
-          <FilterControls>
-            <Button title="Apply" onClick={onShowButtonClick} />
-            <Button role="danger" title="Reset All" onClick={onResetButtonClick} />
-          </FilterControls>
-        )}
-      </MobileFilterActionsWrapper>
-      {isVisible && (
-        <MobileFilterModal>
-          <HeadingH2>Filter and sort</HeadingH2>
-          <Button
+      <BottomBar
+        header={
+          <BottomBarHeader title="Filter and sort" onBackClick={onShowButtonClick} />
+        }
+        buttons={barButtons}
+        isOpen={isVisible}
+        parent={document.body}
+      >
+        <FiltersWrapper>
+          <InputText
             iconLeft={{
-              color: 'var(--color-grey-500)',
-              name: 'arrow-left',
-              size: 12,
+              color: 'var(--color-blue-grey-500)',
+              name: 'magnify',
+              size: 18,
             }}
-            link="#"
-            role="ghost"
-            size="small"
-            title="back"
-            className="back-button"
-            onClick={onShowButtonClick}
+            className="filter-input"
+            value={search}
+            placeholder="Search"
+            onChange={setSearch}
+            onKeyDown={searchHandler}
           />
-          <FiltersWrapper>
-            <InputText
-              iconLeft={{
-                color: 'var(--color-blue-grey-500)',
-                name: 'magnify',
-                size: 18,
-              }}
-              className="filter-input"
-              value={search}
-              placeholder="Search"
-              onChange={setSearch}
-              onKeyDown={searchHandler}
-            />
-            <Select
-              className="filter-input"
-              options={[
-                {
-                  title: 'NFT ID',
-                  id: 'asc' as Direction,
-                  iconRight: iconUp,
-                },
-                {
-                  title: 'NFT ID',
-                  id: 'desc' as Direction,
-                  iconRight: iconDown,
-                },
-              ]}
-              value={sortByTokenId}
-              onChange={sortByTokenIdHandler}
-            />
-            <TypeFilter defaultTypes={defaultTypesFilters} />
-            <CollectionsFilter collections={collections} />
-          </FiltersWrapper>
-        </MobileFilterModal>
-      )}
+          <Select
+            className="filter-input"
+            options={[
+              {
+                title: 'NFT ID',
+                id: 'asc' as Direction,
+                iconRight: iconUp,
+              },
+              {
+                title: 'NFT ID',
+                id: 'desc' as Direction,
+                iconRight: iconDown,
+              },
+            ]}
+            value={sortByTokenId}
+            onChange={sortByTokenIdHandler}
+          />
+          <TypeFilter defaultTypes={defaultTypesFilters} />
+          <CollectionsFilter collections={collections} />
+        </FiltersWrapper>
+      </BottomBar>
     </>
   );
 };
 
-const MobileFilterActionsWrapper = styled.div`
-  display: none;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  left: 0;
-  background-color: var(--color-additional-light);
-  box-shadow: 0px -8px 12px rgba(0, 0, 0, 0.06);
-  z-index: 8;
-  column-gap: calc(var(--prop-gap) / 2);
-  @media (max-width: 1279px) {
-    display: flex;
-  }
-`;
-
-const FilterButton = styled(Button)`
-  margin: 10px 16px;
-  @media (max-width: 568px) {
-    width: 100%;
-  }
-`;
-
-const FilterControls = styled.div`
-  margin: 10px 16px;
-  display: flex;
-  gap: 10px;
-  button {
-    width: 140px;
-  }
-`;
-
-const MobileFilterModal = styled.div`
-  box-sizing: border-box;
-  display: none;
-  position: fixed;
-  background-color: var(--color-additional-light);
-  padding: 110px calc(var(--prop-gap) * 1.5) 60px;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  overflow-y: auto;
-
-  @media (max-width: 1279px) {
-    display: block;
-  }
-
-  .back-button {
-    padding: 0;
-  }
-`;
-
-const HeadingH2 = styled.h2`
-  font-family: "Raleway";
-  font-weight: 700;
-  font-size: 28px;
-  line-height: 42px;
-  margin-bottom: 8px;
-}
-`;
-
 const FiltersWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  margin-top: 32px;
-  max-width: 750px;
+  gap: calc(var(--prop-gap) * 2);
+  max-width: 756px;
+
   .filter-input {
+    width: auto;
     max-width: 100%;
-    width: unset;
   }
+
   .collections-filter {
     margin: 0;
   }

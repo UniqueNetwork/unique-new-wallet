@@ -25,7 +25,7 @@ import {
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
-import { PreviewBar } from '@app/pages/components/PreviewBar';
+import { BottomBar } from '@app/pages/components/BottomBar';
 
 import { NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -155,8 +155,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
-  const root = document.getElementById('root');
-
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
       <WrapperContentStyled>
@@ -226,7 +224,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       {deviceSize >= DeviceSize.lg ? (
         <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
       ) : (
-        <PreviewBar
+        <BottomBar
           buttons={[
             <Button
               title={isDrawerOpen ? 'Back' : 'Preview'}
@@ -235,10 +233,10 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
             />,
           ]}
           isOpen={isDrawerOpen}
-          parent={root as Element}
+          parent={document.body}
         >
           <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
-        </PreviewBar>
+        </BottomBar>
       )}
     </MainWrapper>
   );

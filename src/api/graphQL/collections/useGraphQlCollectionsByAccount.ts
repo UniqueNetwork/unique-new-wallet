@@ -37,9 +37,11 @@ export const useGraphQlCollectionsByAccount = ({
     pagination: { page, limit },
     search,
   } = options;
+
   const {
     data: response,
     error,
+    fetchMore,
     loading,
   } = useQuery<QueryResponse<Collection>>(COLLECTIONS_BY_ACCOUNT_QUERY, {
     skip: !accountAddress,
@@ -65,6 +67,7 @@ export const useGraphQlCollectionsByAccount = ({
   return {
     collections: response?.collections.data ?? [],
     collectionsCount,
+    fetchMore,
     isPagination: collectionsCount > limit,
     isCollectionsLoading: loading,
     error,
