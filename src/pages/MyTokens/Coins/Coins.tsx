@@ -101,7 +101,12 @@ export const Coins: FC = () => {
         window.open(config.mexcQTZUSDT, '_blank', 'noopener');
       },
     },
-    UNIQUE: { getDisabled: true },
+    UNIQUE: {
+      getDisabled: false,
+      onGet: () => {
+        window.open(config.cryptoExchangeUNQ, '_blank', 'noopener');
+      },
+    },
     POLKADOT: {
       getDisabled: false,
       onGet: () => {
