@@ -41,6 +41,7 @@ const TokenInformationStyled = styled(TokenInformationComponent)`
   .attributes-header,
   .attribute-row {
     margin-bottom: var(--prop-gap);
+    word-break: break-all;
   }
 
   .tags-row {

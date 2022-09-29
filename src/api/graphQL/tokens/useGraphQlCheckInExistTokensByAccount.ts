@@ -41,7 +41,7 @@ export const useGraphQlCheckInExistTokensByAccount = ({
   >(TOKENS_QUERY, {
     skip,
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-first',
+    nextFetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
     variables: {
       where: {

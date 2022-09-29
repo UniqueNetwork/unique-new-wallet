@@ -1,4 +1,4 @@
 export * from './AskQuestion';
-export * from './FaqItems';
+export { faqItems } from './FaqItems';
 export * from './SidePlateFooter';
 export * from './SocialNav';

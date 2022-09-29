@@ -44,12 +44,15 @@ const TooltipWrapper = styled.div`
 
 const ListEntitiesWrapper = styled.div`
   display: flex;
-  gap: 15px;
-  margin-top: 20px;
   flex-wrap: wrap;
+  gap: var(--prop-gap);
+  padding: calc(var(--prop-gap) * 1.5) 0 calc(var(--prop-gap) * 2);
 `;
 
 const ListEntitiesCacheWrapper = styled.div`
+  flex: 0 0 auto;
+  width: 100%;
+
   .loader-label {
     color: var(--AdditionalColorDark);
   }

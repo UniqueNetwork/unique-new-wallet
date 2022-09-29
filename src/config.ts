@@ -15,6 +15,7 @@ declare type Config = {
   defaultChain: Chain;
   telegramBot: string | undefined;
   mexcQTZUSDT: string | undefined;
+  cryptoExchangeUNQ: string | undefined;
   zenDeskToken: string | undefined;
   oldCollectionMessage: string | undefined;
   socialLinks: {
@@ -44,6 +45,8 @@ export const config: Config = {
   defaultChain: activeChains[getDefaultChain(window.ENV || process.env)],
   telegramBot: window.ENV?.TELEGRAM_BOT || process.env.REACT_APP_NET_TELEGRAM_BOT,
   mexcQTZUSDT: window.ENV?.MEXC_QTZ_USDT || process.env.REACT_APP_NET_MEXC_QTZ_USDT,
+  cryptoExchangeUNQ:
+    window.ENV?.CRYPTO_EXCHANGE_UNQ || process.env.REACT_APP_CRYPTO_EXCHANGE_UNQ,
   zenDeskToken:
     window.ENV?.ZENDESK_OAUTH_APP_TOKEN || process.env.REACT_APP_ZENDESK_OAUTH_APP_TOKEN,
   oldCollectionMessage:

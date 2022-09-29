@@ -46,39 +46,60 @@ export const SidebarRow = styled.div`
   }
 `;
 
-export const InnerWrapper = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-`;
-
-export const InnerSidebar = styled.div`
-  border-right: 1px solid var(--color-grey-300);
-  flex: 0 0 235px;
-  padding: calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 1.5) 0
-    calc(var(--prop-gap) * 2);
-  @media (max-width: 1279px) {
-    display: none;
-  }
-`;
-
-export const InnerContent = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-
-  @media (max-width: 1025px) {
-    padding-left: 0;
-  }
-`;
-
 export const TabsHeader = styled.div`
-  border-bottom: 1px solid var(--color-grey-300);
   display: flex;
   flex: 0 0 auto;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 calc(var(--prop-gap) * 2);
-  @media (max-width: 1024px) {
+  padding-bottom: calc(var(--prop-gap) * 2);
+
+  @media screen and (min-width: 1024px) {
+    border-bottom: 1px solid var(--color-grey-300);
+    justify-content: space-between;
+    padding: 0 calc(var(--prop-gap) * 2);
+    gap: calc(var(--prop-gap) * 2);
+  }
+
+  .unique-tabs-labels {
+    border-bottom: 1px solid var(--color-grey-300);
+    flex: 1 1 100%;
+    margin-bottom: calc(var(--prop-gap) * 1.5);
+
+    @media screen and (min-width: 1024px) {
+      flex: 0 0 auto;
+      margin-bottom: 0;
+    }
+
+    &.slim {
+      .tab-label {
+        margin-bottom: -1px;
+        padding: calc(var(--prop-gap) / 2) var(--prop-gap) calc(var(--prop-gap) * 1.5);
+        height: auto;
+
+        @media screen and (min-width: 1024px) {
+          margin-bottom: 0;
+          padding-top: calc(var(--prop-gap) * 2.5);
+          padding-bottom: calc(var(--prop-gap) * 2.5);
+        }
+
+        &.active {
+          color: var(--color-primary-500);
+        }
+      }
+    }
+  }
+
+  .unique-tabs-contents {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
     padding: 0;
+
+    @media screen and (min-width: 1024px) {
+      justify-content: flex-end;
+      gap: calc(var(--prop-gap) * 2);
+      max-width: 89%;
+    }
   }
 `;
 
@@ -93,11 +114,4 @@ export const TabsBody = styled.div`
     padding-bottom: 0;
     max-width: 100%;
   }
-`;
-
-export const GridListCommon = styled.div`
-  flex: 1 1 auto;
-  display: grid;
-  align-content: baseline;
-  gap: calc(var(--prop-gap) * 2);
 `;

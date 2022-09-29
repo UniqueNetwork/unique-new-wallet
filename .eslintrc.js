@@ -129,7 +129,7 @@ module.exports = {
     'react/display-name': 'warn',
     'arrow-parens': ['error', 'always'],
     'default-param-last': [0], // conflicts with TS version (this one doesn't allow TS ?)
-    'react/jsx-indent': ['error', 2],
+    // 'react/jsx-indent': ['error', 2],
     'react/jsx-indent-props': [2, 2],
     'react/prop-types': [0], // this is a completely broken rule
     'react/jsx-key': 'warn',
