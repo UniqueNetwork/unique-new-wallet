@@ -9,3 +9,4 @@ export * from './useGetIcon';
 export * from './usePagination';
 export * from './useScreenWidthFromThreshold';
 export * from './useBalanceInsufficient';
+export * from './useItemsLimit';

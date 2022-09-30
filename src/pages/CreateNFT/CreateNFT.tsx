@@ -24,7 +24,7 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
-import { PreviewBar } from '@app/pages/components/PreviewBar';
+import { BottomBar } from '@app/pages/components/BottomBar';
 import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
@@ -216,7 +216,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     [collection, collectionsOptions, isCollectionsLoading, tokenForm],
   );
 
-  const root = document.getElementById('root');
   const renderSidebar = () => (
     <Sidebar
       hidden={!collection}
@@ -263,7 +262,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           (deviceSize >= DeviceSize.lg ? (
             renderSidebar()
           ) : (
-            <PreviewBar
+            <BottomBar
               buttons={[
                 <Button
                   title={isDrawerOpen ? 'Back' : 'Preview'}
@@ -272,10 +271,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 />,
               ]}
               isOpen={isDrawerOpen}
-              parent={root as Element}
+              parent={document.body}
             >
               {renderSidebar()}
-            </PreviewBar>
+            </BottomBar>
           ))}
       </MainWrapper>
       <StatusTransactionModal isVisible={isFlowLoading} description="Creating NFT" />

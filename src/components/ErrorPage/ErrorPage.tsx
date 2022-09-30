@@ -10,7 +10,6 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   gap: calc(var(--prop-gap) * 3) var(--prop-gap);
-  padding: calc(var(--prop-gap) * 2);
   color: var(--color-blue-grey-300);
   text-align: center;
 

@@ -3,11 +3,14 @@ import styled from 'styled-components';
 export const SocialNav = styled.nav`
   display: flex;
   justify-content: center;
+  gap: var(--prop-gap);
   margin-top: var(--prop-gap);
 
   a {
-    &:not(:first-child) {
-      margin-left: var(--prop-gap);
+    color: var(--color-primary-500);
+
+    &:hover {
+      opacity: 0.9;
     }
   }
 `;

@@ -1,12 +1,8 @@
 import React, { VFC } from 'react';
-import classNames from 'classnames';
 import { useParams } from 'react-router-dom';
+import classNames from 'classnames';
 
-import {
-  InnerContent,
-  InnerSidebar,
-  InnerWrapper,
-} from '@app/pages/components/PageComponents';
+import { PagePaper } from '@app/components';
 
 import { CollectionDescription, NftList } from './components';
 
@@ -22,13 +18,11 @@ export const CollectionNft: VFC<CollectionNftProps> = ({ className }) => {
   }
 
   return (
-    <InnerWrapper className={classNames('collection-nft', className)}>
-      <InnerSidebar>
-        <CollectionDescription collectionId={collectionId} />
-      </InnerSidebar>
-      <InnerContent>
-        <NftList collectionId={collectionId} />
-      </InnerContent>
-    </InnerWrapper>
+    <PagePaper.Layout
+      className={classNames('collection-nft', className)}
+      sidebar={<CollectionDescription collectionId={collectionId} />}
+    >
+      <NftList collectionId={collectionId} />
+    </PagePaper.Layout>
   );
 };
