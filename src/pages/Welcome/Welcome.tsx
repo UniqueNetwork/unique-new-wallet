@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { AccountsGroupButton, PagePaper } from '@app/components';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 type Props = {
   className?: string;
@@ -22,7 +23,7 @@ const WelcomeComponent = ({ className }: Props) => {
   );
 };
 
-export const Welcome = styled(WelcomeComponent)`
+const WelcomeStyled = styled(WelcomeComponent)`
   height: calc(100vh - 154px);
   display: flex;
   flex-direction: column;
@@ -80,3 +81,5 @@ export const Welcome = styled(WelcomeComponent)`
     z-index: 49;
   }
 `;
+
+export const Welcome = withPageTitle({ header: undefined })(WelcomeStyled);
