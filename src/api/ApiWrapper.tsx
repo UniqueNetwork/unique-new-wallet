@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ApolloProvider } from '@apollo/client';
+import { IClient, Sdk } from '@unique-nft/sdk';
 
 import { Chain } from '@app/types';
 import { BaseApi, IBaseApi } from '@app/api';
@@ -19,7 +20,9 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
     const chain = network ? config.activeChains[network.toUpperCase()] : null;
     return chain || config.defaultChain;
   });
-  const [apiInstance, setApiInstance] = useState<IBaseApi>();
+  const [apiInstance, setApiInstance] = useState<IClient>(
+    () => new Sdk({ baseUrl: currentChain.apiEndpoint, signer: null }),
+  );
   const [gqlClient, setGqlClient] = useState<GqlClient>(
     () => new GqlClient(currentChain.gqlEndpoint),
   );
@@ -38,7 +41,7 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
       return;
     }
     localStorage.setItem(defaultChainKey, currentChain.network);
-    setApiInstance(new BaseApi(currentChain.apiEndpoint));
+    setApiInstance(new Sdk({ baseUrl: currentChain.apiEndpoint, signer: null }));
     setGqlClient(new GqlClient(currentChain.gqlEndpoint));
   }, [currentChain]);
 

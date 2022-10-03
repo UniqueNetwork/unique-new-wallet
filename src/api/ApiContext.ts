@@ -1,10 +1,10 @@
 import { Context, Consumer, Provider, createContext } from 'react';
+import { IClient } from '@unique-nft/sdk';
 
 import { Chain } from '@app/types';
-import { IBaseApi } from '@app/api';
 
 export type ApiContextProps = {
-  api: IBaseApi | undefined;
+  api: IClient;
   currentChain: Chain;
   setCurrentChain: (chain: Chain) => void;
 };

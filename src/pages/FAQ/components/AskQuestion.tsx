@@ -15,8 +15,10 @@ import {
   InputController,
   TextareaController,
 } from '@app/components/FormControllerComponents';
-import { AskQuestionRequestType } from '@app/api/restApi/ask-question';
-import { useAskQuestionRequest } from '@app/api/restApi/ask-question/useAskQuestionRequest';
+import {
+  AskQuestionRequestType,
+  useAskQuestionRequest,
+} from '@app/api/restApi/ask-question/useAskQuestionRequest';
 import { config } from '@app/config';
 
 import { SidePlateFooter } from './SidePlateFooter';

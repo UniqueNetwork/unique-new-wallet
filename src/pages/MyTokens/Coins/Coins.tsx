@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { ApiWrapper } from '@app/api';
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
-import { useAccountBalancesService } from '@app/api/restApi/balance/hooks/useAccountBalancesService';
+import { useAccountBalancesService } from '@app/api/restApi/balance';
 import { RampModal } from '@app/pages';
 import { SendFunds } from '@app/pages/SendFunds';
 import { Chain, NetworkType } from '@app/types';

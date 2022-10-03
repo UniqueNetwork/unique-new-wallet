@@ -13,7 +13,7 @@ import {
   useBalanceInsufficient,
   useDeviceSize,
 } from '@app/hooks';
-import { CollectionApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
   CollectionSidebar,
@@ -56,11 +56,10 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
   const formMapper = useCollectionFormMapper();
-  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(CollectionApiService.collectionCreateMutation, 'create-collection');
-  const { feeError, isFeeError, fee, feeFormatted, getFee } = useExtrinsicFee(
-    CollectionApiService.collectionCreateMutation,
-  );
+  const { getFee, fee, feeFormatted, submitWaitResult, isLoadingSubmitResult } =
+    useCollectionCreate();
+  const { setPayloadEntity } = useExtrinsicCacheEntities();
+
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
   const collectionForm = useForm<CollectionForm>({
@@ -85,32 +84,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
   useEffect(() => {
-    if (isFeeError) {
-      error(feeError?.message);
-    }
-  }, [isFeeError]);
-
-  useEffect(() => {
-    if (flowStatus === 'success') {
-      info('Collection created successfully');
-
-      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
-    }
-    if (flowStatus === 'error') {
-      error(flowError?.message);
-    }
-  }, [flowStatus, navigate]);
-
-  useEffect(() => {
     navigate(tabsUrls[currentStep - 1]);
   }, [currentStep, navigate]);
 
   useEffect(() => {
     if (collectionDebounceValue) {
       const collection = formMapper(collectionDebounceValue);
-      getFee({
-        payload: collection,
-      });
+      getFee(collection);
     }
   }, [collectionDebounceValue, getFee]);
 
@@ -136,10 +116,18 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       return;
     }
 
-    const collection = formMapper(form);
+    const payload = formMapper(form);
 
-    signAndSubmitExtrinsic({
-      payload: collection,
+    submitWaitResult({ payload }).then((res) => {
+      info('Collection created successfully');
+
+      setPayloadEntity({
+        type: 'create-collection',
+        parsed: res?.parsed,
+        entityData: payload,
+      });
+
+      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
     });
   };
 
@@ -216,7 +204,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
             <Text>{warning?.description}</Text>
           </Confirm>
           <StatusTransactionModal
-            isVisible={isFlowLoading}
+            isVisible={isLoadingSubmitResult}
             description="Creating collection"
           />
         </FormWrapper>

@@ -6,8 +6,7 @@ import {
   AskTransferModal,
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { useExtrinsicFee, useExtrinsicFlow } from '@app/api';
-import { TokenApiService } from '@app/api/restApi/token';
+import { useTokenTransfer } from '@app/api';
 import { Token } from '@app/api/graphQL/types';
 
 interface TransferModalProps {
@@ -26,17 +25,16 @@ export const TransferModal: VFC<TransferModalProps> = ({
   const [recipient, setRecipient] = useState<string | undefined>();
 
   const { selectedAccount } = useAccounts();
-  const { info, error } = useNotifications();
-  const { feeFormatted, getFee } = useExtrinsicFee(TokenApiService.transferMutation);
-  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(TokenApiService.transferMutation, 'transfer-token');
+  const { info } = useNotifications();
+  const { submitWaitResult, getFee, isLoadingSubmitResult, feeFormatted } =
+    useTokenTransfer();
 
   const transferHandler = () => {
     if (!token || !recipient || !selectedAccount?.address) {
       return;
     }
 
-    signAndSubmitExtrinsic({
+    submitWaitResult({
       payload: {
         to: recipient,
         from: selectedAccount.address,
@@ -44,7 +42,14 @@ export const TransferModal: VFC<TransferModalProps> = ({
         tokenId: token.token_id,
         address: selectedAccount.address,
       },
-    });
+    })
+      .then(() => {
+        info('Transfer completed successfully');
+        onComplete();
+      })
+      .catch(() => {
+        onClose();
+      });
   };
 
   useEffect(() => {
@@ -53,33 +58,19 @@ export const TransferModal: VFC<TransferModalProps> = ({
     }
 
     getFee({
-      payload: {
-        to: recipient,
-        from: selectedAccount.address,
-        collectionId: token.collection_id,
-        tokenId: token.token_id,
-        address: selectedAccount.address,
-      },
+      to: recipient,
+      from: selectedAccount.address,
+      collectionId: token.collection_id,
+      tokenId: token.token_id,
+      address: selectedAccount.address,
     });
   }, [recipient]);
-
-  useEffect(() => {
-    if (flowStatus === 'success') {
-      info('Transfer completed successfully');
-      onComplete();
-    }
-
-    if (flowStatus === 'error') {
-      error(flowError?.message);
-      onClose();
-    }
-  }, [flowStatus]);
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isFlowLoading) {
+  if (isLoadingSubmitResult) {
     return <TransferStagesModal />;
   }
 
