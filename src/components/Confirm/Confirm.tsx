@@ -26,12 +26,9 @@ export const Confirm: VFC<IConfirmProps> = ({
 }) => {
   return (
     <Modal
-      footerButtons={
-        buttons &&
-        buttons.map((btn, i) => (
-          <Button role={btn.role} title={btn.title} key={i} onClick={btn.onClick} />
-        ))
-      }
+      footerButtons={buttons?.map((btn, i) => (
+        <Button role={btn.role} title={btn.title} key={i} onClick={btn.onClick} />
+      ))}
       isClosable={isClosable}
       isVisible={isVisible}
       title={title}

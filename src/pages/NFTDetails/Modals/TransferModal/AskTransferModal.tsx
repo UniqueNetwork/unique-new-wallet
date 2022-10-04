@@ -4,7 +4,7 @@ import { Alert, Button, Icon, InputText, Text, Tooltip } from '@unique-nft/ui-ki
 
 import { Modal } from '@app/components/Modal';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
-import { ModalContent, ModalFooter } from '@app/pages/components/ModalComponents';
+import { ModalContent } from '@app/pages/components/ModalComponents';
 
 interface AskTransferModalProps {
   fee?: string;
@@ -16,7 +16,9 @@ interface AskTransferModalProps {
 }
 
 const TransferRow = styled.div`
-  margin-bottom: calc(var(--prop-gap) * 1.5);
+  & + & {
+    margin-top: calc(var(--prop-gap) * 1.5);
+  }
 
   .unique-input-text {
     width: 100%;
@@ -41,7 +43,19 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
   const tooltipRef = createRef<HTMLDivElement>();
 
   return (
-    <Modal isVisible={isVisible} title="Transfer NFT" onClose={onClose}>
+    <Modal
+      isVisible={isVisible}
+      title="Transfer NFT"
+      footerButtons={
+        <Button
+          role="primary"
+          title="Confirm"
+          disabled={!recipient}
+          onClick={onConfirm}
+        />
+      }
+      onClose={onClose}
+    >
       <ModalContent>
         <TransferRow>
           <InputText
@@ -81,24 +95,15 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
           </Text>
         </TransferRow>
         <TransferRow>
-          <FeeInformationTransaction fee={fee} />
-        </TransferRow>
-        <TransferRow>
-          {!fee && (
+          {fee ? (
+            <FeeInformationTransaction fee={fee} />
+          ) : (
             <Alert type="warning">
               A fee will be calculated after entering the address
             </Alert>
           )}
         </TransferRow>
       </ModalContent>
-      <ModalFooter>
-        <Button
-          role="primary"
-          title="Confirm"
-          disabled={!recipient}
-          onClick={onConfirm}
-        />
-      </ModalFooter>
     </Modal>
   );
 };
