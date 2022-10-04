@@ -4,7 +4,10 @@ import { Modal, ModalProps } from '@app/components/Modal';
 import { ContentRow } from '@app/pages/components/ModalComponents';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
-type BurnCollectionModalProps = Omit<ModalProps, 'children'> & {
+type BurnCollectionModalProps = Omit<
+  ModalProps,
+  'children' | 'footerButtons' | 'title'
+> & {
   onConfirm(): void;
 };
 
@@ -14,8 +17,8 @@ export const BurnCollectionModal = ({
 }: BurnCollectionModalProps) => (
   <Modal
     title="Burn collection"
-    {...modalProps}
     footerButtons={<Button role="primary" title="Confirm" onClick={onConfirm} />}
+    {...modalProps}
   >
     <ContentRow>
       <Text>You will not be able to undo this action.</Text>
