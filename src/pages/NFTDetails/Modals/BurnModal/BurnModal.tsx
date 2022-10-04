@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
-import { TokenApiService, useExtrinsicFlow, useExtrinsicFee } from '@app/api';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { Token } from '@app/api/graphQL/types';
+import { useTokenBurn } from '@app/api';
 
 interface BurnModalProps {
   isVisible: boolean;
@@ -21,21 +21,21 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
 
-  const { feeFormatted, getFee } = useExtrinsicFee(TokenApiService.burnMutation);
-  const { flowStatus, isFlowLoading, flowError, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(TokenApiService.burnMutation, 'burn-token');
+  const {
+    getFee,
+    feeFormatted,
+    submitWaitResult,
+    isLoadingSubmitResult,
+    feeError,
+    submitWaitResultError,
+  } = useTokenBurn();
 
   useEffect(() => {
-    if (flowStatus === 'success') {
-      info('NFT burned successfully');
-
-      navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+    if (!feeError) {
+      return;
     }
-
-    if (flowStatus === 'error') {
-      error(flowError?.message);
-    }
-  }, [flowStatus]);
+    error(feeError);
+  }, [feeError]);
 
   useEffect(() => {
     if (!token || !selectedAccount?.address) {
@@ -43,11 +43,9 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     }
 
     getFee({
-      payload: {
-        address: selectedAccount.address,
-        collectionId: token.collection_id,
-        tokenId: token.token_id,
-      },
+      address: selectedAccount.address,
+      collectionId: token.collection_id,
+      tokenId: token.token_id,
     });
   }, []);
 
@@ -56,20 +54,28 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
       return;
     }
 
-    signAndSubmitExtrinsic({
+    submitWaitResult({
       payload: {
         address: selectedAccount.address,
         collectionId: token.collection_id,
         tokenId: token.token_id,
       },
-    });
+    })
+      .then(() => {
+        info('NFT burned successfully');
+
+        navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+      })
+      .catch(() => {
+        submitWaitResultError && error(submitWaitResultError);
+      });
   };
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isFlowLoading) {
+  if (isLoadingSubmitResult) {
     return <BurnStagesModal />;
   }
 

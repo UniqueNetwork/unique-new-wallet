@@ -6,9 +6,8 @@ import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
+import { useCollectionQuery, useExtrinsicCacheEntities, useTokenCreate } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { TokenApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
-import { useCollectionQuery } from '@app/api/restApi/collection/hooks/useCollectionQuery';
 import { MintingBtn, StatusTransactionModal } from '@app/components';
 import {
   DeviceSize,
@@ -55,21 +54,26 @@ const WrapperContentStyled = styled(WrapperContent)`
 
 export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const deviceSize = useDeviceSize();
-  const [closable, setClosable] = useState(false);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
-  const { error, warning, info } = useNotifications();
+  const { warning, info, error } = useNotifications();
   const mapper = useTokenFormMapper();
 
-  const { getFee, fee, feeFormatted, feeError, isFeeError } = useExtrinsicFee(
-    TokenApiService.tokenCreateMutation,
-  );
-  const { flowStatus, flowError, isFlowLoading, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(TokenApiService.tokenCreateMutation, 'create-token');
+  const {
+    fee,
+    feeFormatted,
+    getFee,
+    submitWaitResult,
+    isLoadingSubmitResult,
+    feeError,
+    submitWaitResultError,
+  } = useTokenCreate();
+
+  const { setPayloadEntity } = useExtrinsicCacheEntities();
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
@@ -167,39 +171,41 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     const { address, collectionId } = debouncedFormValues;
 
     if (collectionId && address && isValid && !isOldCollection) {
-      getFee({ payload: mapper(debouncedFormValues as FilledTokenForm) });
+      getFee(mapper(debouncedFormValues as FilledTokenForm));
     }
   }, [debouncedFormValues]);
 
   useEffect(() => {
-    if (flowStatus === 'success') {
-      info('NFT created successfully');
-
-      closable
-        ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
-        : reset(undefined, { keepDefaultValues: true });
+    if (!feeError) {
+      return;
     }
-
-    if (flowStatus === 'error') {
-      error(flowError?.message);
-    }
-  }, [flowStatus]);
-
-  useEffect(() => {
-    if (isFeeError) {
-      error(feeError?.message);
-    }
-  }, [isFeeError]);
+    error(feeError);
+  }, [feeError]);
 
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
     if (isValid) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
-      setClosable(!!closable);
+      const payload = mapper(tokenForm as FilledTokenForm);
 
-      signAndSubmitExtrinsic({
-        payload: mapper(tokenForm as FilledTokenForm),
-      });
+      submitWaitResult({
+        payload,
+      })
+        .then((res) => {
+          setPayloadEntity({
+            type: 'create-token',
+            entityData: payload,
+            parsed: res?.parsed,
+          });
+          info('NFT created successfully');
+
+          closable
+            ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
+            : reset(undefined, { keepDefaultValues: true });
+        })
+        .catch(() => {
+          submitWaitResultError && error(submitWaitResultError);
+        });
     }
   };
 
@@ -277,7 +283,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
             </BottomBar>
           ))}
       </MainWrapper>
-      <StatusTransactionModal isVisible={isFlowLoading} description="Creating NFT" />
+      <StatusTransactionModal
+        isVisible={isLoadingSubmitResult}
+        description="Creating NFT"
+      />
     </>
   );
 };
