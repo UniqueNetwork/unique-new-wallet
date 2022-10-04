@@ -1,11 +1,12 @@
 import React, { FC, useEffect, VFC } from 'react';
-import { Modal, useNotifications } from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
 import { Account } from '@app/account';
 import { Stages } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
 import { useAccountBalanceTransfer } from '@app/api';
+import { Modal } from '@app/components/Modal';
 
 import { SendFundsModal } from './SendFundsModal';
 
@@ -27,7 +28,7 @@ const stages = [
 
 const TransferStagesModal: VFC = () => {
   return (
-    <Modal isVisible isClosable={false}>
+    <Modal isVisible isClosable={false} title="Please wait">
       <Stages stages={stages} />
     </Modal>
   );

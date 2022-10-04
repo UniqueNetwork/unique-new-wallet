@@ -2,7 +2,6 @@ import {
   Button,
   Heading,
   Icon,
-  Modal,
   Text,
   useNotifications,
   Loader,
@@ -20,6 +19,7 @@ import {
   useAskQuestionRequest,
 } from '@app/api/restApi/ask-question/useAskQuestionRequest';
 import { config } from '@app/config';
+import { Modal } from '@app/components/Modal';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -107,13 +107,12 @@ export const AskQuestion = () => {
       </SidePlateFooter>
       <Modal
         isVisible={visibleModal}
-        isClosable={true}
+        title="Ask a question"
         onClose={() => {
           setVisibleModal(false);
         }}
       >
         {isLoadingRequestQuestion && <Loader isFullPage={true} />}
-        <Heading size="2">Ask a question</Heading>
         <ModalContent>
           <FormProvider {...form}>
             <InputController

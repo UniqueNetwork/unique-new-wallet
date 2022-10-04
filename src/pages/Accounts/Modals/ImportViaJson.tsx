@@ -1,13 +1,10 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { Button, Heading, Modal } from '@unique-nft/ui-kit';
+import { Button } from '@unique-nft/ui-kit';
 import { KeyringPair } from '@polkadot/keyring/types';
 
 import { Alert, PasswordInput, Upload } from '@app/components';
-import {
-  AdditionalText,
-  LabelText,
-  ModalHeader,
-} from '@app/pages/Accounts/Modals/commonComponents';
+import { Modal } from '@app/components/Modal';
+import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
@@ -60,10 +57,11 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   }, [onFinish, pair, password, restoreJSONAccount]);
 
   return (
-    <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-      <ModalHeader>
-        <Heading size="2">Add an account via backup JSON file</Heading>
-      </ModalHeader>
+    <Modal
+      isVisible={isVisible}
+      title="Add an account via backup JSON file"
+      onClose={onFinish}
+    >
       <ModalContent>
         <ContentRow>
           <LabelText size="m">Upload</LabelText>

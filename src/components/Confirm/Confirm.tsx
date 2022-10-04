@@ -1,6 +1,8 @@
 import { ReactNode, VFC } from 'react';
 import styled from 'styled-components';
-import { Button, ButtonProps, Heading, Modal } from '@unique-nft/ui-kit';
+import { Button, ButtonProps } from '@unique-nft/ui-kit';
+
+import { Modal } from '@app/components/Modal';
 
 interface IConfirmProps {
   children?: ReactNode;
@@ -52,8 +54,7 @@ export const Confirm: VFC<IConfirmProps> = ({
   onClose,
 }) => {
   return (
-    <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
-      <Heading size="2">{title}</Heading>
+    <Modal isVisible={isVisible} title={title} onClose={onClose}>
       <Body>{children}</Body>
       {buttons && (
         <Footer>
