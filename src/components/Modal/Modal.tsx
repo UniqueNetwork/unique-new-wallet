@@ -5,14 +5,16 @@ import classNames from 'classnames';
 import './Modal.scss';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 export interface ModalProps {
   children: ReactNode;
+  footerButtons?: ReactNode;
   isVisible: boolean;
   isClosable?: boolean;
   inline?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg';
-  title?: string;
+  title?: ReactNode;
   onClose?(): void;
 }
 
@@ -34,6 +36,7 @@ const motionProps: Partial<DrawerProps> = {
 
 export const Modal = ({
   children,
+  footerButtons,
   isVisible,
   isClosable = true,
   inline,
@@ -42,14 +45,7 @@ export const Modal = ({
   onClose,
 }: ModalProps) => {
   const deviceSize = useDeviceSize();
-  const headingSize = () => {
-    switch (deviceSize) {
-      case DeviceSize.md:
-        return '2';
-      default:
-        return '3';
-    }
-  };
+  const headingSize = () => (deviceSize >= DeviceSize.md ? '2' : '3');
 
   return isVisible ? (
     <Drawer
@@ -78,6 +74,13 @@ export const Modal = ({
         </div>
       )}
       <div className="unique-modal-body">{children}</div>
+      {footerButtons && (
+        <div className="unique-modal-footer">
+          <ButtonGroup stack align="flex-end">
+            {footerButtons}
+          </ButtonGroup>
+        </div>
+      )}
     </Drawer>
   ) : null;
 };
