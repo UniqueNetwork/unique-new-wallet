@@ -1,16 +1,13 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
+import { Button, Text } from '@unique-nft/ui-kit';
 import keyring from '@polkadot/ui-keyring';
 import styled from 'styled-components/macro';
 
+import { Modal } from '@app/components/Modal';
 import { PasswordInput } from '@app/components/PasswordInput/PasswordInput';
 import { QRReader, ScannedResult } from '@app/components/QRReader/QRReader';
 import { useAccounts } from '@app/hooks';
-import {
-  AdditionalText,
-  LabelText,
-  ModalHeader,
-} from '@app/pages/Accounts/Modals/commonComponents';
+import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
@@ -57,10 +54,7 @@ export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({
   }, [scanned, password, onFinish]);
 
   return (
-    <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-      <ModalHeader>
-        <Heading size="2">Add an account via QR-code</Heading>
-      </ModalHeader>
+    <Modal isVisible={isVisible} title="Add an account via QR-code" onClose={onFinish}>
       <ModalContent>
         <ContentRow>
           <Text size="m">

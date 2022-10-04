@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Modal } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
+
+import { Modal } from '@app/components/Modal';
 
 export type IntroSliderProps = {
   activeSlide?: number;
@@ -17,7 +18,6 @@ export type IntroSliderProps = {
     | (JSX.Element[] | JSX.Element);
 };
 
-// TODO: в дальнейшем можно перенести в ui кит
 export const IntroSlider = ({ activeSlide = 0, children }: IntroSliderProps) => {
   const [active, setActive] = useState(activeSlide);
   const [open, setOpen] = useState(true);
@@ -35,16 +35,14 @@ export const IntroSlider = ({ activeSlide = 0, children }: IntroSliderProps) => 
   };
 
   return (
-    <div>
-      <Modal isVisible={open} isClosable={true} onClose={() => setOpen(false)}>
-        <div>{renderContent()[active]}</div>
-        <Dots>
-          {renderContent().map((_, idx) => (
-            <Dot isActive={active === idx} key={idx} onClick={() => setActive(idx)} />
-          ))}
-        </Dots>
-      </Modal>
-    </div>
+    <Modal isVisible={open} onClose={() => setOpen(false)}>
+      <div>{renderContent()[active]}</div>
+      <Dots>
+        {renderContent().map((_, idx) => (
+          <Dot isActive={active === idx} key={idx} onClick={() => setActive(idx)} />
+        ))}
+      </Dots>
+    </Modal>
   );
 };
 

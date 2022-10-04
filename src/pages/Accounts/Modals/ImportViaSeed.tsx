@@ -1,9 +1,8 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Heading, Modal } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
+import { Modal } from '@app/components/Modal';
 import { AskCredentialsModal, AskExistsSeedPhrase } from '@app/pages';
-import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 
 import {
   CreateAccountModalStages,
@@ -75,18 +74,16 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
   }
 
   return (
-    // TODO: [UI-109] resolve zIndex for all popping elements
-    <div style={{ zIndex: 40 }}>
-      <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-        <ModalHeader>
-          <Heading size="2">Add an account via seed phrase</Heading>
-        </ModalHeader>
-        <ModalBodyComponent
-          accountProperties={accountProperties}
-          onFinish={onStageFinish}
-          onGoBack={onGoBack}
-        />
-      </Modal>
-    </div>
+    <Modal
+      isVisible={isVisible}
+      title="Add an account via seed phrase"
+      onClose={onFinish}
+    >
+      <ModalBodyComponent
+        accountProperties={accountProperties}
+        onFinish={onStageFinish}
+        onGoBack={onGoBack}
+      />
+    </Modal>
   );
 };
