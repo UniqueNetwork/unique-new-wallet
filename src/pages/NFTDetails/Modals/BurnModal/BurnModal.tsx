@@ -19,10 +19,23 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
   const { currentChain } = useApi();
   const navigate = useNavigate();
   const { selectedAccount } = useAccounts();
-  const { info } = useNotifications();
+  const { info, error } = useNotifications();
 
-  const { getFee, feeFormatted, submitWaitResult, isLoadingSubmitResult } =
-    useTokenBurn();
+  const {
+    getFee,
+    feeFormatted,
+    submitWaitResult,
+    isLoadingSubmitResult,
+    feeError,
+    submitWaitResultError,
+  } = useTokenBurn();
+
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
 
   useEffect(() => {
     if (!token || !selectedAccount?.address) {
@@ -47,11 +60,15 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
         collectionId: token.collection_id,
         tokenId: token.token_id,
       },
-    }).then(() => {
-      info('NFT burned successfully');
+    })
+      .then(() => {
+        info('NFT burned successfully');
 
-      navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
-    });
+        navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+      })
+      .catch(() => {
+        submitWaitResultError && error(submitWaitResultError);
+      });
   };
 
   if (!selectedAccount || !token) {

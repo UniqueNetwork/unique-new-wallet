@@ -25,9 +25,22 @@ export const TransferModal: VFC<TransferModalProps> = ({
   const [recipient, setRecipient] = useState<string | undefined>();
 
   const { selectedAccount } = useAccounts();
-  const { info } = useNotifications();
-  const { submitWaitResult, getFee, isLoadingSubmitResult, feeFormatted } =
-    useTokenTransfer();
+  const { error, info } = useNotifications();
+  const {
+    submitWaitResult,
+    getFee,
+    isLoadingSubmitResult,
+    feeFormatted,
+    submitWaitResultError,
+    feeError,
+  } = useTokenTransfer();
+
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
 
   const transferHandler = () => {
     if (!token || !recipient || !selectedAccount?.address) {
@@ -48,6 +61,7 @@ export const TransferModal: VFC<TransferModalProps> = ({
         onComplete();
       })
       .catch(() => {
+        submitWaitResultError && error(submitWaitResultError);
         onClose();
       });
   };

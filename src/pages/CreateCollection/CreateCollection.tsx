@@ -56,8 +56,15 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
   const formMapper = useCollectionFormMapper();
-  const { getFee, fee, feeFormatted, submitWaitResult, isLoadingSubmitResult } =
-    useCollectionCreate();
+  const {
+    getFee,
+    fee,
+    feeFormatted,
+    submitWaitResult,
+    isLoadingSubmitResult,
+    feeError,
+    submitWaitResultError,
+  } = useCollectionCreate();
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
@@ -82,6 +89,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   });
 
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
+
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
 
   useEffect(() => {
     navigate(tabsUrls[currentStep - 1]);
@@ -118,17 +132,21 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
 
     const payload = formMapper(form);
 
-    submitWaitResult({ payload }).then((res) => {
-      info('Collection created successfully');
+    submitWaitResult({ payload })
+      .then((res) => {
+        info('Collection created successfully');
 
-      setPayloadEntity({
-        type: 'create-collection',
-        parsed: res?.parsed,
-        entityData: payload,
+        setPayloadEntity({
+          type: 'create-collection',
+          parsed: res?.parsed,
+          entityData: payload,
+        });
+
+        navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
+      })
+      .catch(() => {
+        submitWaitResultError && error(submitWaitResultError);
       });
-
-      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
-    });
   };
 
   const isFirstStep = currentStep - 1 === 0;

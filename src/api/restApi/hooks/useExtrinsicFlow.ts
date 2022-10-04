@@ -1,7 +1,5 @@
-import { useEffect } from 'react';
 import { ExtrinsicResultResponse, IMutation } from '@unique-nft/sdk';
 import { useMutation } from 'react-query';
-import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
 import { UNKNOWN_ERROR_MSG } from '@app/api/restApi/hooks/constants';
@@ -9,7 +7,6 @@ import { UNKNOWN_ERROR_MSG } from '@app/api/restApi/hooks/constants';
 export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
   const { signMessage } = useAccounts();
   const { selectedAccount } = useAccounts();
-  const { error } = useNotifications();
 
   const submitWaitResult = async ({
     senderAddress,
@@ -18,20 +15,16 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
     payload: A;
     senderAddress?: string;
   }) => {
-    try {
-      const build = await mutation.build(payload);
+    const build = await mutation.build(payload);
 
-      const account = senderAddress || selectedAccount?.address;
+    const account = senderAddress || selectedAccount?.address;
 
-      const signature = await signMessage(build, account);
+    const signature = await signMessage(build, account);
 
-      return mutation.submitWaitResult({
-        signerPayloadJSON: build.signerPayloadJSON,
-        signature,
-      });
-    } catch (e: any) {
-      error(e?.message || UNKNOWN_ERROR_MSG);
-    }
+    return mutation.submitWaitResult({
+      signerPayloadJSON: build.signerPayloadJSON,
+      signature,
+    });
   };
 
   const submitResultMutationQueryResult = useMutation<
@@ -41,15 +34,11 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
     unknown
   >(submitWaitResult);
 
-  useEffect(() => {
-    if (!submitResultMutationQueryResult.error) {
-      return;
-    }
-    error(submitResultMutationQueryResult.error?.message || UNKNOWN_ERROR_MSG);
-  }, [submitResultMutationQueryResult.error]);
-
   return {
     submitWaitResult: submitResultMutationQueryResult.mutateAsync,
     isLoadingSubmitResult: submitResultMutationQueryResult.isLoading,
+    submitWaitResultError: submitResultMutationQueryResult.isError
+      ? submitResultMutationQueryResult.error?.message || UNKNOWN_ERROR_MSG
+      : null,
   };
 };

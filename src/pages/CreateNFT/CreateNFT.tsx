@@ -60,11 +60,18 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [params] = useSearchParams();
   const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
-  const { warning, info } = useNotifications();
+  const { warning, info, error } = useNotifications();
   const mapper = useTokenFormMapper();
 
-  const { fee, feeFormatted, getFee, submitWaitResult, isLoadingSubmitResult } =
-    useTokenCreate();
+  const {
+    fee,
+    feeFormatted,
+    getFee,
+    submitWaitResult,
+    isLoadingSubmitResult,
+    feeError,
+    submitWaitResultError,
+  } = useTokenCreate();
 
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
@@ -168,6 +175,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
   }, [debouncedFormValues]);
 
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
+
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
     if (isValid) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
@@ -176,18 +190,22 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
       submitWaitResult({
         payload,
-      }).then((res) => {
-        setPayloadEntity({
-          type: 'create-token',
-          entityData: payload,
-          parsed: res?.parsed,
-        });
-        info('NFT created successfully');
+      })
+        .then((res) => {
+          setPayloadEntity({
+            type: 'create-token',
+            entityData: payload,
+            parsed: res?.parsed,
+          });
+          info('NFT created successfully');
 
-        closable
-          ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
-          : reset(undefined, { keepDefaultValues: true });
-      });
+          closable
+            ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
+            : reset(undefined, { keepDefaultValues: true });
+        })
+        .catch(() => {
+          submitWaitResultError && error(submitWaitResultError);
+        });
     }
   };
 

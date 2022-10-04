@@ -38,10 +38,23 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   const { onClose, senderAccount, onSendSuccess, chain } = props;
 
   const { setCurrentChain } = useApi();
-  const { info } = useNotifications();
+  const { info, error } = useNotifications();
 
-  const { getFee, feeFormatted, isLoadingSubmitResult, submitWaitResult } =
-    useAccountBalanceTransfer();
+  const {
+    getFee,
+    feeFormatted,
+    isLoadingSubmitResult,
+    submitWaitResult,
+    feeError,
+    submitWaitResultError,
+  } = useAccountBalanceTransfer();
+
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
 
   useEffect(() => {
     setCurrentChain(chain);
@@ -71,11 +84,15 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
         amount,
       },
       senderAddress,
-    }).then(() => {
-      info('Transfer completed successfully');
-      onSendSuccess?.();
-      onClose();
-    });
+    })
+      .then(() => {
+        info('Transfer completed successfully');
+        onSendSuccess?.();
+        onClose();
+      })
+      .catch(() => {
+        submitWaitResultError && error(submitWaitResultError);
+      });
   };
 
   return (
