@@ -1,45 +1,26 @@
-import React, { memo, useEffect, useLayoutEffect, VFC } from 'react';
-import styled from 'styled-components';
-import { Modal } from '@unique-nft/ui-kit';
+import React, { memo, useEffect, VFC } from 'react';
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
+
+import { Modal } from '@app/components/Modal';
 
 // these sizes are required for embedded rendering method, because RampSdk cheks them, when we initialize ramp object
 // but required sizes are not convenient for users and it causes of using other sizes after initialization
-const requiredWidth = '375px';
+const requiredWidth = '100%';
 const requiredHeight = '667px';
-const convenientHeight = '580px';
-
 const rampContainerId = 'ramp-container';
 
 interface RampModalProps {
-  className?: string;
   isVisible: boolean;
-  swapAsset: 'KSM' | 'DOT';
+  swapAsset: string; // 'KSM' | 'DOT';
   onClose: () => void;
 }
 
-const RampModalComponent: VFC<RampModalProps> = ({
-  className,
-  isVisible,
-  swapAsset,
-  onClose,
-}) => {
-  useLayoutEffect(() => {
-    if (isVisible) {
-      const body = document.getElementsByTagName('body')[0];
-
-      body.style.overflow = 'hidden';
-
-      return () => {
-        body.style.overflow = 'auto';
-      };
-    }
-  }, [isVisible]);
-
+const RampModalComponent: VFC<RampModalProps> = ({ isVisible, swapAsset, onClose }) => {
   useEffect(() => {
     if (isVisible) {
       const rampContainer = document.getElementById(rampContainerId);
       const logoUrl = `${window.location.origin}/logos/logo.svg`;
+
       if (rampContainer) {
         const ramp = new RampInstantSDK({
           hostAppName: 'Unique',
@@ -49,42 +30,29 @@ const RampModalComponent: VFC<RampModalProps> = ({
           swapAsset,
         });
 
-        rampContainer.style.height = convenientHeight;
-
         // Ramp SDK has a few events, but the lib doesn't support them, just asterisk * (it means all events)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         ramp.on('WIDGET_CLOSE', onClose);
         ramp.show();
 
-        return () => {
-          rampContainer.style.height = requiredHeight;
-        };
+        if (ramp.domNodes) {
+          ramp.domNodes.iframe.width = '100%';
+        }
       }
     }
   }, [isVisible]);
 
-  // TODO: remove span to use className prop
   return (
-    <span className={className}>
-      <Modal isClosable isVisible={isVisible} onClose={onClose}>
-        <div
-          id={rampContainerId}
-          style={{ width: requiredWidth, height: requiredHeight }}
-        />
-      </Modal>
-    </span>
+    <Modal inline isClosable={false} isVisible={isVisible} onClose={onClose}>
+      <div
+        className="unique-ramp-modal-wrapper"
+        id={rampContainerId}
+        style={{ width: requiredWidth, height: requiredHeight }}
+      />
+    </Modal>
   );
 };
 
-const RampModalStyled = styled(RampModalComponent)`
-  .unique-modal {
-    width: ${requiredWidth};
-  }
-  .unique-modal-wrapper {
-    padding: var(--prop-gap) 0;
-  }
-`;
-
 // we should use memoization, because ramp can be initialize once
-export const RampModal = memo(RampModalStyled);
+export const RampModal = memo(RampModalComponent);

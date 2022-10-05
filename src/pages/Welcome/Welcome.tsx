@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 
 import { AccountsGroupButton, PagePaper } from '@app/components';
+import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 type Props = {
   className?: string;
@@ -22,7 +23,7 @@ const WelcomeComponent = ({ className }: Props) => {
   );
 };
 
-export const Welcome = styled(WelcomeComponent)`
+const WelcomeStyled = styled(WelcomeComponent)`
   height: calc(100vh - 154px);
   display: flex;
   flex-direction: column;
@@ -44,7 +45,7 @@ export const Welcome = styled(WelcomeComponent)`
   }
 
   .description {
-    padding: 24px 0 32px;
+    padding: calc(var(--prop-gap) * 1.5) 0 calc(var(--prop-gap) * 2);
     text-align: center;
 
     .text {
@@ -63,8 +64,8 @@ export const Welcome = styled(WelcomeComponent)`
   .unique-card {
     background: var(--color-additional-light);
     box-shadow: 0 4px 12px var(--prop-shadow);
-    border-radius: 4px;
-    padding: 32px;
+    border-radius: var(--prop-border-radius);
+    padding: calc(var(--prop-gap) * 2);
 
     &.empty {
       height: 100%;
@@ -80,3 +81,5 @@ export const Welcome = styled(WelcomeComponent)`
     z-index: 49;
   }
 `;
+
+export const Welcome = withPageTitle({ header: undefined })(WelcomeStyled);

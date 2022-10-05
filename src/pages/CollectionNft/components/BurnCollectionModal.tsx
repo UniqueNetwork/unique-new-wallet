@@ -1,10 +1,7 @@
-import { Button, Heading, Modal, Text, ModalProps } from '@unique-nft/ui-kit';
+import { Button, Text } from '@unique-nft/ui-kit';
 
-import {
-  ContentRow,
-  ModalContent,
-  ModalFooter,
-} from '@app/pages/components/ModalComponents';
+import { Modal, ModalProps } from '@app/components/Modal';
+import { ContentRow, ModalFooter } from '@app/pages/components/ModalComponents';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
 type BurnCollectionModalProps = Omit<ModalProps, 'children'> & {
@@ -15,18 +12,15 @@ export const BurnCollectionModal = ({
   onConfirm,
   ...modalProps
 }: BurnCollectionModalProps) => (
-  <Modal {...modalProps} isClosable={true}>
-    <ModalContent>
-      <ContentRow>
-        <Heading size="2">Burn collection</Heading>
-        <Text>You will not be able to undo this action.</Text>
-      </ContentRow>
-      <ContentRow>
-        <FeeInformationTransaction fee="2.073447 QTZ" />
-      </ContentRow>
-      <ModalFooter>
-        <Button role="primary" title="Confirm" onClick={onConfirm} />
-      </ModalFooter>
-    </ModalContent>
+  <Modal title="Burn collection" {...modalProps}>
+    <ContentRow>
+      <Text>You will not be able to undo this action.</Text>
+    </ContentRow>
+    <ContentRow>
+      <FeeInformationTransaction fee="2.073447 QTZ" />
+    </ContentRow>
+    <ModalFooter>
+      <Button role="primary" title="Confirm" onClick={onConfirm} />
+    </ModalFooter>
   </Modal>
 );

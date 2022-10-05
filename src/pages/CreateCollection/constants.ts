@@ -1,4 +1,4 @@
-import { CREATE_COLLECTION_TABS_ROUTE, ROUTE } from '@app/routes';
+import { CREATE_COLLECTION_TABS_ROUTE } from '@app/routes';
 
 import { AttributeFieldOptional, AttributeFieldType, Warning } from './types';
 
@@ -9,9 +9,9 @@ export const tabsUrls = [
 
 export const warnings: Record<string, Warning> = {
   coverIsNotDefine: {
-    title:
-      'You have not entered the cover. Are you sure that you want to create the collection without it?',
-    description: 'You cannot return to editing the cover in this product version.',
+    title: "Warning! You haven't entered the cover.",
+    description:
+      "Are you sure that you want to create the collection without it? You can't return to editing the cover in this product version.",
   },
   attributesAreNotDefine: {
     title:

@@ -1,14 +1,21 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { usePropertiesService } from '@app/api';
 import { ChainPropertiesResponse } from '@app/types/Api';
+import { useApi } from '@app/hooks';
 
-import { ChainPropertiesProvider } from './ChainPropertiesContext';
+import { ChainPropertiesContext } from '.';
 
 export const ChainPropertiesWrapper: FC<{
   initialProperties: ChainPropertiesResponse;
 }> = ({ children, initialProperties }) => {
-  const { data } = usePropertiesService();
+  const { data, refetch } = usePropertiesService();
+
+  const { api } = useApi();
+
+  useEffect(() => {
+    refetch();
+  }, [api, refetch]);
 
   const value = useMemo(() => {
     return {
@@ -16,5 +23,9 @@ export const ChainPropertiesWrapper: FC<{
     };
   }, [data, initialProperties]);
 
-  return <ChainPropertiesProvider value={value}>{children}</ChainPropertiesProvider>;
+  return (
+    <ChainPropertiesContext.Provider value={value}>
+      {children}
+    </ChainPropertiesContext.Provider>
+  );
 };

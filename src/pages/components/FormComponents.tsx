@@ -146,10 +146,14 @@ export const AdditionalText = styled(Text).attrs({
   margin-bottom: var(--prop-gap);
 `;
 
-export const ButtonGroup = styled.div<{ stack?: boolean }>`
+export const ButtonGroup = styled.div<{
+  align?: 'flex-start' | 'center' | 'flex-end';
+  stack?: boolean;
+}>`
   flex: 1 1 auto;
   display: flex;
   flex-wrap: wrap;
+  justify-content: ${(p) => p.align};
   gap: calc(var(--prop-gap) / 2) var(--prop-gap);
 
   @media screen and (min-width: 568px) {
@@ -157,7 +161,7 @@ export const ButtonGroup = styled.div<{ stack?: boolean }>`
   }
 
   & > * {
-    flex: ${(p) => (p.stack ? '1 1 auto' : '1 1 100%')};
+    flex: ${(p) => (p.stack ? '1 1 100%' : '0 0 auto')};
 
     @media screen and (min-width: 568px) {
       flex: 0 0 auto;

@@ -1,18 +1,9 @@
 import { createRef, VFC } from 'react';
 import styled from 'styled-components';
-import {
-  Alert,
-  Button,
-  Heading,
-  Icon,
-  InputText,
-  Modal,
-  Text,
-  Tooltip,
-} from '@unique-nft/ui-kit';
+import { Alert, Button, Icon, InputText, Text, Tooltip } from '@unique-nft/ui-kit';
 
+import { Modal } from '@app/components/Modal';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
-import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 import { ModalContent, ModalFooter } from '@app/pages/components/ModalComponents';
 
 interface AskTransferModalProps {
@@ -50,10 +41,7 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
   const tooltipRef = createRef<HTMLDivElement>();
 
   return (
-    <Modal isClosable isVisible={isVisible} onClose={onClose}>
-      <ModalHeader>
-        <Heading size="2">Transfer NFT</Heading>
-      </ModalHeader>
+    <Modal isVisible={isVisible} title="Transfer NFT" onClose={onClose}>
       <ModalContent>
         <TransferRow>
           <InputText

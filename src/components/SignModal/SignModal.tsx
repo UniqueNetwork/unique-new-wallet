@@ -1,11 +1,12 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Button, Heading, Modal, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
+import { Button, Text } from '@unique-nft/ui-kit';
 import { KeyringPair } from '@polkadot/keyring/types';
 
 import { AccountSigner } from '@app/account';
 import { useAccounts } from '@app/hooks';
 import { IdentityIcon, PasswordInput } from '@app/components';
+import { Modal } from '@app/components/Modal';
 
 export type TSignModalProps = {
   isVisible: boolean;
@@ -41,10 +42,7 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
   }
 
   return (
-    <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
-      <Content>
-        <Heading size="2">Authorize transaction</Heading>
-      </Content>
+    <Modal isVisible={isVisible} title="Authorize transaction" onClose={onClose}>
       <AddressWrapper>
         <IdentityIcon address={signer.address || ''} />
         <Text>{signer.address || ''}</Text>
@@ -60,11 +58,6 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
   );
 };
 
-const Content = styled.div`
-  && h2 {
-    margin-bottom: 0;
-  }
-`;
 const AddressWrapper = styled.div`
   display: flex;
   column-gap: calc(var(--prop-gap) / 2);

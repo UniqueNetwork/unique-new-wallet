@@ -1,10 +1,9 @@
-import { FC, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { Heading, InputText, Loader, Modal } from '@unique-nft/ui-kit';
+import { FC, useContext, useEffect, useMemo, useState } from 'react';
+import { InputText, Loader } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
 import { useAccounts } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
-import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
@@ -20,6 +19,7 @@ import { AccountSelector } from '@app/pages/SendFunds/components/AccountSelector
 import { AccountSuggest } from '@app/pages/SendFunds/components/AccountSuggest';
 import { ChainPropertiesContext } from '@app/context';
 import { Alert, TransferBtn } from '@app/components';
+import { Modal } from '@app/components/Modal';
 import { AccountUtils } from '@app/account/AccountUtils';
 
 import { SendFundsProps } from './SendFunds';
@@ -96,18 +96,6 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
 
   const amountChangeHandler = (amount: string) => setAmount(parseAmount(amount));
 
-  useLayoutEffect(() => {
-    if (isVisible) {
-      const body = document.getElementsByTagName('body')[0];
-
-      body.style.overflow = 'hidden';
-
-      return () => {
-        body.style.overflow = 'auto';
-      };
-    }
-  }, [isVisible]);
-
   useEffect(() => {
     const parsedAmount = parseFloat(amount);
 
@@ -163,10 +151,7 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
   }
 
   return (
-    <Modal isVisible={isVisible} isClosable={true} onClose={onClose}>
-      <ModalHeader>
-        <Heading size="2">Send funds</Heading>
-      </ModalHeader>
+    <Modal isVisible={isVisible} title="Send funds" onClose={onClose}>
       <ModalContent>
         <ContentRow>
           <Group>

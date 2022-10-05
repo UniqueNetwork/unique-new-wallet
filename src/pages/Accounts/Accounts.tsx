@@ -24,7 +24,7 @@ import {
 } from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
-import { useAccountsBalanceService } from '@app/api/restApi/balance/hooks/useAccountsBalanceService';
+import { useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 

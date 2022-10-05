@@ -46,7 +46,7 @@ export const useGraphQlCollectionsByAccount = ({
   } = useQuery<QueryResponse<Collection>>(COLLECTIONS_BY_ACCOUNT_QUERY, {
     skip: !accountAddress,
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-first',
+    nextFetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
     variables: {
       limit,

@@ -1,11 +1,12 @@
 import React, { FC, useEffect, VFC } from 'react';
-import { Modal, useNotifications } from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
 import { Account } from '@app/account';
 import { Stages } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
-import { AccountApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import { useAccountBalanceTransfer } from '@app/api';
+import { Modal } from '@app/components/Modal';
 
 import { SendFundsModal } from './SendFundsModal';
 
@@ -27,7 +28,7 @@ const stages = [
 
 const TransferStagesModal: VFC = () => {
   return (
-    <Modal isVisible isClosable={false}>
+    <Modal isVisible isClosable={false} title="Please wait">
       <Stages stages={stages} />
     </Modal>
   );
@@ -37,13 +38,23 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   const { onClose, senderAccount, onSendSuccess, chain } = props;
 
   const { setCurrentChain } = useApi();
-  const { error, info } = useNotifications();
+  const { info, error } = useNotifications();
 
-  const { isFlowLoading, flowError, flowStatus, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(AccountApiService.balanceTransfer, 'transfer-balance');
-  const { isFeeError, feeError, feeFormatted, getFee } = useExtrinsicFee(
-    AccountApiService.balanceTransfer,
-  );
+  const {
+    getFee,
+    feeFormatted,
+    isLoadingSubmitResult,
+    submitWaitResult,
+    feeError,
+    submitWaitResultError,
+  } = useAccountBalanceTransfer();
+
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
 
   useEffect(() => {
     setCurrentChain(chain);
@@ -55,50 +66,38 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     amount: number,
   ) => {
     getFee({
-      payload: {
-        address: senderAddress,
-        destination: destinationAddress,
-        amount,
-      },
+      address: senderAddress,
+      destination: destinationAddress,
+      amount,
     });
   };
-
-  useEffect(() => {
-    if (flowStatus === 'success') {
-      info('Transfer completed successfully');
-      onSendSuccess?.();
-      onClose();
-    } else if (flowStatus === 'error') {
-      error(flowError?.message);
-    }
-  }, [flowStatus]);
-
-  useEffect(() => {
-    if (isFeeError) {
-      error(feeError?.message);
-    }
-  }, [isFeeError]);
 
   const confirmHandler = (
     senderAddress: string,
     destinationAddress: string,
     amount: number,
   ) => {
-    signAndSubmitExtrinsic(
-      {
-        payload: {
-          address: senderAddress,
-          destination: destinationAddress,
-          amount,
-        },
+    submitWaitResult({
+      payload: {
+        address: senderAddress,
+        destination: destinationAddress,
+        amount,
       },
       senderAddress,
-    );
+    })
+      .then(() => {
+        info('Transfer completed successfully');
+        onSendSuccess?.();
+        onClose();
+      })
+      .catch(() => {
+        submitWaitResultError && error(submitWaitResultError);
+      });
   };
 
   return (
     <>
-      {isFlowLoading ? (
+      {isLoadingSubmitResult ? (
         <TransferStagesModal />
       ) : (
         <SendFundsModal
