@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-indent-props */
+
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, InputText, Select } from '@unique-nft/ui-kit';
@@ -57,24 +59,7 @@ export const MobileFilters = ({
     };
   });
 
-  const barButtons: ReactNode[] = !isVisible
-    ? [
-        <Button
-          key="Filter-toggle-button"
-          role="primary"
-          title="Filter and sort"
-          onClick={onVisibleButtonClick}
-        />,
-      ]
-    : [
-        <Button key="Filter-apply-button" title="Apply" onClick={onShowButtonClick} />,
-        <Button
-          key="Filter-reset-button"
-          role="danger"
-          title="Reset All"
-          onClick={onResetButtonClick}
-        />,
-      ];
+  const barButtons: ReactNode[] = [];
 
   return (
     <>

@@ -1,14 +1,6 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { AdditionalText } from '@app/pages/Accounts/Modals/commonComponents';
-
-export const truncateText = css`
-  box-sizing: border-box;
-  overflow: hidden;
-  max-width: 100%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 export const Group = styled.div`
   &:not(:first-child) {
@@ -24,103 +16,6 @@ export const Group = styled.div`
 
 export const StyledAdditionalText = styled(AdditionalText)`
   margin-bottom: calc(var(--prop-gap) / 2);
-`;
-
-export const AccountWrapper = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
-  width: 100%;
-
-  .unique-text {
-    display: inline-block;
-    vertical-align: middle;
-    ${truncateText};
-    line-height: 1.5;
-  }
-`;
-
-export const AccountGroup = styled.div`
-  max-width: calc(100% - 40px);
-  width: 100%;
-  margin-left: calc(var(--prop-gap) / 2);
-`;
-
-export const AddressCopy = styled.button.attrs({ type: 'button' })`
-  appearance: none;
-  border: 0 none;
-  border-radius: 0;
-  vertical-align: middle;
-  padding: 0;
-  color: inherit;
-  background: none;
-  cursor: pointer;
-
-  &:hover {
-    color: var(--color-grey-600);
-  }
-`;
-
-export const AccountAddress = styled.div`
-  color: var(--color-grey-500);
-
-  .unique-text {
-    padding-right: 1.5rem;
-  }
-
-  ${AddressCopy} {
-    margin-bottom: -0.2em;
-    margin-left: -1rem;
-  }
-`;
-
-export const AccountContainer = styled.div`
-  box-sizing: border-box;
-  border-radius: var(--prop-border-radius);
-  border: 1px solid var(--color-grey-300);
-  position: relative;
-  background-color: var(--color-additional-light);
-`;
-
-export const AccountSelectWrapper = styled(AccountContainer)`
-  padding-right: calc(var(--prop-gap) * 2.5);
-  user-select: none;
-
-  &:after {
-    border-style: solid;
-    border-width: 5px;
-    border-color: var(--color-blue-grey-400) transparent transparent transparent;
-    position: absolute;
-    top: 50%;
-    right: var(--prop-gap);
-    width: 0;
-    height: 0;
-    content: '';
-
-    .dropped & {
-      transform: rotate(180deg) translate3d(0, 5px, 0);
-    }
-  }
-`;
-
-export const AccountSelect = styled.div`
-  .unique-dropdown {
-    width: 100%;
-    z-index: 100;
-
-    .dropdown-options,
-    .dropdown-option {
-      box-sizing: border-box;
-      width: 100%;
-      padding: 0;
-      line-height: normal;
-    }
-
-    .dropdown-options {
-      border: 1px solid transparent;
-    }
-  }
 `;
 
 export const InputAmount = styled.div`

@@ -1,23 +1,23 @@
-import React, { VFC } from 'react';
+import React, { MouseEventHandler, VFC } from 'react';
 import { Icon, Text } from '@unique-nft/ui-kit';
 
-import {
-  AccountAddress,
-  AccountGroup,
-  AccountWrapper,
-  AddressCopy,
-} from '@app/pages/SendFunds/components/Style';
 import { IdentityIcon } from '@app/components';
 
-export const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boolean }> = ({
+import { AccountAddress, AccountGroup, AccountWrapper, AddressCopy } from './styles';
+
+interface AccountInfoProps {
+  name?: string;
+  address?: string;
+  canCopy?: boolean;
+  onCopy?: MouseEventHandler<HTMLButtonElement>;
+}
+
+export const AccountInfo: VFC<AccountInfoProps> = ({
   name = '',
   address = '',
   canCopy,
+  onCopy,
 }) => {
-  const copyAddress = (address: string) => {
-    void navigator.clipboard.writeText(address);
-  };
-
   return (
     <AccountWrapper>
       <IdentityIcon address={address} />
@@ -28,8 +28,8 @@ export const AccountInfo: VFC<{ name?: string; address?: string; canCopy?: boole
             {address}
           </Text>
           {canCopy && (
-            <AddressCopy onClick={() => copyAddress(address)}>
-              <Icon size={14} name="copy" color="currentColor" />
+            <AddressCopy onMouseDown={onCopy}>
+              <Icon size={16} name="copy" color="var(--color-blue-grey-400)" />
             </AddressCopy>
           )}
         </AccountAddress>

@@ -22,8 +22,8 @@ import {
 } from '@app/pages/components/BottomBar';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 
-import { TopFilter } from './components';
 import { useMyCollectionsContext } from './context';
+import { TopFilter } from './components';
 
 interface MyCollectionsComponentProps {
   className?: string;

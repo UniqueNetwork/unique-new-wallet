@@ -1,13 +1,18 @@
-import React, { FC, useEffect, VFC } from 'react';
-import { Modal, useNotifications } from '@unique-nft/ui-kit';
+import React, { FC, useEffect, useMemo, VFC } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { Heading, Modal, useNotifications } from '@unique-nft/ui-kit';
+import { useDebounce } from 'use-debounce';
 
 import { useApi } from '@app/hooks';
 import { Account } from '@app/account';
-import { Stages } from '@app/components';
+import { Alert, Stages, TransferBtn } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
 import { AccountApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
 
-import { SendFundsModal } from './SendFundsModal';
+import { SendFundsForm } from './SendFundsForm';
+import { ModalHeader } from '../Accounts/Modals/commonComponents';
+import { ContentRow, ModalContent, ModalFooter } from '../components/ModalComponents';
+import { FundsForm } from './types';
 
 export interface SendFundsProps {
   isVisible: boolean;
@@ -39,6 +44,21 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   const { setCurrentChain } = useApi();
   const { error, info } = useNotifications();
 
+  const sendFundsForm = useForm<FundsForm>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      from: senderAccount,
+    },
+  });
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = sendFundsForm;
+  const sendFundsValues = useWatch<FundsForm>({ control });
+  const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
+
   const { isFlowLoading, flowError, flowStatus, signAndSubmitExtrinsic } =
     useExtrinsicFlow(AccountApiService.balanceTransfer, 'transfer-balance');
   const { isFeeError, feeError, feeFormatted, getFee } = useExtrinsicFee(
@@ -49,19 +69,17 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     setCurrentChain(chain);
   }, [chain, setCurrentChain]);
 
-  const amountChangeHandler = (
-    senderAddress: string,
-    destinationAddress: string,
-    amount: number,
-  ) => {
-    getFee({
-      payload: {
-        address: senderAddress,
-        destination: destinationAddress,
-        amount,
-      },
-    });
-  };
+  useEffect(() => {
+    if (isValid) {
+      getFee({
+        payload: {
+          address: sendFundsDebounceValues.from?.address,
+          destination: sendFundsDebounceValues.to?.address,
+          amount: sendFundsDebounceValues.amount,
+        },
+      });
+    }
+  }, [sendFundsDebounceValues]);
 
   useEffect(() => {
     if (flowStatus === 'success') {
@@ -79,35 +97,57 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     }
   }, [isFeeError]);
 
-  const confirmHandler = (
-    senderAddress: string,
-    destinationAddress: string,
-    amount: number,
-  ) => {
+  const submitHandler = (sendFundsForm: FundsForm) => {
     signAndSubmitExtrinsic(
       {
         payload: {
-          address: senderAddress,
-          destination: destinationAddress,
-          amount,
+          address: sendFundsForm.from.address,
+          destination: sendFundsForm.to.address,
+          amount: sendFundsForm.amount,
         },
       },
-      senderAddress,
+      sendFundsForm.from.address,
     );
   };
+
+  const isolatedSendFundsForm = useMemo(
+    () => (
+      <FormProvider {...sendFundsForm}>
+        <SendFundsForm apiEndpoint={chain.apiEndpoint} />
+      </FormProvider>
+    ),
+    [sendFundsForm],
+  );
 
   return (
     <>
       {isFlowLoading ? (
         <TransferStagesModal />
       ) : (
-        <SendFundsModal
-          {...props}
-          fee={feeFormatted}
-          senderAccount={senderAccount}
-          onConfirm={confirmHandler}
-          onAmountChange={amountChangeHandler}
-        />
+        <Modal isVisible={props.isVisible} isClosable={true} onClose={onClose}>
+          <ModalHeader>
+            <Heading size="2">Send funds</Heading>
+          </ModalHeader>
+          <ModalContent>
+            {isolatedSendFundsForm}
+            <ContentRow>
+              <Alert type="warning">
+                {isValid && feeFormatted
+                  ? `A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
+              is sponsored`
+                  : 'A fee will be calculated after entering the recipient and amount'}
+              </Alert>
+            </ContentRow>
+          </ModalContent>
+          <ModalFooter>
+            <TransferBtn
+              role="primary"
+              title="Confirm"
+              disabled={isValid}
+              onClick={handleSubmit(submitHandler)}
+            />
+          </ModalFooter>
+        </Modal>
       )}
     </>
   );

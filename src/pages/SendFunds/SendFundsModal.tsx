@@ -1,17 +1,9 @@
-import {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, useCallback, useContext, useLayoutEffect, useMemo, useState } from 'react';
+import { Controller, useWatch } from 'react-hook-form';
 import { Heading, InputText, Loader, Modal } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
 import { useAccounts } from '@app/hooks';
-import { useAccountBalanceService } from '@app/api';
 import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
@@ -24,13 +16,11 @@ import {
   InputAmountButton,
   StyledAdditionalText,
 } from '@app/pages/SendFunds/components/Style';
-import { AccountSelector } from '@app/pages/SendFunds/components/AccountSelector';
-import { AccountSuggest } from '@app/pages/SendFunds/components/AccountSuggest';
 import { ChainPropertiesContext } from '@app/context';
-import { Alert, TransferBtn } from '@app/components';
 import { AccountUtils } from '@app/account/AccountUtils';
 
 import { SendFundsProps } from './SendFunds';
+// import { SendFundsForm } from './types';
 
 export type RecipientAddressType = {
   address: Account['address'];
@@ -39,80 +29,40 @@ export type RecipientAddressType = {
 
 export type SendFundsModalProps = SendFundsProps & {
   fee?: string;
-  onConfirm: (senderAddress: string, destinationAddress: string, amount: number) => void;
-  onAmountChange: (
-    senderAddress: string,
-    destinationAddress: string,
-    amount: number,
-  ) => void;
+  onConfirm: (form: any) => void;
 };
 
 export const SendFundsModal: FC<SendFundsModalProps> = ({
-  fee,
-  senderAccount,
   isVisible,
   onClose,
   onConfirm,
-  onAmountChange,
   chain,
 }) => {
   const { chainProperties } = useContext(ChainPropertiesContext);
 
-  const { accounts, selectedAccount } = useAccounts();
+  const { accounts } = useAccounts();
 
-  const [sender, setSender] = useState<Account | undefined>(
-    senderAccount || selectedAccount,
-  );
-  const [recipientOptions, setRecipientOptions] = useState<RecipientAddressType[]>([]);
-  const [recipient, setRecipient] = useState<RecipientAddressType | null>(null);
-  const [amount, setAmount] = useState<string>('');
+  // const parseAmount = useCallback(
+  //   (changedAmount: string) => {
+  //     const parsedAmount = Number(changedAmount);
+  //     const parsedAvailableAmount = Number(senderData?.availableBalance.amount);
 
-  useEffect(() => {
-    setRecipientOptions(
-      accounts
-        .filter(({ address }) => address !== sender?.address)
-        .map(({ address, meta: { name } }) => ({ address, name })),
-    );
-  }, [accounts, sender?.address]);
+  //     if (isNaN(parsedAmount)) {
+  //       changedAmount = changedAmount.replace(/[^\d.]/g, '');
 
-  const senderOptions: Account[] = useMemo(
-    () => accounts.filter(({ address }) => address !== recipient?.address),
-    [accounts, recipient?.address],
-  );
+  //       if (changedAmount.split('.').length > 2) {
+  //         changedAmount = changedAmount.replace(/\.+$/, '');
+  //       }
+  //     }
 
-  const { data: senderData } = useAccountBalanceService(
-    sender?.address,
-    chain.apiEndpoint,
-  );
+  //     if (parsedAmount > parsedAvailableAmount) {
+  //       changedAmount = amount;
+  //     }
 
-  const { data: chainData } = useAccountBalanceService(
-    recipient?.address,
-    chain.apiEndpoint,
-  );
-
-  const parseAmount = useCallback(
-    (changedAmount: string) => {
-      const parsedAmount = Number(changedAmount);
-      const parsedAvailableAmount = Number(senderData?.availableBalance.amount);
-
-      if (isNaN(parsedAmount)) {
-        changedAmount = changedAmount.replace(/[^\d.]/g, '');
-
-        if (changedAmount.split('.').length > 2) {
-          changedAmount = changedAmount.replace(/\.+$/, '');
-        }
-      }
-
-      if (parsedAmount > parsedAvailableAmount) {
-        changedAmount = amount;
-      }
-
-      return changedAmount.trim();
-    },
-    [amount, senderData?.availableBalance.amount],
-  );
-
-  const amountChangeHandler = (amount: string) => setAmount(parseAmount(amount));
+  //     return changedAmount.trim();
+  //   },
+  //   [amount, senderData?.availableBalance.amount],
+  // );
 
   useLayoutEffect(() => {
     if (isVisible) {
@@ -126,55 +76,36 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
     }
   }, [isVisible]);
 
-  useEffect(() => {
-    const parsedAmount = parseFloat(amount);
+  // const handleRecipientAddress = (address: string) => {
+  //   try {
+  //     if (!address) {
+  //       return null;
+  //     }
 
-    if (sender?.address && recipient?.address && parsedAmount) {
-      onAmountChange(sender.address, recipient.address, parsedAmount);
-    }
-  }, [sender?.address, recipient?.address, amount]);
-
-  const confirm = () => {
-    const parsedAmount = parseFloat(amount);
-
-    if (!sender?.address || !recipient?.address || !parsedAmount) {
-      return;
-    }
-
-    onConfirm(sender?.address, recipient?.address, parsedAmount);
-  };
-
-  const handleRecipientAddress = (address: string) => {
-    try {
-      if (!address) {
-        setRecipient(null);
-        return;
-      }
-
-      const transformAddressForCurrentChain = AccountUtils.encodeAddress(
-        address,
-        chainProperties.SS58Prefix,
-      );
-      const addressIsExist = recipientOptions.find(
-        (recipient) => recipient.address === address,
-      );
-      if (!addressIsExist) {
-        setRecipientOptions((prevState) => [
-          ...prevState,
-          {
-            address: transformAddressForCurrentChain,
-            name: transformAddressForCurrentChain,
-          },
-        ]);
-      }
-      setRecipient({
-        address: transformAddressForCurrentChain,
-        name: addressIsExist?.name ?? transformAddressForCurrentChain,
-      });
-    } catch {
-      setRecipient(null);
-    }
-  };
+  //     const transformAddressForCurrentChain = AccountUtils.encodeAddress(
+  //       address,
+  //       chainProperties.SS58Prefix,
+  //     );
+  //     const addressIsExist = recipientOptions.find(
+  //       (recipient) => recipient.address === address,
+  //     );
+  //     if (!addressIsExist) {
+  //       setRecipientOptions((prevState) => [
+  //         ...prevState,
+  //         {
+  //           address: transformAddressForCurrentChain,
+  //           name: transformAddressForCurrentChain,
+  //         },
+  //       ]);
+  //     }
+  //     return {
+  //       address: transformAddressForCurrentChain,
+  //       name: addressIsExist?.name ?? transformAddressForCurrentChain,
+  //     };
+  //   } catch {
+  //     return null;
+  //   }
+  // };
 
   if (!accounts?.length) {
     return null;
@@ -191,62 +122,63 @@ export const SendFundsModal: FC<SendFundsModalProps> = ({
             <StyledAdditionalText size="s" color="grey-500">
               From
             </StyledAdditionalText>
-            <AccountSelector
-              canCopy={!!senderOptions.length}
-              selectOptions={senderOptions}
-              selectedValue={sender}
-              balance={senderData}
-              onChangeAccount={(value) => {
-                setSender(value);
-                setAmount('');
-              }}
-            />
+            {/* <Controller
+              name="from"
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <AccountSelector
+                  apiEndpoint={chain.apiEndpoint}
+                  canCopy={false}
+                  selectOptions={[]}
+                  selectedValue={value}
+                  onChangeAccount={(value) => {
+                    onChange(value);
+                    // setAmount('');
+                  }}
+                />
+              )}
+            /> */}
           </Group>
-          <Group>
+          {/* <Group>
             <StyledAdditionalText size="s" color="grey-500">
               To
             </StyledAdditionalText>
-            <AccountSuggest
-              recipientOptions={recipientOptions}
-              recipient={recipient}
-              balance={chainData}
-              onRecipientAddress={handleRecipientAddress}
-              onChangeRecipient={setRecipient}
+            <Controller
+              name="to"
+              rules={{ required: true }}
+              render={({ field: { value, onChange } }) => (
+                <AccountSuggest
+                  recipient={value}
+                  recipientOptions={[]}
+                  apiEndpoint={chain.apiEndpoint}
+                  onRecipientAddress={(address: string) => {
+                    // onChange(handleRecipientAddress(address))
+                    console.log('test');
+                  }
+              )}
             />
-          </Group>
+          </Group> */}
         </ContentRow>
         <ContentRow>
-          <InputAmount>
-            <InputText
-              placeholder="Enter the amount"
-              role="decimal"
-              value={amount}
-              onChange={amountChangeHandler}
-            />
-            <InputAmountButton
-              onClick={() => setAmount(senderData?.availableBalance.amount || '')}
-            >
-              {senderData ? 'Max' : <Loader size="small" />}
-            </InputAmountButton>
-          </InputAmount>
-        </ContentRow>
-        <ContentRow>
-          <Alert type="warning">
-            {recipient && amount && fee
-              ? `A fee of ~ ${fee} can be applied to the transaction, unless the transaction
-              is sponsored`
-              : 'A fee will be calculated after entering the recipient and amount'}
-          </Alert>
+          <Controller
+            name="amount"
+            rules={{ required: true }}
+            render={({ field: { value, onChange } }) => (
+              <InputAmount>
+                <InputText
+                  placeholder="Enter the amount"
+                  role="decimal"
+                  value={value}
+                  onChange={onChange}
+                />
+                <InputAmountButton onClick={() => onChange(value || '')}>
+                  {/* {senderData ? 'Max' : <Loader size="small" />} */}
+                </InputAmountButton>
+              </InputAmount>
+            )}
+          />
         </ContentRow>
       </ModalContent>
-      <ModalFooter>
-        <TransferBtn
-          role="primary"
-          title="Confirm"
-          disabled={!parseFloat(amount) || !sender?.address || !recipient?.address}
-          onClick={confirm}
-        />
-      </ModalFooter>
     </Modal>
   );
 };
