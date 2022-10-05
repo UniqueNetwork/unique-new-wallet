@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import {
   Button,
@@ -9,13 +10,10 @@ import {
   Select,
   Textarea,
 } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
 
 import { addressFromSeed } from '@app/utils';
-import { Alert, IdentityIcon, Tooltip } from '@app/components';
+import { Alert, Tooltip } from '@app/components';
 import {
-  AddressText,
-  AddressWrapper,
   ButtonGroup,
   StepsTextStyled,
 } from '@app/pages/Accounts/Modals/commonComponents';
@@ -24,6 +22,7 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
@@ -70,10 +69,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
     <>
       <ModalContent>
         <ContentRow>
-          <AddressWrapper>
-            <IdentityIcon address={address} />
-            <AddressText>{address}</AddressText>
-          </AddressWrapper>
+          <AddressWidget address={address} />
         </ContentRow>
         <ContentRow>
           <Heading size="4">The secret seed value for this account</Heading>

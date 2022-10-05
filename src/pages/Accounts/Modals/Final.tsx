@@ -1,19 +1,15 @@
 import { createRef, FC, useCallback, useMemo } from 'react';
 import { Button, Icon, InputText, Tooltip, TooltipAlign } from '@unique-nft/ui-kit';
 
-import {
-  AddressText,
-  AddressWrapper,
-  ButtonGroup,
-  LabelText,
-  StepsTextStyled,
-} from '@app/pages/Accounts/Modals/commonComponents';
+import { Alert } from '@app/components';
+import { LabelText, StepsTextStyled } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
-import { Alert, IdentityIcon } from '@app/components';
+import { ButtonGroup } from '@app/pages/components/FormComponents';
+import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
@@ -53,10 +49,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
     <>
       <ModalContent>
         <ContentRow>
-          <AddressWrapper>
-            <IdentityIcon address={accountProperties?.address || ''} />
-            <AddressText>{accountProperties?.address || ''}</AddressText>
-          </AddressWrapper>
+          <AddressWidget address={accountProperties?.address} />
         </ContentRow>
         <ContentRow>
           {/* TODO: rewrite to component props [UI-108] */}
@@ -123,7 +116,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
       </ModalContent>
       <ModalFooter>
         <StepsTextStyled size="m">Step 3/3</StepsTextStyled>
-        <ButtonGroup>
+        <ButtonGroup stack>
           <Button title="Previous" onClick={onGoBack} />
           <Button role="primary" title="Create account" onClick={onSaveClick} />
         </ButtonGroup>

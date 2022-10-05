@@ -83,24 +83,29 @@ const QRReaderWrapper = styled.div`
   max-width: 362px;
   max-height: 362px;
   margin: 0 auto;
+  background-color: var(--color-blue-grey-100);
 
-  &:after {
+  &::before {
     box-sizing: border-box;
-    border: 5px solid var(--color-coral-500);
+    border: 5px solid var(--color-coral-400);
+    z-index: 1;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 50%;
+    left: 50%;
+    display: block;
     width: 100%;
     height: 100%;
     content: '';
+    transform: translate3d(-50%, -50%, 0);
 
-    @media (min-width: 568px) {
-      top: 50%;
-      left: 50%;
-      width: 78%;
-      height: 78%;
-      transform: translate3d(-50%, -50%, 0);
-      outline: 50px solid rgba(174, 175, 178, 0.5);
+    @media screen and (min-width: 1024px) {
+      width: 80%;
+      height: 80%;
+      background-color: rgba(255, 255, 255, 0.3);
     }
+  }
+
+  video {
+    object-fit: cover;
   }
 `;
