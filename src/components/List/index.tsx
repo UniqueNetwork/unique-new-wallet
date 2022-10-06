@@ -53,6 +53,11 @@ const Wrapper = styled.div`
 
 const ListBody = styled.div`
   flex: 1 1 auto;
+  padding-bottom: calc(var(--prop-gap) * 2.5);
+
+  @media screen and (min-width: 1024px) {
+    padding-bottom: 0;
+  }
 
   &.__empty {
     display: flex;
@@ -120,7 +125,7 @@ const ItemScope = styled.div`
 
 const ButtonMoreWrapper = styled.div`
   margin-top: auto;
-  padding: calc(var(--prop-gap) * 2) 0;
+  padding-top: calc(var(--prop-gap) * 2);
 `;
 
 function List<T>({
@@ -223,21 +228,23 @@ function List<T>({
 
       <ListBody className={classNames({ __empty: !dataSource.length })}>
         {childrenContent}
-        <ButtonMoreWrapper>
-          {dataSource.length < panelSettings.pagination.size &&
-            deviceSize <= DeviceSize.md && (
+
+        {deviceSize <= DeviceSize.md &&
+          dataSource.length < panelSettings.pagination.size && (
+            <ButtonMoreWrapper>
               <Button
                 title="Load more"
                 iconRight={{ color: 'currentColor', name: 'arrow-down', size: 16 }}
                 wide={deviceSize <= DeviceSize.xs}
                 onClick={handleMoreButton}
               />
-            )}
-        </ButtonMoreWrapper>
+            </ButtonMoreWrapper>
+          )}
       </ListBody>
 
       {deviceSize >= DeviceSize.lg &&
         !!dataSource.length &&
+        !!paginationContent &&
         (panelSettings.viewMode === 'both' || panelSettings.viewMode === 'bottom') && (
           <ListPanel as={PagePaper.Panel} stacked="top">
             {!!dataSource.length && ResultItemText}
