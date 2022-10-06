@@ -111,7 +111,6 @@ export const LabelText = styled(Text).attrs({
   appearance: 'block',
   color: 'additional-dark',
   size: 'm',
-  weight: 'bold',
 })`
   display: block;
   margin-bottom: var(--prop-gap);

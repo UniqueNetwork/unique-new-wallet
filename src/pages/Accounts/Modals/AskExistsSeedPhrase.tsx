@@ -1,21 +1,16 @@
-import React, { ChangeEvent, FC, useCallback, useState } from 'react';
+import { ChangeEvent, FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button } from '@unique-nft/ui-kit';
 
 import { addressFromSeed } from '@app/utils';
-import {
-  AddressText,
-  AddressWrapper,
-  ButtonGroup,
-  StepsTextStyled,
-} from '@app/pages/Accounts/Modals/commonComponents';
+import { StepsTextStyled } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
-import { LabelText } from '@app/pages/components/FormComponents';
-import { IdentityIcon } from '@app/components';
+import { ButtonGroup, LabelText } from '@app/pages/components/FormComponents';
+import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 
 import { TCreateAccountBodyModalProps } from './types';
 import { defaultPairType, derivePath } from './CreateAccount';
@@ -45,14 +40,7 @@ export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish
     <>
       <ModalContent>
         <ContentRow>
-          <AddressWrapper>
-            {seed && <IdentityIcon address={address} />}
-            <AddressText>
-              {seed
-                ? address
-                : 'The account address will appear while entering the secret seed value'}
-            </AddressText>
-          </AddressWrapper>
+          <AddressWidget address={address} empty={!seed} />
         </ContentRow>
         <ContentRow>
           <LabelText>The secret seed value</LabelText>
@@ -61,7 +49,7 @@ export const AskExistsSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish
       </ModalContent>
       <ModalFooter>
         <StepsTextStyled size="m">Step 1/3</StepsTextStyled>
-        <ButtonGroup>
+        <ButtonGroup stack>
           <Button disabled={!address} role="primary" title="Next" onClick={onNextClick} />
         </ButtonGroup>
       </ModalFooter>

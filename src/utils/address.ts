@@ -51,6 +51,8 @@ export const getTokenIpfsUriByImagePath = (
   return undefined;
 };
 
-export const shortAddress = (longAddress: string, slice = 5) => {
-  return `${longAddress.slice(0, slice)}...${longAddress.slice(-slice)}`;
+export const shortAddress = (longAddress: string | undefined, slice = 5) => {
+  return longAddress
+    ? `${longAddress.slice(0, slice)}...${longAddress.slice(-slice)}`
+    : '';
 };
