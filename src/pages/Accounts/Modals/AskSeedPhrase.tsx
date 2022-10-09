@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import {
@@ -83,12 +83,16 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
               <ControlIcon className="align-middle">
                 <Tooltip
                   title={
-                    <>
+                    <span style={{ whiteSpace: 'nowrap' }}>
                       Find out more on{' '}
-                      <TooltipLink href="https://" title="Polkadot Wiki">
+                      <TooltipLink
+                        href="https://wiki.polkadot.network/docs/learn-accounts"
+                        title="Polkadot Wiki"
+                      >
                         Polkadot Wiki
+                        <Icon color="currentColor" name="arrow-up-right" size={16} />
                       </TooltipLink>
-                    </>
+                    </span>
                   }
                 >
                   <Icon size={24} name="question" color="var(--color-primary-500)" />
@@ -170,9 +174,27 @@ const ControlsGroup = styled.div`
   & > :last-child {
     align-self: baseline;
   }
+
+  .unique-alert {
+    margin-top: calc(var(--prop-gap) / 2);
+  }
 `;
 
 const TooltipLink = styled(Link)`
-  border-bottom: 1px solid;
-  color: inherit;
+  &.unique-link {
+    &.primary {
+      gap: 2px;
+      color: var(--color-primary-300);
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.3em;
+      }
+
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
+      }
+    }
+  }
 `;
