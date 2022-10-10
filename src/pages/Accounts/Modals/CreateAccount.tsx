@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useAccounts } from '@app/hooks';
