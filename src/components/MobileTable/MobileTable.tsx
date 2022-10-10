@@ -40,8 +40,8 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
   } else if (!loading) {
     children = (
       <>
-        {data?.map((item, rowIdx) => (
-          <MobileTableRow className="mobile-table-row" key={rowIdx}>
+        {data?.map((item, rowIndex) => (
+          <MobileTableRow className="mobile-table-row" key={item.key}>
             {columns?.map((column, colIdx) => (
               <MobileTableCell
                 className="mobile-table-cell"
@@ -54,7 +54,7 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
                 )}
                 {column.render?.(getDeepValue(item, column.field), item, {
                   columnIndex: colIdx,
-                  rowIndex: 0,
+                  rowIndex,
                 }) || getDeepValue(item, column.field)}
               </MobileTableCell>
             ))}
