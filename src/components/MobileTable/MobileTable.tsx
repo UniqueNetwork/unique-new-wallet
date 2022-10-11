@@ -41,7 +41,7 @@ const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
     children = (
       <>
         {data?.map((item, rowIndex) => (
-          <MobileTableRow className="mobile-table-row" key={item.key}>
+          <MobileTableRow className="mobile-table-row" key={rowIndex}>
             {columns?.map((column, colIdx) => (
               <MobileTableCell
                 className="mobile-table-cell"

@@ -18,7 +18,7 @@ interface NftListComponentProps {
 export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
-  const getLimit = useItemsLimit();
+  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const { search, direction, page, onChangePagination, type } = useNftFilterContext();
   const { selectedAccount } = useAccounts();
 
@@ -35,7 +35,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         direction,
         pagination: {
           page,
-          limit: getLimit(),
+          limit: getLimit,
         },
       },
     });
@@ -53,10 +53,11 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         dataSource={tokens}
         fetchMore={fetchMore}
         isLoading={isLoadingTokens}
+        itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
         panelSettings={{
           pagination: {
             current: page,
-            pageSizes: [getLimit()],
+            pageSizes: [getLimit],
             show: isPagination,
             size: tokensCount,
             viewMode: 'bottom',
@@ -85,7 +86,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
             }
           />
         )}
-        visibleItems={getLimit()}
+        visibleItems={getLimit}
         onPageChange={onChangePagination}
       />
     </PagePaper.Processing>
