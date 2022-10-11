@@ -133,7 +133,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                 <List.Item key={collection.collection_id}>
                   <TokenLink
                     image={getTokenIpfsUriByImagePath(collection.collection_cover)}
-                    title={`${collection.name} [${collection.collection_id}]`}
+                    title={`${collection.name} [id ${collection.collection_id}]`}
                     meta={
                       <>
                         <Text color="grey-500" size="s">

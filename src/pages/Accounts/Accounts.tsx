@@ -257,7 +257,7 @@ const BlockExplorer = ({ account }: { account: Account }) => {
         <ExternalLink
           target="_blank"
           rel="noreferrer"
-          href={`${currentChain.subscanAddress}/${account?.address}`}
+          href={`${currentChain.subscanAddress}/account/${account?.address}`}
         >
           <Text color="primary-500">Subscan</Text>
           <Icon size={16} name="arrow-up-right" color="currentColor" />

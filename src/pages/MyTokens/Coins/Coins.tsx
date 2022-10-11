@@ -1,6 +1,8 @@
 import { Heading } from '@unique-nft/ui-kit';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { UseQueryResult } from 'react-query';
+import { AllBalancesResponse } from '@unique-nft/sdk';
 
 import { ApiWrapper, useAccountBalancesService } from '@app/api';
 import { config } from '@app/config';
@@ -45,22 +47,14 @@ export const Coins: FC = () => {
 
   const { selectedAccount } = useAccounts();
 
-  const {
-    isLoading: chainsBalanceLoading,
-    data: chainsBalance,
-    refetch: refetchChainsBalance,
-  } = useAccountBalancesService(
+  const accountBalances = useAccountBalancesService(
     Object.values(config.allChains).map((chain) => chain.apiEndpoint),
     selectedAccount?.address,
-  );
+  ) as UseQueryResult<AllBalancesResponse>[];
 
   useEffect(() => {
     logUserEvent(UserEvents.COINS);
   }, []);
-
-  useEffect(() => {
-    refetchChainsBalance();
-  }, [refetchChainsBalance, selectedAccount?.address]);
 
   const sendFundsHandler = useCallback((networkType: NetworkType, chain: Chain) => {
     setSelectedNetworkType(networkType);
@@ -129,15 +123,15 @@ export const Coins: FC = () => {
             <CoinsRow
               getDisabled={getDisabled}
               key={chain.network}
-              loading={chainsBalanceLoading}
-              sendDisabled={!Number(chainsBalance?.[idx].availableBalance.amount)}
+              loading={accountBalances[idx].isLoading}
+              sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
               address={selectedAccount?.address}
-              balanceFull={chainsBalance?.[idx].freeBalance.amount}
-              balanceLocked={chainsBalance?.[idx].lockedBalance.amount}
-              balanceTransferable={chainsBalance?.[idx].availableBalance.amount}
+              balanceFull={accountBalances[idx].data?.freeBalance.amount}
+              balanceLocked={accountBalances[idx].data?.lockedBalance.amount}
+              balanceTransferable={accountBalances[idx].data?.availableBalance.amount}
               iconName={`chain-${chain.network.toLowerCase()}`}
               name={chain.name}
-              symbol={chainsBalance?.[idx].availableBalance.unit || ''}
+              symbol={accountBalances[idx].data?.availableBalance.unit || ''}
               chain={chain}
               onSend={sendFundsHandler}
               onGet={onGet}

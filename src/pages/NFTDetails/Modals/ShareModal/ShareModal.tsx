@@ -123,7 +123,7 @@ const ButtonWrapper = styled.div`
         flex: 0 1 48%;
       }
 
-      @media screen and (min-width: 567px) {
+      @media screen and (min-width: 568px) {
         flex: 0;
       }
     }

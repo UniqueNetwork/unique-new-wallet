@@ -40,6 +40,7 @@ const StageWrapper = styled.div`
   grid-column-gap: var(--gap);
   grid-row-gap: var(--gap);
   align-items: flex-start;
+  margin-bottom: 10px;
 `;
 
 const StatusWrapper = styled.div`

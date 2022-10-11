@@ -22,34 +22,13 @@ export const AdditionalText = styled(Text).attrs({
   margin-bottom: var(--prop-gap);
 `;
 
-export const ModalHeader = styled.div`
-  margin-bottom: calc(var(--prop-gap) * 1.5);
-
-  && h2 {
-    margin-bottom: 0;
-  }
-`;
-
-export const AddressWrapper = styled.div`
-  border: 1px solid var(--color-grey-300);
-  border-radius: var(--prop-border-radius);
-  display: flex;
-  column-gap: calc(var(--prop-gap) / 2);
-  min-height: 24px;
-  padding: 20px var(--prop-gap);
-  color: var(--color-grey-400);
-`;
-
-export const AddressText = styled(Text).attrs({ appearance: 'block', size: 's' })`
-  &.unique-text {
-    color: inherit;
-    line-height: 24px;
-  }
-`;
-
 export const StepsTextStyled = styled(Text)`
-  flex-grow: 1;
+  flex: 1 1 100%;
   padding-right: var(--prop-gap);
+
+  @media screen and (min-width: 568px) {
+    flex-basis: 0;
+  }
 `;
 
 export const ButtonGroup = styled.div`

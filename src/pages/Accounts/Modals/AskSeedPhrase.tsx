@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import {
   Button,
@@ -9,13 +10,10 @@ import {
   Select,
   Textarea,
 } from '@unique-nft/ui-kit';
-import styled from 'styled-components/macro';
 
 import { addressFromSeed } from '@app/utils';
-import { Alert, IdentityIcon, Tooltip } from '@app/components';
+import { Alert, Tooltip } from '@app/components';
 import {
-  AddressText,
-  AddressWrapper,
   ButtonGroup,
   StepsTextStyled,
 } from '@app/pages/Accounts/Modals/commonComponents';
@@ -24,6 +22,7 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
@@ -70,10 +69,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
     <>
       <ModalContent>
         <ContentRow>
-          <AddressWrapper>
-            <IdentityIcon address={address} />
-            <AddressText>{address}</AddressText>
-          </AddressWrapper>
+          <AddressWidget address={address} />
         </ContentRow>
         <ContentRow>
           <Heading size="4">The secret seed value for this account</Heading>
@@ -87,12 +83,16 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
               <ControlIcon className="align-middle">
                 <Tooltip
                   title={
-                    <>
+                    <span style={{ whiteSpace: 'nowrap' }}>
                       Find out more on{' '}
-                      <TooltipLink href="https://" title="Polkadot Wiki">
+                      <TooltipLink
+                        href="https://wiki.polkadot.network/docs/learn-accounts"
+                        title="Polkadot Wiki"
+                      >
                         Polkadot Wiki
+                        <Icon color="currentColor" name="arrow-up-right" size={16} />
                       </TooltipLink>
-                    </>
+                    </span>
                   }
                 >
                   <Icon size={24} name="question" color="var(--color-primary-500)" />
@@ -174,9 +174,27 @@ const ControlsGroup = styled.div`
   & > :last-child {
     align-self: baseline;
   }
+
+  .unique-alert {
+    margin-top: calc(var(--prop-gap) / 2);
+  }
 `;
 
 const TooltipLink = styled(Link)`
-  border-bottom: 1px solid;
-  color: inherit;
+  &.unique-link {
+    &.primary {
+      gap: 2px;
+      color: var(--color-primary-300);
+
+      &:hover {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.3em;
+      }
+
+      &:focus-visible {
+        outline: -webkit-focus-ring-color auto 1px;
+      }
+    }
+  }
 `;
