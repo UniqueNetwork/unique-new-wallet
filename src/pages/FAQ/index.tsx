@@ -56,8 +56,12 @@ const WrapperContentStyled = styled(WrapperContent)`
       list-style-position: inside;
     }
 
-    p + p {
-      margin-top: 1.125em;
+    ul,
+    ol,
+    p {
+      & + p {
+        margin-top: 1.125em;
+      }
     }
 
     a:not([class]),
