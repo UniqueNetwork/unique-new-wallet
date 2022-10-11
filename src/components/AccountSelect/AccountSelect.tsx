@@ -1,52 +1,31 @@
-import React, { MouseEventHandler, VFC } from 'react';
-import Select, {
-  Props,
+import React, {
+  ComponentType,
+  MouseEventHandler,
+  useCallback,
+  useRef,
+  useState,
+} from 'react';
+import {
   OptionProps,
   SingleValueProps,
   ClearIndicatorProps,
   DropdownIndicatorProps,
-  StylesConfig,
+  SelectInstance,
   components,
+  GroupBase,
 } from 'react-select';
+import CreatebleSelect from 'react-select/creatable';
 import { Icon, useNotifications } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
 import { AccountInfo } from '@app/components/AccountSelect/AccountInfo';
 
-const styles: StylesConfig<Account, false> = {
-  control: (css) => ({
-    ...css,
-    padding: '9px var(--prop-gap)',
-    height: 'calc(var(--prop-gap) * 4)',
-    borderColor: 'var(--color-grey-300)',
-    boxShadow: 'none',
-    '&:hover': {
-      borderColor: 'var(--color-grey-300)',
-    },
-    '&:focus-within': {
-      borderColor: 'var(--color-grey-400)',
-    },
-  }),
-  valueContainer: (css) => ({ ...css, padding: 0 }),
-  clearIndicator: (css) => ({
-    ...css,
-    padding: 0,
-    marginRight: 'calc(var(--prop-gap) / 2)',
-  }),
-  dropdownIndicator: (css) => ({
-    ...css,
-    padding: 0,
-  }),
-  placeholder: (css) => ({
-    ...css,
-    color: 'var(--color-grey-400)',
-    fontWeight: 'var(--prop-font-weight)',
-    fontFamily: 'var(--prop-font-family)',
-    fontSize: 'calc(var(--prop-font-size) + 2px)',
-  }),
-};
+import { styles, theme } from './styles';
 
-const DropdownIndicator: VFC<DropdownIndicatorProps<Account>> = (props) => {
+const DropdownIndicator:
+  | ComponentType<DropdownIndicatorProps<Account | null, boolean, GroupBase<Account>>>
+  | null
+  | undefined = (props) => {
   return (
     <components.DropdownIndicator {...props}>
       <Icon size={8} color="var(--color-blue-grey-400)" name="triangle" />
@@ -54,7 +33,9 @@ const DropdownIndicator: VFC<DropdownIndicatorProps<Account>> = (props) => {
   );
 };
 
-const ClearIndicator: VFC<ClearIndicatorProps<Account>> = (props) => {
+const ClearIndicator:
+  | ComponentType<ClearIndicatorProps<Account | null, boolean, GroupBase<Account>>>
+  | undefined = (props) => {
   return (
     <components.ClearIndicator {...props}>
       <Icon size={19} color="var(--color-blue-grey-400)" name="circle-close" />
@@ -62,18 +43,21 @@ const ClearIndicator: VFC<ClearIndicatorProps<Account>> = (props) => {
   );
 };
 
-const AccountSingleValue: VFC<SingleValueProps<Account>> = ({ children, ...props }) => {
+const AccountSingleValue:
+  | ComponentType<SingleValueProps<Account | null, boolean, GroupBase<Account>>>
+  | undefined = (props) => {
   const {
+    data,
     selectProps: { isSearchable, menuIsOpen },
-    data: { address, meta },
   } = props;
-
   const { info } = useNotifications();
+
+  const label = props.data?.address;
 
   //question: should we keep this functionality here
   //maybe will be better to get pages and bussiness components the opportunity to pass onCopy handler
   const onCopyHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
-    navigator.clipboard.writeText(address);
+    navigator.clipboard.writeText(label || '');
 
     e.preventDefault();
     e.stopPropagation();
@@ -82,50 +66,80 @@ const AccountSingleValue: VFC<SingleValueProps<Account>> = ({ children, ...props
   };
 
   if (isSearchable && menuIsOpen) {
-    return <components.SingleValue {...props}>{children}</components.SingleValue>;
+    return null;
   }
+
   return (
     <components.SingleValue {...props}>
       <AccountInfo
         canCopy
-        key={address}
-        name={meta.name}
-        address={address}
+        key={label}
+        address={label}
+        name={data?.meta?.name}
         onCopy={onCopyHandler}
       />
     </components.SingleValue>
   );
 };
 
-const AccountOption: VFC<OptionProps<Account>> = (props) => {
-  const {
-    data: { address, meta },
-  } = props;
-
+const AccountOption:
+  | ComponentType<OptionProps<Account | null, boolean, GroupBase<Account>>>
+  | undefined = (props) => {
   return (
     <components.Option {...props}>
-      <AccountInfo address={address} key={address} name={meta.name} />
+      <AccountInfo
+        key={props?.label}
+        name={props?.data?.meta?.name}
+        address={props?.label}
+      />
     </components.Option>
   );
 };
 
-export const AccountSelect: VFC<Props<Account>> = (props) => {
+export const AccountSelect = (props: any) => {
+  const { isSearchable, value } = props;
+
+  const [inputValue, setInputValue] = useState<string>();
+
+  const selectRef = useRef<SelectInstance<Account>>(null);
+
+  const menuCloseHandler = useCallback(() => {
+    selectRef.current?.blurInput();
+  }, []);
+
+  const menuOpenHandler = useCallback(() => {
+    if (isSearchable) {
+      setInputValue(value?.address);
+    }
+  }, [isSearchable, value]);
+
+  const changeHandler = useCallback((val) => {
+    props.onChange(val);
+
+    if (!val) {
+      setInputValue('');
+    }
+  }, []);
+
+  const changeInputHandler = useCallback((val) => {
+    setInputValue(val);
+  }, []);
+
+  const formatCreateLabel = useCallback((label) => label, []);
+
+  const getNewOptionData = useCallback((inputValue) => ({ address: inputValue }), []);
+
+  const getOptionLabel = useCallback((account) => account?.address, []);
+
   return (
-    <Select
+    <CreatebleSelect
       {...props}
+      theme={theme}
       styles={styles}
-      getOptionLabel={(account) => account.address}
-      getOptionValue={(account) => account.address}
-      theme={(th) => ({
-        ...th,
-        colors: {
-          ...th.colors,
-          primary: 'var(--color-primary-100)',
-          primary25: 'var(--color-primary-100)',
-          primary50: 'var(--color-primary-100)',
-          primary75: 'var(--color-primary-100)',
-        },
-      })}
+      ref={selectRef}
+      isClearable={props.isClearable ?? true}
+      isSearchable={props.isSearchable ?? false}
+      inputValue={inputValue}
       components={{
         Option: AccountOption,
         SingleValue: AccountSingleValue,
@@ -133,6 +147,14 @@ export const AccountSelect: VFC<Props<Account>> = (props) => {
         ClearIndicator,
         DropdownIndicator,
       }}
+      getOptionLabel={getOptionLabel}
+      getOptionValue={getOptionLabel}
+      getNewOptionData={getNewOptionData}
+      formatCreateLabel={formatCreateLabel}
+      onMenuOpen={menuOpenHandler}
+      onMenuClose={menuCloseHandler}
+      onInputChange={changeInputHandler}
+      onChange={changeHandler}
     />
   );
 };

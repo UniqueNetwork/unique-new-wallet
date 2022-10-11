@@ -40,6 +40,41 @@ export const InputAmountButton = styled.button`
   color: var(--color-primary-500);
   font: inherit;
   font-weight: 500;
+  font-size: calc(var(--prop-font-size) + 2px);
   transform: translate3d(0, -50%, 0);
   cursor: pointer;
+
+  &:disabled {
+    color: var(--color-blue-grey-300);
+  }
+`;
+
+export const TotalLoader = styled.span`
+  .unique-loader {
+    .loader {
+      width: calc(var(--prop-gap) * 1.375);
+      height: calc(var(--prop-gap) * 1.375);
+    }
+
+    .loader-label {
+      color: var(--color-additional-dark);
+    }
+  }
+`;
+
+export const FeeLoader = styled.span`
+  .unique-loader {
+    .loader {
+      width: calc(var(--prop-gap) * 1.375);
+      height: calc(var(--prop-gap) * 1.375);
+      border-top-color: var(--color-additional-warning-500);
+      border-left-color: var(--color-additional-warning-500);
+    }
+
+    .loader-label {
+      font-size: var(--prop-font-size);
+      font-weight: calc(var(--prop-font-weight) + 100);
+      color: var(--color-additional-warning-500);
+    }
+  }
 `;

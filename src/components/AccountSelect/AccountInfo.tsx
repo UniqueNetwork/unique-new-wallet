@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, VFC } from 'react';
+import React, { MouseEventHandler, TouchEventHandler, VFC } from 'react';
 import { Icon, Text } from '@unique-nft/ui-kit';
 
 import { IdentityIcon } from '@app/components';
@@ -9,7 +9,7 @@ interface AccountInfoProps {
   name?: string;
   address?: string;
   canCopy?: boolean;
-  onCopy?: MouseEventHandler<HTMLButtonElement>;
+  onCopy?: MouseEventHandler<HTMLButtonElement> | TouchEventHandler<HTMLButtonElement>;
 }
 
 export const AccountInfo: VFC<AccountInfoProps> = ({
@@ -22,13 +22,13 @@ export const AccountInfo: VFC<AccountInfoProps> = ({
     <AccountWrapper>
       <IdentityIcon address={address} />
       <AccountGroup>
-        <Text>{name}</Text>
+        {name && <Text>{name}</Text>}
         <AccountAddress>
-          <Text color="inherit" size="s">
+          <Text className="address-text" weight="light" color="inherit" size="s">
             {address}
           </Text>
           {canCopy && (
-            <AddressCopy onMouseDown={onCopy}>
+            <AddressCopy onMouseDown={onCopy as MouseEventHandler<HTMLButtonElement>}>
               <Icon size={16} name="copy" color="var(--color-blue-grey-400)" />
             </AddressCopy>
           )}

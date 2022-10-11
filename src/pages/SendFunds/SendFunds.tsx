@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, VFC } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { Heading, Modal, useNotifications } from '@unique-nft/ui-kit';
+import { Heading, Loader, Modal, Text, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 
 import { useApi } from '@app/hooks';
@@ -13,6 +13,7 @@ import { SendFundsForm } from './SendFundsForm';
 import { ModalHeader } from '../Accounts/Modals/commonComponents';
 import { ContentRow, ModalContent, ModalFooter } from '../components/ModalComponents';
 import { FundsForm } from './types';
+import { FeeLoader, TotalLoader } from './styles';
 
 export interface SendFundsProps {
   isVisible: boolean;
@@ -61,9 +62,8 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
 
   const { isFlowLoading, flowError, flowStatus, signAndSubmitExtrinsic } =
     useExtrinsicFlow(AccountApiService.balanceTransfer, 'transfer-balance');
-  const { isFeeError, feeError, feeFormatted, getFee } = useExtrinsicFee(
-    AccountApiService.balanceTransfer,
-  );
+  const { isFeeError, isFeeLoading, feeError, feeFormatted, fee, getFee } =
+    useExtrinsicFee(AccountApiService.balanceTransfer);
 
   useEffect(() => {
     setCurrentChain(chain);
@@ -119,6 +119,8 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     [sendFundsForm],
   );
 
+  const total = Number(sendFundsValues?.amount ?? 0 + parseInt(fee)).toFixed(3);
+
   return (
     <>
       {isFlowLoading ? (
@@ -132,18 +134,40 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
             {isolatedSendFundsForm}
             <ContentRow>
               <Alert type="warning">
-                {isValid && feeFormatted
-                  ? `A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
-              is sponsored`
-                  : 'A fee will be calculated after entering the recipient and amount'}
+                {isFeeLoading && (
+                  <FeeLoader>
+                    <Loader size="small" label="Calculating fee" placement="left" />
+                  </FeeLoader>
+                )}
+                {!isValid && !isFeeLoading && (
+                  <Text color="inherit" size="s">
+                    A fee will be calculated after entering the recipient and amount
+                  </Text>
+                )}
+                {!isFeeLoading && isValid && feeFormatted && (
+                  <Text color="inherit" size="s">
+                    {`A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
+              is sponsored`}
+                  </Text>
+                )}
               </Alert>
             </ContentRow>
+            {((sendFundsValues.amount && fee) || isFeeLoading) && (
+              <ContentRow>
+                {!isFeeLoading && isValid && <Text weight="light">Total ~ {total}</Text>}
+                {isFeeLoading && (
+                  <TotalLoader>
+                    <Loader label="Calculating total" placement="left" />
+                  </TotalLoader>
+                )}
+              </ContentRow>
+            )}
           </ModalContent>
           <ModalFooter>
             <TransferBtn
               role="primary"
               title="Confirm"
-              disabled={isValid}
+              disabled={!isValid || isFeeLoading}
               onClick={handleSubmit(submitHandler)}
             />
           </ModalFooter>

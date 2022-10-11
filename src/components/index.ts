@@ -22,4 +22,5 @@ export * from './TooltipWrapper';
 export * from './IdentityIcon';
 export * from './TokenLink';
 export * from './AccountSelect';
+export * from './InputText';
 export * from './ErrorPage';
