@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /*eslint-disable @typescript-eslint/no-unnecessary-type-assertion*/
-import { useCallback } from 'react';
-
 import { config } from '@app/config';
 import { CreateCollectionNewRequest } from '@app/types/Api';
 
