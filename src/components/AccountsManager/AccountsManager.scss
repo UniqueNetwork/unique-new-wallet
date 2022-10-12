@@ -1,6 +1,6 @@
-@media (max-width: 380px) {
+@media (max-width: 480px) {
   .unique-dropdown {
-    .selected-balance {
+    .selected-balance.unique-text[class*='appearance-inline'] {
       display: none;
     }
   }

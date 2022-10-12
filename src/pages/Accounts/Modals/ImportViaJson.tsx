@@ -1,18 +1,11 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { Button, Heading, Modal } from '@unique-nft/ui-kit';
+import { Button } from '@unique-nft/ui-kit';
 import { KeyringPair } from '@polkadot/keyring/types';
 
 import { Alert, PasswordInput, Upload } from '@app/components';
-import {
-  AdditionalText,
-  LabelText,
-  ModalHeader,
-} from '@app/pages/Accounts/Modals/commonComponents';
-import {
-  ContentRow,
-  ModalContent,
-  ModalFooter,
-} from '@app/pages/components/ModalComponents';
+import { Modal } from '@app/components/Modal';
+import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
+import { ContentRow } from '@app/pages/components/ModalComponents';
 import { convertToU8a, keyringFromFile } from '@app/utils';
 import { ChainPropertiesContext } from '@app/context';
 import { useAccounts } from '@app/hooks';
@@ -60,36 +53,8 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
   }, [onFinish, pair, password, restoreJSONAccount]);
 
   return (
-    <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-      <ModalHeader>
-        <Heading size="2">Add an account via backup JSON file</Heading>
-      </ModalHeader>
-      <ModalContent>
-        <ContentRow>
-          <LabelText size="m">Upload</LabelText>
-          <AdditionalText size="s" color="grey-500">
-            Click to select or drop the file here
-          </AdditionalText>
-          <Upload onChange={onUploadChange} />
-        </ContentRow>
-        <ContentRow>
-          <LabelText size="m">Password</LabelText>
-          <AdditionalText size="s" color="grey-500">
-            The password that was previously used to encrypt this account
-          </AdditionalText>
-          <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
-        </ContentRow>
-        <ContentRow>
-          <Alert type="warning">
-            Consider storing your account in a signer such as a browser extension,
-            hardware device, QR-capable phone wallet (non-connected) or desktop
-            application for optimal account security. Future versions of the web-only
-            interface will drop support for non-external accounts, much like the IPFS
-            version.
-          </Alert>
-        </ContentRow>
-      </ModalContent>
-      <ModalFooter>
+    <Modal
+      footerButtons={
         <Button
           disabled={!password || !pair}
           role="primary"
@@ -98,7 +63,33 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
             onRestoreClick();
           }}
         />
-      </ModalFooter>
+      }
+      isVisible={isVisible}
+      title="Add an account via backup JSON file"
+      onClose={onFinish}
+    >
+      <ContentRow>
+        <LabelText size="m">Upload</LabelText>
+        <AdditionalText size="s" color="grey-500">
+          Click to select or drop the file here
+        </AdditionalText>
+        <Upload onChange={onUploadChange} />
+      </ContentRow>
+      <ContentRow>
+        <LabelText size="m">Password</LabelText>
+        <AdditionalText size="s" color="grey-500">
+          The password that was previously used to encrypt this account
+        </AdditionalText>
+        <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
+      </ContentRow>
+      <ContentRow>
+        <Alert type="warning">
+          Consider storing your account in a signer such as a browser extension, hardware
+          device, QR-capable phone wallet (non-connected) or desktop application for
+          optimal account security. Future versions of the web-only interface will drop
+          support for non-external accounts, much like the IPFS version.
+        </Alert>
+      </ContentRow>
     </Modal>
   );
 };

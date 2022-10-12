@@ -1,4 +1,5 @@
 import { useCallback, useContext, useMemo, VFC } from 'react';
+import { GroupBase, Options, OptionsOrGroups } from 'react-select';
 import { Controller, useWatch } from 'react-hook-form';
 import { Text } from '@unique-nft/ui-kit';
 
@@ -22,23 +23,19 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
 
   const { chainProperties } = useContext(ChainPropertiesContext);
 
-  const [to, from] = useWatch<FundsForm>({ name: ['to', 'from'] });
+  const [to, from] = useWatch<FundsForm, ['to', 'from']>({
+    name: ['to', 'from'],
+  });
 
-  const { data: senderBalance } = useAccountBalanceService(
-    (from as Account)?.address,
-    apiEndpoint,
-  );
-  const { data: recipientBalance } = useAccountBalanceService(
-    (to as Account)?.address,
-    apiEndpoint,
-  );
+  const { data: senderBalance } = useAccountBalanceService(from?.address, apiEndpoint);
+  const { data: recipientBalance } = useAccountBalanceService(to?.address, apiEndpoint);
 
   const senders = useMemo(
-    () => accounts.filter((acc) => acc.address !== (to as Account)?.address),
+    () => accounts.filter((acc) => acc.address !== to?.address),
     [to],
   );
   const recipients = useMemo(
-    () => accounts.filter((acc) => acc.address !== (from as Account)?.address),
+    () => accounts.filter((acc) => acc.address !== from?.address),
     [from],
   );
 
@@ -65,10 +62,17 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
   );
 
   const externalRecipientValidator = useCallback(
-    (inputValue: string, selected: Account, options: Account[]) => {
+    (
+      inputValue: string,
+      selected: Options<Account>,
+      options: OptionsOrGroups<Account, GroupBase<Account>>,
+    ) => {
       // this code hides an additional option
       // with suggestion to create an existing item
-      if (options.find((opt) => opt.address.startsWith(inputValue))) {
+      if (
+        options.find((opt) => (opt as Account)?.address.startsWith(inputValue)) ||
+        from?.address.toLowerCase() === inputValue.toLocaleLowerCase()
+      ) {
         return false;
       }
 
@@ -80,7 +84,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
         return false;
       }
     },
-    [chainProperties],
+    [chainProperties, from],
   );
 
   return (
@@ -93,6 +97,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           </StyledAdditionalText>
           <Controller
             name="from"
+            rules={{ required: true }}
             render={({ field: { value, onChange } }) => (
               <AccountSelect
                 value={value}

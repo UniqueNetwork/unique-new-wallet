@@ -20,6 +20,7 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
 }) => {
   return (
     <Confirm
+      isClosable
       isVisible={isVisible}
       title="Burn NFT"
       buttons={[{ title: 'Confirm', role: 'primary', onClick: onBurn }]}

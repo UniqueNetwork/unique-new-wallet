@@ -1,10 +1,9 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Heading, Modal } from '@unique-nft/ui-kit';
+import { FC, useCallback, useMemo, useState } from 'react';
 
-import { AskCredentialsModal, AskSeedPhrase } from '@app/pages';
-import { useAccounts } from '@app/hooks';
-import { ModalHeader } from '@app/pages/Accounts/Modals/commonComponents';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { useAccounts } from '@app/hooks';
+import { AskCredentialsModal, AskSeedPhrase } from '@app/pages';
+import { Modal } from '@app/components/Modal';
 
 import {
   CreateAccountModalStages,
@@ -89,18 +88,12 @@ export const CreateAccountModal: FC<TCreateAccountModalProps> = ({
   }
 
   return (
-    // TODO: [UI-109] resolve zIndex for all popping elements
-    <div style={{ zIndex: 40 }}>
-      <Modal isVisible={isVisible} isClosable={true} onClose={onFinish}>
-        <ModalHeader>
-          <Heading size="2">Create substrate account</Heading>
-        </ModalHeader>
-        <ModalBodyComponent
-          accountProperties={accountProperties}
-          onFinish={onStageFinish}
-          onGoBack={onGoBack}
-        />
-      </Modal>
-    </div>
+    <Modal isVisible={isVisible} title="Create substrate account" onClose={onFinish}>
+      <ModalBodyComponent
+        accountProperties={accountProperties}
+        onFinish={onStageFinish}
+        onGoBack={onGoBack}
+      />
+    </Modal>
   );
 };

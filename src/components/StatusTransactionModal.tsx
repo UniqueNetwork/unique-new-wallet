@@ -1,17 +1,21 @@
-import { Heading, Modal, Loader, ModalProps } from '@unique-nft/ui-kit';
+import { Loader } from '@unique-nft/ui-kit';
+
+import { Modal, ModalProps } from '@app/components/Modal';
 
 type Props = Pick<ModalProps, 'isVisible'> & {
-  title?: string;
   description: string;
+  isVisible: boolean;
+  title?: string;
 };
 
 export const StatusTransactionModal = ({
-  title = 'Please wait',
   description,
-  ...modalProps
-}: Props) => (
-  <Modal {...modalProps}>
-    <Heading>{title}</Heading>
-    <Loader label={description} />
-  </Modal>
-);
+  title = 'Please wait',
+  isVisible,
+}: Props) => {
+  return (
+    <Modal isVisible={isVisible} isClosable={false} title={title}>
+      <Loader label={description} />
+    </Modal>
+  );
+};

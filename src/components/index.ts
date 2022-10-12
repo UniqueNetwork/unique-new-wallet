@@ -23,4 +23,5 @@ export * from './IdentityIcon';
 export * from './TokenLink';
 export * from './AccountSelect';
 export * from './InputText';
+export * from './Modal';
 export * from './ErrorPage';

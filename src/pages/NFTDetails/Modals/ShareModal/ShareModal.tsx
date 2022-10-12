@@ -1,9 +1,10 @@
 import React, { useMemo, VFC } from 'react';
-import { Button, Heading, IconProps, Modal } from '@unique-nft/ui-kit';
+import { Button, IconProps } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import getSocialLink from '@app/pages/NFTDetails/Modals/utils/getSocialLink';
 import { Token } from '@app/api/graphQL/types';
+import { Modal } from '@app/components/Modal';
+import getSocialLink from '@app/pages/NFTDetails/Modals/utils/getSocialLink';
 
 // TODO: need to move these icons to ui-kit
 import RedditLogo from '../../../../static/icons/reddit.svg';
@@ -81,16 +82,13 @@ export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) 
   };
 
   return (
-    <Modal isClosable isVisible={isVisible} onClose={onClose}>
-      <HeadingWrapper>
-        <Heading size="2">Share</Heading>
-      </HeadingWrapper>
+    <Modal isVisible={isVisible} title="Share" onClose={onClose}>
       <ButtonWrapper>
-        {socialItems.map(({ title, url, icon }, index) => (
-          <Button key={index} title={title} iconLeft={icon} onClick={openLink(url)} />
-        ))}
-      </ButtonWrapper>
-      <ButtonWrapper>
+        <div className="share-button-group">
+          {socialItems.map(({ title, url, icon }, index) => (
+            <Button key={index} title={title} iconLeft={icon} onClick={openLink(url)} />
+          ))}
+        </div>
         <Button
           role="primary"
           title="Copy link"
@@ -108,28 +106,47 @@ export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) 
 
 const ButtonWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin-top: calc(var(--prop-gap) * 1.5);
-  .unique-button {
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-    img {
-      margin-right: var(--prop-gap);
-    }
-    &:hover {
-      background-color: transparent;
-      border: none;
-      color: var(--color-primary-500);
+  flex-wrap: wrap;
+  gap: calc(var(--prop-gap) * 1.5);
+
+  .share-button-group {
+    flex: 1 1 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--prop-gap) * 1.5) var(--prop-gap);
+
+    .unique-button {
+      box-sizing: border-box;
+      flex: 1 0 100%;
+
+      @media screen and (min-width: 320px) {
+        flex: 0 1 48%;
+      }
+
+      @media screen and (min-width: 568px) {
+        flex: 0;
+      }
     }
   }
-`;
 
-const HeadingWrapper = styled.div`
-  && h2 {
-    margin-bottom: calc(var(--prop-gap) * 2);
+  .unique-button {
+    border: none;
+    justify-content: flex-end;
+    padding: 0;
+    color: inherit;
+    background-color: transparent;
+
+    &.with-icon.to-left {
+      gap: calc(var(--prop-gap) / 2);
+
+      & > .icon {
+        margin: 0;
+      }
+    }
+
+    &:hover {
+      background-color: transparent;
+      color: var(--color-primary-500);
+    }
   }
 `;

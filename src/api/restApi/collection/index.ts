@@ -1,2 +1,2 @@
-export * from './CollectionApiService';
-export * from './hooks';
+export * from './useCollectionCreate';
+export * from './useCollectionQuery';

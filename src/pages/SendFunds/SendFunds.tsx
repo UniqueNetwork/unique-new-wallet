@@ -1,16 +1,15 @@
 import React, { FC, useEffect, useMemo, VFC } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { Heading, Loader, Modal, Text, useNotifications } from '@unique-nft/ui-kit';
+import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 
 import { useApi } from '@app/hooks';
 import { Account } from '@app/account';
-import { Alert, Stages, TransferBtn } from '@app/components';
+import { Alert, Stages, TransferBtn, Modal } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
-import { AccountApiService, useExtrinsicFee, useExtrinsicFlow } from '@app/api';
+import { useAccountBalanceTransfer } from '@app/api';
 
 import { SendFundsForm } from './SendFundsForm';
-import { ModalHeader } from '../Accounts/Modals/commonComponents';
 import { ContentRow, ModalContent, ModalFooter } from '../components/ModalComponents';
 import { FundsForm } from './types';
 import { FeeLoader, TotalLoader } from './styles';
@@ -43,7 +42,19 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   const { onClose, senderAccount, onSendSuccess, chain } = props;
 
   const { setCurrentChain } = useApi();
-  const { error, info } = useNotifications();
+  const { info, error } = useNotifications();
+
+  const {
+    fee,
+    feeFormatted,
+    feeLoading,
+    feeStatus,
+    feeError,
+    isLoadingSubmitResult,
+    getFee,
+    submitWaitResult,
+    submitWaitResultError,
+  } = useAccountBalanceTransfer();
 
   const sendFundsForm = useForm<FundsForm>({
     mode: 'onChange',
@@ -60,10 +71,12 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   const sendFundsValues = useWatch<FundsForm>({ control });
   const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
 
-  const { isFlowLoading, flowError, flowStatus, signAndSubmitExtrinsic } =
-    useExtrinsicFlow(AccountApiService.balanceTransfer, 'transfer-balance');
-  const { isFeeError, isFeeLoading, feeError, feeFormatted, fee, getFee } =
-    useExtrinsicFee(AccountApiService.balanceTransfer);
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
 
   useEffect(() => {
     setCurrentChain(chain);
@@ -72,43 +85,42 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   useEffect(() => {
     if (isValid) {
       getFee({
-        payload: {
-          address: sendFundsDebounceValues.from?.address,
-          destination: sendFundsDebounceValues.to?.address,
-          amount: sendFundsDebounceValues.amount,
-        },
+        address: sendFundsDebounceValues.from?.address,
+        destination: sendFundsDebounceValues.to?.address,
+        amount: sendFundsDebounceValues.amount,
       });
     }
   }, [sendFundsDebounceValues]);
 
-  useEffect(() => {
-    if (flowStatus === 'success') {
-      info('Transfer completed successfully');
-      onSendSuccess?.();
-      onClose();
-    } else if (flowStatus === 'error') {
-      error(flowError?.message);
-    }
-  }, [flowStatus]);
-
-  useEffect(() => {
-    if (isFeeError) {
-      error(feeError?.message);
-    }
-  }, [isFeeError]);
-
   const submitHandler = (sendFundsForm: FundsForm) => {
-    signAndSubmitExtrinsic(
-      {
-        payload: {
-          address: sendFundsForm.from.address,
-          destination: sendFundsForm.to.address,
-          amount: sendFundsForm.amount,
-        },
+    submitWaitResult({
+      payload: {
+        address: sendFundsForm.from.address,
+        destination: sendFundsForm.to.address,
+        amount: sendFundsForm.amount,
       },
-      sendFundsForm.from.address,
-    );
+      senderAddress: sendFundsForm.from.address,
+    })
+      .then(() => {
+        info('Transfer completed successfully');
+        onSendSuccess?.();
+        onClose();
+      })
+      .catch(() => {
+        submitWaitResultError && error(submitWaitResultError);
+      });
   };
+
+  const total = useMemo(() => {
+    const parsedFee = Number(fee);
+    const parsedAmount = Number(sendFundsValues?.amount);
+
+    if (parsedFee && parsedAmount) {
+      return (parsedFee + parsedAmount).toFixed(3);
+    }
+
+    return 0;
+  }, [sendFundsValues?.amount, fee]);
 
   const isolatedSendFundsForm = useMemo(
     () => (
@@ -119,32 +131,32 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     [sendFundsForm],
   );
 
-  const total = Number(sendFundsValues?.amount ?? 0 + parseInt(fee)).toFixed(3);
-
   return (
     <>
-      {isFlowLoading ? (
+      {isLoadingSubmitResult ? (
         <TransferStagesModal />
       ) : (
-        <Modal isVisible={props.isVisible} isClosable={true} onClose={onClose}>
-          <ModalHeader>
-            <Heading size="2">Send funds</Heading>
-          </ModalHeader>
+        <Modal
+          title="Send funds"
+          isClosable={true}
+          isVisible={props.isVisible}
+          onClose={onClose}
+        >
           <ModalContent>
             {isolatedSendFundsForm}
-            <ContentRow>
+            <ContentRow space="calc(var(--prop-gap) * 1.5)">
               <Alert type="warning">
-                {isFeeLoading && (
+                {feeStatus === 'loading' && (
                   <FeeLoader>
                     <Loader size="small" label="Calculating fee" placement="left" />
                   </FeeLoader>
                 )}
-                {!isValid && !isFeeLoading && (
+                {!isValid && (
                   <Text color="inherit" size="s">
                     A fee will be calculated after entering the recipient and amount
                   </Text>
                 )}
-                {!isFeeLoading && isValid && feeFormatted && (
+                {isValid && feeStatus === 'success' && (
                   <Text color="inherit" size="s">
                     {`A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
               is sponsored`}
@@ -152,10 +164,10 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
                 )}
               </Alert>
             </ContentRow>
-            {((sendFundsValues.amount && fee) || isFeeLoading) && (
+            {((sendFundsValues.amount && fee) || feeLoading) && (
               <ContentRow>
-                {!isFeeLoading && isValid && <Text weight="light">Total ~ {total}</Text>}
-                {isFeeLoading && (
+                {!feeLoading && isValid && <Text weight="light">Total ~ {total}</Text>}
+                {feeLoading && (
                   <TotalLoader>
                     <Loader label="Calculating total" placement="left" />
                   </TotalLoader>
@@ -167,7 +179,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
             <TransferBtn
               role="primary"
               title="Confirm"
-              disabled={!isValid || isFeeLoading}
+              disabled={!isValid || feeLoading}
               onClick={handleSubmit(submitHandler)}
             />
           </ModalFooter>

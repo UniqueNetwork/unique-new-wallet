@@ -23,6 +23,7 @@ export const InputAmount = styled.div`
 
   input[type='text'] {
     width: calc(100% - 76px);
+    color: var(--color-additional-dark);
   }
 `;
 

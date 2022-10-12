@@ -1,12 +1,9 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Button, InputText } from '@unique-nft/ui-kit';
 
-import { IdentityIcon, PasswordInput } from '@app/components';
+import { PasswordInput } from '@app/components';
 import {
   AdditionalText,
-  AddressText,
-  AddressWrapper,
-  ButtonGroup,
   LabelText,
   StepsTextStyled,
 } from '@app/pages/Accounts/Modals/commonComponents';
@@ -15,6 +12,8 @@ import {
   ModalContent,
   ModalFooter,
 } from '@app/pages/components/ModalComponents';
+import { ButtonGroup } from '@app/pages/components/FormComponents';
+import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 
 import { TCreateAccountBodyModalProps } from './types';
 
@@ -48,10 +47,7 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
     <>
       <ModalContent>
         <ContentRow>
-          <AddressWrapper>
-            <IdentityIcon address={accountProperties?.address || ''} />
-            <AddressText>{accountProperties?.address || ''}</AddressText>
-          </AddressWrapper>
+          <AddressWidget address={accountProperties?.address} />
         </ContentRow>
         <ContentRow>
           <LabelText size="m">Name</LabelText>
@@ -76,7 +72,7 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
       </ModalContent>
       <ModalFooter>
         <StepsTextStyled size="m">Step 2/3</StepsTextStyled>
-        <ButtonGroup>
+        <ButtonGroup stack>
           <Button title="Previous" onClick={onGoBack} />
           <Button
             disabled={!validPassword || !password || !name}

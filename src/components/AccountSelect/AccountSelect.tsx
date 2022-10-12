@@ -1,10 +1,4 @@
-import React, {
-  ComponentType,
-  MouseEventHandler,
-  useCallback,
-  useRef,
-  useState,
-} from 'react';
+import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
 import {
   OptionProps,
   SingleValueProps,
@@ -14,7 +8,7 @@ import {
   components,
   GroupBase,
 } from 'react-select';
-import CreatebleSelect from 'react-select/creatable';
+import CreatebleSelect, { CreatableProps } from 'react-select/creatable';
 import { Icon, useNotifications } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
@@ -22,10 +16,7 @@ import { AccountInfo } from '@app/components/AccountSelect/AccountInfo';
 
 import { styles, theme } from './styles';
 
-const DropdownIndicator:
-  | ComponentType<DropdownIndicatorProps<Account | null, boolean, GroupBase<Account>>>
-  | null
-  | undefined = (props) => {
+const DropdownIndicator = (props: DropdownIndicatorProps<Account, false>) => {
   return (
     <components.DropdownIndicator {...props}>
       <Icon size={8} color="var(--color-blue-grey-400)" name="triangle" />
@@ -33,9 +24,7 @@ const DropdownIndicator:
   );
 };
 
-const ClearIndicator:
-  | ComponentType<ClearIndicatorProps<Account | null, boolean, GroupBase<Account>>>
-  | undefined = (props) => {
+const ClearIndicator = (props: ClearIndicatorProps<Account, false>) => {
   return (
     <components.ClearIndicator {...props}>
       <Icon size={19} color="var(--color-blue-grey-400)" name="circle-close" />
@@ -43,9 +32,7 @@ const ClearIndicator:
   );
 };
 
-const AccountSingleValue:
-  | ComponentType<SingleValueProps<Account | null, boolean, GroupBase<Account>>>
-  | undefined = (props) => {
+const AccountSingleValue = (props: SingleValueProps<Account, false>) => {
   const {
     data,
     selectProps: { isSearchable, menuIsOpen },
@@ -82,9 +69,7 @@ const AccountSingleValue:
   );
 };
 
-const AccountOption:
-  | ComponentType<OptionProps<Account | null, boolean, GroupBase<Account>>>
-  | undefined = (props) => {
+const AccountOption = (props: OptionProps<Account, false>) => {
   return (
     <components.Option {...props}>
       <AccountInfo
@@ -96,7 +81,9 @@ const AccountOption:
   );
 };
 
-export const AccountSelect = (props: any) => {
+export const AccountSelect = (
+  props: CreatableProps<Account, false, GroupBase<Account>>,
+) => {
   const { isSearchable, value } = props;
 
   const [inputValue, setInputValue] = useState<string>();
@@ -109,25 +96,28 @@ export const AccountSelect = (props: any) => {
 
   const menuOpenHandler = useCallback(() => {
     if (isSearchable) {
-      setInputValue(value?.address);
+      setInputValue((value as Account)?.address);
     }
   }, [isSearchable, value]);
 
-  const changeHandler = useCallback((val) => {
-    props.onChange(val);
+  const changeHandler = useCallback((account, meta) => {
+    props.onChange?.(account, meta);
 
-    if (!val) {
+    if (!account) {
       setInputValue('');
     }
   }, []);
 
-  const changeInputHandler = useCallback((val) => {
-    setInputValue(val);
+  const changeInputHandler = useCallback((inputValue) => {
+    setInputValue(inputValue);
   }, []);
 
   const formatCreateLabel = useCallback((label) => label, []);
 
-  const getNewOptionData = useCallback((inputValue) => ({ address: inputValue }), []);
+  const getNewOptionData = useCallback(
+    (inputValue: string) => ({ address: inputValue } as any),
+    [],
+  );
 
   const getOptionLabel = useCallback((account) => account?.address, []);
 

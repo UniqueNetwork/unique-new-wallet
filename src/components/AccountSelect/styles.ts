@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { StylesConfig, Theme } from 'react-select';
+import { GroupBase, StylesConfig, Theme } from 'react-select';
 
 import { Account } from '@app/account';
 
@@ -14,7 +14,7 @@ export const theme = (theme: Theme) => ({
   },
 });
 
-export const styles: StylesConfig<Account, false> = {
+export const styles: StylesConfig<Account, false, GroupBase<Account>> = {
   container: (css) => ({ ...css, height: 'calc(var(--prop-gap) * 4)' }),
   control: (css) => ({
     ...css,
@@ -50,6 +50,13 @@ export const styles: StylesConfig<Account, false> = {
   input: (css) => ({
     ...css,
     width: 0,
+    marginLeft: 0,
+    color: 'var(--color-additional-dark)',
+    fontSize: 'calc(var(--prop-font-size) + 2px)',
+  }),
+  singleValue: (css) => ({
+    ...css,
+    marginLeft: 0,
   }),
 };
 
