@@ -74,7 +74,5 @@ export const useCollectionFormMapper = () => {
     return request;
   };
 
-  const m = useCallback(mapper, []);
-
-  return m;
+  return mapper;
 };

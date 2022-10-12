@@ -69,10 +69,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
 
-  useEffect(() => {
-    console.log('test 12345');
-  }, [formMapper]);
-
   const collectionForm = useForm<CollectionForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
