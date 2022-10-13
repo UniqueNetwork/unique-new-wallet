@@ -136,12 +136,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
       {isLoadingSubmitResult ? (
         <TransferStagesModal />
       ) : (
-        <Modal
-          title="Send funds"
-          isClosable={true}
-          isVisible={props.isVisible}
-          onClose={onClose}
-        >
+        <Modal title="Send funds" isVisible={props.isVisible} onClose={onClose}>
           <ModalContent>
             {isolatedSendFundsForm}
             <ContentRow space="calc(var(--prop-gap) * 1.5)">
