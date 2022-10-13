@@ -45,7 +45,7 @@ export const NFTsTemplateList = ({
 }: NFTsListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
-  const getLimit = useItemsLimit();
+  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
 
   return (
     <PagePaper.Processing>
@@ -55,10 +55,11 @@ export const NFTsTemplateList = ({
         dataSource={tokens}
         fetchMore={fetchMore}
         isLoading={isLoading}
+        itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
         panelSettings={{
           pagination: {
             current: paginationSettings.current,
-            pageSizes: [getLimit()],
+            pageSizes: [getLimit],
             show: paginationSettings.show,
             size: paginationSettings.size,
             viewMode: 'bottom',
@@ -97,7 +98,7 @@ export const NFTsTemplateList = ({
             }
           />
         )}
-        visibleItems={getLimit()}
+        visibleItems={getLimit}
         onPageChange={onPageChange}
       />
     </PagePaper.Processing>

@@ -1,10 +1,10 @@
-import { ReactNode, useState } from 'react';
+import { Key, ReactNode, useState } from 'react';
 import { OperationVariables } from '@apollo/client/core/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Button, IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { DeviceSize, SizeMap, useDeviceSize } from '@app/hooks';
 import { NoItems, PagePaper } from '@app/components';
 
 import Item from './Item';
@@ -32,6 +32,7 @@ export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
   dataSource: T[];
   fetchMore?(variables?: any): void;
   isLoading?: boolean;
+  itemCols: Record<string, number>;
   panelSettings: IPanelSettings;
   renderItem?: (item: T, index: number) => ReactNode;
   visibleItems?: number;
@@ -91,36 +92,15 @@ const ListExtra = styled.span`
   }
 `;
 
-const ItemScope = styled.div`
+const ItemScope = styled.div<{ cols: Record<string, number>; breakpoint: string }>`
   box-sizing: border-box;
   position: relative;
   flex: 1 1 auto;
   width: 100%;
-
   display: grid;
   align-content: baseline;
   gap: calc(var(--prop-gap) * 2);
-
-  @media screen and (min-width: 500px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media screen and (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  // TODO: feat: page layout breakpoints
-  //@media screen and (min-width: 1400px) {
-  //  grid-template-columns: repeat(4, 1fr);
-  //}
-
-  @media screen and (min-width: 1600px) {
-    grid-template-columns: repeat(5, 1fr);
-  }
+  grid-template-columns: repeat(${(p) => p.cols[p.breakpoint]}, 1fr);
 `;
 
 const ButtonMoreWrapper = styled.div`
@@ -133,13 +113,15 @@ function List<T>({
   dataSource,
   fetchMore,
   isLoading,
+  itemCols,
   panelSettings,
   renderItem,
   visibleItems,
   onPageChange,
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
-  const listItemsKeys: { [index: number]: React.Key } = {};
+  const size = SizeMap[deviceSize];
+  const listItemsKeys: { [index: number]: Key } = {};
 
   const renderInnerItem = (item: T, index: number) => {
     if (!renderItem) {
@@ -164,7 +146,12 @@ function List<T>({
       renderInnerItem(item, index),
     );
     childrenContent = (
-      <ItemScope className={classNames(className, listClassName)} role="list">
+      <ItemScope
+        breakpoint={size}
+        className={classNames(className, listClassName)}
+        cols={itemCols}
+        role="list"
+      >
         {items}
       </ItemScope>
     );
@@ -178,6 +165,7 @@ function List<T>({
       current={panelSettings.pagination.current}
       pageSizes={panelSettings.pagination.pageSizes}
       size={panelSettings.pagination.size}
+      visible={5}
       onPageChange={onPageChange}
     />
   ) : null;

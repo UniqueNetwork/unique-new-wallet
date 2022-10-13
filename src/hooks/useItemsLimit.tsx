@@ -1,18 +1,14 @@
-import { DeviceSize, useDeviceSize } from '@app/hooks/useDeviceSize';
+import { SizeMap, useDeviceSize } from '@app/hooks/useDeviceSize';
 
-export const useItemsLimit = (): any => {
+const DEFAULT_ITEMS_COUNT = 10;
+
+export const useItemsLimit = (breakpoints: Record<string, number>): number => {
   const deviceSize = useDeviceSize();
-  return () => {
-    switch (deviceSize) {
-      case DeviceSize.sm:
-      case DeviceSize.lg:
-      case DeviceSize.xl:
-        return 8;
-      case DeviceSize.md:
-        return 9;
-      case DeviceSize.xxl:
-      default:
-        return 10;
-    }
-  };
+  const size = SizeMap[deviceSize];
+
+  if (!breakpoints) {
+    return DEFAULT_ITEMS_COUNT;
+  }
+
+  return size in breakpoints ? breakpoints[size] : DEFAULT_ITEMS_COUNT;
 };
