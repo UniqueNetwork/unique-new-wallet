@@ -141,7 +141,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
             {isolatedSendFundsForm}
             <ContentRow space="calc(var(--prop-gap) * 1.5)">
               <Alert type="warning">
-                {feeStatus === 'loading' && (
+                {feeLoading && (
                   <FeeLoader>
                     <Loader size="small" label="Calculating fee" placement="left" />
                   </FeeLoader>

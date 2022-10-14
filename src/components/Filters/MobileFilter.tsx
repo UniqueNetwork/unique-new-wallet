@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-indent-props */
-
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, InputText, Select } from '@unique-nft/ui-kit';
@@ -59,7 +57,24 @@ export const MobileFilters = ({
     };
   });
 
-  const barButtons: ReactNode[] = [];
+  const barButtons: ReactNode[] = !isVisible
+    ? [
+        <Button
+          key="Filter-toggle-button"
+          role="primary"
+          title="Filter and sort"
+          onClick={onVisibleButtonClick}
+        />,
+      ]
+    : [
+        <Button key="Filter-apply-button" title="Apply" onClick={onShowButtonClick} />,
+        <Button
+          key="Filter-reset-button"
+          role="danger"
+          title="Reset All"
+          onClick={onResetButtonClick}
+        />,
+      ];
 
   return (
     <>
@@ -114,12 +129,10 @@ const FiltersWrapper = styled.div`
   flex-direction: column;
   gap: calc(var(--prop-gap) * 2);
   max-width: 756px;
-
   .filter-input {
     width: auto;
     max-width: 100%;
   }
-
   .collections-filter {
     margin: 0;
   }
