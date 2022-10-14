@@ -109,8 +109,8 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
     --page-gap: calc(var(--prop-gap) * 1.5);
 
     display: flex;
-    flex-direction: column;
     flex: 1 1 auto;
+    flex-direction: column;
     gap: var(--page-gap);
     max-width: 100%;
 
@@ -172,6 +172,7 @@ const NFTDetailsStyled = styled(NFTDetailsComponent)`
 
     &__info-container {
       flex: 1 1 auto;
+      align-self: stretch;
       max-width: 100%;
 
       @media screen and (min-width: 768px) {

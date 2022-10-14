@@ -31,11 +31,17 @@ interface MenuOptionItem extends SelectOptionProps {
   id: TNFTModalType;
 }
 
-const HeaderContainer = styled.div`
+const HeaderTopContainer = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--prop-gap);
+`;
+
+const HeaderBottomContainer = styled.div`
+  .collection-heading {
+    margin-bottom: var(--prop-gap);
+  }
 `;
 
 const HeaderContent = styled.div`
@@ -50,9 +56,6 @@ const HeaderContent = styled.div`
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-  }
-  .collection-heading {
-    margin-bottom: var(--prop-gap);
   }
 `;
 
@@ -162,22 +165,48 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   }, [isCurrentAccountOwner]);
 
   return (
-    <HeaderContainer className={className}>
-      <HeaderContent>
-        <Link
-          target="_blank"
-          rel="noreferrer"
-          color="primary"
-          href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
-          className="collection-link"
+    <>
+      <HeaderTopContainer className={className}>
+        <HeaderContent>
+          <Link
+            target="_blank"
+            rel="noreferrer"
+            color="primary"
+            href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
+            className="collection-link"
+          >
+            <Text className="collection-link-text" color="primary-500" weight="light">
+              {`${collectionName} [id ${collectionId}]`}
+            </Text>
+            <div>
+              <Icon color="var(--color-primary-500)" size={16} name="arrow-up-right" />
+            </div>
+          </Link>
+        </HeaderContent>
+        <Dropdown
+          placement="right"
+          options={options}
+          optionRender={(opt) => (
+            <MenuOption
+              {...(opt as MenuOptionItem)}
+              disabled={opt.id === 'burn' && !currentChain.burnEnabled}
+            />
+          )}
+          onChange={(opt) => {
+            if (opt.id === 'burn' && !currentChain.burnEnabled) {
+              return;
+            }
+            onShowModal((opt as MenuOptionItem).id);
+          }}
         >
-          <Text className="collection-link-text" color="primary-500" weight="light">
-            {`${collectionName} [id ${collectionId}]`}
-          </Text>
-          <div>
-            <Icon color="var(--color-primary-500)" size={16} name="arrow-up-right" />
-          </div>
-        </Link>
+          <Icon
+            size={40}
+            name="rounded-rectangle-more"
+            color="var(--color-secondary-400)"
+          />
+        </Dropdown>
+      </HeaderTopContainer>
+      <HeaderBottomContainer>
         <Heading size={size === DeviceSize.xs ? '2' : '1'} className="collection-heading">
           {title}
         </Heading>
@@ -199,39 +228,18 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
         </TextOwner>
         {isCurrentAccountOwner && (
           <TransferBtn
+            wide={size <= DeviceSize.sm}
             className="transfer-btn"
             title="Transfer"
-            role="outlined"
+            role="primary"
             onClick={() => {
               logUserEvent(UserEvents.TRANSFER_NFT);
               onShowModal('transfer');
             }}
           />
         )}
-      </HeaderContent>
-      <Dropdown
-        placement="right"
-        options={options}
-        optionRender={(opt) => (
-          <MenuOption
-            {...(opt as MenuOptionItem)}
-            disabled={opt.id === 'burn' && !currentChain.burnEnabled}
-          />
-        )}
-        onChange={(opt) => {
-          if (opt.id === 'burn' && !currentChain.burnEnabled) {
-            return;
-          }
-          onShowModal((opt as MenuOptionItem).id);
-        }}
-      >
-        <Icon
-          size={40}
-          name="rounded-rectangle-more"
-          color="var(--color-secondary-400)"
-        />
-      </Dropdown>
-    </HeaderContainer>
+      </HeaderBottomContainer>
+    </>
   );
 };
 
