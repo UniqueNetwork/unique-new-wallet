@@ -1,0 +1,127 @@
+.unique-input-text {
+    font-family: var(--prop-font-family);
+    font-size: calc(var(--prop-font-size) + 2px);
+    font-weight: var(--prop-font-weight);
+    position: relative;
+    width: 250px;
+
+    label {
+        color: var(--color-secondary-500);
+        display: block;
+        font-size: 16px;
+        font-weight: 600;
+        height: 24px;
+        line-height: 24px;
+        margin-bottom: 5px;
+        overflow: hidden;
+        position: relative;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+    }
+
+    .additional-text {
+        color: var(--color-grey-500);
+        font-size: 14px;
+        height: 22px;
+        line-height: 22px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+    }
+
+    .status-text {
+        color: var(--color-grey-500);
+        font-size: 14px;
+        line-height: 22px;
+        margin-top: 8px;
+        min-height: 22px;
+        width: 100%;
+    }
+
+    &.error,
+    &.error:focus-within {
+        .input-wrapper {
+            border: 1px solid var(--color-coral-500);
+        }
+        .status-text {
+            color: var(--color-coral-500);
+        }
+    }
+
+    .input-wrapper {
+        position: relative;
+        border: 1px solid var(--color-grey-300);
+        border-radius: var(--prop-border-radius);
+        display: flex;
+        align-items: center;
+
+        &:focus-within {
+            border: 1px solid var(--color-grey-400);
+        }
+
+        &.disabled {
+            background-color: var(--color-grey-100);
+
+            input {
+                color: var(--color-blue-grey-400);
+            }
+        }
+
+        input {
+            color: var(--color-secondary-500);
+            outline: none;
+            padding: 8px 16px;
+            width: calc(100% - 24px);
+            border: none;
+            background: none;
+            line-height: 1.5;
+            font-family: var(--prop-font-family);
+            font-weight: var(--prop-font-weight);        
+            font-size: calc(var(--prop-font-size) + 2px);
+            &::placeholder {
+                color: var(--color-grey-400);
+                font-family: var(--prop-font-family);
+            }
+        }
+
+        &.with-icon {
+            svg {
+                position: relative;
+                margin: 0 10px;
+            }
+            &.to-left:not(.to-right) {
+                input {
+                    padding: 11px 12px 11px 0px;
+                    width: calc(100% - 50px);
+                }
+            }
+            &.to-right:not(.to-left) {
+                input {
+                    padding: 11px 0px 11px 12px;
+                    width: calc(100% - 50px);
+                }
+            }
+            &.to-left.to-right {
+                input {
+                    padding: 11px 12px 11px 0px;
+                    width: calc(100% - 88px);
+                }
+            }
+        }
+    }
+
+    &.size-middle {
+        input {
+            padding: 7px 16px;
+        }
+    }
+
+    &.size-small {
+        input {
+            padding: 7px 12px;
+        }
+    }
+}
