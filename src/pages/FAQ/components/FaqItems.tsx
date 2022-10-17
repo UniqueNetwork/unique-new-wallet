@@ -125,16 +125,7 @@ export const faqItems = (activeNetwork: string) => {
           />
           .
           <br />
-          To obtain UNQ visit the{' '}
-          <UiLink
-            href="https://www.huobi.com/en-us/exchange/unq_usdt"
-            role="primary"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Huobi Global
-            <Icon color="currentColor" name="arrow-up-right" size={16} />
-          </UiLink>
+          UNQ coming soon on the exchange.
         </p>
       ),
     },
