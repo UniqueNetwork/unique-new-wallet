@@ -50,6 +50,7 @@ $closeSize: 24px;
 }
 
 .unique-modal-content-wrapper {
+  z-index: $zIndex + 1;
   box-sizing: border-box;
   overflow: auto;
   position: relative;

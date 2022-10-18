@@ -93,11 +93,9 @@ export const SettingsRow = styled.div`
 
   label,
   .checkbox-label > span {
-    & > .icon {
-      display: inline-block;
-      vertical-align: middle;
-      margin: -0.125em 0 0 0.3em;
-    }
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
   }
 
   .unique-input-text {
