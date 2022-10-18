@@ -1,21 +1,36 @@
-import React, { memo, VFC } from 'react';
+import React, { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { Heading, Text, Tag } from '@unique-nft/ui-kit';
+
+import { TToken } from '@app/pages/NFTDetails/type';
 
 export type Attribute = {
   title: string;
   tags: string[];
 };
 
-interface TokenInformationProps {
-  attributes?: Attribute[];
+interface TokenInformationProps<T extends TToken> {
+  token?: T;
   className?: string;
 }
 
-const TokenInformationComponent: VFC<TokenInformationProps> = ({
-  attributes,
+const TokenInformationComponent = <T extends TToken>({
+  token,
   className,
-}) => {
+}: TokenInformationProps<T>) => {
+  const attributes = useMemo<Attribute[]>(() => {
+    if (!token) {
+      return [];
+    }
+
+    const attrsValues = Object.values(token?.attributes || {});
+
+    return attrsValues.map(({ name, value }) => ({
+      title: name._,
+      tags: Array.isArray(value) ? value.map((val) => val._) : [value._],
+    }));
+  }, [token?.attributes]);
+
   return (
     <div className={className}>
       <Heading className="attributes-header" size="4">

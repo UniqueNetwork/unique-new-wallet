@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { usePageSettingContext } from '@app/context';
 
 import { Header } from '../';
-import { Footer } from '../Footer/Footer';
+import { Footer } from '../Footer';
 
 export const PageLayout: FC = () => {
   const { breadcrumbs, heading } = usePageSettingContext();
@@ -60,8 +60,6 @@ const LayoutStyled = styled.div`
     box-sizing: border-box;
     width: 100%;
     max-width: var(--prop-container-width);
-    margin-left: auto;
-    margin-right: auto;
     padding-left: 24px;
     padding-right: 24px;
     margin: 32px auto 0;

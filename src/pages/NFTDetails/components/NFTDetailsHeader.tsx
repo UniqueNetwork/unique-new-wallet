@@ -1,4 +1,4 @@
-import { memo, useMemo, VFC } from 'react';
+import { memo, ReactNode, useMemo, VFC } from 'react';
 import styled from 'styled-components';
 import {
   Button,
@@ -11,9 +11,9 @@ import {
 } from '@unique-nft/ui-kit';
 
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
-import { BurnBtn, IdentityIcon, TransferBtn } from '@app/components';
+import { BurnBtn, IdentityIcon } from '@app/components';
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
-import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { shortcutText } from '@app/utils';
 
 interface NFTDetailsHeaderProps {
   title?: string;
@@ -23,6 +23,7 @@ interface NFTDetailsHeaderProps {
   isCurrentAccountOwner?: boolean;
   className?: string;
   onShowModal(modal: TNFTModalType): void;
+  buttons: ReactNode;
 }
 
 interface MenuOptionItem extends SelectOptionProps {
@@ -31,7 +32,7 @@ interface MenuOptionItem extends SelectOptionProps {
   id: TNFTModalType;
 }
 
-const HeaderContainer = styled.div`
+const HeaderContainerInfo = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -136,6 +137,7 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   isCurrentAccountOwner,
   className,
   onShowModal,
+  buttons,
 }) => {
   const { currentChain } = useApi();
   const size = useDeviceSize();
@@ -162,76 +164,73 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   }, [isCurrentAccountOwner]);
 
   return (
-    <HeaderContainer className={className}>
-      <HeaderContent>
-        <Link
-          target="_blank"
-          rel="noreferrer"
-          color="primary"
-          href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
-          className="collection-link"
-        >
-          <Text className="collection-link-text" color="primary-500" weight="light">
-            {`${collectionName} [id ${collectionId}]`}
-          </Text>
-          <div>
-            <Icon color="var(--color-primary-500)" size={16} name="arrow-up-right" />
-          </div>
-        </Link>
-        <Heading size={size === DeviceSize.xs ? '2' : '1'} className="collection-heading">
-          {title}
-        </Heading>
-        <TextOwner>
-          {isCurrentAccountOwner ? (
-            'You own it'
-          ) : (
-            <>
-              Owned by
-              <Address>
-                <IdentityIcon
-                  address={ownerAddress || ''}
-                  className="address-account-image"
-                />
-                {ownerAddress}
-              </Address>
-            </>
+    <div className={className}>
+      <HeaderContainerInfo>
+        <HeaderContent>
+          <Link
+            target="_blank"
+            rel="noreferrer"
+            color="primary"
+            href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
+            className="collection-link"
+          >
+            <Text className="collection-link-text" color="primary-500" weight="light">
+              {`${collectionName} [id ${collectionId}]`}
+            </Text>
+            <div>
+              <Icon color="var(--color-primary-500)" size={16} name="arrow-up-right" />
+            </div>
+          </Link>
+          <Heading
+            size={size === DeviceSize.xs ? '2' : '1'}
+            className="collection-heading"
+          >
+            {title}
+          </Heading>
+          <TextOwner>
+            {isCurrentAccountOwner ? (
+              'You own it'
+            ) : (
+              <>
+                Owned by
+                <Address>
+                  <IdentityIcon
+                    address={ownerAddress || ''}
+                    className="address-account-image"
+                  />
+                  {DeviceSize.xs === size
+                    ? shortcutText(ownerAddress || '')
+                    : ownerAddress}
+                </Address>
+              </>
+            )}
+          </TextOwner>
+        </HeaderContent>
+        <Dropdown
+          placement="right"
+          options={options}
+          optionRender={(opt) => (
+            <MenuOption
+              {...(opt as MenuOptionItem)}
+              disabled={opt.id === 'burn' && !currentChain.burnEnabled}
+            />
           )}
-        </TextOwner>
-        {isCurrentAccountOwner && (
-          <TransferBtn
-            className="transfer-btn"
-            title="Transfer"
-            role="outlined"
-            onClick={() => {
-              logUserEvent(UserEvents.TRANSFER_NFT);
-              onShowModal('transfer');
-            }}
+          onChange={(opt) => {
+            if (opt.id === 'burn' && !currentChain.burnEnabled) {
+              return;
+            }
+            onShowModal((opt as MenuOptionItem).id);
+          }}
+        >
+          <Icon
+            size={40}
+            name="rounded-rectangle-more"
+            color="var(--color-secondary-400)"
           />
-        )}
-      </HeaderContent>
-      <Dropdown
-        placement="right"
-        options={options}
-        optionRender={(opt) => (
-          <MenuOption
-            {...(opt as MenuOptionItem)}
-            disabled={opt.id === 'burn' && !currentChain.burnEnabled}
-          />
-        )}
-        onChange={(opt) => {
-          if (opt.id === 'burn' && !currentChain.burnEnabled) {
-            return;
-          }
-          onShowModal((opt as MenuOptionItem).id);
-        }}
-      >
-        <Icon
-          size={40}
-          name="rounded-rectangle-more"
-          color="var(--color-secondary-400)"
-        />
-      </Dropdown>
-    </HeaderContainer>
+        </Dropdown>
+      </HeaderContainerInfo>
+      {buttons && <div className="nft-details-buttons">{buttons}</div>}
+    </div>
   );
 };
 

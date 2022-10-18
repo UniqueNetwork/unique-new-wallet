@@ -1,21 +1,25 @@
-import React, { useEffect, VFC } from 'react';
+import React, { useEffect } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
-import { Token } from '@app/api/graphQL/types';
 import { useTokenBurn } from '@app/api';
+import { TToken } from '@app/pages/NFTDetails/type';
 
-interface BurnModalProps {
+interface BurnModalProps<T> {
   isVisible: boolean;
-  token?: Token;
+  token?: T;
   onClose(): void;
   onComplete(): void;
 }
 
-export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) => {
+export const BurnModal = <T extends TToken>({
+  isVisible,
+  token,
+  onClose,
+}: BurnModalProps<T>) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
   const { selectedAccount } = useAccounts();
@@ -44,8 +48,8 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
 
     getFee({
       address: selectedAccount.address,
-      collectionId: token.collection_id,
-      tokenId: token.token_id,
+      collectionId: token.collectionId,
+      tokenId: token.tokenId,
     });
   }, []);
 
@@ -57,8 +61,8 @@ export const BurnModal: VFC<BurnModalProps> = ({ isVisible, token, onClose }) =>
     submitWaitResult({
       payload: {
         address: selectedAccount.address,
-        collectionId: token.collection_id,
-        tokenId: token.token_id,
+        collectionId: token.collectionId,
+        tokenId: token.tokenId,
       },
     })
       .then(() => {

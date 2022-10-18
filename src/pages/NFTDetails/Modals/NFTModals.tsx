@@ -1,24 +1,22 @@
-import React, { VFC } from 'react';
-
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
 import { TransferModal } from '@app/pages/NFTDetails/Modals/TransferModal';
 import { BurnModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { ShareModal } from '@app/pages/NFTDetails/Modals/ShareModal';
-import { Token } from '@app/api/graphQL/types';
+import { TToken } from '@app/pages/NFTDetails/type';
 
-interface NFTModalsProps {
+interface NFTModalsProps<T> {
   modalType: TNFTModalType;
-  token?: Token;
+  token?: T;
   onComplete(): void;
   onClose(): void;
 }
 
-export const NFTModals: VFC<NFTModalsProps> = ({
+export const NFTModals = <T extends TToken>({
   modalType,
   token,
   onComplete,
   onClose,
-}) => {
+}: NFTModalsProps<T>) => {
   if (!token) {
     return null;
   }
