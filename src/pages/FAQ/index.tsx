@@ -32,6 +32,7 @@ const WrapperContentStyled = styled(WrapperContent)`
 
     .unique-accordion-content {
       padding: 10px;
+      line-height: 1.5;
       background-color: var(--color-blue-grey-100);
     }
 

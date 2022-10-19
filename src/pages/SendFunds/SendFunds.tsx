@@ -3,16 +3,16 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 
-import { useApi } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { Account } from '@app/account';
 import { Alert, Stages, TransferBtn, Modal } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
 import { useAccountBalanceTransfer } from '@app/api';
 
-import { SendFundsForm } from './SendFundsForm';
 import { ContentRow, ModalContent, ModalFooter } from '../components/ModalComponents';
-import { FundsForm } from './types';
+import { SendFundsForm } from './SendFundsForm';
 import { FeeLoader, TotalLoader } from './styles';
+import { FundsForm } from './types';
 
 export interface SendFundsProps {
   isVisible: boolean;
@@ -41,9 +41,6 @@ const TransferStagesModal: VFC = () => {
 export const SendFunds: FC<SendFundsProps> = (props) => {
   const { onClose, senderAccount, onSendSuccess, chain } = props;
 
-  const { setCurrentChain } = useApi();
-  const { info, error } = useNotifications();
-
   const {
     fee,
     feeFormatted,
@@ -70,6 +67,10 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   } = sendFundsForm;
   const sendFundsValues = useWatch<FundsForm>({ control });
   const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
+
+  const size = useDeviceSize();
+  const { setCurrentChain } = useApi();
+  const { info, error } = useNotifications();
 
   useEffect(() => {
     if (!feeError) {
@@ -174,6 +175,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
             <TransferBtn
               role="primary"
               title="Confirm"
+              wide={size === DeviceSize.xs}
               disabled={!isValid || feeLoading}
               onClick={handleSubmit(submitHandler)}
             />
