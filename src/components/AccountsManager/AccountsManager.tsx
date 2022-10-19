@@ -1,11 +1,11 @@
+import { ReactNode, useEffect } from 'react';
 import { Dropdown, Icon, IconProps, Text } from '@unique-nft/ui-kit';
-import React, { ReactNode, useEffect } from 'react';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
 
 import { isTouchDevice } from '../../utils';
-import './AccountsManager.scss';
 import { AccountsManagerDropdown } from './components';
+import './AccountsManager.scss';
 
 interface SelectOptionProps {
   [x: string | number | symbol]: unknown;
@@ -37,7 +37,7 @@ export interface AccountsManagerProps {
   isLoading?: boolean;
   isTouch?: boolean;
   stake?: {
-    visability?: boolean;
+    visibility?: boolean;
     disabled?: boolean;
     onStake?: () => void;
     description?: string;
