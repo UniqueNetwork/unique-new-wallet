@@ -56,10 +56,13 @@ export const Header = () => {
     if (targetAccount) {
       changeAccount(targetAccount);
     }
+
+    setAccountManagerOpen(false);
   };
 
   const handleChangeNetwork = (val: INetwork) => {
     setCurrentChain(config.activeChains[val.id]);
+    setAccountManagerOpen(false);
     navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
   };
 
@@ -121,7 +124,7 @@ export const Header = () => {
             isTouch={deviceSize <= DeviceSize.xs}
             open={isAccountManagerOpen}
             stake={{
-              visability: true,
+              visibility: true,
               disabled: true,
               onStake: () => {
                 console.log('Stake!');
