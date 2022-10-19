@@ -1,9 +1,9 @@
-import { Heading, Text, Button } from '@unique-nft/ui-kit';
+import { Button, Heading, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { Dispatch, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useApi } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { ROUTE } from '@app/routes';
 
 type IntroCardProps = {
@@ -25,16 +25,26 @@ export const IntroCard = ({
 }: IntroCardProps) => {
   const navigation = useNavigate();
   const { currentChain } = useApi();
+  const size = useDeviceSize();
+
+  const isXsMobile = size === DeviceSize.xs;
+
   return (
     <IntroCardWrapper>
       <img width="96" src={imgPath} alt="" />
-      <Heading size="2">{title}</Heading>
+      <Heading size={isXsMobile ? '3' : '2'}>{title}</Heading>
       <Text appearance="block">{description}</Text>
       <div className="buttons-wrapper">
         {isLast ? (
           <div className="group-btn">
-            <Button title="Get started" role="primary" onClick={onCloseModal} />{' '}
             <Button
+              title="Get started"
+              wide={isXsMobile}
+              role="primary"
+              onClick={onCloseModal}
+            />{' '}
+            <Button
+              wide={isXsMobile}
               title="Visit FAQ"
               onClick={() => {
                 onCloseModal?.();
@@ -46,6 +56,7 @@ export const IntroCard = ({
           <Button
             className="next-button"
             title="Next"
+            wide={isXsMobile}
             role="primary"
             onClick={() => {
               setActiveSlide((prev) => prev + 1);
@@ -72,19 +83,23 @@ const IntroCardWrapper = styled.div`
   }
 
   .next-button {
-    width: 135px;
+    min-width: 135px;
   }
 
   .group-btn {
     display: flex;
     justify-content: center;
-
-    button + button {
-      margin-left: 10px;
-    }
+    gap: 10px;
   }
 
   .buttons-wrapper {
-    margin-top: 25px;
+    width: 100%;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 567px) {
+    .group-btn {
+      flex-direction: column;
+    }
   }
 `;
