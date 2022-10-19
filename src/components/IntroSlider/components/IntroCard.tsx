@@ -89,10 +89,7 @@ const IntroCardWrapper = styled.div`
   .group-btn {
     display: flex;
     justify-content: center;
-
-    button + button {
-      margin-left: 10px;
-    }
+    gap: 10px;
   }
 
   .buttons-wrapper {
@@ -102,12 +99,7 @@ const IntroCardWrapper = styled.div`
 
   @media (max-width: 567px) {
     .group-btn {
-      display: block;
-
-      button + button {
-        margin-left: 0;
-        margin-top: 10px;
-      }
+      flex-direction: column;
     }
   }
 `;
