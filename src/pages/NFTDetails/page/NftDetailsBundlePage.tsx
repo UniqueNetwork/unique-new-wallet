@@ -219,7 +219,7 @@ export const NftDetailsBundlePage = () => {
 };
 
 const BundleWrapper = styled.div`
-  margin-top: 24px;
+  margin-top: calc(var(--prop-gap) * 1.5);
 
   @media screen and (max-width: 567px) {
     display: none;

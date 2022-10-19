@@ -75,7 +75,7 @@ const Title = ({
 const NestedDetails = styled.div`
   @media (min-width: 1024px) {
     display: block;
-    padding: 16px 32px;
+    padding: var(--prop-gap) calc(var(--prop-gap) * 2);
     background-color: #ededee50;
     width: calc(100% - 536px);
     height: 373px;

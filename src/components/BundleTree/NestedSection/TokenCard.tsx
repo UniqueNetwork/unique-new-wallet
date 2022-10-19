@@ -220,7 +220,7 @@ const IconWrapper = styled.div`
   && {
     width: 16px;
     height: 16px;
-    margin-left: 4px;
+    margin-left: calc(var(--prop-gap) / 4);
     transform: rotate(-90deg);
 
     path {
