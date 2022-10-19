@@ -19,7 +19,7 @@ import { UserEvents } from '@app/utils/logUserEvent';
 
 import logo from '../../static/icons/logo.svg';
 import { AccountsManager } from '../AccountsManager';
-import { Footer } from '../Footer/Footer';
+import { Footer } from '../Footer';
 import MenuLink from './MenuLink';
 
 export const Header = () => {

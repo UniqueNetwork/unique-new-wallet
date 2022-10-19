@@ -2,7 +2,6 @@ import { Icon } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { config } from '@app/config';
-import { Primary500 } from '@app/styles/colors';
 
 export const Footer = () => {
   return (
@@ -17,19 +16,19 @@ export const Footer = () => {
       </FooterText>
       <FooterLinks>
         <IconLink href={config.socialLinks.telegram} target="_blank" rel="noreferrer">
-          <Icon name="social-telegram" color={Primary500} size={32} />
+          <Icon name="social-telegram" color="var(--color-primary-500)" size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.twitter} target="_blank" rel="noreferrer">
-          <Icon name="social-twitter" color={Primary500} size={32} />
+          <Icon name="social-twitter" color="var(--color-primary-500)" size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.discord} target="_blank" rel="noreferrer">
-          <Icon name="social-discord" color={Primary500} size={32} />
+          <Icon name="social-discord" color="var(--color-primary-500)" size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.github} target="_blank" rel="noreferrer">
-          <Icon name="social-github" color={Primary500} size={32} />
+          <Icon name="social-github" color="var(--color-primary-500)" size={32} />
         </IconLink>
         <IconLink href={config.socialLinks.subsocial} target="_blank" rel="noreferrer">
-          <Icon name="social-subsocial" color={Primary500} size={32} />
+          <Icon name="social-subsocial" color="var(--color-primary-500)" size={32} />
         </IconLink>
       </FooterLinks>
     </FooterWrapper>

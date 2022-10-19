@@ -1,4 +1,4 @@
-import { useEffect, useState, VFC } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
@@ -7,21 +7,21 @@ import {
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
 import { useTokenTransfer } from '@app/api';
-import { Token } from '@app/api/graphQL/types';
+import { TToken } from '@app/pages/NFTDetails/type';
 
-interface TransferModalProps {
+interface TransferModalProps<T> {
   isVisible: boolean;
-  token?: Token;
+  token?: T;
   onComplete(): void;
   onClose(): void;
 }
 
-export const TransferModal: VFC<TransferModalProps> = ({
+export const TransferModal = <T extends TToken>({
   isVisible,
   token,
   onComplete,
   onClose,
-}) => {
+}: TransferModalProps<T>) => {
   const [recipient, setRecipient] = useState<string | undefined>();
 
   const { selectedAccount } = useAccounts();
@@ -51,8 +51,8 @@ export const TransferModal: VFC<TransferModalProps> = ({
       payload: {
         to: recipient,
         from: selectedAccount.address,
-        collectionId: token.collection_id,
-        tokenId: token.token_id,
+        collectionId: token.collectionId,
+        tokenId: token.tokenId,
         address: selectedAccount.address,
       },
     })
@@ -74,8 +74,8 @@ export const TransferModal: VFC<TransferModalProps> = ({
     getFee({
       to: recipient,
       from: selectedAccount.address,
-      collectionId: token.collection_id,
-      tokenId: token.token_id,
+      collectionId: token.collectionId,
+      tokenId: token.tokenId,
       address: selectedAccount.address,
     });
   }, [recipient]);

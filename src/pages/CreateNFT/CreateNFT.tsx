@@ -6,7 +6,11 @@ import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
 
-import { useCollectionQuery, useExtrinsicCacheEntities, useTokenCreate } from '@app/api';
+import {
+  useCollectionGetById,
+  useExtrinsicCacheEntities,
+  useTokenCreate,
+} from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { MintingBtn, StatusTransactionModal } from '@app/components';
 import {
@@ -103,7 +107,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
   });
-  const { data: collection } = useCollectionQuery(formValues.collectionId ?? 0);
+  const { data: collection } = useCollectionGetById(formValues.collectionId ?? 0);
 
   const isOldCollection = collection?.schema?.schemaName === '_old_';
 
