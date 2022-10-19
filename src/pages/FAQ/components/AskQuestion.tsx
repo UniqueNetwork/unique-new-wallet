@@ -18,8 +18,9 @@ import {
   AskQuestionRequestType,
   useAskQuestionRequest,
 } from '@app/api/restApi/ask-question/useAskQuestionRequest';
-import { config } from '@app/config';
 import { Modal } from '@app/components/Modal';
+import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { config } from '@app/config';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -38,6 +39,8 @@ const Wrapper = styled.div`
 
 export const AskQuestion = () => {
   const [visibleModal, setVisibleModal] = useState(false);
+
+  const size = useDeviceSize();
   const form = useForm<AskQuestionRequestType>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -150,9 +153,10 @@ export const AskQuestion = () => {
 
             <Button
               title="Send"
-              disabled={!isValid}
               role="primary"
               type="submit"
+              disabled={!isValid}
+              wide={size === DeviceSize.xs}
               onClick={handleSubmit(onSubmit)}
             />
           </FormProvider>
@@ -176,8 +180,6 @@ const ModalContent = styled.div`
     }
   }
   .unique-button {
-    width: 88px;
-    min-width: 88px;
     margin-left: auto;
   }
 `;
