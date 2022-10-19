@@ -51,8 +51,8 @@ function BundleTree<T extends INode>({
 
 const Wrapper = styled.div`
   display: flex;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
-  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: var(--prop-border-radius);
 `;
 
 export default BundleTree;

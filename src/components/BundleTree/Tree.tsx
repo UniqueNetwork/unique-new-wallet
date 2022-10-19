@@ -98,12 +98,12 @@ export function Tree<T extends INode>({
 }
 
 const TreeStyled = styled.div`
-  width: 536px;
+  width: 100%;
   height: 373px;
   overflow: auto;
 
-  @media (max-width: 1023px) {
-    width: 100%;
+  @media (min-width: 1024px) {
+    width: 536px;
   }
 `;
 

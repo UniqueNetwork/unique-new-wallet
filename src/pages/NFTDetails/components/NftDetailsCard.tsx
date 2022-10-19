@@ -59,7 +59,7 @@ const NftDetailsInfo = styled.div`
     background: var(--color-additional-light);
     border: 1px solid var(--color-blue-grey-200);
     padding: 5px 8px;
-    border-radius: 4px;
+    border-radius: var(--prop-border-radius);
     position: absolute;
     right: 15px;
     top: 15px;

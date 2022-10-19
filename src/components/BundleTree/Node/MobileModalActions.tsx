@@ -25,15 +25,18 @@ const ModalWrapper = styled.div`
   @media (max-width: 767px) {
     flex-direction: column;
     row-gap: var(--gap);
-    & .unique-modal-wrapper .unique-modal {
-      width: calc(520px - (var(--gap) * 3));
-    }
   }
 
-  @media (max-width: 567px) {
-    & .unique-modal-wrapper .unique-modal {
-      padding: 24px 16px;
-      width: calc(304px - (var(--gap) * 3));
+  & .unique-modal-wrapper {
+    .unique-modal {
+      @media (max-width: 567px) {
+        padding: 24px 16px;
+        width: calc(304px - (var(--gap) * 3));
+      }
+
+      @media (max-width: 767px) {
+        width: calc(520px - (var(--gap) * 3));
+      }
     }
   }
 `;

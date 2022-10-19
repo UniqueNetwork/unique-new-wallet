@@ -127,13 +127,13 @@ const TokenCardWrapper = styled.div`
   flex-direction: column;
   padding: 12px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: calc(var(--prop-border-radius) * 2);
   background-color: var(--color-additional-light);
   .picture {
     width: 128px;
     height: 128px;
     img {
-      border-radius: 4px;
+      border-radius: var(--prop-border-radius);
       max-width: 100%;
       max-height: 100%;
       object-fit: fill;
@@ -162,7 +162,7 @@ const ActionsMenuWrapper = styled.div`
       padding: 4px;
       background-color: var(--color-additional-dark);
       border: 2px solid #ffffff;
-      border-radius: 4px;
+      border-radius: var(--prop-border-radius);
       color: var(--color-additional-light);
       height: 32px;
       &:hover {

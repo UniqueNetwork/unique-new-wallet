@@ -73,17 +73,17 @@ const Title = ({
 };
 
 const NestedDetails = styled.div`
-  display: block;
-  padding: 16px 32px;
-  background-color: #ededee50;
-  width: calc(100% - 536px);
-  height: 373px;
-  overflow: auto;
-  box-sizing: border-box;
-
-  @media (max-width: 1023px) {
-    display: none;
+  @media (min-width: 1024px) {
+    display: block;
+    padding: 16px 32px;
+    background-color: #ededee50;
+    width: calc(100% - 536px);
+    height: 373px;
+    overflow: auto;
+    box-sizing: border-box;
   }
+
+  display: none;
 `;
 
 const NestedTokens = styled.div`
