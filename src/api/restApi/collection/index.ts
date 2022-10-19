@@ -1,2 +1,2 @@
 export * from './useCollectionCreate';
-export * from './useCollectionQuery';
+export * from './useCollectionGetById';

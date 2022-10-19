@@ -3,11 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button, Heading, Text } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
+import { TokenByIdResponse } from '@unique-nft/sdk';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { useTokenGetBundle, useTokenGetById } from '@app/api';
+import { useCollectionGetById, useTokenGetBundle, useTokenGetById } from '@app/api';
 import BundleTree from '@app/components/BundleTree/BundleTree';
 import NodeView from '@app/components/BundleTree/Node/NodeView';
 import { INestingToken } from '@app/components/BundleTree/types';
@@ -66,13 +67,35 @@ export const NftDetailsBundlePage = () => {
   });
 
   const {
-    data: token,
+    data: tokenById,
     isLoading: isLoadingToken,
     refetch: refetchToken,
   } = useTokenGetById({
     collectionId: parseInt(collectionId),
     tokenId: parseInt(tokenId),
   });
+
+  const {
+    data: collection,
+    isLoading: isLoadingCollection,
+    refetch: refetchCollection,
+  } = useCollectionGetById(parseInt(collectionId));
+
+  const token:
+    | (TokenByIdResponse & {
+        collectionName: string;
+        name: string;
+      })
+    | undefined = useMemo(() => {
+    if (!tokenById) {
+      return undefined;
+    }
+    return {
+      ...tokenById,
+      name: collection ? `${collection.tokenPrefix} #${tokenById.tokenId}` : '',
+      collectionName: collection?.name || '',
+    };
+  }, [tokenById, collection]);
 
   const isOwner = useIsOwner(token);
 
@@ -88,6 +111,7 @@ export const NftDetailsBundlePage = () => {
   const onComplete = () => {
     refetchToken();
     refetchBundle();
+    refetchCollection();
     setCurrentModal('none');
   };
 
@@ -126,7 +150,7 @@ export const NftDetailsBundlePage = () => {
       })}
     >
       <NftDetailsLayout
-        isLoading={isLoadingBundleToken || isLoadingToken}
+        isLoading={isLoadingBundleToken || isLoadingToken || isLoadingCollection}
         tokenExist={!!bundleToken && !!token}
       >
         <NftDetailsCard

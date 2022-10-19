@@ -3,7 +3,7 @@ import { CollectionInfoWithSchemaResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
 
-export const useCollectionQuery = (
+export const useCollectionGetById = (
   collectionId?: number,
 ): UseQueryResult<CollectionInfoWithSchemaResponse> => {
   const { api } = useApi();

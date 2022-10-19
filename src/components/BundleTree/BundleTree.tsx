@@ -19,11 +19,7 @@ function BundleTree<T extends INode>({
 }: IBundleTree<T>) {
   const [selectedToken, setSelectedToken] = useState<T | null>(null);
   const onNodeClicked = useCallback((data: T) => {
-    if (!data.selected) {
-      setSelectedToken(null);
-    } else {
-      setSelectedToken(data);
-    }
+    setSelectedToken(data.selected ? data : null);
     onNodeClickedProps(data);
   }, []);
 

@@ -16,7 +16,7 @@ export const useTokenIsBundle = ({
     ['token', 'is-bundle', collectionId, tokenId],
     () => api.tokens.isBundle({ collectionId: collectionId!, tokenId: tokenId! }),
     {
-      enabled: !!collectionId || !!collectionId,
+      enabled: !!collectionId || !!tokenId,
     },
   );
 };

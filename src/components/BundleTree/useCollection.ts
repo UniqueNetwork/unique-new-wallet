@@ -1,7 +1,7 @@
-import { useCollectionQuery } from '@app/api';
+import { useCollectionGetById } from '@app/api';
 
 export const useCollection = (collectionId: number | undefined) => {
-  const { data, isLoading } = useCollectionQuery(collectionId);
+  const { data, isLoading } = useCollectionGetById(collectionId);
 
   return {
     collection: data,

@@ -53,6 +53,25 @@ export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
   );
 };
 
+const Title = ({
+  isCollectionLoading,
+  prefix,
+  token,
+}: {
+  isCollectionLoading: boolean;
+  prefix: string;
+  token: INestingToken;
+}) => {
+  if (isCollectionLoading) {
+    return <Loader size="large" />;
+  }
+  return (
+    <Text color="additional-dark" size="l">
+      Nested in {prefix} #{token.tokenId}
+    </Text>
+  );
+};
+
 const NestedDetails = styled.div`
   display: block;
   padding: 16px 32px;
@@ -78,21 +97,6 @@ const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-const Title: FC<{
-  isCollectionLoading: boolean;
-  prefix: string;
-  token: INestingToken;
-}> = ({ isCollectionLoading, prefix, token }) => {
-  if (isCollectionLoading) {
-    return <Loader size="large" />;
-  }
-  return (
-    <Text color="additional-dark" size="l">
-      Nested in {prefix} #{token.tokenId}
-    </Text>
-  );
-};
 
 const NoNestedWrapper = styled.div`
   display: flex;

@@ -25,6 +25,6 @@ export const useTokenGetBundle = ({
   };
 
   return useQuery(['token', 'get-bundle', collectionId, tokenId], () => getBundle(), {
-    enabled: !!collectionId || !!collectionId,
+    enabled: !!collectionId || !!tokenId,
   });
 };

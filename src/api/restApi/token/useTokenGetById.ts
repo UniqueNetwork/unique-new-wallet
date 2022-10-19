@@ -9,22 +9,14 @@ export const useTokenGetById = ({
 }: {
   collectionId?: number;
   tokenId?: number;
-}): UseQueryResult<TokenByIdResponse & { collectionName: string; name: string }> => {
+}): UseQueryResult<TokenByIdResponse> => {
   const { api } = useApi();
 
-  const getToken = async () => {
-    const [token, collection] = await Promise.all([
-      api.tokens.get({ collectionId: collectionId!, tokenId: tokenId! }),
-      api.collections.get({ collectionId: collectionId! }),
-    ]);
-    return {
-      ...token,
-      name: `${collection.tokenPrefix} #${token.tokenId}`,
-      collectionName: collection.name,
-    };
-  };
-
-  return useQuery(['token', collectionId, tokenId], () => getToken(), {
-    enabled: !!collectionId || !!collectionId,
-  });
+  return useQuery(
+    ['token', collectionId, tokenId],
+    () => api.tokens.get({ collectionId: collectionId!, tokenId: tokenId! }),
+    {
+      enabled: !!collectionId || !!tokenId,
+    },
+  );
 };
