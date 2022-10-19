@@ -175,7 +175,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
             <TransferBtn
               role="primary"
               title="Confirm"
-              wide={size <= DeviceSize.sm}
+              wide={size <= DeviceSize.xs}
               disabled={!isValid || feeLoading}
               onClick={handleSubmit(submitHandler)}
             />
