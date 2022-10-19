@@ -94,7 +94,7 @@ const IntroCardWrapper = styled.div`
 
   .buttons-wrapper {
     width: 100%;
-    margin-top: 25px;
+    margin-top: 24px;
   }
 
   @media (max-width: 567px) {
