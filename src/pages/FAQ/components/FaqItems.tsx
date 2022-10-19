@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Icon, Link as UiLink } from '@unique-nft/ui-kit';
 
+import { config } from '@app/config';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 
 export const faqItems = (activeNetwork: string) => {
@@ -125,7 +126,16 @@ export const faqItems = (activeNetwork: string) => {
           />
           .
           <br />
-          UNQ coming soon on the exchange.
+          To obtain UNQ visit the{' '}
+          <UiLink
+            href={config.cryptoExchangeUNQ}
+            role="primary"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Huobi Global
+            <Icon color="currentColor" name="arrow-up-right" size={16} />
+          </UiLink>
         </p>
       ),
     },
