@@ -9,6 +9,7 @@ import {
   Text,
   Tooltip,
   TooltipAlign,
+  Toggle,
 } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 
@@ -44,8 +45,27 @@ export const NFTAttributes = () => {
       <FormBody>
         <AttributesTable />
         <AdvancedSettingsAccordion title="Advanced settings">
+          <FormRow>
+            <Heading size="4">Nesting</Heading>
+            <Text>
+              A way to group tokens in a nested, tree-like structure within and NFT.
+              Nesting of both NFTs and RFTs in unlimited quantities is supported.
+            </Text>
+          </FormRow>
           <SettingsRow>
-            <Text>This section contains marketplace related settings.</Text>
+            <Controller
+              name="nesting.tokenOwner"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <Toggle
+                    label="Nesting enabled"
+                    on={Boolean(value)}
+                    size="m"
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
           </SettingsRow>
           <SettingsRow>
             <Controller
@@ -163,6 +183,7 @@ const AdvancedSettingsAccordion = styled(Accordion)`
   .unique-accordion-title {
     font-size: 24px;
     line-height: 32px;
+    margin-bottom: calc(var(--prop-gap));
   }
 
   &.expanded .unique-accordion-content {

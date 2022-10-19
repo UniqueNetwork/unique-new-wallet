@@ -1,3 +1,5 @@
+import { CollectionNestingPermissionsDto } from '@unique-nft/sdk';
+
 export type Warning = {
   title: string;
   description: string;
@@ -30,4 +32,5 @@ export type CollectionForm = {
   tokenLimit?: number;
   ownerCanDestroy?: boolean;
   attributes?: AttributeField[];
+  nesting: Pick<CollectionNestingPermissionsDto, 'tokenOwner'>;
 };

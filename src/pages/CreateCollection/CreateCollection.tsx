@@ -77,6 +77,9 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       symbol: '',
       description: '',
       address: selectedAccount?.address,
+      nesting: {
+        tokenOwner: false,
+      },
     },
   });
   const {
