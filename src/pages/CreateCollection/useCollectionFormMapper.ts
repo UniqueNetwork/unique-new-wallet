@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /*eslint-disable @typescript-eslint/no-unnecessary-type-assertion*/
+import { CreateCollectionBody } from '@unique-nft/sdk';
+
 import { config } from '@app/config';
-import { CreateCollectionNewRequest } from '@app/types/Api';
 
 import { CollectionForm } from './types';
 
 export const useCollectionFormMapper = () => {
-  const mapper = (form: CollectionForm): CreateCollectionNewRequest => {
+  const mapper = (form: CollectionForm): CreateCollectionBody => {
     const {
       address,
       name,
@@ -16,12 +17,16 @@ export const useCollectionFormMapper = () => {
       ownerCanDestroy,
       sponsorAddress,
       coverPictureIpfsCid,
+      nesting,
     } = form;
 
-    const request: CreateCollectionNewRequest = {
+    const request: CreateCollectionBody = {
       name,
       address,
       description,
+      permissions: {
+        nesting,
+      },
       sponsorship: {
         isConfirmed: false,
         address: sponsorAddress,

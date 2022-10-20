@@ -84,7 +84,7 @@ export const UploadWidget = styled.div`
 
 export const SettingsRow = styled.div`
   &:not(:last-child) {
-    margin-bottom: calc(var(--prop-gap) * 1.5);
+    margin-bottom: calc(var(--prop-gap) * 2);
   }
 
   label {
