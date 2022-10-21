@@ -3,6 +3,8 @@ import { TokenByIdResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
 
+import { queryKeys } from '../keysConfig';
+
 export const useTokenGetById = ({
   collectionId,
   tokenId,
@@ -13,7 +15,7 @@ export const useTokenGetById = ({
   const { api } = useApi();
 
   return useQuery(
-    ['token', collectionId, tokenId],
+    queryKeys.token.byId(collectionId, tokenId),
     () => api.tokens.get({ collectionId: collectionId!, tokenId: tokenId! }),
     {
       enabled: !!collectionId || !!tokenId,

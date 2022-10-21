@@ -3,6 +3,8 @@ import { IsBundleResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
 
+import { queryKeys } from '../keysConfig';
+
 export const useTokenIsBundle = ({
   collectionId,
   tokenId,
@@ -13,7 +15,7 @@ export const useTokenIsBundle = ({
   const { api } = useApi();
 
   return useQuery(
-    ['token', 'is-bundle', collectionId, tokenId],
+    queryKeys.token.isBundle(collectionId, tokenId),
     () => api.tokens.isBundle({ collectionId: collectionId!, tokenId: tokenId! }),
     {
       enabled: !!collectionId || !!tokenId,

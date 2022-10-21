@@ -4,6 +4,7 @@ import { AllBalancesResponse } from '@unique-nft/sdk';
 import { useApi } from '@app/hooks';
 
 import { calculateSliceBalance } from './utils';
+import { queryKeys } from '../keysConfig';
 
 export const useAccountsBalanceService = (
   addresses: string[],
@@ -21,7 +22,7 @@ export const useAccountsBalanceService = (
   };
 
   return useQuery(
-    ['account', 'balances', ...addresses],
+    queryKeys.account.balances(addresses),
     () => getAccountsBalance(addresses),
     {
       enabled: addresses.length !== 0,
