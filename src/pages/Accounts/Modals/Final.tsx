@@ -1,7 +1,7 @@
-import { createRef, FC, useCallback, useMemo } from 'react';
-import { Button, Icon, InputText, Tooltip, TooltipAlign } from '@unique-nft/ui-kit';
+import { FC, useCallback, useMemo } from 'react';
+import { Button, Icon, InputText, TooltipAlign } from '@unique-nft/ui-kit';
 
-import { Alert } from '@app/components';
+import { Alert, TooltipWrapper } from '@app/components';
 import { LabelText, StepsTextStyled } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
@@ -14,9 +14,6 @@ import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
 
-const keypairTooltip = createRef<HTMLDivElement>();
-const pathTooltip = createRef<HTMLDivElement>();
-const seedTooltip = createRef<HTMLDivElement>();
 const tooltipAlign: TooltipAlign = {
   appearance: 'horizontal',
   horizontal: 'right',
@@ -55,17 +52,18 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Partial seed
-            <Tooltip align={tooltipAlign} targetRef={seedTooltip}>
-              The seed is&nbsp;your key to&nbsp;the account. Knowing the seed allows you,
-              or&nbsp;anyone else who knows the seed, to&nbsp;re-generate and control this
-              account.
-            </Tooltip>
-            <Icon
-              ref={seedTooltip}
-              name="question"
-              size={20}
-              color="var(--color-primary-500)"
-            />
+            <TooltipWrapper
+              align={tooltipAlign}
+              message={
+                <>
+                  The seed is&nbsp;your key to&nbsp;the account. Knowing the seed allows
+                  you, or&nbsp;anyone else who knows the seed, to&nbsp;re-generate and
+                  control this account.
+                </>
+              }
+            >
+              <Icon name="question" size={20} color="var(--color-primary-500)" />
+            </TooltipWrapper>
           </LabelText>
           <InputText value={shortSeed} disabled={true} />
         </ContentRow>
@@ -73,17 +71,18 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Keypair type
-            <Tooltip align={tooltipAlign} targetRef={keypairTooltip}>
-              Substrate supports a&nbsp;number of&nbsp;different crypto mechanisms.
-              As&nbsp;such the keyring allows for the creation and management
-              of&nbsp;different types of&nbsp;crypto.
-            </Tooltip>
-            <Icon
-              ref={keypairTooltip}
-              name="question"
-              size={20}
-              color="var(--color-primary-500)"
-            />
+            <TooltipWrapper
+              align={tooltipAlign}
+              message={
+                <>
+                  Substrate supports a&nbsp;number of&nbsp;different crypto mechanisms.
+                  As&nbsp;such the keyring allows for the creation and management
+                  of&nbsp;different types of&nbsp;crypto.
+                </>
+              }
+            >
+              <Icon name="question" size={20} color="var(--color-primary-500)" />
+            </TooltipWrapper>
           </LabelText>
           <InputText value={defaultPairType} disabled={true} />
         </ContentRow>
@@ -91,16 +90,17 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           {/* TODO: rewrite to component props [UI-108] */}
           <LabelText size="m">
             Derivation path
-            <Tooltip align={tooltipAlign} targetRef={pathTooltip}>
-              If&nbsp;you would like to&nbsp;create and manage several accounts
-              on&nbsp;the network using the same seed, you can use derivation paths.
-            </Tooltip>
-            <Icon
-              ref={pathTooltip}
-              name="question"
-              size={20}
-              color="var(--color-primary-500)"
-            />
+            <TooltipWrapper
+              align={tooltipAlign}
+              message={
+                <>
+                  If&nbsp;you would like to&nbsp;create and manage several accounts
+                  on&nbsp;the network using the same seed, you can use derivation paths.
+                </>
+              }
+            >
+              <Icon name="question" size={20} color="var(--color-primary-500)" />
+            </TooltipWrapper>
           </LabelText>
           <InputText value={derivePath || 'None provided'} disabled={true} />
         </ContentRow>

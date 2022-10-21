@@ -1,4 +1,4 @@
-import React, { createRef, FC, useCallback, useMemo, useState, VFC } from 'react';
+import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
@@ -8,7 +8,6 @@ import {
   InputText,
   TableColumnProps,
   Text,
-  Tooltip,
 } from '@unique-nft/ui-kit';
 
 import { Account, AccountSigner } from '@app/account';
@@ -20,6 +19,7 @@ import {
   Confirm,
   PagePaper,
   Table,
+  TooltipWrapper,
   TransferBtn,
 } from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
@@ -196,19 +196,14 @@ const TableTitle = styled.span.attrs({ className: 'accounts-table-title' })`
   gap: 0.4rem;
 `;
 
-const AccountTitle = () => {
-  const tooltipRef = createRef<HTMLDivElement>();
-
-  return (
-    <>
-      Account
-      <Tooltip targetRef={tooltipRef}>
-        <CaptionText />
-      </Tooltip>
-      <Icon ref={tooltipRef} name="question" size={20} color="var(--color-primary-500)" />
-    </>
-  );
-};
+const AccountTitle = () => (
+  <>
+    Account
+    <TooltipWrapper message={<CaptionText />}>
+      <Icon name="question" size={20} color="var(--color-primary-500)" />
+    </TooltipWrapper>
+  </>
+);
 
 const getButtonRender = (unit?: string) => {
   switch (unit) {

@@ -84,17 +84,15 @@ export const faqItems = (activeNetwork: string) => {
       title: 'How much does it cost to create a collection or a token?',
       content: (
         <>
-          <p>
-            The cost of create the collection rally consists of: <br />
-            <ol>
-              <li>Fixed commission Unique = 2 coins.</li>
-              <li>Transfer fee ≈ 0.1 coins.</li>
-              <li>
-                Network fees, which varies depending on the amount of data uploaded to the
-                blockchain.
-              </li>
-            </ol>
-          </p>
+          <p>The cost of create the collection rally consists of:</p>
+          <ol>
+            <li>Fixed commission Unique = 2 coins.</li>
+            <li>Transfer fee ≈ 0.1 coins.</li>
+            <li>
+              Network fees, which varies depending on the amount of data uploaded to the
+              blockchain.
+            </li>
+          </ol>
           <p>
             The cost of minting the token depends on the number of properties specified.
           </p>
@@ -152,12 +150,13 @@ export const faqItems = (activeNetwork: string) => {
     {
       title: 'How can I transfer tokens to the other wallet or exchange?',
       content: (
-        <p>
-          Both fungible and non-fungible tokens can be transferred via the corresponding
-          utility page.
-          <br />
-          For:
-          <br />
+        <>
+          <p>
+            Both fungible and non-fungible tokens can be transferred via the corresponding
+            utility page.
+            <br />
+            For:
+          </p>
           <ol>
             <li>
               Fungible tokens — go to{' '}
@@ -170,7 +169,7 @@ export const faqItems = (activeNetwork: string) => {
             </li>
             <li>NFTs — go to your NFT page and click on “Transfer” button</li>
           </ol>
-        </p>
+        </>
       ),
     },
     {

@@ -1,16 +1,9 @@
-import React, { createRef, useCallback, VFC } from 'react';
-import {
-  Button,
-  Icon,
-  InputText,
-  Select,
-  TableColumnProps,
-  Tooltip,
-} from '@unique-nft/ui-kit';
+import { ReactNode, useCallback, VFC } from 'react';
 import styled from 'styled-components';
 import { Controller, useFieldArray, useWatch } from 'react-hook-form';
+import { Button, Icon, InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
 
-import { Table } from '@app/components';
+import { Table, TooltipWrapper } from '@app/components';
 
 import { EnumsInputController } from '../components/EnumsInput/EnumsInputController';
 import trash from '../../../static/icons/trash.svg';
@@ -20,22 +13,14 @@ interface AttributesTableProps {
   className?: string;
 }
 
-const ColumnTitle: VFC<{ title: string; tooltip: string }> = ({ title, tooltip }) => {
-  const valuesTooltip = createRef<HTMLDivElement>();
-
-  return (
-    <TableTitle>
-      {title}
-      <Tooltip targetRef={valuesTooltip}>{tooltip}</Tooltip>
-      <Icon
-        ref={valuesTooltip}
-        name="question"
-        size={18}
-        color="var(--color-primary-500)"
-      />
-    </TableTitle>
-  );
-};
+const ColumnTitle: VFC<{ title: string; tooltip: ReactNode }> = ({ title, tooltip }) => (
+  <TableTitle>
+    {title}
+    <TooltipWrapper message={tooltip}>
+      <Icon name="question" size={18} color="var(--color-primary-500)" />
+    </TooltipWrapper>
+  </TableTitle>
+);
 
 const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
   const type = useWatch({ name: `attributes.${index}.type` } as any);
@@ -59,7 +44,10 @@ const attributesColumns: TableColumnProps[] = [
     width: '21%',
     field: 'name',
     title: (
-      <ColumnTitle title="Attribute" tooltip="Textual traits that show up on Token" />
+      <ColumnTitle
+        title="Attribute"
+        tooltip={<>Textual traits that show up&nbsp;on&nbsp;Token</>}
+      />
     ),
     render(data, attribute, { rowIndex }) {
       const inputRegExp = /^[^0-9].*$|^$/;
@@ -89,7 +77,10 @@ const attributesColumns: TableColumnProps[] = [
     width: '17%',
     field: 'fieldType',
     title: (
-      <ColumnTitle title="Type" tooltip="Select type of information you want to create" />
+      <ColumnTitle
+        title="Type"
+        tooltip={<>Select type of&nbsp;information you want to&nbsp;create</>}
+      />
     ),
     render: (data, attribute, { rowIndex }) => (
       <Controller
@@ -111,7 +102,7 @@ const attributesColumns: TableColumnProps[] = [
   {
     width: '17%',
     field: 'rule',
-    title: <ColumnTitle title="Rule" tooltip="Set a rule for your attribute" />,
+    title: <ColumnTitle title="Rule" tooltip={<>Set a&nbsp;rule for your attribute</>} />,
     render: (data, attribute, { rowIndex }) => (
       <Controller
         name={`attributes.${rowIndex}.optional`}
