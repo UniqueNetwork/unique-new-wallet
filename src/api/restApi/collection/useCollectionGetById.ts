@@ -3,13 +3,15 @@ import { CollectionInfoWithSchemaResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
 
+import { queryKeys } from '../keysConfig';
+
 export const useCollectionGetById = (
   collectionId?: number,
 ): UseQueryResult<CollectionInfoWithSchemaResponse> => {
   const { api } = useApi();
 
   return useQuery(
-    ['collection', collectionId],
+    queryKeys.collection.byId(collectionId),
     () => api.collections.get({ collectionId: collectionId! }),
     {
       enabled: !!collectionId,

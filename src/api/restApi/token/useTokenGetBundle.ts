@@ -3,6 +3,8 @@ import { GetBundleResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
 
+import { queryKeys } from '../keysConfig';
+
 export const useTokenGetBundle = ({
   collectionId,
   tokenId,
@@ -24,7 +26,7 @@ export const useTokenGetBundle = ({
     };
   };
 
-  return useQuery(['token', 'get-bundle', collectionId, tokenId], () => getBundle(), {
+  return useQuery(queryKeys.token.bundle(collectionId, tokenId), () => getBundle(), {
     enabled: !!collectionId || !!tokenId,
   });
 };
