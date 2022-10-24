@@ -1,7 +1,7 @@
-import { createRef, VFC } from 'react';
 import styled from 'styled-components';
-import { Alert, Button, Icon, InputText, Text, Tooltip } from '@unique-nft/ui-kit';
+import { Alert, Button, Icon, InputText, Text } from '@unique-nft/ui-kit';
 
+import { TooltipWrapper } from '@app/components';
 import { Modal } from '@app/components/Modal';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { ModalContent } from '@app/pages/components/ModalComponents';
@@ -32,16 +32,14 @@ const TransferRow = styled.div`
   }
 `;
 
-export const AskTransferModal: VFC<AskTransferModalProps> = ({
+export const AskTransferModal = ({
   fee,
   isVisible,
   recipient,
   onClose,
   onConfirm,
   onRecipientChange,
-}) => {
-  const tooltipRef = createRef<HTMLDivElement>();
-
+}: AskTransferModalProps) => {
   return (
     <Modal
       isVisible={isVisible}
@@ -61,27 +59,26 @@ export const AskTransferModal: VFC<AskTransferModalProps> = ({
           <InputText
             label={
               <>
-                <Tooltip
+                Recipient address
+                <TooltipWrapper
                   align={{
                     appearance: 'horizontal',
                     horizontal: 'right',
                     vertical: 'top',
                   }}
-                  targetRef={tooltipRef}
+                  message={
+                    <>
+                      Make sure to&nbsp;use a&nbsp;Substrate address created with
+                      a&nbsp;Polkadot.&#123;js&#125; wallet. There
+                      is&nbsp;no&nbsp;guarantee that third-party wallets, exchanges
+                      or&nbsp;hardware wallets can successfully sign and process your
+                      transfer which will result in&nbsp;a&nbsp;possible loss of&nbsp;the
+                      NFT.
+                    </>
+                  }
                 >
-                  Make sure to&nbsp;use a&nbsp;Substrate address created with
-                  a&nbsp;Polkadot.&#123;js&#125; wallet. There is&nbsp;no&nbsp;guarantee
-                  that third-party wallets, exchanges or&nbsp;hardware wallets can
-                  successfully sign and process your transfer which will result
-                  in&nbsp;a&nbsp;possible loss of&nbsp;the NFT.
-                </Tooltip>
-                Recipient address
-                <Icon
-                  color="var(--color-primary-500)"
-                  name="question"
-                  ref={tooltipRef}
-                  size={24}
-                />
+                  <Icon color="var(--color-primary-500)" name="question" size={24} />
+                </TooltipWrapper>
               </>
             }
             maxLength={49}

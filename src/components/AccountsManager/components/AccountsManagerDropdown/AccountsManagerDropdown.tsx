@@ -14,7 +14,6 @@ export const AccountsManagerDropdown = ({
   activeNetwork,
   deposit,
   depositDescription,
-  manageBalanceLinkTitle,
   balance,
   symbol,
   isTouch,
@@ -81,7 +80,7 @@ export const AccountsManagerDropdown = ({
           {depositDescription}
         </div>
       </div>
-      {stake?.visability && (
+      {stake?.visibility && (
         <div className="wallet-accounts-stake">
           <Text size="xs" color="grey-500" weight="light">
             {stake.description}

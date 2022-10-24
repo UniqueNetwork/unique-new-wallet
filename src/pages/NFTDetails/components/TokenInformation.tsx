@@ -1,25 +1,51 @@
-import React, { memo, VFC } from 'react';
+import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-import { Heading, Text, Tag } from '@unique-nft/ui-kit';
+import { Heading, Icon, Tag, Text } from '@unique-nft/ui-kit';
+
+import { TooltipWrapper } from '@app/components';
+import { TToken } from '@app/pages/NFTDetails/type';
 
 export type Attribute = {
   title: string;
   tags: string[];
 };
 
-interface TokenInformationProps {
-  attributes?: Attribute[];
+interface TokenInformationProps<T extends TToken> {
+  token?: T;
   className?: string;
 }
 
-const TokenInformationComponent: VFC<TokenInformationProps> = ({
-  attributes,
+const TokenInformationComponent = <T extends TToken>({
+  token,
   className,
-}) => {
+}: TokenInformationProps<T>) => {
+  const attributes = useMemo<Attribute[]>(() => {
+    if (!token) {
+      return [];
+    }
+
+    const attrsValues = Object.values(token?.attributes || {});
+
+    return attrsValues.map(({ name, value }) => ({
+      title: name._,
+      tags: Array.isArray(value) ? value.map((val) => val._) : [value._],
+    }));
+  }, [token?.attributes]);
+
   return (
     <div className={className}>
       <Heading className="attributes-header" size="4">
         Attributes
+        <TooltipWrapper
+          message={
+            <>
+              Special features of&nbsp;the token that the collection creator specifies
+              when minting
+            </>
+          }
+        >
+          <Icon name="question" size={20} color="var(--color-primary-500)" />
+        </TooltipWrapper>
       </Heading>
       {attributes?.map(({ title, tags }, index) => (
         <div className="attribute-row" key={`${title}${index}`}>
@@ -42,6 +68,12 @@ const TokenInformationStyled = styled(TokenInformationComponent)`
   .attribute-row {
     margin-bottom: var(--prop-gap);
     word-break: break-all;
+  }
+
+  .attributes-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
   }
 
   .tags-row {

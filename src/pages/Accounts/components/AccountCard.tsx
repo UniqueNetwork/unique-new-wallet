@@ -1,21 +1,23 @@
-import React from 'react';
 import styled from 'styled-components';
-import { Icon, useNotifications } from '@unique-nft/ui-kit';
+import { Icon, Link, useNotifications } from '@unique-nft/ui-kit';
 
 import { shortcutText } from '@app/utils';
 import { IdentityIcon } from '@app/components';
+import { DeviceSize, useDeviceSize } from '@app/hooks';
 
 interface AccountCardProps {
-  accountName: string;
-  chainLogo?: string;
-  accountType?: string;
   accountAddress: string;
-  isShort?: boolean;
-  canCopy?: boolean;
+  accountName?: string;
+  accountType?: string;
   hideAddress?: boolean;
+  canCopy?: boolean;
+  chainLogo?: string;
+  scanLink?: string;
+  isShort?: boolean;
 }
 
 const Wrapper = styled.div`
+  overflow: hidden;
   display: flex;
   align-items: center;
 `;
@@ -72,6 +74,27 @@ const AddressRow = styled.span`
   align-items: center;
   padding: 0;
   color: var(--color-grey-500);
+
+  a {
+    display: inline;
+
+    &.primary {
+      color: var(--color-primary-500);
+    }
+
+    &::before,
+    &::after {
+      display: block;
+      content: '';
+      height: 0.25em;
+    }
+
+    &:hover {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.3em;
+    }
+  }
 `;
 
 const ActionButton = styled.button.attrs({ type: 'button' })`
@@ -96,13 +119,20 @@ const AccountCard = ({
   accountName,
   accountType,
   accountAddress = '',
-  isShort = false,
+  isShort,
   canCopy = true,
   chainLogo,
   hideAddress = false,
+  scanLink,
 }: AccountCardProps) => {
-  const address = isShort ? shortcutText(accountAddress) : accountAddress;
   const { info, error } = useNotifications();
+
+  const deviceSize = useDeviceSize();
+  const address = isShort
+    ? shortcutText(accountAddress)
+    : deviceSize <= DeviceSize.xs
+    ? shortcutText(accountAddress)
+    : accountAddress;
 
   const onCopyAddress = (account: string) => () => {
     if (account) {
@@ -125,26 +155,39 @@ const AccountCard = ({
       {chainLogo ? (
         <Icon name={chainLogo} size={24} />
       ) : (
-        <IdentityIcon address={address} />
+        <IdentityIcon address={accountAddress} />
       )}
       <AccountInfoWrapper>
-        <AccountInfoText>
-          <span className="truncate-text">{accountName}</span>
-          {accountType && (
-            <AccountInfoParams>
-              ({accountType})
-              {/* TODO: no functionality
+        {(accountName || accountType) && (
+          <AccountInfoText>
+            {accountName && <span className="truncate-text">{accountName}</span>}
+            {accountType && (
+              <AccountInfoParams>
+                ({accountType})
+                {/* TODO: no functionality
               <ActionButton>
                 <Icon name="pencil" size={16} />
               </ActionButton> */}
-            </AccountInfoParams>
-          )}
-        </AccountInfoText>
+              </AccountInfoParams>
+            )}
+          </AccountInfoText>
+        )}
         {!hideAddress && (
-          <AddressRow>
-            <span className="truncate-text">{address}</span>
+          <AddressRow title={accountAddress}>
+            {scanLink ? (
+              <Link
+                className="truncate-text"
+                href={scanLink}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                {address}
+              </Link>
+            ) : (
+              <span className="truncate-text">{address}</span>
+            )}
             {canCopy && (
-              <ActionButton onClick={onCopyAddress(accountAddress)}>
+              <ActionButton title="Copy address" onClick={onCopyAddress(accountAddress)}>
                 <Icon color="currentColor" name="copy" size={16} />
               </ActionButton>
             )}

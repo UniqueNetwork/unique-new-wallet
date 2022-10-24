@@ -1,9 +1,11 @@
 import styled from 'styled-components/macro';
 
-export const ContentRow = styled.div`
+export const ContentRow = styled.div.attrs((props: { space?: string }) => ({
+  space: props.space ?? 'calc(var(--prop-gap) * 2)',
+}))`
   display: flex;
   flex-direction: column;
-  margin-bottom: calc(var(--prop-gap) * 2);
+  margin-bottom: ${(props) => props.space};
 
   .unique-input-text {
     width: 100%;

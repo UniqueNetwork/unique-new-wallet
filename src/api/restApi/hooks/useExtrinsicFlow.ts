@@ -1,12 +1,15 @@
 import { ExtrinsicResultResponse, IMutation } from '@unique-nft/sdk';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
 import { useAccounts } from '@app/hooks';
 import { UNKNOWN_ERROR_MSG } from '@app/api/restApi/hooks/constants';
 
+import { queryKeys } from '../keysConfig';
+
 export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
   const { signMessage } = useAccounts();
   const { selectedAccount } = useAccounts();
+  const queryClient = useQueryClient();
 
   const submitWaitResult = async ({
     senderAddress,
@@ -32,7 +35,12 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
     Error,
     { payload: A; senderAddress?: string | undefined },
     unknown
-  >(submitWaitResult);
+  >(submitWaitResult, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.account.chain._def);
+      queryClient.invalidateQueries(queryKeys.account.balance._def);
+    },
+  });
 
   return {
     submitWaitResult: submitResultMutationQueryResult.mutateAsync,

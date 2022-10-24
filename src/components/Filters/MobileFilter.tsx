@@ -129,12 +129,10 @@ const FiltersWrapper = styled.div`
   flex-direction: column;
   gap: calc(var(--prop-gap) * 2);
   max-width: 756px;
-
   .filter-input {
     width: auto;
     max-width: 100%;
   }
-
   .collections-filter {
     margin: 0;
   }

@@ -1,14 +1,18 @@
-import React, { FC, useEffect, VFC } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
+import React, { FC, useEffect, useMemo, VFC } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
+import { useDebounce } from 'use-debounce';
 
-import { useApi } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { Account } from '@app/account';
-import { Stages } from '@app/components';
+import { Alert, Stages, TransferBtn, Modal } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
 import { useAccountBalanceTransfer } from '@app/api';
-import { Modal } from '@app/components/Modal';
 
-import { SendFundsModal } from './SendFundsModal';
+import { ContentRow, ModalContent, ModalFooter } from '../components/ModalComponents';
+import { SendFundsForm } from './SendFundsForm';
+import { FeeLoader, TotalLoader } from './styles';
+import { FundsForm } from './types';
 
 export interface SendFundsProps {
   isVisible: boolean;
@@ -28,7 +32,7 @@ const stages = [
 
 const TransferStagesModal: VFC = () => {
   return (
-    <Modal isVisible isClosable={false} title="Please wait">
+    <Modal isVisible isClosable={false}>
       <Stages stages={stages} />
     </Modal>
   );
@@ -37,17 +41,36 @@ const TransferStagesModal: VFC = () => {
 export const SendFunds: FC<SendFundsProps> = (props) => {
   const { onClose, senderAccount, onSendSuccess, chain } = props;
 
-  const { setCurrentChain } = useApi();
-  const { info, error } = useNotifications();
-
   const {
-    getFee,
+    fee,
     feeFormatted,
-    isLoadingSubmitResult,
-    submitWaitResult,
+    feeLoading,
+    feeStatus,
     feeError,
+    isLoadingSubmitResult,
+    getFee,
+    submitWaitResult,
     submitWaitResultError,
   } = useAccountBalanceTransfer();
+
+  const sendFundsForm = useForm<FundsForm>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      from: senderAccount,
+    },
+  });
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = sendFundsForm;
+  const sendFundsValues = useWatch<FundsForm>({ control });
+  const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
+
+  const size = useDeviceSize();
+  const { setCurrentChain } = useApi();
+  const { info, error } = useNotifications();
 
   useEffect(() => {
     if (!feeError) {
@@ -60,30 +83,24 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     setCurrentChain(chain);
   }, [chain, setCurrentChain]);
 
-  const amountChangeHandler = (
-    senderAddress: string,
-    destinationAddress: string,
-    amount: number,
-  ) => {
-    getFee({
-      address: senderAddress,
-      destination: destinationAddress,
-      amount,
-    });
-  };
+  useEffect(() => {
+    if (isValid) {
+      getFee({
+        address: sendFundsDebounceValues.from?.address,
+        destination: sendFundsDebounceValues.to?.address,
+        amount: sendFundsDebounceValues.amount,
+      });
+    }
+  }, [sendFundsDebounceValues]);
 
-  const confirmHandler = (
-    senderAddress: string,
-    destinationAddress: string,
-    amount: number,
-  ) => {
+  const submitHandler = (sendFundsForm: FundsForm) => {
     submitWaitResult({
       payload: {
-        address: senderAddress,
-        destination: destinationAddress,
-        amount,
+        address: sendFundsForm.from.address,
+        destination: sendFundsForm.to.address,
+        amount: sendFundsForm.amount,
       },
-      senderAddress,
+      senderAddress: sendFundsForm.from.address,
     })
       .then(() => {
         info('Transfer completed successfully');
@@ -95,18 +112,75 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
       });
   };
 
+  const total = useMemo(() => {
+    const parsedFee = Number(fee);
+    const parsedAmount = Number(sendFundsValues?.amount);
+
+    if (parsedFee && parsedAmount) {
+      return (parsedFee + parsedAmount).toFixed(3);
+    }
+
+    return 0;
+  }, [sendFundsValues?.amount, fee]);
+
+  const isolatedSendFundsForm = useMemo(
+    () => (
+      <FormProvider {...sendFundsForm}>
+        <SendFundsForm apiEndpoint={chain.apiEndpoint} />
+      </FormProvider>
+    ),
+    [sendFundsForm],
+  );
+
   return (
     <>
       {isLoadingSubmitResult ? (
         <TransferStagesModal />
       ) : (
-        <SendFundsModal
-          {...props}
-          fee={feeFormatted}
-          senderAccount={senderAccount}
-          onConfirm={confirmHandler}
-          onAmountChange={amountChangeHandler}
-        />
+        <Modal title="Send funds" isVisible={props.isVisible} onClose={onClose}>
+          <ModalContent>
+            {isolatedSendFundsForm}
+            <ContentRow space="calc(var(--prop-gap) * 1.5)">
+              <Alert type="warning">
+                {feeLoading && (
+                  <FeeLoader>
+                    <Loader size="small" label="Calculating fee" placement="left" />
+                  </FeeLoader>
+                )}
+                {!isValid && (
+                  <Text color="inherit" size="s">
+                    A fee will be calculated after entering the recipient and amount
+                  </Text>
+                )}
+                {isValid && feeStatus === 'success' && (
+                  <Text color="inherit" size="s">
+                    {`A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
+              is sponsored`}
+                  </Text>
+                )}
+              </Alert>
+            </ContentRow>
+            {((sendFundsValues.amount && fee) || feeLoading) && (
+              <ContentRow>
+                {!feeLoading && isValid && <Text weight="light">Total ~ {total}</Text>}
+                {feeLoading && (
+                  <TotalLoader>
+                    <Loader label="Calculating total" placement="left" />
+                  </TotalLoader>
+                )}
+              </ContentRow>
+            )}
+          </ModalContent>
+          <ModalFooter>
+            <TransferBtn
+              role="primary"
+              title="Confirm"
+              wide={size === DeviceSize.xs}
+              disabled={!isValid || feeLoading}
+              onClick={handleSubmit(submitHandler)}
+            />
+          </ModalFooter>
+        </Modal>
       )}
     </>
   );

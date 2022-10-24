@@ -2,6 +2,7 @@ import { QueriesResults, useQueries } from 'react-query';
 import { AllBalancesResponse, Sdk } from '@unique-nft/sdk';
 
 import { calculateSliceBalance } from './utils';
+import { queryKeys } from '../keysConfig';
 
 // Запрос по всем чейнам баланса для выбранного аккаунта
 export const useAccountBalancesService = (
@@ -11,7 +12,7 @@ export const useAccountBalancesService = (
   return useQueries<AllBalancesResponse[]>(
     chainsUrl.map((baseUrl) => {
       return {
-        queryKey: ['account', 'chain', 'balance', baseUrl],
+        queryKey: queryKeys.account.chain(baseUrl),
         queryFn: async () => {
           try {
             const api = new Sdk({ baseUrl, signer: null });

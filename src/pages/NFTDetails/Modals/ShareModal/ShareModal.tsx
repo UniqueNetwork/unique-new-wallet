@@ -1,18 +1,18 @@
-import React, { useMemo, VFC } from 'react';
+import React, { useMemo } from 'react';
 import { Button, IconProps } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { Token } from '@app/api/graphQL/types';
 import { Modal } from '@app/components/Modal';
 import getSocialLink from '@app/pages/NFTDetails/Modals/utils/getSocialLink';
+import { TToken } from '@app/pages/NFTDetails/type';
 
 // TODO: need to move these icons to ui-kit
 import RedditLogo from '../../../../static/icons/reddit.svg';
 import FacebookLogo from '../../../../static/icons/facebook.svg';
 
-interface ShareModalProps {
+interface ShareModalProps<T> {
   isVisible: boolean;
-  token: Token;
+  token: T;
   onClose(): void;
 }
 
@@ -22,7 +22,11 @@ interface SocialItem {
   icon: IconProps;
 }
 
-export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) => {
+export const ShareModal = <T extends TToken>({
+  isVisible,
+  token,
+  onClose,
+}: ShareModalProps<T>) => {
   const openLink = (url: string) => () => {
     window.open(url);
   };
@@ -33,7 +37,7 @@ export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) 
         title: 'Twitter',
         url: getSocialLink('twitter', {
           url: window.location.href,
-          text: token.token_name,
+          text: token.name,
         }),
         icon: {
           name: 'social-twitter',
@@ -44,7 +48,7 @@ export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) 
         title: 'Reddit',
         url: getSocialLink('reddit', {
           url: window.location.href,
-          title: token.token_name,
+          title: token.name,
         }),
         icon: {
           file: RedditLogo,
@@ -55,7 +59,7 @@ export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) 
         title: 'Telegram',
         url: getSocialLink('telegram', {
           url: window.location.href,
-          text: token.token_name,
+          text: token.name,
         }),
         icon: {
           name: 'social-telegram',
@@ -66,7 +70,7 @@ export const ShareModal: VFC<ShareModalProps> = ({ isVisible, token, onClose }) 
         title: 'Facebook',
         url: getSocialLink('facebook', {
           url: window.location.href,
-          title: token.token_name,
+          title: token.name,
         }),
         icon: {
           file: FacebookLogo,

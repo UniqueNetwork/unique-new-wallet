@@ -22,8 +22,8 @@ import {
 } from '@app/pages/components/BottomBar';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 
-import { TopFilter } from './components';
 import { useMyCollectionsContext } from './context';
+import { TopFilter } from './components';
 
 interface MyCollectionsComponentProps {
   className?: string;
@@ -36,7 +36,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const { selectedAccount } = useContext(AccountContext);
   const deviceSize = useDeviceSize();
   const navigate = useNavigate();
-  const getLimit = useItemsLimit();
+  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const [isFilterOpen, setFilterOpen] = useState(false);
 
   const { collections: cacheCollections, excludeCollectionsCache } =
@@ -53,7 +53,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
         order,
         pagination: {
           page,
-          limit: getLimit(),
+          limit: getLimit,
         },
         search,
       },
@@ -119,10 +119,11 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
               isLoading={isCollectionsLoading}
               dataSource={collections}
               fetchMore={fetchMore}
+              itemCols={{ sm: 2, md: 3, lg: 4, xl: 4, xxl: 5 }}
               panelSettings={{
                 pagination: {
                   current: page,
-                  pageSizes: [getLimit()],
+                  pageSizes: [getLimit],
                   show: isPagination,
                   size: collectionsCount,
                   viewMode: 'bottom',
@@ -148,7 +149,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                   />
                 </List.Item>
               )}
-              visibleItems={getLimit()}
+              visibleItems={getLimit}
               onPageChange={onChangePagination}
             />
           </PagePaper.Processing>

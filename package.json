@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@lukemorales/query-key-factory": "^0.6.1",
     "@phala/typedefs": "^0.2.30",
     "@polkadot/api": "^7.8.1",
     "@polkadot/extension-dapp": "^0.42.7",
@@ -22,6 +23,7 @@
     "@testing-library/user-event": "^12.1.10",
     "@unique-nft/sdk": "^0.1.4",
     "@unique-nft/ui-kit": "^0.0.37",
+    "@unique-nft/utils": "^0.1.4",
     "amplitude-js": "^8.19.0",
     "axios": "^0.24.0",
     "date-fns": "^2.28.0",
@@ -39,6 +41,7 @@
     "react-query": "^3.39.2",
     "react-router-dom": "^6.0.2",
     "react-scripts": "5.0.0",
+    "react-select": "^5.4.0",
     "socket.io-client": "^4.4.1",
     "use-debounce": "^8.0.2",
     "web-vitals": "^1.0.1",

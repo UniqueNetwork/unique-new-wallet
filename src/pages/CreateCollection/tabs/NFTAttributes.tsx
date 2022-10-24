@@ -1,17 +1,17 @@
-import React, { createRef } from 'react';
 import styled from 'styled-components';
 import {
   Accordion,
+  Checkbox,
   Heading,
   Icon,
   InputText,
-  Checkbox,
   Text,
-  Tooltip,
   TooltipAlign,
+  Toggle,
 } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 
+import { TooltipWrapper } from '@app/components';
 import {
   FormBody,
   FormHeader,
@@ -22,9 +22,6 @@ import { maxTokenLimit } from '@app/pages/constants/token';
 
 import { AttributesTable } from './AttributesTable';
 
-const addressTooltip = createRef<HTMLDivElement>();
-const burnTooltip = createRef<HTMLDivElement>();
-const limitTooltip = createRef<HTMLDivElement>();
 const tooltipAlign: TooltipAlign = {
   appearance: 'horizontal',
   horizontal: 'right',
@@ -44,8 +41,27 @@ export const NFTAttributes = () => {
       <FormBody>
         <AttributesTable />
         <AdvancedSettingsAccordion title="Advanced settings">
+          <FormRow>
+            <Heading size="4">Nesting</Heading>
+            <Text>
+              A way to group tokens in a nested, tree-like structure within and NFT.
+              Nesting of both NFTs and RFTs in unlimited quantities is supported.
+            </Text>
+          </FormRow>
           <SettingsRow>
-            <Text>This section contains marketplace related settings.</Text>
+            <Controller
+              name="nesting.tokenOwner"
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <Toggle
+                    label="Nesting enabled"
+                    on={Boolean(value)}
+                    size="m"
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
           </SettingsRow>
           <SettingsRow>
             <Controller
@@ -55,18 +71,24 @@ export const NFTAttributes = () => {
                   label={
                     <>
                       Collection sponsor address
-                      <Tooltip align={tooltipAlign} targetRef={addressTooltip}>
-                        The collection sponsor pays for all transactions related to this
-                        collection. You can set as a sponsor a regular account or a market
-                        contract. The sponsor will need to confirm the sponsorship before
-                        the sponsoring begins
-                      </Tooltip>
-                      <Icon
-                        ref={addressTooltip}
-                        name="question"
-                        size={22}
-                        color="var(--color-primary-500)"
-                      />
+                      <TooltipWrapper
+                        align={tooltipAlign}
+                        message={
+                          <>
+                            The collection sponsor pays for all transactions related
+                            to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
+                            a&nbsp;regular account or&nbsp;a&nbsp;market contract. The
+                            sponsor will need to&nbsp;confirm the sponsorship before the
+                            sponsoring begins
+                          </>
+                        }
+                      >
+                        <Icon
+                          name="question"
+                          size={22}
+                          color="var(--color-primary-500)"
+                        />
+                      </TooltipWrapper>
                     </>
                   }
                   additionalText="The designated sponsor should approve the request"
@@ -94,16 +116,22 @@ export const NFTAttributes = () => {
                   label={
                     <>
                       Token limit
-                      <Tooltip align={tooltipAlign} targetRef={limitTooltip}>
-                        The token limit (collection size) is a mandatory parameter if you
-                        want to list your collection on a marketplace.
-                      </Tooltip>
-                      <Icon
-                        ref={limitTooltip}
-                        name="question"
-                        size={22}
-                        color="var(--color-primary-500)"
-                      />
+                      <TooltipWrapper
+                        align={tooltipAlign}
+                        message={
+                          <>
+                            The token limit (collection size) is&nbsp;a&nbsp;mandatory
+                            parameter if&nbsp;you want to&nbsp;list your collection
+                            on&nbsp;a&nbsp;marketplace.
+                          </>
+                        }
+                      >
+                        <Icon
+                          name="question"
+                          size={22}
+                          color="var(--color-primary-500)"
+                        />
+                      </TooltipWrapper>
                     </>
                   }
                   additionalText="Unlimited by default"
@@ -131,18 +159,24 @@ export const NFTAttributes = () => {
                   label={
                     <>
                       Owner can burn collection
-                      <Tooltip align={tooltipAlign} targetRef={burnTooltip}>
-                        Should you decide to keep the right to destroy the collection, a
-                        marketplace could reject it depending on its policies as it gives
-                        the author the power to arbitrarily destroy a collection at any
-                        moment in the future
-                      </Tooltip>
-                      <Icon
-                        ref={burnTooltip}
-                        name="question"
-                        size={22}
-                        color="var(--color-primary-500)"
-                      />
+                      <TooltipWrapper
+                        align={tooltipAlign}
+                        message={
+                          <>
+                            Should you decide to&nbsp;keep the right to&nbsp;destroy the
+                            collection, a&nbsp;marketplace could reject it&nbsp;depending
+                            on&nbsp;its policies as&nbsp;it&nbsp;gives the author the
+                            power to&nbsp;arbitrarily destroy a&nbsp;collection
+                            at&nbsp;any moment in&nbsp;the future
+                          </>
+                        }
+                      >
+                        <Icon
+                          name="question"
+                          size={22}
+                          color="var(--color-primary-500)"
+                        />
+                      </TooltipWrapper>
                     </>
                   }
                   checked={value}
@@ -163,6 +197,7 @@ const AdvancedSettingsAccordion = styled(Accordion)`
   .unique-accordion-title {
     font-size: 24px;
     line-height: 32px;
+    margin-bottom: calc(var(--prop-gap));
   }
 
   &.expanded .unique-accordion-content {

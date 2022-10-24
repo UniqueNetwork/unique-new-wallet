@@ -18,6 +18,8 @@ export const useExtrinsicFee = <T, R>(getFeeEndpoint: IMutation<T, R>['getFee'])
         ].join(' ')
       : '',
     getFee: feeMutationQueryResult.mutateAsync,
+    feeStatus: feeMutationQueryResult.status,
+    feeLoading: feeMutationQueryResult.isLoading,
     feeError: feeMutationQueryResult.isError
       ? feeMutationQueryResult.error?.message || UNKNOWN_ERROR_MSG
       : null,

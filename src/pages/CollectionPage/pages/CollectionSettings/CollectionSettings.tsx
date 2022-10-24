@@ -1,4 +1,4 @@
-import { createRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -7,12 +7,11 @@ import {
   InputText,
   Loader,
   Text,
-  Tooltip,
   TooltipAlign,
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { PagePaper, StatusTransactionModal, TooltipButtonWrapper } from '@app/components';
+import { PagePaper, StatusTransactionModal, TooltipWrapper } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts } from '@app/hooks';
@@ -25,12 +24,8 @@ import {
   FormWrapper,
   SettingsRow,
 } from '@app/pages/components/FormComponents';
-import { maxTokenLimit } from '@app/pages/constants/token';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
-const addressTooltip = createRef<HTMLDivElement>();
-const destroyTooltip = createRef<HTMLDivElement>();
-const tokenTooltip = createRef<HTMLDivElement>();
 const tooltipAlign: TooltipAlign = {
   appearance: 'horizontal',
   horizontal: 'right',
@@ -117,18 +112,24 @@ const CollectionSettings = () => {
                     label={
                       <>
                         Collection sponsor address
-                        <Tooltip align={tooltipAlign} targetRef={addressTooltip}>
-                          The collection sponsor pays for all transactions related to this
-                          collection. You can set as a sponsor a regular account or a
-                          market contract. The sponsor will need to confirm the
-                          sponsorship before the sponsoring begins
-                        </Tooltip>
-                        <Icon
-                          ref={addressTooltip}
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
+                        <TooltipWrapper
+                          align={tooltipAlign}
+                          message={
+                            <>
+                              The collection sponsor pays for all transactions related
+                              to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
+                              a&nbsp;regular account or&nbsp;a&nbsp;market contract. The
+                              sponsor will need to&nbsp;confirm the sponsorship before the
+                              sponsoring begins
+                            </>
+                          }
+                        >
+                          <Icon
+                            name="question"
+                            size={22}
+                            color="var(--color-primary-500)"
+                          />
+                        </TooltipWrapper>
                       </>
                     }
                     additionalText="The designated sponsor should approve the request"
@@ -153,16 +154,22 @@ const CollectionSettings = () => {
                     label={
                       <>
                         Token limit
-                        <Tooltip align={tooltipAlign} targetRef={tokenTooltip}>
-                          The token limit (collection size) is a mandatory parameter if
-                          you want to list your collection on a marketplace.
-                        </Tooltip>
-                        <Icon
-                          ref={tokenTooltip}
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
+                        <TooltipWrapper
+                          align={tooltipAlign}
+                          message={
+                            <>
+                              The token limit (collection size) is&nbsp;a&nbsp;mandatory
+                              parameter if&nbsp;you want to&nbsp;list your collection
+                              on&nbsp;a&nbsp;marketplace.
+                            </>
+                          }
+                        >
+                          <Icon
+                            name="question"
+                            size={22}
+                            color="var(--color-primary-500)"
+                          />
+                        </TooltipWrapper>
                       </>
                     }
                     additionalText="Unlimited by default"
@@ -178,18 +185,25 @@ const CollectionSettings = () => {
                     label={
                       <>
                         Owner can burn collection
-                        <Tooltip align={tooltipAlign} targetRef={destroyTooltip}>
-                          Should you decide to keep the right to destroy the collection, a
-                          marketplace could reject it depending on its policies as it
-                          gives the author the power to arbitrarily destroy a collection
-                          at any moment in the future
-                        </Tooltip>
-                        <Icon
-                          ref={destroyTooltip}
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
+                        <TooltipWrapper
+                          align={tooltipAlign}
+                          message={
+                            <>
+                              Should you decide to&nbsp;keep the right to&nbsp;destroy the
+                              collection, a&nbsp;marketplace could reject
+                              it&nbsp;depending on&nbsp;its policies as&nbsp;it&nbsp;gives
+                              the author the power to&nbsp;arbitrarily destroy
+                              a&nbsp;collection at&nbsp;any moment in&nbsp;the future
+                            </>
+                          }
+                        >
+                          {' '}
+                          <Icon
+                            name="question"
+                            size={22}
+                            color="var(--color-primary-500)"
+                          />
+                        </TooltipWrapper>
                       </>
                     }
                     disabled={!ownerCanDestroy}
@@ -199,9 +213,9 @@ const CollectionSettings = () => {
                   />
                 </SettingsRow>
                 <ButtonGroup>
-                  <TooltipButtonWrapper message="The form in development progress">
+                  <TooltipWrapper message={<>The form in&nbsp;development progress</>}>
                     <Button title="Save changes" disabled={true} type="submit" />
-                  </TooltipButtonWrapper>
+                  </TooltipWrapper>
                   {/* TODO: WAL-343
                   {ownerCanDestroy && (
                     <Button

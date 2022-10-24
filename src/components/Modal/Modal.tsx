@@ -21,7 +21,6 @@ export interface ModalProps {
 const maskMotion: DrawerProps['maskMotion'] = {
   motionAppear: true,
   motionName: 'mask-motion',
-  onAppearEnd: console.warn,
 };
 
 export const motion: DrawerProps['motion'] = (placement) => ({
