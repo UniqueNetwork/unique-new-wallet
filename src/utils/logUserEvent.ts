@@ -29,4 +29,5 @@ export const UserEvents = {
   COINS: 'COINS',
   SEND_COINS: 'SEND_COINS',
   GET_COINS: 'GET_COINS',
+  CREATE_BUNDLE: 'CREATE_BUNDLE',
 };

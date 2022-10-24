@@ -82,7 +82,6 @@ $closeSize: 24px;
 
 .unique-modal-content {
   box-sizing: border-box;
-  overflow: hidden;
   position: relative;
   z-index: $zIndex;
   border-radius: calc(var(--prop-border-radius) * 2);

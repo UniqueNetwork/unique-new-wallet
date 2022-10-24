@@ -1,0 +1,15 @@
+.unique-suggestion {
+    .suggestion-item {
+        padding: 8px;
+        cursor: pointer;
+
+        &.isActive {
+            background: var(--color-primary-100);
+            color: var(--color-primary-500);
+        }
+
+        &:hover {
+            background: var(--color-primary-100);
+        }
+    }
+}

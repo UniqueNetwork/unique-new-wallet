@@ -24,10 +24,16 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
 
     const signature = await signMessage(build, account);
 
-    return mutation.submitWaitResult({
+    const res = await mutation.submitWaitResult({
       signerPayloadJSON: build.signerPayloadJSON,
       signature,
     });
+
+    if (res.isError) {
+      return Promise.reject(res);
+    }
+
+    return res;
   };
 
   const submitResultMutationQueryResult = useMutation<

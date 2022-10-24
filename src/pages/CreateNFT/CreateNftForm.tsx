@@ -4,7 +4,6 @@ import {
   Avatar,
   Heading,
   Loader,
-  Suggest,
   Text,
   Upload,
   useNotifications,
@@ -26,6 +25,7 @@ import {
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
 import { useFileUpload } from '@app/api';
+import { Suggest } from '@app/components/Suggest';
 
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
