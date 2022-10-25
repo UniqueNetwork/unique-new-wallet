@@ -17,7 +17,7 @@ export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
   const { isCollectionLoading, collection } = useCollection(selectedToken?.collectionId);
   return (
     <NestedDetails>
-      {selectedToken?.nestingChildTokens?.length && (
+      {selectedToken?.nestingChildTokens?.length ? (
         <TitleWrapper>
           <Title
             token={selectedToken}
@@ -25,7 +25,7 @@ export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
             prefix={collection?.tokenPrefix || ''}
           />
         </TitleWrapper>
-      )}
+      ) : null}
       {!selectedToken?.nestingChildTokens?.length && (
         <NoNestedWrapper>
           <Icon file={NoTrades} size={80} />

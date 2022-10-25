@@ -129,7 +129,7 @@ export const NftDetailsBundlePage = () => {
 
   const isBundleToken = () => {
     // @ts-ignore
-    const nestingParentToken = bundleToken?.nestingChildTokens?.[0].nestingParentToken;
+    const nestingParentToken = bundleToken?.nestingChildTokens?.[0]?.nestingParentToken;
     if (!nestingParentToken) {
       return false;
     }
