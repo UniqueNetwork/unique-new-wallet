@@ -6,7 +6,7 @@ import { useDebounce } from 'use-debounce';
 import { useQueryClient } from 'react-query';
 
 import { Modal, TransferBtn } from '@app/components';
-import { TToken } from '@app/pages/NFTDetails/type';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
 import { useAccounts } from '@app/hooks';
@@ -18,20 +18,15 @@ import { CreateBundleStagesModal } from '@app/pages/NFTDetails/Modals/CreateBund
 import { CreateBundleForm } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleForm';
 import { queryKeys } from '@app/api/restApi/keysConfig';
 
-type Props<T> = Omit<NFTModalsProps<T>, 'modalType'> & {
-  isVisible: boolean;
-};
-
 export type TCreateBundleForm = {
   collection: CollectionNestingOption | null;
   token: Token | null;
 };
 
-export const CreateBundleModal = <T extends TToken>({
+export const CreateBundleModal = <T extends TBaseToken>({
   token,
   onClose,
-  isVisible,
-}: Props<T>) => {
+}: NFTModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const form = useForm<TCreateBundleForm>({
     mode: 'onChange',
@@ -60,6 +55,7 @@ export const CreateBundleModal = <T extends TToken>({
     isLoadingSubmitResult,
     feeFormatted,
     feeError,
+    submitWaitResultError,
   } = useTokenNest();
 
   const queryClient = useQueryClient();
@@ -76,32 +72,31 @@ export const CreateBundleModal = <T extends TToken>({
         : undefined,
   });
 
-  const onSubmit = async (form: TCreateBundleForm) => {
-    try {
-      if (!token || !selectedAccount || !form.token || !form.collection) {
-        return;
-      }
-      await submitWaitResult({
-        payload: {
-          parent: {
-            collectionId: form.collection.collection_id,
-            tokenId: form.token.token_id,
-          },
-          address: selectedAccount.address,
-          nested: {
-            collectionId: token.collectionId,
-            tokenId: token.tokenId,
-          },
+  const onSubmit = (form: TCreateBundleForm) => {
+    if (!token || !selectedAccount || !form.token || !form.collection) {
+      return;
+    }
+    submitWaitResult({
+      payload: {
+        parent: {
+          collectionId: form.collection.collection_id,
+          tokenId: form.token.token_id,
         },
-      });
+        address: selectedAccount.address,
+        nested: {
+          collectionId: token.collectionId,
+          tokenId: token.tokenId,
+        },
+      },
+    }).then(() => {
       onClose();
 
       info(`${form.token?.token_name} nested into ${token.name}`);
-      await queryClient.invalidateQueries(queryKeys.token.isBundle._def);
-      await queryClient.invalidateQueries(queryKeys.token.byId._def);
-    } catch (res: any) {
-      error(res.error.message);
-    }
+
+      queryClient.invalidateQueries(queryKeys.token.isBundle._def);
+      queryClient.invalidateQueries(queryKeys.token.byId._def);
+      queryClient.invalidateQueries(queryKeys.token.bundle._def);
+    });
   };
 
   useEffect(() => {
@@ -134,6 +129,13 @@ export const CreateBundleModal = <T extends TToken>({
     error(feeError);
   }, [feeError]);
 
+  useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
+
   const feeResults = () => {
     if (feeLoading) {
       return (
@@ -162,7 +164,7 @@ export const CreateBundleModal = <T extends TToken>({
   return (
     <Modal
       title="Create bundle"
-      isVisible={isVisible}
+      isVisible={true}
       footerButtons={
         <TransferBtn
           title="Confirm"

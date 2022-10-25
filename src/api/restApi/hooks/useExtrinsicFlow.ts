@@ -30,7 +30,10 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
     });
 
     if (res.isError) {
-      return Promise.reject(res);
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject({
+        extrinsicError: res,
+      });
     }
 
     return res;
@@ -38,7 +41,7 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
 
   const submitResultMutationQueryResult = useMutation<
     ExtrinsicResultResponse<R> | undefined,
-    Error,
+    { extrinsicError: ExtrinsicResultResponse<any> } | Error,
     { payload: A; senderAddress?: string | undefined },
     unknown
   >(submitWaitResult, {
@@ -52,7 +55,10 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
     submitWaitResult: submitResultMutationQueryResult.mutateAsync,
     isLoadingSubmitResult: submitResultMutationQueryResult.isLoading,
     submitWaitResultError: submitResultMutationQueryResult.isError
-      ? submitResultMutationQueryResult.error?.message || UNKNOWN_ERROR_MSG
+      ? 'extrinsicError' in submitResultMutationQueryResult.error
+        ? // @ts-ignore
+          submitResultMutationQueryResult.error?.extrinsicError?.error.message
+        : submitResultMutationQueryResult.error?.message || UNKNOWN_ERROR_MSG
       : null,
   };
 };

@@ -7,7 +7,6 @@ export const countNestedChildren = (nestingChildTokens: INestingToken[]) => {
       return count;
     } else {
       count += tokenChildren.length;
-      // @ts-ignore
       tokenChildren.forEach((child) => countChildren(child.nestingChildTokens || []));
     }
   };

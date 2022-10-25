@@ -101,6 +101,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   }, [feeError]);
 
   useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
+
+  useEffect(() => {
     navigate(tabsUrls[currentStep - 1]);
   }, [currentStep, navigate]);
 
@@ -135,21 +142,17 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
 
     const payload = formMapper(form);
 
-    submitWaitResult({ payload })
-      .then((res) => {
-        info('Collection created successfully');
+    submitWaitResult({ payload }).then((res) => {
+      info('Collection created successfully');
 
-        setPayloadEntity({
-          type: 'create-collection',
-          parsed: res?.parsed,
-          entityData: payload,
-        });
-
-        navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
-      })
-      .catch(() => {
-        submitWaitResultError && error(submitWaitResultError);
+      setPayloadEntity({
+        type: 'create-collection',
+        parsed: res?.parsed,
+        entityData: payload,
       });
+
+      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
+    });
   };
 
   const isFirstStep = currentStep - 1 === 0;

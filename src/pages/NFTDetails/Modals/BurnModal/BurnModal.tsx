@@ -6,20 +6,13 @@ import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useTokenBurn } from '@app/api';
-import { TToken } from '@app/pages/NFTDetails/type';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
+import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
 
-interface BurnModalProps<T> {
-  isVisible: boolean;
-  token?: T;
-  onClose(): void;
-  onComplete(): void;
-}
-
-export const BurnModal = <T extends TToken>({
-  isVisible,
+export const BurnModal = <T extends TBaseToken>({
   token,
   onClose,
-}: BurnModalProps<T>) => {
+}: NFTModalsProps<T>) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
   const { selectedAccount } = useAccounts();
@@ -40,6 +33,13 @@ export const BurnModal = <T extends TToken>({
     }
     error(feeError);
   }, [feeError]);
+
+  useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
 
   useEffect(() => {
     if (!token || !selectedAccount?.address) {
@@ -64,15 +64,11 @@ export const BurnModal = <T extends TToken>({
         collectionId: token.collectionId,
         tokenId: token.tokenId,
       },
-    })
-      .then(() => {
-        info('NFT burned successfully');
+    }).then(() => {
+      info('NFT burned successfully');
 
-        navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
-      })
-      .catch(() => {
-        submitWaitResultError && error(submitWaitResultError);
-      });
+      navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+    });
   };
 
   if (!selectedAccount || !token) {
@@ -86,7 +82,7 @@ export const BurnModal = <T extends TToken>({
   return (
     <AskBurnModal
       fee={feeFormatted ?? ''}
-      isVisible={isVisible}
+      isVisible={true}
       onBurn={burnHandler}
       onClose={onClose}
     />

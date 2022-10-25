@@ -186,6 +186,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     error(feeError);
   }, [feeError]);
 
+  useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
+
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
     if (isValid) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
@@ -194,22 +201,18 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
       submitWaitResult({
         payload,
-      })
-        .then((res) => {
-          setPayloadEntity({
-            type: 'create-token',
-            entityData: payload,
-            parsed: res?.parsed,
-          });
-          info('NFT created successfully');
-
-          closable
-            ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
-            : reset(undefined, { keepDefaultValues: true });
-        })
-        .catch(() => {
-          submitWaitResultError && error(submitWaitResultError);
+      }).then((res) => {
+        setPayloadEntity({
+          type: 'create-token',
+          entityData: payload,
+          parsed: res?.parsed,
         });
+        info('NFT created successfully');
+
+        closable
+          ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
+          : reset(undefined, { keepDefaultValues: true });
+      });
     }
   };
 
