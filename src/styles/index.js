@@ -17,4 +17,8 @@ export const GlobalStyle = createGlobalStyle`
   .unique-tooltip {
     z-index: 1100;
   }
+  
+  .unique-font-heading {
+    font-feature-settings: 'pnum' on, 'lnum' on;
+  }
 `;

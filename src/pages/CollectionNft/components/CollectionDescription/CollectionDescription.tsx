@@ -1,17 +1,19 @@
-import React, { useState, VFC } from 'react';
+import { useState, VFC } from 'react';
 import styled from 'styled-components';
 import { addSeconds, format } from 'date-fns';
 import { Avatar, Loader } from '@unique-nft/ui-kit';
 
-import { AccountLinkComponent, CollectionScanLink } from '@app/components';
+import { useApi } from '@app/hooks';
+import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
+import { AccountLinkComponent, ExternalLink } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
-import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
 import { maxTokenLimit } from '@app/pages/constants/token';
 
 const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
   collectionId,
 }) => {
+  const { currentChain } = useApi();
   const { collection, collectionLoading } = useCollectionContext() || {};
   const {
     description,
@@ -78,8 +80,20 @@ const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
               </strong>
             </span>
           </Row>
-          {description && <Description>{description}</Description>}
-          <CollectionScanLink collectionId={collectionId} />
+          {description && (
+            <Row>
+              <Description>{description}</Description>
+            </Row>
+          )}
+          <Row>
+            <span>
+              <ExternalLink
+                href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
+              >
+                View collection on Scan
+              </ExternalLink>
+            </span>
+          </Row>
         </>
       )}
     </CollectionVerticalCard>

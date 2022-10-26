@@ -32,6 +32,7 @@ const AccountInfoWrapper = styled.div`
   flex-direction: column;
   width: calc(100% - 24px);
   padding-left: calc(var(--prop-gap) / 2);
+  line-height: 1.5;
 
   .truncate-text {
     overflow: hidden;
@@ -78,21 +79,14 @@ const AddressRow = styled.span`
   a {
     display: inline;
 
-    &.primary {
-      color: var(--color-primary-500);
-    }
-
-    &::before,
-    &::after {
-      display: block;
-      content: '';
-      height: 0.25em;
-    }
-
     &:hover {
       text-decoration: underline;
       text-decoration-thickness: 1px;
       text-underline-offset: 0.3em;
+    }
+
+    &.primary {
+      color: var(--color-primary-500);
     }
   }
 `;

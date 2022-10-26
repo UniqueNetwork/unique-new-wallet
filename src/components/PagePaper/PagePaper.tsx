@@ -37,6 +37,7 @@ const Wrapper = styled.div<Pick<PagePaperProps, 'flexLayout' | 'noPadding'>>`
   flex: 1 1 auto;
   display: ${(p) => (p.flexLayout ? 'flex' : undefined)};
   flex-direction: ${(p) => p.flexLayout};
+  max-width: 100%;
   padding: ${(p) => (p.noPadding ? undefined : 'calc(var(--prop-gap) * 2)')};
 `;
 

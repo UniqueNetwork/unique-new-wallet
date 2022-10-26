@@ -37,6 +37,11 @@ const TokenInformationComponent = <T extends TBaseToken>({
       <Heading className="attributes-header" size="4">
         Attributes
         <TooltipWrapper
+          align={{
+            appearance: 'horizontal',
+            vertical: 'top',
+            horizontal: 'right',
+          }}
           message={
             <>
               Special features of&nbsp;the token that the collection creator specifies
