@@ -22,7 +22,14 @@ import {
   UploadWidget,
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { _10MB, FILE_SIZE_LIMIT_ERROR } from '@app/pages/constants';
+import {
+  _10MB,
+  MAX_NAME_SIZE,
+  MAX_SYMBOL_SIZE,
+  MAX_DESCRIPTION_SIZE,
+  MAX_SYMBOL_BYTES_SIZE,
+  FILE_SIZE_LIMIT_ERROR,
+} from '@app/pages/constants';
 
 interface MainInformationProps {
   className?: string;
@@ -79,9 +86,9 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
               render={({ field: { onChange, value } }) => (
                 <InputText
                   label="Name*"
-                  maxLength={64}
                   value={value}
-                  additionalText="Max 64 symbols"
+                  maxLength={MAX_NAME_SIZE}
+                  additionalText={`Max ${MAX_NAME_SIZE - value.length} symbols`}
                   onChange={onChange}
                 />
               )}
@@ -93,10 +100,10 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
               render={({ field: { onChange, value } }) => (
                 <Textarea
                   label="Description"
-                  rows={4}
-                  maxLength={256}
-                  additionalText="Max 256 symbols"
                   value={value}
+                  rows={4}
+                  maxLength={MAX_DESCRIPTION_SIZE}
+                  additionalText={`Max ${MAX_DESCRIPTION_SIZE - value.length} symbols`}
                   onChange={onChange}
                 />
               )}
@@ -111,10 +118,18 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
               render={({ field: { onChange, value } }) => (
                 <InputText
                   label="Symbol*"
-                  additionalText="Token name as displayed in Wallet (max 4 symbols)"
-                  maxLength={4}
                   value={value}
-                  onChange={onChange}
+                  maxLength={MAX_SYMBOL_SIZE}
+                  additionalText={`Token name as displayed in Wallet (max ${
+                    MAX_SYMBOL_SIZE - value.length
+                  } symbols)`}
+                  onChange={(newVal) => {
+                    const size = new Blob([newVal]).size;
+
+                    if (size <= MAX_SYMBOL_BYTES_SIZE) {
+                      onChange(newVal);
+                    }
+                  }}
                 />
               )}
             />
