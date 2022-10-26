@@ -7,21 +7,14 @@ import {
   TransferStagesModal,
 } from '@app/pages/NFTDetails/Modals/TransferModal';
 import { useTokenTransfer } from '@app/api';
-import { TToken } from '@app/pages/NFTDetails/type';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
+import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
 
-interface TransferModalProps<T> {
-  isVisible: boolean;
-  token?: T;
-  onComplete(): void;
-  onClose(): void;
-}
-
-export const TransferModal = <T extends TToken>({
-  isVisible,
+export const TransferModal = <T extends TBaseToken>({
   token,
   onComplete,
   onClose,
-}: TransferModalProps<T>) => {
+}: NFTModalsProps<T>) => {
   const [recipient, setRecipient] = useState<string | undefined>();
 
   const { selectedAccount } = useAccounts();
@@ -42,28 +35,34 @@ export const TransferModal = <T extends TToken>({
     error(feeError);
   }, [feeError]);
 
-  const transferHandler = () => {
+  useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
+
+  const transferHandler = async () => {
     if (!token || !recipient || !selectedAccount?.address) {
       return;
     }
 
-    submitWaitResult({
-      payload: {
-        to: recipient,
-        from: selectedAccount.address,
-        collectionId: token.collectionId,
-        tokenId: token.tokenId,
-        address: selectedAccount.address,
-      },
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-        onComplete();
-      })
-      .catch(() => {
-        submitWaitResultError && error(submitWaitResultError);
-        onClose();
+    try {
+      await submitWaitResult({
+        payload: {
+          to: recipient,
+          from: selectedAccount.address,
+          collectionId: token.collectionId,
+          tokenId: token.tokenId,
+          address: selectedAccount.address,
+        },
       });
+
+      info('Transfer completed successfully');
+      onComplete();
+    } catch {
+      onClose();
+    }
   };
 
   useEffect(() => {
@@ -91,7 +90,7 @@ export const TransferModal = <T extends TToken>({
   return (
     <AskTransferModal
       fee={feeFormatted}
-      isVisible={isVisible}
+      isVisible={true}
       recipient={recipient}
       onClose={onClose}
       onRecipientChange={setRecipient}

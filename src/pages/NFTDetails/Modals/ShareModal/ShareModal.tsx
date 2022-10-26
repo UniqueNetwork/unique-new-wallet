@@ -4,17 +4,12 @@ import styled from 'styled-components';
 
 import { Modal } from '@app/components/Modal';
 import getSocialLink from '@app/pages/NFTDetails/Modals/utils/getSocialLink';
-import { TToken } from '@app/pages/NFTDetails/type';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
+import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
 
 // TODO: need to move these icons to ui-kit
 import RedditLogo from '../../../../static/icons/reddit.svg';
 import FacebookLogo from '../../../../static/icons/facebook.svg';
-
-interface ShareModalProps<T> {
-  isVisible: boolean;
-  token: T;
-  onClose(): void;
-}
 
 interface SocialItem {
   title: string;
@@ -22,11 +17,10 @@ interface SocialItem {
   icon: IconProps;
 }
 
-export const ShareModal = <T extends TToken>({
-  isVisible,
+export const ShareModal = <T extends TBaseToken>({
   token,
   onClose,
-}: ShareModalProps<T>) => {
+}: Omit<NFTModalsProps<T> & { token: T }, 'onComplete'>) => {
   const openLink = (url: string) => () => {
     window.open(url);
   };
@@ -86,7 +80,7 @@ export const ShareModal = <T extends TToken>({
   };
 
   return (
-    <Modal isVisible={isVisible} title="Share" onClose={onClose}>
+    <Modal isVisible={true} title="Share" onClose={onClose}>
       <ButtonWrapper>
         <div className="share-button-group">
           {socialItems.map(({ title, url, icon }, index) => (

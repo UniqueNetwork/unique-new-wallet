@@ -80,6 +80,13 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   }, [feeError]);
 
   useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
+
+  useEffect(() => {
     setCurrentChain(chain);
   }, [chain, setCurrentChain]);
 
@@ -101,15 +108,11 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
         amount: sendFundsForm.amount,
       },
       senderAddress: sendFundsForm.from.address,
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-        onSendSuccess?.();
-        onClose();
-      })
-      .catch(() => {
-        submitWaitResultError && error(submitWaitResultError);
-      });
+    }).then(() => {
+      info('Transfer completed successfully');
+      onSendSuccess?.();
+      onClose();
+    });
   };
 
   const total = useMemo(() => {

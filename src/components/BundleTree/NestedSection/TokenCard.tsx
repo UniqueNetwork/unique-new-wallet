@@ -28,10 +28,10 @@ function TokenCard({
 
   const onUnnest = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onUnnestClick?.(token);
+      onUnnestClick?.({ ...token, name: `${collection?.tokenPrefix} #${token.tokenId}` });
       event.stopPropagation();
     },
-    [token, onUnnestClick],
+    [onUnnestClick, token, collection?.tokenPrefix],
   );
 
   const showMenu = useCallback(() => {

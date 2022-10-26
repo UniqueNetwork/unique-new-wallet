@@ -1,58 +1,48 @@
-import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
-import { TransferModal } from '@app/pages/NFTDetails/Modals/TransferModal';
-import { BurnModal } from '@app/pages/NFTDetails/Modals/BurnModal';
-import { ShareModal } from '@app/pages/NFTDetails/Modals/ShareModal';
-import { TToken } from '@app/pages/NFTDetails/type';
-import { CreateBundleModal } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleModal';
+import {
+  UnnestModal,
+  ShareModal,
+  BurnModal,
+  TransferModal,
+  TNFTModalType,
+  CreateBundleModal,
+} from '@app/pages/NFTDetails/Modals';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
 
-export interface NFTModalsProps<T> {
-  modalType: TNFTModalType;
+export type NFTModalsProps<T> = {
   token?: T;
   onComplete(): void;
   onClose(): void;
-}
+};
 
-export const NFTModals = <T extends TToken>({
+type BaseNFTModalsProps<T> = NFTModalsProps<T> & {
+  modalType: TNFTModalType;
+};
+
+export const NFTModals = <T extends TBaseToken>({
   modalType,
   token,
   onComplete,
   onClose,
-}: NFTModalsProps<T>) => {
+}: BaseNFTModalsProps<T>) => {
   if (!token) {
     return null;
   }
 
   switch (modalType) {
     case 'transfer':
-      return (
-        <TransferModal
-          isVisible={true}
-          token={token}
-          onClose={onClose}
-          onComplete={onComplete}
-        />
-      );
+      return <TransferModal token={token} onClose={onClose} onComplete={onComplete} />;
     case 'share':
-      return <ShareModal isVisible={true} token={token} onClose={onClose} />;
+      return <ShareModal token={token} onClose={onClose} />;
     case 'burn':
-      return (
-        <BurnModal
-          isVisible={true}
-          token={token}
-          onClose={onClose}
-          onComplete={onComplete}
-        />
-      );
+      return <BurnModal token={token} onClose={onClose} onComplete={onComplete} />;
 
     case 'create-bundle':
       return (
-        <CreateBundleModal
-          isVisible={true}
-          token={token}
-          onClose={onClose}
-          onComplete={onComplete}
-        />
+        <CreateBundleModal token={token} onClose={onClose} onComplete={onComplete} />
       );
+
+    case 'unnest':
+      return <UnnestModal token={token} onClose={onClose} onComplete={onComplete} />;
   }
   return null;
 };

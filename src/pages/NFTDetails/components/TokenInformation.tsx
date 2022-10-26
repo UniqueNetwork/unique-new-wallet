@@ -3,19 +3,19 @@ import styled from 'styled-components';
 import { Heading, Icon, Tag, Text } from '@unique-nft/ui-kit';
 
 import { TooltipWrapper } from '@app/components';
-import { TToken } from '@app/pages/NFTDetails/type';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
 
 export type Attribute = {
   title: string;
   tags: string[];
 };
 
-interface TokenInformationProps<T extends TToken> {
+interface TokenInformationProps<T extends TBaseToken> {
   token?: T;
   className?: string;
 }
 
-const TokenInformationComponent = <T extends TToken>({
+const TokenInformationComponent = <T extends TBaseToken>({
   token,
   className,
 }: TokenInformationProps<T>) => {

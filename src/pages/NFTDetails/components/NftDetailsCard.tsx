@@ -6,9 +6,9 @@ import { NFTDetailsHeader } from '@app/pages/NFTDetails/components/NFTDetailsHea
 import { Divider } from '@app/pages/NFTDetails/components/Divider';
 import { TokenInformation } from '@app/pages/NFTDetails/components/TokenInformation';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { TToken } from '@app/pages/NFTDetails/type';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
 
-type Props<T extends TToken> = {
+type Props<T extends TBaseToken> = {
   token?: T;
   achievement?: string;
   onCurrentModal: (type: TNFTModalType) => void;
@@ -17,7 +17,7 @@ type Props<T extends TToken> = {
   className?: string;
 };
 
-export const NftDetailsCard = <T extends TToken>({
+export const NftDetailsCard = <T extends TBaseToken>({
   token,
   onCurrentModal,
   achievement,

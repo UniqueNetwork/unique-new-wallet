@@ -18,6 +18,7 @@ import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
   a.collectionId === b.collectionId && a.tokenId === b.tokenId;
@@ -33,12 +34,9 @@ const addIsCurrentAccountOwnerToBundleAndSort = (
     return bundle;
   }
   bundle.opened = false;
-  // @ts-ignore
   bundle.nestingChildTokens = bundle.nestingChildTokens
-    // @ts-ignore
     ?.sort((a, b) => (a.tokenId > b.tokenId ? 1 : -1))
     .map((bundleToken) => {
-      // @ts-ignore
       return addIsCurrentAccountOwnerToBundleAndSort(bundleToken, isOwner);
     });
 
@@ -56,6 +54,9 @@ export const NftDetailsBundlePage = () => {
   const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
 
   const [isShowBundleTreeMobile, setShowBundleTreeMobile] = useState(false);
+
+  const [selectedTokenBundleTable, setSelectedTokenBundleTable] =
+    useState<INestingToken | null>(null);
 
   const {
     data: bundleToken,
@@ -106,7 +107,10 @@ export const NftDetailsBundlePage = () => {
     setBundle([addIsCurrentAccountOwnerToBundleAndSort(bundleToken, isOwner)]);
   }, [bundleToken, isOwner]);
 
-  const onModalClose = () => setCurrentModal('none');
+  const onModalClose = () => {
+    setCurrentModal('none');
+    setSelectedTokenBundleTable(null);
+  };
 
   const onComplete = () => {
     refetchToken();
@@ -123,9 +127,9 @@ export const NftDetailsBundlePage = () => {
     navigate(`/${currentChain?.network}/token/${token.collectionId}/${token.tokenId}`);
   };
 
-  const isParentToken = () => {
+  const isBundleToken = () => {
     // @ts-ignore
-    const nestingParentToken = bundleToken?.nestingChildTokens?.[0].nestingParentToken;
+    const nestingParentToken = bundleToken?.nestingChildTokens?.[0]?.nestingParentToken;
     if (!nestingParentToken) {
       return false;
     }
@@ -139,9 +143,18 @@ export const NftDetailsBundlePage = () => {
     if (!bundle || !bundle[0]?.nestingChildTokens) {
       return 0;
     }
-    // @ts-ignore
     return countNestedChildren(bundle[0].nestingChildTokens);
   }, [bundle]);
+
+  const handleUnnestToken = (token: INestingToken) => {
+    unnestTokenAction();
+    setSelectedTokenBundleTable(token);
+  };
+
+  const unnestTokenAction = () => {
+    logUserEvent(UserEvents.UNNEST_TOKEN);
+    setCurrentModal('unnest');
+  };
 
   return (
     <NftDetailsWrapper
@@ -156,21 +169,30 @@ export const NftDetailsBundlePage = () => {
         <NftDetailsCard
           className="nft-details-card"
           token={token}
-          // tokenAddress={isParentToken ? token?.owner : bundleToken?.nestingChildTokens}
           isOwner={isOwner}
-          achievement={isParentToken() ? 'Bundle' : 'Nested'}
+          achievement={isBundleToken() ? 'Bundle' : 'Nested'}
           buttons={
             isOwner && (
-              <TransferBtn
-                className="transfer-btn"
-                wide={size === DeviceSize.xs}
-                title="Transfer"
-                role="primary"
-                onClick={() => {
-                  logUserEvent(UserEvents.TRANSFER_NFT);
-                  setCurrentModal('transfer');
-                }}
-              />
+              <NftDetailsWrapperButtons>
+                <TransferBtn
+                  className="transfer-btn"
+                  wide={size === DeviceSize.xs}
+                  title="Transfer"
+                  role="primary"
+                  onClick={() => {
+                    logUserEvent(UserEvents.TRANSFER_NFT);
+                    setCurrentModal('transfer');
+                  }}
+                />
+                {!isBundleToken() && (
+                  <TransferBtn
+                    wide={size === DeviceSize.xs}
+                    title="Unnest Token"
+                    role="danger"
+                    onClick={unnestTokenAction}
+                  />
+                )}
+              </NftDetailsWrapperButtons>
             )
           }
           onCurrentModal={setCurrentModal}
@@ -193,8 +215,8 @@ export const NftDetailsBundlePage = () => {
             getKey={getKey}
             onNodeClicked={handleNodeClicked}
             onViewNodeDetails={handleViewTokenDetails}
+            onUnnestClick={handleUnnestToken}
             // onTransferClick={onActionClick('nested')}
-            // onUnnestClick={onActionClick(BundleModalType.unnest)}
           />
         </BundleWrapper>
 
@@ -209,7 +231,7 @@ export const NftDetailsBundlePage = () => {
 
         <NFTModals
           modalType={currentModal}
-          token={token}
+          token={selectedTokenBundleTable || token}
           onComplete={onComplete}
           onClose={onModalClose}
         />

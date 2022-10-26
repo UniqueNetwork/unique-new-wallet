@@ -13,12 +13,18 @@ const TooltipParent = styled.span`
   vertical-align: middle;
 `;
 
-export const TooltipWrapper: VFC<TooltipWrapperProps> = ({ children, message }) => {
+export const TooltipWrapper: VFC<TooltipWrapperProps> = ({
+  children,
+  message,
+  align,
+}) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
-      <Tooltip targetRef={tooltipRef}>{message}</Tooltip>
+      <Tooltip targetRef={tooltipRef} align={align}>
+        {message}
+      </Tooltip>
       <TooltipParent ref={tooltipRef}>{children}</TooltipParent>
     </>
   );
