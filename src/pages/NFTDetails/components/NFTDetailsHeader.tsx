@@ -1,17 +1,9 @@
 import { memo, ReactNode, useMemo, VFC } from 'react';
 import styled from 'styled-components';
-import {
-  Button,
-  Dropdown,
-  Heading,
-  Icon,
-  Link,
-  SelectOptionProps,
-  Text,
-} from '@unique-nft/ui-kit';
+import { Button, Dropdown, Heading, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
-import { BurnBtn } from '@app/components';
+import { BurnBtn, ExternalLink } from '@app/components';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
@@ -22,8 +14,8 @@ interface NFTDetailsHeaderProps {
   ownerAddress?: string;
   isCurrentAccountOwner?: boolean;
   className?: string;
-  onShowModal(modal: TNFTModalType): void;
   buttons: ReactNode;
+  onShowModal(modal: TNFTModalType): void;
 }
 
 interface MenuOptionItem extends SelectOptionProps {
@@ -42,16 +34,11 @@ const HeaderContainerInfo = styled.div`
 const HeaderContent = styled.div`
   min-width: 0;
 
-  .collection-link {
-    display: flex;
+  .header-link {
     margin-bottom: calc(var(--prop-gap) / 2);
-
-    &-text {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    font-size: 1rem;
   }
+
   .collection-heading {
     margin-bottom: var(--prop-gap);
   }
@@ -158,20 +145,13 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
     <div className={className}>
       <HeaderContainerInfo>
         <HeaderContent>
-          <Link
-            target="_blank"
-            rel="noreferrer"
-            color="primary"
-            href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
-            className="collection-link"
-          >
-            <Text className="collection-link-text" color="primary-500" weight="light">
+          <div className="header-link">
+            <ExternalLink
+              href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
+            >
               {`${collectionName} [id ${collectionId}]`}
-            </Text>
-            <div>
-              <Icon color="var(--color-primary-500)" size={16} name="arrow-up-right" />
-            </div>
-          </Link>
+            </ExternalLink>
+          </div>
           <Heading className="collection-heading">{title}</Heading>
           <TextOwner>
             {isCurrentAccountOwner ? (
