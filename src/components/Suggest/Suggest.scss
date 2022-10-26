@@ -1,0 +1,124 @@
+.unique-suggestion-wrapper {
+    display: inline-block;
+    width: 250px;
+    .status-text {
+        color: var(--color-grey-500);
+        font-size: 14px;
+        line-height: 22px;
+        margin-top: 8px;
+        min-height: 22px;
+        width: 100%;
+    }
+
+    &.error,
+    &.error:focus-within {
+        .suggest-input {
+            border: 1px solid var(--color-coral-500);
+        }
+        .status-text {
+            color: var(--color-coral-500);
+        }
+    }
+}
+
+.unique-suggestion {
+    font-family: var(--prop-font-family);
+    font-size: var(--prop-font-size);
+    font-weight: var(--prop-font-weight);
+    position: relative;
+    color: var(--color-additional-dark);
+    display: inline-block;
+    width: 100%;
+
+    .dropped {
+        .icon-triangle {
+            transform: rotate(180deg);
+        }
+    }
+
+    .suggest-input {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+
+        .unique-input-text {
+            .input-wrapper {
+                display: none;
+                & input {
+                    text-overflow: ellipsis;
+                    padding-right: 63px;
+                    font-size: var(--prop-font-size);
+                }
+            }
+            &.dropped .input-wrapper,
+            &.empty .input-wrapper{
+                display: flex;
+            }
+        }
+
+        .suggest-active-value {
+            white-space: nowrap;
+            padding: 0 56px 0  4px;
+            height: 38px;
+            border: 1px solid var(--color-grey-300);
+            border-radius: var(--prop-border-radius);
+
+            .suggestion-item:hover {
+                background-color: transparent;
+            }
+            & * {
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+
+        .with-icon {
+            .icon-triangle {
+                margin: 0;
+            }
+        }
+
+        .icon-clear {
+            cursor: pointer;
+            z-index: 2;
+            margin-right: 10px;
+
+            svg {
+                display: block;
+                margin: 0;
+            }
+        }
+    }
+
+    .suggestion-values {
+        border: 1px solid var(--color-grey-300);
+        border-radius: 4px;
+        background: var(--color-additional-light);
+        box-sizing: border-box;
+        position: absolute;
+        z-index: 50;
+        top: calc(100% + 5px);
+        width: 100%;
+        padding: 8px;
+        max-height: 250px;
+        overflow-y: auto;
+
+        &.empty {
+            height: auto;
+        }
+    }
+
+    .icon-right-wrapper {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-right: 17px;
+        &.dropped .icon.icon-triangle {
+            transform: rotate(180deg);
+        }
+    }
+}

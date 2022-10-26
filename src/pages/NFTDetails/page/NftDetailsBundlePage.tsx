@@ -97,7 +97,7 @@ export const NftDetailsBundlePage = () => {
     };
   }, [tokenById, collection]);
 
-  const isOwner = useIsOwner(token);
+  const isOwner = useIsOwner(bundleToken);
 
   useEffect(() => {
     if (!bundleToken) {

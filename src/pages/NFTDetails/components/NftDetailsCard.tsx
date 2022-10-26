@@ -65,6 +65,7 @@ const NftDetailsInfo = styled.div`
     top: 15px;
     font-size: 16px;
     font-weight: 500;
+    z-index: 2;
   }
 
   @media screen and (min-width: 768px) {

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TokenByIdResponse } from '@unique-nft/sdk';
+import { Button } from '@unique-nft/ui-kit';
+import styled from 'styled-components';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
@@ -68,16 +70,27 @@ export const NftDetailsPage = () => {
         isOwner={isOwner}
         buttons={
           isOwner && (
-            <TransferBtn
-              className="transfer-btn"
-              title="Transfer"
-              wide={size <= DeviceSize.sm}
-              role="primary"
-              onClick={() => {
-                logUserEvent(UserEvents.TRANSFER_NFT);
-                setCurrentModal('transfer');
-              }}
-            />
+            <DetailsNftButtonsWrapper>
+              <TransferBtn
+                className="transfer-btn"
+                title="Transfer"
+                wide={size <= DeviceSize.sm}
+                role="primary"
+                onClick={() => {
+                  logUserEvent(UserEvents.TRANSFER_NFT);
+                  setCurrentModal('transfer');
+                }}
+              />
+              {collection?.permissions?.nesting?.tokenOwner && (
+                <Button
+                  title="Nest this token"
+                  onClick={() => {
+                    logUserEvent(UserEvents.CREATE_BUNDLE);
+                    setCurrentModal('create-bundle');
+                  }}
+                />
+              )}
+            </DetailsNftButtonsWrapper>
           )
         }
         onCurrentModal={setCurrentModal}
@@ -91,3 +104,8 @@ export const NftDetailsPage = () => {
     </NftDetailsLayout>
   );
 };
+
+const DetailsNftButtonsWrapper = styled.div`
+  display: flex;
+  gap: calc(var(--prop-gap) / 2);
+`;

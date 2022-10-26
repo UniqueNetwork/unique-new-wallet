@@ -3,8 +3,9 @@ import { TransferModal } from '@app/pages/NFTDetails/Modals/TransferModal';
 import { BurnModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { ShareModal } from '@app/pages/NFTDetails/Modals/ShareModal';
 import { TToken } from '@app/pages/NFTDetails/type';
+import { CreateBundleModal } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleModal';
 
-interface NFTModalsProps<T> {
+export interface NFTModalsProps<T> {
   modalType: TNFTModalType;
   token?: T;
   onComplete(): void;
@@ -36,6 +37,16 @@ export const NFTModals = <T extends TToken>({
     case 'burn':
       return (
         <BurnModal
+          isVisible={true}
+          token={token}
+          onClose={onClose}
+          onComplete={onComplete}
+        />
+      );
+
+    case 'create-bundle':
+      return (
+        <CreateBundleModal
           isVisible={true}
           token={token}
           onClose={onClose}

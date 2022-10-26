@@ -3,4 +3,4 @@ export type TTransfer = {
   recipient: string;
 };
 
-export type TNFTModalType = 'none' | 'transfer' | 'share' | 'burn';
+export type TNFTModalType = 'none' | 'transfer' | 'share' | 'burn' | 'create-bundle';
