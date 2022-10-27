@@ -85,7 +85,12 @@ export const UnnestModal = ({ onClose, token }: NFTModalsProps<TNestingToken>) =
       title="Unnest"
       isVisible={true}
       footerButtons={
-        <TransferBtn title="Confirm" disabled={feeLoading} onClick={handleSubmit} />
+        <TransferBtn
+          title="Confirm"
+          disabled={feeLoading}
+          role="primary"
+          onClick={handleSubmit}
+        />
       }
       onClose={onClose}
     >

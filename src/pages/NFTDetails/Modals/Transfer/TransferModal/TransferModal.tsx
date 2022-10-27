@@ -102,6 +102,7 @@ export const TransferModal = <T extends TBaseToken>({
         <TransferBtn
           title="Confirm"
           disabled={!isValid || feeLoading}
+          role="primary"
           onClick={form.handleSubmit(onSubmit)}
         />
       }

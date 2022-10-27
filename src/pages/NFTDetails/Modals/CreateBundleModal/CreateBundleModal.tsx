@@ -171,6 +171,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
         <TransferBtn
           title="Confirm"
           disabled={!isValid || feeLoading}
+          role="primary"
           onClick={handleSubmit(onSubmit)}
         />
       }
