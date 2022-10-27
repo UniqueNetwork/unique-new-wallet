@@ -5,6 +5,7 @@ import {
   TransferModal,
   TNFTModalType,
   CreateBundleModal,
+  TransferNestedTokenModal,
 } from '@app/pages/NFTDetails/Modals';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 
@@ -43,6 +44,15 @@ export const NFTModals = <T extends TBaseToken>({
 
     case 'unnest':
       return <UnnestModal token={token} onClose={onClose} onComplete={onComplete} />;
+
+    case 'bundle-transfer':
+      return (
+        <TransferNestedTokenModal
+          token={token}
+          onClose={onClose}
+          onComplete={onComplete}
+        />
+      );
   }
   return null;
 };

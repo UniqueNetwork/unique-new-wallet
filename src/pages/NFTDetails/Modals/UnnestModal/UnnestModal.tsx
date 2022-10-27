@@ -63,13 +63,17 @@ export const UnnestModal = ({ onClose, token }: NFTModalsProps<TNestingToken>) =
     }
     submitWaitResult({
       payload: unnestData,
-    }).then(() => {
-      onClose();
+    })
+      .then(() => {
+        onClose();
 
-      info(`${token?.name} belongs to you now`);
+        info(`${token?.name} belongs to you now`);
 
-      queryClient.invalidateQueries(queryKeys.token.isBundle._def);
-    });
+        queryClient.invalidateQueries(queryKeys.token.isBundle._def);
+      })
+      .catch(() => {
+        onClose();
+      });
   };
 
   if (isLoadingSubmitResult) {
