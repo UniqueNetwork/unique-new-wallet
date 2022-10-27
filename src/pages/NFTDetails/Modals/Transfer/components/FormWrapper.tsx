@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
-import { Alert, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
 
 import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { ModalContent } from '@app/pages/components/ModalComponents';
+import { Alert } from '@app/components';
 
 type Props = {
   children: ReactNode;
