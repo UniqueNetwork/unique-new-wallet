@@ -119,6 +119,7 @@ const Row = styled.div`
 `;
 
 const Description = styled.div`
+  width: 100%;
   padding: var(--prop-gap) 0;
   border-top: 1px dashed var(--color-grey-300);
   border-bottom: 1px dashed var(--color-grey-300);

@@ -1,25 +1,26 @@
 import { memo, ReactNode, useMemo, VFC } from 'react';
 import styled from 'styled-components';
-import { Button, Dropdown, Heading, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
+import { Button, Heading, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
-import { BurnBtn, ExternalLink } from '@app/components';
+import { BurnBtn, Dropdown, ExternalLink } from '@app/components';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 interface NFTDetailsHeaderProps {
   title?: string;
+  tokenId?: string;
   collectionId?: number;
   collectionName?: string;
   ownerAddress?: string;
   isCurrentAccountOwner?: boolean;
   className?: string;
   buttons: ReactNode;
+
   onShowModal(modal: TNFTModalType): void;
 }
 
 interface MenuOptionItem extends SelectOptionProps {
-  color?: string;
   disabled?: boolean;
   id: TNFTModalType;
 }
@@ -29,6 +30,61 @@ const HeaderContainerInfo = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--prop-gap);
+
+  .dropdown-options {
+    .dropdown-option {
+      position: relative;
+      margin: 0 !important;
+      padding: 0;
+
+      &:not(:first-child) {
+        margin-top: calc(var(--prop-gap) / 2) !important;
+
+        &:before {
+          border-top: 1px dashed var(--color-grey-300);
+          position: absolute;
+          top: calc(var(--prop-gap) / (-4));
+          left: 0;
+          width: 100%;
+          height: 0;
+          content: '';
+          pointer-events: none;
+        }
+      }
+
+      &-primary {
+        color: var(--color-primary-500);
+
+        &:hover {
+          background-color: var(--color-primary-100);
+          color: var(--color-primary-500);
+        }
+      }
+
+      &-danger {
+        color: var(--color-coral-500);
+
+        &:hover {
+          background-color: var(--color-coral-100);
+          color: var(--color-coral-500);
+        }
+      }
+
+      &:active {
+        color: inherit;
+      }
+    }
+
+    .unique-button {
+      box-sizing: border-box;
+      border-radius: 0;
+      justify-content: flex-start;
+      width: 100%;
+      padding: calc(var(--prop-gap) / 2);
+      background: 0 none;
+      color: inherit;
+    }
+  }
 `;
 
 const HeaderContent = styled.div`
@@ -41,26 +97,6 @@ const HeaderContent = styled.div`
 
   .collection-heading {
     margin-bottom: var(--prop-gap);
-  }
-`;
-
-const MenuOptionContainer = styled.div<{ color?: string }>`
-  margin: 0 calc(var(--prop-gap) / (-2));
-
-  &:not(:hover) {
-    color: ${(p) => p.color};
-  }
-
-  .unique-button {
-    padding: 0 calc(var(--prop-gap) / 2);
-
-    &:not([disabled]) {
-      color: inherit;
-    }
-
-    & > .icon {
-      pointer-events: none;
-    }
   }
 `;
 
@@ -77,39 +113,26 @@ const TextOwner = styled.div`
 const MenuOption = (
   option: SelectOptionProps & { color?: string; disabled?: boolean },
 ) => {
+  const ButtonElement = option.disabled ? BurnBtn : Button;
+
   return (
-    <MenuOptionContainer color={option.color}>
-      {option.disabled ? (
-        <BurnBtn
-          disabled={option.disabled}
-          iconLeft={{
-            color: 'currentColor',
-            name: (option.icon as string) ?? '',
-            size: 16,
-          }}
-          role="ghost"
-          title={option.title as string}
-          wide={true}
-        />
-      ) : (
-        <Button
-          disabled={option.disabled}
-          iconLeft={{
-            color: 'currentColor',
-            name: (option.icon as string) ?? '',
-            size: 16,
-          }}
-          role="ghost"
-          title={option.title as string}
-          wide={true}
-        />
-      )}
-    </MenuOptionContainer>
+    <ButtonElement
+      disabled={option.disabled}
+      iconRight={{
+        color: 'currentColor',
+        name: (option.icon as string) ?? '',
+        size: 16,
+      }}
+      role="ghost"
+      title={option.title as string}
+      wide={true}
+    />
   );
 };
 
 const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   title = '',
+  tokenId,
   collectionName = '',
   collectionId,
   ownerAddress,
@@ -126,20 +149,34 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
         icon: 'shared',
         id: 'share',
         title: 'Share',
+        type: 'primary',
+      },
+      {
+        icon: 'arrow-up-right',
+        id: 'scan',
+        title: 'View NFT on UniqueScan',
+        type: 'primary',
       },
     ];
 
     if (isCurrentAccountOwner) {
       items.push({
-        color: 'var(--color-coral-500)',
         icon: 'burn',
         id: 'burn',
-        title: 'Burn NFT',
+        title: 'Burn token',
+        type: 'danger',
       });
     }
 
     return items;
   }, [isCurrentAccountOwner]);
+
+  const openInNewTab = (url: string) => {
+    const newWindow = window.open(url, '_blank', 'noopener, noreferrer');
+    if (newWindow) {
+      newWindow.opener = null;
+    }
+  };
 
   return (
     <div className={className}>
@@ -180,14 +217,23 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
           onChange={(opt) => {
             if (opt.id === 'burn' && !currentChain.burnEnabled) {
               return;
+            } else if (opt.id === 'scan') {
+              openInNewTab(
+                `${currentChain.uniquescanAddress}/nfts/${collectionId}/${tokenId}`,
+              );
             }
+
             onShowModal((opt as MenuOptionItem).id);
           }}
         >
-          <Icon
-            size={40}
-            name="rounded-rectangle-more"
-            color="var(--color-secondary-400)"
+          <Button
+            className="unique-button-icon"
+            iconLeft={{
+              color: 'currentColor',
+              name: 'more-horiz',
+              size: 24,
+            }}
+            title=""
           />
         </Dropdown>
       </HeaderContainerInfo>
