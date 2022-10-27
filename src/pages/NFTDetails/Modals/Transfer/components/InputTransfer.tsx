@@ -1,12 +1,7 @@
 import { Icon, InputText, InputTextProps } from '@unique-nft/ui-kit';
 
 import { TooltipWrapper } from '@app/components';
-
-const ALIGN = {
-  appearance: 'horizontal',
-  horizontal: 'right',
-  vertical: 'top',
-} as const;
+import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 export const InputTransfer = (inputProps: InputTextProps) => (
   <InputText
@@ -14,7 +9,7 @@ export const InputTransfer = (inputProps: InputTextProps) => (
       <>
         Recipient address
         <TooltipWrapper
-          align={ALIGN}
+          align={DEFAULT_POSITION_TOOLTIP}
           message={
             <>
               Make sure to&nbsp;use a&nbsp;Substrate address created with
