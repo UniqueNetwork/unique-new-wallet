@@ -26,3 +26,4 @@ export * from './AccountSelect';
 export * from './InputText';
 export * from './Modal';
 export * from './ErrorPage';
+export * from './Dropdown';

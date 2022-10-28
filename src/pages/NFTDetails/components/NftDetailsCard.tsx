@@ -47,6 +47,7 @@ export const NftDetailsCard = <T extends TBaseToken>({
     <div className="info-container">
       <NFTDetailsHeader
         title={token?.name}
+        tokenId={token?.tokenId}
         collectionId={token?.collectionId}
         collectionName={token?.collectionName}
         ownerAddress={token?.owner}
