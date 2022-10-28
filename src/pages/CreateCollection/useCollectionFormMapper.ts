@@ -35,6 +35,8 @@ export const useCollectionFormMapper = () => {
       limits: {
         tokenLimit,
         ownerCanDestroy,
+        transfersEnabled: true,
+        ownerCanTransfer: true,
       },
       schema: {
         coverPicture: {

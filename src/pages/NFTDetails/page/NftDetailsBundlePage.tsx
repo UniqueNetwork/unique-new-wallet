@@ -156,6 +156,16 @@ export const NftDetailsBundlePage = () => {
     setCurrentModal('unnest');
   };
 
+  const handleTransferToken = (token: INestingToken) => {
+    transferTokenAction();
+    setSelectedTokenBundleTable(token);
+  };
+
+  const transferTokenAction = () => {
+    logUserEvent(UserEvents.TRANSFER_NFT);
+    setCurrentModal('bundle-transfer');
+  };
+
   return (
     <NftDetailsWrapper
       className={classNames({
@@ -179,10 +189,7 @@ export const NftDetailsBundlePage = () => {
                   wide={size === DeviceSize.xs}
                   title="Transfer"
                   role="primary"
-                  onClick={() => {
-                    logUserEvent(UserEvents.TRANSFER_NFT);
-                    setCurrentModal('transfer');
-                  }}
+                  onClick={transferTokenAction}
                 />
                 {!isBundleToken() && (
                   <TransferBtn
@@ -216,7 +223,7 @@ export const NftDetailsBundlePage = () => {
             onNodeClicked={handleNodeClicked}
             onViewNodeDetails={handleViewTokenDetails}
             onUnnestClick={handleUnnestToken}
-            // onTransferClick={onActionClick('nested')}
+            onTransferClick={handleTransferToken}
           />
         </BundleWrapper>
 

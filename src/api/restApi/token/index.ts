@@ -6,3 +6,4 @@ export * from './useTokenGetById';
 export * from './useTokenGetBundle';
 export * from './useTokenNest';
 export * from './useTokenUnnest';
+export * from './useTokenParentGetById';

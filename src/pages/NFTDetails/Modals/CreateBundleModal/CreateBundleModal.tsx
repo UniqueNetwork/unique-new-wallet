@@ -88,13 +88,17 @@ export const CreateBundleModal = <T extends TBaseToken>({
           tokenId: token.tokenId,
         },
       },
-    }).then(() => {
-      onClose();
+    })
+      .then(() => {
+        onClose();
 
-      info(`${form.token?.token_name} nested into ${token.name}`);
+        info(`${form.token?.token_name} nested into ${token.name}`);
 
-      queryClient.invalidateQueries(queryKeys.token.isBundle._def);
-    });
+        queryClient.invalidateQueries(queryKeys.token.isBundle._def);
+      })
+      .then(() => {
+        onClose();
+      });
   };
 
   useEffect(() => {
@@ -167,6 +171,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
         <TransferBtn
           title="Confirm"
           disabled={!isValid || feeLoading}
+          role="primary"
           onClick={handleSubmit(onSubmit)}
         />
       }

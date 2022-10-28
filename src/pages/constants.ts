@@ -5,3 +5,8 @@ export const MAX_SYMBOL_SIZE = 4;
 export const MAX_SYMBOL_BYTES_SIZE = 16;
 export const FILE_SIZE_LIMIT_ERROR = 'File size more than 10MB';
 export const NO_BALANCE_MESSAGE = 'Insufficient funds. Please top up\u00a0your balance';
+export const DEFAULT_POSITION_TOOLTIP = {
+  appearance: 'horizontal',
+  horizontal: 'right',
+  vertical: 'top',
+} as const;

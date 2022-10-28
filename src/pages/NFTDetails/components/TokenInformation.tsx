@@ -4,6 +4,7 @@ import { Heading, Icon, Text } from '@unique-nft/ui-kit';
 
 import { Tag, Tags, TooltipWrapper } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
+import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 export type Attribute = {
   title: string;
@@ -37,11 +38,7 @@ const TokenInformationComponent = <T extends TBaseToken>({
       <Heading className="attributes-header" size="4">
         Attributes
         <TooltipWrapper
-          align={{
-            appearance: 'horizontal',
-            vertical: 'top',
-            horizontal: 'right',
-          }}
+          align={DEFAULT_POSITION_TOOLTIP}
           message={
             <>
               Special features of&nbsp;the token that the collection creator specifies

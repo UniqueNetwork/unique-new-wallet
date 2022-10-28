@@ -7,7 +7,6 @@ import {
   InputText,
   Loader,
   Text,
-  TooltipAlign,
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,12 +24,7 @@ import {
   SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-
-const tooltipAlign: TooltipAlign = {
-  appearance: 'horizontal',
-  horizontal: 'right',
-  vertical: 'top',
-};
+import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
@@ -113,7 +107,7 @@ const CollectionSettings = () => {
                       <>
                         Collection sponsor address
                         <TooltipWrapper
-                          align={tooltipAlign}
+                          align={DEFAULT_POSITION_TOOLTIP}
                           message={
                             <>
                               The collection sponsor pays for all transactions related
@@ -155,7 +149,7 @@ const CollectionSettings = () => {
                       <>
                         Token limit
                         <TooltipWrapper
-                          align={tooltipAlign}
+                          align={DEFAULT_POSITION_TOOLTIP}
                           message={
                             <>
                               The token limit (collection size) is&nbsp;a&nbsp;mandatory
@@ -186,7 +180,7 @@ const CollectionSettings = () => {
                       <>
                         Owner can burn collection
                         <TooltipWrapper
-                          align={tooltipAlign}
+                          align={DEFAULT_POSITION_TOOLTIP}
                           message={
                             <>
                               Should you decide to&nbsp;keep the right to&nbsp;destroy the

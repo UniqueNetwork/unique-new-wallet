@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo } from 'react';
-import { Button, Icon, InputText, TooltipAlign } from '@unique-nft/ui-kit';
+import { Button, Icon, InputText } from '@unique-nft/ui-kit';
 
 import { Alert, TooltipWrapper } from '@app/components';
 import { LabelText, StepsTextStyled } from '@app/pages/Accounts/Modals/commonComponents';
@@ -10,15 +10,10 @@ import {
 } from '@app/pages/components/ModalComponents';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
+import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
-
-const tooltipAlign: TooltipAlign = {
-  appearance: 'horizontal',
-  horizontal: 'right',
-  vertical: 'top',
-};
 
 export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
   accountProperties,
@@ -53,7 +48,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <LabelText size="m">
             Partial seed
             <TooltipWrapper
-              align={tooltipAlign}
+              align={DEFAULT_POSITION_TOOLTIP}
               message={
                 <>
                   The seed is&nbsp;your key to&nbsp;the account. Knowing the seed allows
@@ -72,7 +67,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <LabelText size="m">
             Keypair type
             <TooltipWrapper
-              align={tooltipAlign}
+              align={DEFAULT_POSITION_TOOLTIP}
               message={
                 <>
                   Substrate supports a&nbsp;number of&nbsp;different crypto mechanisms.
@@ -91,7 +86,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
           <LabelText size="m">
             Derivation path
             <TooltipWrapper
-              align={tooltipAlign}
+              align={DEFAULT_POSITION_TOOLTIP}
               message={
                 <>
                   If&nbsp;you would like to&nbsp;create and manage several accounts

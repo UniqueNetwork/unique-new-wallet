@@ -4,12 +4,12 @@ import { Modal } from '@app/components/Modal';
 
 const stages = [
   {
-    title: 'Nesting in progress',
+    title: 'Transfer in progress',
     status: StageStatus.inProgress,
   },
 ];
 
-export const CreateBundleStagesModal = () => {
+export const TransferNestedStagesModal = () => {
   return (
     <Modal isVisible={true} title="Please wait">
       <Stages stages={stages} />

@@ -55,7 +55,7 @@ export const CreateBundleForm = ({
                 }) => (
                   <SuggestOptionNesting
                     isActive={Boolean(isActive)}
-                    title={suggestion.name}
+                    title={`${suggestion.name} [id ${suggestion.collection_id}]`}
                     img={suggestion.collection_cover}
                     typeAvatar="circle"
                   />

@@ -4,4 +4,5 @@ export type TNFTModalType =
   | 'share'
   | 'burn'
   | 'create-bundle'
-  | 'unnest';
+  | 'unnest'
+  | 'bundle-transfer';
