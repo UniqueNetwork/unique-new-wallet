@@ -1,3 +1,5 @@
+import { Nullable } from '@app/types';
+
 export type Direction = 'asc' | 'desc';
 
 // depricated
@@ -44,6 +46,8 @@ export interface Attribute {
   };
 }
 
+export type TokenTypeEnum = 'FRACTIONAL' | 'NESTED' | 'NFT';
+
 export interface Token {
   token_id: number;
   token_name: string;
@@ -56,11 +60,12 @@ export interface Token {
     fullUrl: string | null;
     ipfsCid: string | null;
   };
-
   collection_id: number;
   collection_name: string;
   collection_cover: string;
   collection_description: string;
+  type: TokenTypeEnum;
+  children_count: number;
 }
 
 export interface Collection {
