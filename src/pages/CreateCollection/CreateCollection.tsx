@@ -1,37 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
+import { Button, useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { useDebounce } from 'use-debounce';
-import { Button, Text, useNotifications } from '@unique-nft/ui-kit';
 
-import {
-  DeviceSize,
-  useAccounts,
-  useApi,
-  useBalanceInsufficient,
-  useDeviceSize,
-} from '@app/hooks';
-import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
 import { ROUTE } from '@app/routes';
-import {
-  CollectionSidebar,
-  CollectionStepper,
-  Confirm,
-  MintingBtn,
-  StatusTransactionModal,
-} from '@app/components';
+import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
+import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
+import { StatusTransactionModal } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
-import { withPageTitle } from '@app/HOCs/withPageTitle';
-import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { BottomBar } from '@app/pages/components/BottomBar';
 
-import { NO_BALANCE_MESSAGE } from '../constants';
-import { CollectionForm, Warning } from './types';
-import { ButtonGroup, FormWrapper } from '../components/FormComponents';
+import { mapCollectionForm } from './helpers';
 import { tabsUrls, warnings } from './constants';
-import { useCollectionFormMapper } from './useCollectionFormMapper';
+import { CollectionForm, Warning } from './types';
+import { CollectionTabs, WarningModal } from './components';
+import { FormWrapper } from '../components/FormComponents';
+import { CollectionSidebar, FeeInformationTransaction } from './features';
+import { useMainInformationValidator, useNftAttributesValidator } from './tabs';
 
 interface CreateCollectionProps {
   className?: string;
@@ -45,95 +32,54 @@ const WrapperContentStyled = styled(WrapperContent)`
   }
 `;
 
-const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
+export const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const deviceSize = useDeviceSize();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [step, setStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
-  const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
-  const formMapper = useCollectionFormMapper();
-  const {
-    getFee,
-    fee,
-    feeFormatted,
-    submitWaitResult,
-    isLoadingSubmitResult,
-    feeError,
-    submitWaitResultError,
-  } = useCollectionCreate();
+  const { error, info } = useNotifications();
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
-  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  const { submitWaitResult, isLoadingSubmitResult, submitWaitResultError } =
+    useCollectionCreate();
 
-  const collectionForm = useForm<CollectionForm>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      name: '',
-      symbol: '',
-      description: '',
-      address: selectedAccount?.address,
-      nesting: {
-        tokenOwner: false,
-      },
-    },
-  });
-  const {
-    control,
-    formState: { isValid },
-    handleSubmit,
-  } = collectionForm;
-  const collectionFormValues = useWatch<CollectionForm>({
-    control,
-  });
+  const { handleSubmit, getValues } = useFormContext<CollectionForm>();
 
-  const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
+  const formValidator = useNftAttributesValidator();
+  const mainInformationValidator = useMainInformationValidator();
 
   useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
+    navigate(tabsUrls[step - 1]);
+  }, [step, navigate]);
 
-  useEffect(() => {
-    navigate(tabsUrls[currentStep - 1]);
-  }, [currentStep, navigate]);
+  const goToPreviousStep = useCallback((step: number) => {
+    setStep(step);
+  }, []);
+  const onNextStep = useCallback((step: number) => {
+    const coverPictureIpfsCid = getValues('coverPictureIpfsCid');
 
-  useEffect(() => {
-    if (collectionDebounceValue) {
-      const collection = formMapper(collectionDebounceValue);
-      getFee(collection);
-    }
-  }, [collectionDebounceValue, getFee]);
+    console.log(coverPictureIpfsCid);
 
-  const goToNextStep = (step: number) => setCurrentStep(step);
-  const goToPreviousStep = (step: number) => {
-    if (step < currentStep) {
-      setCurrentStep(step);
-    }
-  };
-  const onNextStep = ({ coverPictureIpfsCid }: CollectionForm) => {
     if (!coverPictureIpfsCid) {
       setWarning(warnings.coverIsNotDefine);
 
       return;
     }
 
-    goToNextStep(currentStep + 1);
-  };
+    setStep(step);
+  }, []);
 
-  const onSubmit = (form: CollectionForm) => {
+  const onSubmit = useCallback((form: CollectionForm) => {
     if (!selectedAccount) {
       error('Account is not found');
       return;
     }
 
-    const payload = formMapper(form);
+    const payload = mapCollectionForm(form);
 
     submitWaitResult({ payload })
       .then((res) => {
@@ -150,80 +96,41 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       .catch(() => {
         submitWaitResultError && error(submitWaitResultError);
       });
-  };
+  }, []);
+  const onCreateCollectionHandler = useCallback(() => handleSubmit(onSubmit)(), []);
 
-  const isFirstStep = currentStep - 1 === 0;
-  const isLastStep = currentStep === tabsUrls.length;
+  const onConfirmHandler = useCallback(() => {
+    setWarning(null);
+    setStep((prevStep) => ++prevStep);
+  }, []);
 
-  const isolatedCollectionForm = useMemo(
-    () => (
-      <FormProvider {...collectionForm}>
-        <Outlet />
-      </FormProvider>
-    ),
-    [collectionForm],
-  );
+  const onCancelHandler = useCallback(() => {
+    setWarning(null);
+  }, []);
 
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
+      <WarningModal
+        warning={warning}
+        onConfirm={onConfirmHandler}
+        onCancel={onCancelHandler}
+      />
       <WrapperContentStyled>
         <FormWrapper>
-          <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
-          {isolatedCollectionForm}
-          <FeeInformationTransaction fee={feeFormatted} />
-          <ButtonGroup>
-            {!isLastStep && (
-              <MintingBtn
-                iconRight={{
-                  color: 'currentColor',
-                  name: 'arrow-right',
-                  size: 12,
-                }}
-                title="Next step"
-                disabled={!isValid}
-                onClick={handleSubmit(onNextStep)}
-              />
-            )}
-            {!isFirstStep && (
-              <Button
-                iconLeft={{
-                  color: 'var(--color-primary-400)',
-                  name: 'arrow-left',
-                  size: 12,
-                }}
-                title="Previous step"
-                onClick={() => goToPreviousStep(currentStep - 1)}
-              />
-            )}
-            {isLastStep && (
-              <MintingBtn
-                role="primary"
-                title="Create collection"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid || isBalanceInsufficient}
-                onClick={handleSubmit(onSubmit)}
-              />
-            )}
-          </ButtonGroup>
-          <Confirm
-            buttons={[
-              { title: 'No, return', onClick: () => setWarning(null) },
-              {
-                title: 'Yes, I am sure',
-                role: 'primary',
-                type: 'submit',
-                onClick: () => {
-                  goToNextStep(2);
-                  setWarning(null);
-                },
-              },
-            ]}
-            isVisible={!!warning}
-            title={warning?.title}
-            onClose={() => setWarning(null)}
+          <CollectionTabs
+            step={step}
+            creationDisabled={!formValidator.isValid}
+            nextStepDisabled={!mainInformationValidator.isValid}
+            nextStepTooltip={Object.values(mainInformationValidator.errors).join('.')}
+            creationTooltip={Object.values(formValidator.errors).join('.')}
+            onClickStep={setStep}
+            onClickNextStep={onNextStep}
+            onClickPreviousStep={goToPreviousStep}
+            onCreateCollection={onCreateCollectionHandler}
           >
-            <Text>{warning?.description}</Text>
-          </Confirm>
+            <Outlet />
+            <FeeInformationTransaction />
+          </CollectionTabs>
           <StatusTransactionModal
             isVisible={isLoadingSubmitResult}
             description="Creating collection"
@@ -231,7 +138,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         </FormWrapper>
       </WrapperContentStyled>
       {deviceSize >= DeviceSize.lg ? (
-        <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+        <CollectionSidebar />
       ) : (
         <BottomBar
           buttons={[
@@ -244,14 +151,9 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           isOpen={isDrawerOpen}
           parent={document.body}
         >
-          <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+          <CollectionSidebar />
         </BottomBar>
       )}
     </MainWrapper>
   );
 };
-
-export const CreateCollection = withPageTitle({
-  header: 'Create a collection',
-  backLink: ROUTE.MY_COLLECTIONS,
-})(CreateCollectionComponent);

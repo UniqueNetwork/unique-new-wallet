@@ -5,9 +5,9 @@ import { Button, Icon, InputText, Select, TableColumnProps } from '@unique-nft/u
 
 import { Table, TooltipWrapper } from '@app/components';
 
-import { EnumsInputController } from '../components/EnumsInput/EnumsInputController';
-import trash from '../../../static/icons/trash.svg';
-import { rules, types } from '../constants';
+import { rules, types } from '../../constants';
+import trash from '../../../../static/icons/trash.svg';
+import { EnumsInputController } from '../../components/EnumsInput/EnumsInputController';
 
 interface AttributesTableProps {
   className?: string;

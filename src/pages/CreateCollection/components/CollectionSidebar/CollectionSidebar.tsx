@@ -1,4 +1,4 @@
-import { memo, VFC } from 'react';
+import { VFC } from 'react';
 import { Heading } from '@unique-nft/ui-kit';
 
 import { Card } from '@app/pages/components/Card';
@@ -6,7 +6,7 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { CollectionForm } from '@app/pages/CreateCollection/types';
 
-const CollectionSidebarComponent: VFC<{
+export const CollectionSidebar: VFC<{
   collectionForm: CollectionForm;
   className?: string;
 }> = ({ collectionForm, className }) => {
@@ -38,5 +38,3 @@ const CollectionSidebarComponent: VFC<{
     </WrapperSidebar>
   );
 };
-
-export const CollectionSidebar = memo(CollectionSidebarComponent);
