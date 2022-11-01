@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 type AlertProps = {
   children: ReactNode;
-  type: 'warning';
+  type: 'warning' | 'error';
   className?: string;
 };
 
@@ -24,5 +24,10 @@ const AlertStyledWrapper = styled.div`
   &.warning {
     background: var(--color-additional-warning-100);
     color: var(--color-additional-warning-500);
+  }
+
+  &.error {
+    background: var(--color-coral-100);
+    color: var(--color-coral-500);
   }
 `;

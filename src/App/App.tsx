@@ -20,8 +20,9 @@ const BUNDLE_SHOW_MODAL = 'new-wallet-bundle-show-modal';
 
 export default function App() {
   const [isShowIntroSlider] = useState<boolean>(() => {
-    const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
-    return status ? JSON.parse(status) : true;
+    // const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
+    // return status ? JSON.parse(status) : true;
+    return false;
   });
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Dropdown, Icon, Loader, Tooltip } from '@unique-nft/ui-kit';
+import { Dropdown, Icon, Loader } from '@unique-nft/ui-kit';
 import { useParams } from 'react-router-dom';
 
 import Pin from 'static/icons/pin.svg';
@@ -8,6 +8,7 @@ import MeatBallIcon from 'static/icons/meatball.svg';
 import SquareIcon from 'static/icons/square.svg';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { TooltipWrapper } from '@app/components';
 
 import { Picture } from '../../Picture';
 import { INestingToken, INodeView } from '../types';
@@ -36,9 +37,6 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   const [modalVisible, setModalVisible] = useState(false);
   const deviceSize = useDeviceSize();
   const { isCollectionLoading, collection } = useCollection(data.collectionId);
-  const meatballIconMenu = useRef(null);
-  const squareIcon = useRef(null);
-  const pinIconRef = useRef(null);
 
   const isMobileView = [DeviceSize.sm, DeviceSize.md, DeviceSize.xs].includes(deviceSize);
 
@@ -59,10 +57,10 @@ const NodeView: FC<INodeView<INestingToken>> = ({
 
   const onUnnest = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onUnnestClick?.(data);
+      onUnnestClick?.({ ...data, name: `${collection?.tokenPrefix} #${data.tokenId}` });
       event.stopPropagation();
     },
-    [onUnnestClick, data],
+    [onUnnestClick, data, collection?.tokenPrefix],
   );
 
   const showMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
@@ -83,20 +81,20 @@ const NodeView: FC<INodeView<INestingToken>> = ({
             <Icon name="sorting-initial" size={16} color="var(--color-primary-500)" />
           </IconWrapper>
         </TransferMenuItem>
-        <UnnestMenuItem onClick={onUnnest}>
-          Unnest token
-          <IconWrapper>
-            <Icon name="logout" size={16} color="var(--color-coral-500)" />
-          </IconWrapper>
-        </UnnestMenuItem>
+        {level !== 1 && (
+          <UnnestMenuItem onClick={onUnnest}>
+            Unnest token
+            <IconWrapper>
+              <Icon name="logout" size={16} color="var(--color-coral-500)" />
+            </IconWrapper>
+          </UnnestMenuItem>
+        )}
       </>
     );
   }, [onTransfer, onUnnest]);
 
   const viewTokenDetails = useCallback(() => {
-    if (onViewNodeDetails) {
-      onViewNodeDetails(data);
-    }
+    onViewNodeDetails?.(data);
     setModalVisible(false);
   }, [onViewNodeDetails, data]);
 
@@ -144,63 +142,65 @@ const NodeView: FC<INodeView<INestingToken>> = ({
         </NftInfo>
         <Actions>
           {deviceSize !== DeviceSize.sm && (
-            <ActionButtons className="action-buttons">
-              {menuVisible && data.isCurrentAccountOwner && (
-                <ActionsMenuWrapper className="menu">
-                  <Tooltip
+            <ActionButtons
+              className="action-buttons"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              {menuVisible && data.isCurrentAccountOwner && !isMobileView && (
+                <ActionsMenuWrapper>
+                  <TooltipWrapper
                     align={{
                       vertical: 'top',
                       horizontal: 'middle',
                       appearance: 'vertical',
                     }}
-                    targetRef={meatballIconMenu}
+                    message="Open additional menu"
                   >
-                    Open additional menu
-                  </Tooltip>
-                  <Dropdown
-                    placement="left"
-                    dropdownRender={() => <DropdownMenu>{tokenMenuActions}</DropdownMenu>}
-                  >
-                    <Icon
-                      size={32}
-                      name="meatball-menu"
-                      color="var(--color-secondary-400)"
-                      ref={meatballIconMenu}
-                    />
-                  </Dropdown>
+                    <Dropdown
+                      placement="right"
+                      dropdownRender={() => (
+                        <DropdownMenu>{tokenMenuActions}</DropdownMenu>
+                      )}
+                    >
+                      <Icon
+                        size={32}
+                        file={MeatBallIcon}
+                        color="var(--color-secondary-400)"
+                      />
+                    </Dropdown>
+                  </TooltipWrapper>
                 </ActionsMenuWrapper>
               )}
               {!isCurrent && !isMobileView && (
                 <div onClick={viewTokenDetails}>
-                  <Tooltip
+                  <TooltipWrapper
                     align={{
                       vertical: 'top',
                       horizontal: 'middle',
                       appearance: 'vertical',
                     }}
-                    targetRef={squareIcon}
+                    message="Go to the token page"
                   >
-                    Go to the token page
-                  </Tooltip>
-                  <Icon
-                    size={32}
-                    file={SquareIcon}
-                    color="var(--color-secondary-400)"
-                    ref={squareIcon}
-                  />
+                    <Icon
+                      size={32}
+                      file={SquareIcon}
+                      color="var(--color-secondary-400)"
+                    />
+                  </TooltipWrapper>
                 </div>
               )}
             </ActionButtons>
           )}
           {isCurrent && (
             <PinIcon className="pin-icon">
-              <Tooltip
+              <TooltipWrapper
                 align={{ vertical: 'top', horizontal: 'middle', appearance: 'vertical' }}
-                targetRef={pinIconRef}
+                message="Current token page"
               >
-                Current token page
-              </Tooltip>
-              <Icon size={32} file={Pin} ref={pinIconRef} />
+                <Icon size={32} file={Pin} />
+              </TooltipWrapper>
             </PinIcon>
           )}
           {isMobileView && <Icon size={32} file={MeatBallIcon} />}
@@ -327,9 +327,6 @@ const ActionsMenuWrapper = styled.div`
       &:hover {
         background-color: var(--color-additional-dark);
       }
-    }
-    & > img {
-      display: none;
     }
   }
   div[class*='DropdownMenuDropdown'] {

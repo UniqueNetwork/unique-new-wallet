@@ -19,6 +19,7 @@ export const useTokenIsBundle = ({
     () => api.tokens.isBundle({ collectionId: collectionId!, tokenId: tokenId! }),
     {
       enabled: !!collectionId || !!tokenId,
+      refetchOnMount: true,
     },
   );
 };

@@ -56,6 +56,13 @@ export const CreateCollectionComponent = ({ className }: CreateCollectionProps) 
     navigate(tabsUrls[step - 1]);
   }, [step, navigate]);
 
+  useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
+
   const goToPreviousStep = useCallback((step: number) => {
     setStep(step);
   }, []);
@@ -81,21 +88,17 @@ export const CreateCollectionComponent = ({ className }: CreateCollectionProps) 
 
     const payload = mapCollectionForm(form);
 
-    submitWaitResult({ payload })
-      .then((res) => {
-        info('Collection created successfully');
+    submitWaitResult({ payload }).then((res) => {
+      info('Collection created successfully');
 
-        setPayloadEntity({
-          type: 'create-collection',
-          parsed: res?.parsed,
-          entityData: payload,
-        });
-
-        navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
-      })
-      .catch(() => {
-        submitWaitResultError && error(submitWaitResultError);
+      setPayloadEntity({
+        type: 'create-collection',
+        parsed: res?.parsed,
+        entityData: payload,
       });
+
+      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
+    });
   }, []);
   const onCreateCollectionHandler = useCallback(() => handleSubmit(onSubmit)(), []);
 

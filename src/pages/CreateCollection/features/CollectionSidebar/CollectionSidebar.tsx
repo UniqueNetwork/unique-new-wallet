@@ -1,9 +1,8 @@
 import { memo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { CollectionSidebar as CollectionSidebarComponent } from '@app/components';
-
 import { CollectionForm } from '../../types';
+import { CollectionSidebar as CollectionSidebarComponent } from '../../components';
 
 const CollectionSidebarContainer = () => {
   const { control } = useFormContext<CollectionForm>();

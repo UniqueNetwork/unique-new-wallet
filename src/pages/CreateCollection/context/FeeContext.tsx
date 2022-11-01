@@ -11,12 +11,13 @@ export interface FeeContextProps {
   fee: string;
   feeFormatted: string;
   feeLoading: boolean;
+  feeError: string | null;
 }
 
 export const FeeContext = createContext<FeeContextProps | null>(null);
 
 export const FeeProvider = ({ children }: any) => {
-  const { getFee, fee, feeLoading, feeFormatted } = useCollectionCreate();
+  const { getFee, fee, feeError, feeLoading, feeFormatted } = useCollectionCreate();
   const { control } = useFormContext<CollectionForm>();
   const collectionFormValues = useWatch<CollectionForm>({
     control,
@@ -31,8 +32,8 @@ export const FeeProvider = ({ children }: any) => {
   useEffect(() => debounced(), [collectionFormValues]);
 
   const value = useMemo(
-    () => ({ fee, feeFormatted, feeLoading }),
-    [fee, feeFormatted, feeLoading],
+    () => ({ fee, feeFormatted, feeLoading, feeError }),
+    [fee, feeFormatted, feeLoading, feeError],
   );
 
   return <FeeContext.Provider value={value}>{children}</FeeContext.Provider>;

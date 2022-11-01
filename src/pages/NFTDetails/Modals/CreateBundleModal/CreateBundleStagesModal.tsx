@@ -1,19 +1,17 @@
-import React, { VFC } from 'react';
-
 import { Stages } from '@app/components';
 import { StageStatus } from '@app/types';
 import { Modal } from '@app/components/Modal';
 
 const stages = [
   {
-    title: 'Transfer in progress',
+    title: 'Nesting in progress',
     status: StageStatus.inProgress,
   },
 ];
 
-export const TransferStagesModal: VFC = () => {
+export const CreateBundleStagesModal = () => {
   return (
-    <Modal isVisible={true} title="Transfer NFT">
+    <Modal isVisible={true} title="Please wait">
       <Stages stages={stages} />
     </Modal>
   );

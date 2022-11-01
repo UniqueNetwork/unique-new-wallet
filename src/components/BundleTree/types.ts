@@ -6,6 +6,7 @@ export interface INestingToken extends GetBundleResponse {
   disabled?: boolean;
   selected?: boolean;
   isCurrentAccountOwner?: boolean;
+  name?: string;
 }
 
 export interface ITokenCard {

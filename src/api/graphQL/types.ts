@@ -65,7 +65,6 @@ export interface Token {
 
 export interface Collection {
   collection_id: number;
-  collection_name: string;
   collection_cover: string;
   date_of_creation: number;
   description: string;

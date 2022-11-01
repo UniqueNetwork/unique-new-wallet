@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TokenByIdResponse } from '@unique-nft/sdk';
+import { Button } from '@unique-nft/ui-kit';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
@@ -10,6 +11,7 @@ import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
 
 export const NftDetailsPage = () => {
   const { collectionId = '', tokenId = '' } = useParams();
@@ -68,16 +70,27 @@ export const NftDetailsPage = () => {
         isOwner={isOwner}
         buttons={
           isOwner && (
-            <TransferBtn
-              className="transfer-btn"
-              title="Transfer"
-              wide={size <= DeviceSize.sm}
-              role="primary"
-              onClick={() => {
-                logUserEvent(UserEvents.TRANSFER_NFT);
-                setCurrentModal('transfer');
-              }}
-            />
+            <NftDetailsWrapperButtons>
+              <TransferBtn
+                className="transfer-btn"
+                title="Transfer"
+                wide={size <= DeviceSize.sm}
+                role="primary"
+                onClick={() => {
+                  logUserEvent(UserEvents.TRANSFER_NFT);
+                  setCurrentModal('transfer');
+                }}
+              />
+              {collection?.permissions?.nesting?.tokenOwner && (
+                <Button
+                  title="Nest this token"
+                  onClick={() => {
+                    logUserEvent(UserEvents.CREATE_BUNDLE);
+                    setCurrentModal('create-bundle');
+                  }}
+                />
+              )}
+            </NftDetailsWrapperButtons>
           )
         }
         onCurrentModal={setCurrentModal}

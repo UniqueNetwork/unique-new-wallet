@@ -19,6 +19,7 @@ export const useTokenGetById = ({
     () => api.tokens.get({ collectionId: collectionId!, tokenId: tokenId! }),
     {
       enabled: !!collectionId || !!tokenId,
+      refetchOnMount: true,
     },
   );
 };

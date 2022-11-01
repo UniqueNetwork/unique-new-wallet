@@ -6,9 +6,10 @@ import { NFTDetailsHeader } from '@app/pages/NFTDetails/components/NFTDetailsHea
 import { Divider } from '@app/pages/NFTDetails/components/Divider';
 import { TokenInformation } from '@app/pages/NFTDetails/components/TokenInformation';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { TToken } from '@app/pages/NFTDetails/type';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
+import { TooltipWrapper } from '@app/components';
 
-type Props<T extends TToken> = {
+type Props<T extends TBaseToken> = {
   token?: T;
   achievement?: string;
   onCurrentModal: (type: TNFTModalType) => void;
@@ -17,7 +18,7 @@ type Props<T extends TToken> = {
   className?: string;
 };
 
-export const NftDetailsCard = <T extends TToken>({
+export const NftDetailsCard = <T extends TBaseToken>({
   token,
   onCurrentModal,
   achievement,
@@ -27,12 +28,26 @@ export const NftDetailsCard = <T extends TToken>({
 }: Props<T>) => (
   <NftDetailsInfo className={className}>
     <div className="avatar">
-      {achievement && <span className="achievement">{achievement}</span>}
+      {achievement && (
+        <span className="achievement">
+          <TooltipWrapper
+            message={
+              <>
+                A&nbsp;group of&nbsp;tokens nested in&nbsp;an&nbsp;NFT and having
+                a&nbsp;nested, ordered, tree-like structure
+              </>
+            }
+          >
+            {achievement}
+          </TooltipWrapper>
+        </span>
+      )}
       <Avatar fit="contain" src={token?.image?.fullUrl || undefined} />
     </div>
     <div className="info-container">
       <NFTDetailsHeader
         title={token?.name}
+        tokenId={token?.tokenId}
         collectionId={token?.collectionId}
         collectionName={token?.collectionName}
         ownerAddress={token?.owner}
@@ -58,13 +73,18 @@ const NftDetailsInfo = styled.div`
   .achievement {
     background: var(--color-additional-light);
     border: 1px solid var(--color-blue-grey-200);
-    padding: 5px 8px;
     border-radius: var(--prop-border-radius);
     position: absolute;
     right: 15px;
     top: 15px;
     font-size: 16px;
     font-weight: 500;
+    z-index: 2;
+    cursor: default;
+
+    & > span {
+      padding: 4px 8px;
+    }
   }
 
   @media screen and (min-width: 768px) {

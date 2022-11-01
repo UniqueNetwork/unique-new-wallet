@@ -28,5 +28,6 @@ export const useTokenGetBundle = ({
 
   return useQuery(queryKeys.token.bundle(collectionId, tokenId), () => getBundle(), {
     enabled: !!collectionId || !!tokenId,
+    refetchOnMount: true,
   });
 };

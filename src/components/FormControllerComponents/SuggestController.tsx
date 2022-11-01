@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { SuggestProps, Suggest } from '@unique-nft/ui-kit';
 
 import { Option } from '@app/pages/CreateNFT/types';
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
+import { SuggestProps, Suggest } from '@app/components/Suggest';
 
 type SuggestControllerProps = BaseControllerProps<
   Omit<SuggestProps<Option>, 'onChange'>
@@ -22,11 +21,7 @@ export const SuggestController = ({
   transform,
   ...suggestProps
 }: SuggestControllerProps) => {
-  const { control, register } = useFormContext();
-
-  // useEffect(() => {
-  //   register(name, rules);
-  // }, [name, register, rules]);
+  const { control } = useFormContext();
 
   return (
     <Controller

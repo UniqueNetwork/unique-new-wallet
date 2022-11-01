@@ -19,7 +19,7 @@ export const mapCollectionForm = (form: CollectionForm): CreateCollectionBody =>
     nesting,
   } = form;
 
-  const request: CreateCollectionBody = {
+  const collectionBody: CreateCollectionBody = {
     name,
     address,
     description,
@@ -34,6 +34,8 @@ export const mapCollectionForm = (form: CollectionForm): CreateCollectionBody =>
     limits: {
       tokenLimit,
       ownerCanDestroy,
+      transfersEnabled: true,
+      ownerCanTransfer: true,
     },
     schema: {
       coverPicture: {
@@ -48,11 +50,11 @@ export const mapCollectionForm = (form: CollectionForm): CreateCollectionBody =>
   };
 
   if (form.attributes?.length) {
-    request.schema!.attributesSchema = {};
-    request.schema!.attributesSchemaVersion = '1.0.0';
+    collectionBody.schema!.attributesSchema = {};
+    collectionBody.schema!.attributesSchemaVersion = '1.0.0';
 
     form.attributes.forEach((attr, index) => {
-      request.schema!.attributesSchema![index] = {
+      collectionBody.schema!.attributesSchema![index] = {
         type: 'string',
         name: { _: attr.name } as any,
         optional: attr.optional.id === 'optional',
@@ -60,7 +62,7 @@ export const mapCollectionForm = (form: CollectionForm): CreateCollectionBody =>
       };
 
       if (attr.values?.length) {
-        request.schema!.attributesSchema![index].enumValues = attr.values.reduce(
+        collectionBody.schema!.attributesSchema![index].enumValues = attr.values.reduce(
           (acc, val, index) => {
             return {
               ...acc,
@@ -73,5 +75,5 @@ export const mapCollectionForm = (form: CollectionForm): CreateCollectionBody =>
     });
   }
 
-  return request;
+  return collectionBody;
 };
