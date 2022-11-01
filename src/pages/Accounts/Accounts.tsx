@@ -355,19 +355,15 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
 
-  const {
-    data: balancesAccounts,
-    isLoading: isLoadingBalances,
-    refetch,
-  } = useAccountsBalanceService(accounts.map(({ address }) => address));
+  const balances = useAccountsBalanceService(accounts.map(({ address }) => address));
 
-  const accountBalances = useMemo<Account[]>(
+  const accountBalances = useMemo(
     () =>
       accounts.map((account, idx) => ({
         ...account,
-        balance: balancesAccounts?.[idx],
+        balance: balances?.[idx].data,
       })),
-    [accounts, balancesAccounts],
+    [accounts, balances],
   );
 
   const onSendFundsClick = useCallback(
@@ -402,15 +398,6 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
     void fetchAccounts();
   }, [fetchAccounts]);
 
-  // const totalBalance = useMemo(
-  //   () =>
-  //     accounts.reduce<BN>(
-  //       (acc, account) => (account?.balance ? acc.add(new BN(account?.balance)) : acc),
-  //       new BN(0),
-  //     ),
-  //   [accounts],
-  // );
-
   return (
     <>
       <PagePaper
@@ -440,7 +427,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
               onForgetWalletClick,
             })}
             data={filteredAccounts}
-            loading={isLoadingBalances}
+            loading={balances.some((balance) => balance.isLoading)}
             mobileCaption={
               <Text color="grey-500" weight="light">
                 <CaptionText />
@@ -457,7 +444,9 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
           networkType={selectedAccount?.unitBalance}
           onClose={onChangeAccountsFinish}
           onSendSuccess={() => {
-            refetch();
+            balances.forEach((balance) => {
+              balance.refetch();
+            });
           }}
         />
       )}
