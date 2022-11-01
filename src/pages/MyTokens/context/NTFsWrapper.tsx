@@ -1,38 +1,32 @@
 import { FC, useCallback, useState } from 'react';
 
 import { Direction } from '@app/api/graphQL/types';
-import { TypeFilter } from '@app/api/graphQL/tokens';
+import { StatusFilterNft, TypeFilterNft } from '@app/api/graphQL/tokens';
 
 import NTFsContext from './NFTsContext';
 import { defaultPage } from '../constants';
 
 export const NFTsWrapper: FC = ({ children }) => {
   const [collectionsIds, setCollectionsIds] = useState<number[]>([]);
-  const [tokensTypesFilters, setTokensTypesFilters] = useState<TypeFilter[]>([]);
+  const [tokensStatusFilter, setTokensStatusFilter] =
+    useState<StatusFilterNft>('allStatus');
   const [sortByTokenId, setSortByTokenId] = useState<Direction>('asc');
   const [tokensPage, setTokensPage] = useState(defaultPage);
   const [searchText, setSearchText] = useState('');
+  const [typeFilter, setTypeFilter] = useState<TypeFilterNft>('allType');
 
   const changeSortByTokenIdHandler = useCallback((sort: Direction) => {
     setSortByTokenId(sort);
     setTokensPage(defaultPage);
   }, []);
 
-  const changeTypeFiltersHandler = useCallback((typeFilter: TypeFilter) => {
-    setTokensTypesFilters((previous) => {
-      if (previous.includes(typeFilter)) {
-        previous = previous.filter((tf) => tf !== typeFilter);
-      } else {
-        previous = [...previous, typeFilter];
-      }
-
-      return previous;
-    });
+  const changeStatusFilterHandler = useCallback((statusFilter: StatusFilterNft) => {
+    setTokensStatusFilter(statusFilter);
     setTokensPage(defaultPage);
   }, []);
 
-  const setTypeFiltersHandler = useCallback((typeFilters: TypeFilter[]) => {
-    setTokensTypesFilters(typeFilters);
+  const changeTypeFilterHandler = useCallback((typeFilter: TypeFilterNft) => {
+    setTypeFilter(typeFilter);
     setTokensPage(defaultPage);
   }, []);
 
@@ -66,14 +60,15 @@ export const NFTsWrapper: FC = ({ children }) => {
         changeSortByTokenId: changeSortByTokenIdHandler,
         tokensPage,
         changeTokensPage: setTokensPage,
-        typesFilters: tokensTypesFilters,
-        changeTypesFilters: changeTypeFiltersHandler,
-        setTypesFilters: setTypeFiltersHandler,
+        statusFilter: tokensStatusFilter,
+        changeStatusFilter: changeStatusFilterHandler,
         collectionsIds,
         changeCollectionsIds: changeCollectionsIdsHandler,
         setCollectionsIds: setCollectionsIdsHandler,
         searchText,
         changeSearchText: changeSearchTextHandler,
+        typeFilter,
+        changeTypeFilter: changeTypeFilterHandler,
       }}
     >
       {children}

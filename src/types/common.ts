@@ -19,8 +19,8 @@ export type ResponseError = {
   prettifiedMessage?: string;
 };
 
-export type Option<T> = {
-  id: T;
+export type OptionChips<T> = {
+  value: T;
   label: string;
   icon?: string;
   checked?: boolean;

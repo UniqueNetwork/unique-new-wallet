@@ -6,5 +6,4 @@ export * from './seedUtils';
 export * from './textUtils';
 export * from './timestampUtils';
 export * from './address';
-export * from './dictionary';
 export * from './table';

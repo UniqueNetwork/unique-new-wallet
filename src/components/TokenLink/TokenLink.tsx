@@ -12,6 +12,7 @@ export interface ITokenLinkProps {
   meta?: ReactNode;
   onTokenClick?: () => void;
   onMetaClick?: () => void;
+  badge?: ReactNode;
 }
 
 const TokenLinkWrapper = styled.div`
@@ -65,6 +66,7 @@ export const TokenLink = ({
   meta,
   onTokenClick,
   onMetaClick,
+  badge,
 }: ITokenLinkProps) => {
   const [isLoaded, setLoaded] = useState(false);
 
@@ -72,6 +74,7 @@ export const TokenLink = ({
     <TokenLinkWrapper>
       <div onClick={onTokenClick}>
         <TokenLinkImageWrapper>
+          {badge}
           <img
             alt={alt}
             src={image || emptyImage}
