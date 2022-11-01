@@ -7,7 +7,7 @@ import { Divider } from '@app/pages/NFTDetails/components/Divider';
 import { TokenInformation } from '@app/pages/NFTDetails/components/TokenInformation';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { TooltipWrapper } from '@app/components';
+import { Achievement } from '@app/components';
 
 type Props<T extends TBaseToken> = {
   token?: T;
@@ -29,18 +29,15 @@ export const NftDetailsCard = <T extends TBaseToken>({
   <NftDetailsInfo className={className}>
     <div className="avatar">
       {achievement && (
-        <span className="achievement">
-          <TooltipWrapper
-            message={
-              <>
-                A&nbsp;group of&nbsp;tokens nested in&nbsp;an&nbsp;NFT and having
-                a&nbsp;nested, ordered, tree-like structure
-              </>
-            }
-          >
-            {achievement}
-          </TooltipWrapper>
-        </span>
+        <Achievement
+          achievement={achievement}
+          tooltipDescription={
+            <>
+              A&nbsp;group of&nbsp;tokens nested in&nbsp;an&nbsp;NFT and having
+              a&nbsp;nested, ordered, tree-like structure
+            </>
+          }
+        />
       )}
       <Avatar fit="contain" src={token?.image?.fullUrl || undefined} />
     </div>
@@ -69,23 +66,6 @@ const NftDetailsInfo = styled.div`
   flex: 1 1 auto;
   gap: var(--page-gap);
   max-width: 100%;
-
-  .achievement {
-    background: var(--color-additional-light);
-    border: 1px solid var(--color-blue-grey-200);
-    border-radius: var(--prop-border-radius);
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    font-size: 16px;
-    font-weight: 500;
-    z-index: 2;
-    cursor: default;
-
-    & > span {
-      padding: 4px 8px;
-    }
-  }
 
   @media screen and (min-width: 768px) {
     flex-direction: row;

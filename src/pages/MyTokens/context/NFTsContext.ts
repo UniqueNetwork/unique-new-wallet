@@ -1,16 +1,17 @@
 import { createContext, useContext } from 'react';
 
 import { Direction } from '@app/api/graphQL/types';
-import { TypeFilter } from '@app/api/graphQL/tokens';
+import { StatusFilterNft, TypeFilterNft } from '@app/api/graphQL/tokens';
 
 export interface NTFsContextState {
   sortByTokenId: Direction;
   changeSortByTokenId: (tokenId: Direction) => void;
   tokensPage: number;
   changeTokensPage: (page: number) => void;
-  typesFilters: TypeFilter[];
-  changeTypesFilters: (typeFilters: TypeFilter) => void;
-  setTypesFilters: (typeFilters: TypeFilter[]) => void;
+  statusFilter: StatusFilterNft;
+  changeStatusFilter: (statusFilter: StatusFilterNft) => void;
+  typeFilter: TypeFilterNft;
+  changeTypeFilter: (typeFilter: TypeFilterNft) => void;
   collectionsIds: number[];
   changeCollectionsIds: (collectionsFilters: number) => void;
   setCollectionsIds: (collectionsFilters: number[]) => void;

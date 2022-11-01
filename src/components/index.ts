@@ -1,3 +1,4 @@
+export * from './Achievement';
 export * from './AccountsGroupButton';
 export * from './AccountLinkComponent';
 export * from './Alert';
