@@ -102,24 +102,32 @@ const LayoutStyled = styled.div`
     }
   }
 
-  header {
-    top: 0;
-    position: sticky;
-    z-index: 49;
-    @media (max-width: 620px) {
-      height: 80px;
+  .unique-layout {
+    min-width: 300px;
+
+    & > header {
+      top: 0;
+      position: sticky;
+      z-index: 49;
+
+      @media (max-width: 620px) {
+        height: 80px;
+      }
     }
-  }
 
-  .unique-layout footer {
-    display: none;
+    & > main {
+      padding-bottom: calc(var(--prop-gap) * 2.5);
+    }
 
-    @media screen and (min-width: 1280px) {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      margin-top: 40px;
-      padding: 0;
+    & > footer {
+      display: none;
+
+      @media screen and (min-width: 1280px) {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 0;
+      }
     }
   }
   .unique-tabs-labels {

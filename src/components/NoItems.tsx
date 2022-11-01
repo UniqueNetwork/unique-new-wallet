@@ -4,6 +4,7 @@ import { Icon, IconProps, Text } from '@unique-nft/ui-kit';
 
 interface NoItemsProps {
   className?: string;
+  file?: string;
   iconName?: IconProps['name'];
   iconSize?: number;
   title?: string;
@@ -16,6 +17,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   width: 100%;
+  user-select: none;
 `;
 
 const Title = styled(Text).attrs({ color: 'grey-500', weight: 'light' })`
@@ -24,13 +26,14 @@ const Title = styled(Text).attrs({ color: 'grey-500', weight: 'light' })`
 
 const NoItemsComponent: FC<NoItemsProps> = ({
   className,
+  file,
   iconName = 'no-items',
   iconSize = 80,
   title = 'Nothing found',
 }) => {
   return (
     <Wrapper className={className}>
-      <Icon name={iconName} size={iconSize} />
+      {file ? <img src={file} alt={title} /> : <Icon name={iconName} size={iconSize} />}
       <Title>{title}</Title>
     </Wrapper>
   );

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button, Heading, Text } from '@unique-nft/ui-kit';
-import classNames from 'classnames';
 import { TokenByIdResponse } from '@unique-nft/sdk';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
@@ -19,6 +18,7 @@ import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
+import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
   a.collectionId === b.collectionId && a.tokenId === b.tokenId;
@@ -47,7 +47,7 @@ export const NftDetailsBundlePage = () => {
   const { collectionId = '', tokenId = '' } = useParams();
   const navigate = useNavigate();
   const { currentChain } = useApi();
-  const size = useDeviceSize();
+  const deviceSize = useDeviceSize();
 
   const [bundle, setBundle] = useState<INestingToken[]>([]);
 
@@ -130,9 +130,11 @@ export const NftDetailsBundlePage = () => {
   const isBundleToken = () => {
     // @ts-ignore
     const nestingParentToken = bundleToken?.nestingChildTokens?.[0]?.nestingParentToken;
+
     if (!nestingParentToken) {
       return false;
     }
+
     return (
       nestingParentToken.collectionId === parseInt(collectionId) &&
       nestingParentToken.tokenId === parseInt(tokenId)
@@ -166,12 +168,25 @@ export const NftDetailsBundlePage = () => {
     setCurrentModal('bundle-transfer');
   };
 
+  const BundleTreeRendered = (
+    <BundleTree<INestingToken>
+      dataSource={bundle || []}
+      nodeView={NodeView}
+      nestedSectionView={NestedSection}
+      className="tree-container"
+      compareNodes={areNodesEqual}
+      childrenProperty="nestingChildTokens"
+      getKey={getKey}
+      onNodeClicked={handleNodeClicked}
+      onViewNodeDetails={handleViewTokenDetails}
+      onUnnestClick={handleUnnestToken}
+      onTransferClick={handleTransferToken}
+    />
+  );
+
+  // className={classNames({hidden: isShowBundleTreeMobile && deviceSize === DeviceSize.xs})}
   return (
-    <NftDetailsWrapper
-      className={classNames({
-        hidden: isShowBundleTreeMobile && size === DeviceSize.xs,
-      })}
-    >
+    <NftDetailsWrapper>
       <NftDetailsLayout
         isLoading={isLoadingBundleToken || isLoadingToken || isLoadingCollection}
         tokenExist={!!bundleToken && !!token}
@@ -186,14 +201,14 @@ export const NftDetailsBundlePage = () => {
               <NftDetailsWrapperButtons>
                 <TransferBtn
                   className="transfer-btn"
-                  wide={size === DeviceSize.xs}
+                  wide={deviceSize === DeviceSize.xs}
                   title="Transfer"
                   role="primary"
                   onClick={transferTokenAction}
                 />
                 {!isBundleToken() && (
                   <TransferBtn
-                    wide={size === DeviceSize.xs}
+                    wide={deviceSize === DeviceSize.xs}
                     title="Unnest Token"
                     role="danger"
                     onClick={unnestTokenAction}
@@ -205,36 +220,42 @@ export const NftDetailsBundlePage = () => {
           onCurrentModal={setCurrentModal}
         />
 
-        <BundleWrapper>
-          <HeaderStyled>
-            <Heading size="2">Bundle tree structure</Heading>
-            <Text color="grey-500" size="m" className="tokens-count">
-              {tokensCount + 1} items total
-            </Text>
-          </HeaderStyled>
-          <BundleTree<INestingToken>
-            dataSource={bundle || []}
-            nodeView={NodeView}
-            nestedSectionView={NestedSection}
-            className="tree-container"
-            compareNodes={areNodesEqual}
-            childrenProperty="nestingChildTokens"
-            getKey={getKey}
-            onNodeClicked={handleNodeClicked}
-            onViewNodeDetails={handleViewTokenDetails}
-            onUnnestClick={handleUnnestToken}
-            onTransferClick={handleTransferToken}
-          />
-        </BundleWrapper>
+        {deviceSize >= DeviceSize.sm && (
+          <BundleWrapper>
+            <HeaderStyled>
+              <Heading size="2">Bundle tree structure</Heading>
+              <Text color="grey-500" size="m" className="tokens-count">
+                {tokensCount + 1} items total
+              </Text>
+            </HeaderStyled>
+            {BundleTreeRendered}
+          </BundleWrapper>
+        )}
 
-        <TreeMobileBtn className="tree-bundle-btn">
-          <Button
-            role="primary"
-            wide={size === DeviceSize.xs}
-            title={isShowBundleTreeMobile ? 'Back' : 'Show bundle tree structure'}
-            onClick={() => setShowBundleTreeMobile((prev) => !prev)}
-          />
-        </TreeMobileBtn>
+        {deviceSize <= DeviceSize.xs && (
+          <BottomBar
+            buttons={[
+              <Button
+                key="show-bundle-tree"
+                role="primary"
+                wide={deviceSize === DeviceSize.xs}
+                title={isShowBundleTreeMobile ? 'Back' : 'Show bundle tree structure'}
+                onClick={() => setShowBundleTreeMobile((prev) => !prev)}
+              />,
+            ]}
+            header={
+              <BottomBarHeader showBackLink={false} title="Bundle tree structure">
+                <Text color="grey-500" size="m" className="tokens-count">
+                  {tokensCount + 1} items total
+                </Text>
+              </BottomBarHeader>
+            }
+            isOpen={isShowBundleTreeMobile}
+            parent={document.body}
+          >
+            {BundleTreeRendered}
+          </BottomBar>
+        )}
 
         <NFTModals
           modalType={currentModal}
@@ -269,63 +290,4 @@ const HeaderStyled = styled.div`
 const NftDetailsWrapper = styled.div`
   display: flex;
   flex: 1;
-
-  @media screen and (max-width: 567px) {
-    .nft-details-card,
-    ${BundleWrapper} {
-      padding-bottom: 75px;
-    }
-  }
-  &.hidden {
-    .nft-details-card,
-    .unique-breadcrumbs-wrapper {
-      display: none;
-    }
-
-    .tree-container {
-      height: auto;
-      overflow: inherit;
-    }
-
-    ${BundleWrapper} {
-      display: block;
-      margin-top: -70px;
-      background: var(--color-additional-light);
-    }
-
-    ${HeaderStyled} {
-      flex-direction: column;
-      gap: inherit;
-      margin-bottom: 24px;
-
-      h2 {
-        margin-bottom: 0;
-        font-size: 24px;
-      }
-
-      .tokens-count {
-        margin-top: 0;
-      }
-    }
-  }
-`;
-
-const TreeMobileBtn = styled.div`
-  display: none;
-
-  @media screen and (max-width: 567px) {
-    &.tree-bundle-btn {
-      background: var(--color-additional-light);
-      z-index: 49;
-      display: block;
-      height: auto;
-      line-height: inherit;
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-  }
 `;

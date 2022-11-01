@@ -1,6 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import classNames from 'classnames';
 
 import { INode, INodeContainer } from './types';
 
@@ -30,10 +29,7 @@ export function Node<T extends INode>({
   }, [data, onNodeClicked]);
 
   return (
-    <NodeContainer
-      isOpened={!!isOpened}
-      className={classNames({ className: 'treenode', selected: !!data.selected })}
-    >
+    <NodeContainer className="tree-node" selected={!!data.selected}>
       <NodeView
         arrowClicked={arrowClicked}
         isOpened={!!isOpened}
@@ -53,11 +49,6 @@ export function Node<T extends INode>({
   );
 }
 
-const NodeContainer = styled.div<{ isOpened: boolean }>`
-  .treenode {
-    display: ${({ isOpened }) => (!isOpened ? 'none' : 'block')};
-    &.selected {
-      background-color: var(--color-primary-100);
-    }
-  }
+const NodeContainer = styled.div<{ selected: boolean }>`
+  background-color: ${(p) => p.selected && 'var(--color-primary-100)'};
 `;
