@@ -69,7 +69,7 @@ export const UnnestModal = ({ onClose, token }: NFTModalsProps<TNestingToken>) =
 
         info(`${token?.name} belongs to you now`);
 
-        queryClient.invalidateQueries(queryKeys.token.isBundle._def);
+        queryClient.invalidateQueries(queryKeys.token._def);
       })
       .catch(() => {
         onClose();

@@ -25,24 +25,6 @@ const areNodesEqual = (a: INestingToken, b: INestingToken) =>
 
 const getKey = (a: INestingToken) => `T${a.tokenId}C${a.collectionId}`;
 
-const addIsCurrentAccountOwnerToBundleAndSort = (
-  bundle: INestingToken,
-  isOwner: boolean,
-) => {
-  bundle.isCurrentAccountOwner = isOwner;
-  if (bundle.nestingChildTokens?.length === 0) {
-    return bundle;
-  }
-  bundle.opened = false;
-  bundle.nestingChildTokens = bundle.nestingChildTokens
-    ?.sort((a, b) => (a.tokenId > b.tokenId ? 1 : -1))
-    .map((bundleToken) => {
-      return addIsCurrentAccountOwnerToBundleAndSort(bundleToken, isOwner);
-    });
-
-  return bundle;
-};
-
 export const NftDetailsBundlePage = () => {
   const { collectionId = '', tokenId = '' } = useParams();
   const navigate = useNavigate();
@@ -57,6 +39,8 @@ export const NftDetailsBundlePage = () => {
 
   const [selectedTokenBundleTable, setSelectedTokenBundleTable] =
     useState<INestingToken | null>(null);
+
+  const [selectedToken, setSelectedToken] = useState<INestingToken>();
 
   const {
     data: bundleToken,
@@ -100,13 +84,6 @@ export const NftDetailsBundlePage = () => {
 
   const isOwner = useIsOwner(bundleToken);
 
-  useEffect(() => {
-    if (!bundleToken) {
-      return;
-    }
-    setBundle([addIsCurrentAccountOwnerToBundleAndSort(bundleToken, isOwner)]);
-  }, [bundleToken, isOwner]);
-
   const onModalClose = () => {
     setCurrentModal('none');
     setSelectedTokenBundleTable(null);
@@ -141,6 +118,64 @@ export const NftDetailsBundlePage = () => {
     );
   };
 
+  useEffect(() => {
+    setBundle([]);
+  }, [bundleToken]);
+
+  useEffect(() => {
+    if (bundle.length) {
+      return;
+    }
+
+    const sortTokensInBundleAndSelectOpened = (bundle: INestingToken) => {
+      bundle.isCurrentAccountOwner = isOwner;
+      if (
+        bundle.tokenId === token?.tokenId &&
+        bundle.collectionId === token.collectionId
+      ) {
+        bundle.selected = true;
+        bundle.opened = true;
+        setSelectedToken(bundle);
+      }
+
+      if (!bundle.nestingChildTokens?.length) {
+        return bundle;
+      }
+
+      bundle.nestingChildTokens = bundle.nestingChildTokens
+        ?.sort((a, b) => (a.tokenId > b.tokenId ? 1 : -1))
+        .map((token) => sortTokensInBundleAndSelectOpened(token));
+      return bundle;
+    };
+
+    const openNodeIfChildsPageOpened = (bundle: INestingToken) => {
+      if (!bundle.nestingChildTokens?.length) {
+        return (
+          bundle.tokenId === token?.tokenId && bundle.collectionId === token.collectionId
+        );
+      }
+
+      bundle.opened = !!bundle.nestingChildTokens.filter((token) =>
+        openNodeIfChildsPageOpened(token),
+      ).length;
+      return bundle;
+    };
+
+    if (bundleToken && !isLoadingBundleToken) {
+      let allowedToEditBundle = JSON.parse(JSON.stringify(bundleToken));
+      allowedToEditBundle = sortTokensInBundleAndSelectOpened(allowedToEditBundle);
+      allowedToEditBundle = openNodeIfChildsPageOpened(allowedToEditBundle);
+      setBundle([allowedToEditBundle]);
+    }
+  }, [
+    bundle,
+    bundleToken,
+    isLoadingBundleToken,
+    token?.tokenId,
+    token?.collectionId,
+    isOwner,
+  ]);
+
   const tokensCount = useMemo(() => {
     if (!bundle || !bundle[0]?.nestingChildTokens) {
       return 0;
@@ -171,6 +206,7 @@ export const NftDetailsBundlePage = () => {
   const BundleTreeRendered = (
     <BundleTree<INestingToken>
       dataSource={bundle || []}
+      selectedToken={selectedToken}
       nodeView={NodeView}
       nestedSectionView={NestedSection}
       className="tree-container"

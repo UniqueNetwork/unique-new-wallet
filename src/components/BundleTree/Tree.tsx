@@ -26,11 +26,7 @@ export function Tree<T extends INode>({
   const nodeClickHandler = useCallback(
     (data: T) => {
       const selectNode = (node: T) => {
-        if (compareNodes(node, data)) {
-          node.selected = !node.selected;
-        } else {
-          node.selected = false;
-        }
+        node.selected = compareNodes(node, data);
         (node[childrenProperty] as unknown as T[])?.forEach((child: T) => {
           return selectNode(child);
         });

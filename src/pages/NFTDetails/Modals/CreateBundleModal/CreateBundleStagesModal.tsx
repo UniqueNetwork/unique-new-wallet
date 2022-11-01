@@ -11,7 +11,7 @@ const stages = [
 
 export const CreateBundleStagesModal = () => {
   return (
-    <Modal isVisible={true} title="Please wait">
+    <Modal isVisible={true} isClosable={false} title="Please wait">
       <Stages stages={stages} />
     </Modal>
   );

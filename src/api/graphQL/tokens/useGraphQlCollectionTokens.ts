@@ -68,6 +68,7 @@ export const useGraphQlCollectionTokens = ({
         ],
         ...(type !== 'all' && { is_sold: { _eq: `${type === 'disowned'}` } }),
         ...getConditionBySearchText('token_name', search),
+        burned: { _eq: 'false' },
       },
     },
   });

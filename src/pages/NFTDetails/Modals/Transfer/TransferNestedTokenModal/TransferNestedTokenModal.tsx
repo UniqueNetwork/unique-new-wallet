@@ -110,7 +110,7 @@ export const TransferNestedTokenModal = ({
       .then(() => {
         info('Transfer completed successfully');
 
-        queryClient.invalidateQueries(queryKeys.token.isBundle._def);
+        queryClient.invalidateQueries(queryKeys.token._def);
         onComplete();
       })
       .catch(() => {

@@ -94,9 +94,9 @@ export const CreateBundleModal = <T extends TBaseToken>({
 
         info(`${form.token?.token_name} nested into ${token.name}`);
 
-        queryClient.invalidateQueries(queryKeys.token.isBundle._def);
+        queryClient.invalidateQueries(queryKeys.token._def);
       })
-      .then(() => {
+      .catch(() => {
         onClose();
       });
   };

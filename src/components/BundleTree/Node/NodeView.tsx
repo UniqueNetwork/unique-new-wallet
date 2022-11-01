@@ -40,13 +40,6 @@ const NodeView: FC<INodeView<INestingToken>> = ({
 
   const isMobileView = [DeviceSize.sm, DeviceSize.md, DeviceSize.xs].includes(deviceSize);
 
-  // const onClick = useCallback(
-  //   (event: React.MouseEvent) => {
-  //     isMobileView ? setModalVisible(true) : textClicked(event);
-  //   },
-  //   [isMobileView, textClicked],
-  // );
-
   const onClick = useCallback(
     (event: React.MouseEvent) => {
       if (isMobileView) {

@@ -6,6 +6,7 @@ import { IBundleTree, INode } from './types';
 
 function BundleTree<T extends INode>({
   dataSource,
+  selectedToken: selectedTokenUser,
   nodeView: NodeView,
   onNodeClicked: onNodeClickedProps,
   nestedSectionView: NestedSectionView,
@@ -17,7 +18,7 @@ function BundleTree<T extends INode>({
   onUnnestClick,
   onTransferClick,
 }: IBundleTree<T>) {
-  const [selectedToken, setSelectedToken] = useState<T | null>(null);
+  const [selectedToken, setSelectedToken] = useState<T | null>(selectedTokenUser || null);
   const onNodeClicked = useCallback((data: T) => {
     setSelectedToken(data.selected ? data : null);
     onNodeClickedProps(data);

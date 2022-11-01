@@ -71,6 +71,7 @@ export interface ITree<T> {
   onViewNodeDetails?: (node: T) => void;
   onUnnestClick?: (node: T) => void;
   onTransferClick?: (node: T) => void;
+  selectedToken?: T;
 }
 
 export interface IBundleTree<T> extends ITree<T> {
