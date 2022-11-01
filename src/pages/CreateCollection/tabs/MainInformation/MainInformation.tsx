@@ -29,7 +29,8 @@ import {
   MAX_DESCRIPTION_SIZE,
   MAX_SYMBOL_BYTES_SIZE,
   FILE_SIZE_LIMIT_ERROR,
-} from '@app/pages/constants';
+  FORM_ERRORS,
+} from '@app/pages';
 
 interface MainInformationProps {
   className?: string;
@@ -81,7 +82,10 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
             <Controller
               name="name"
               rules={{
-                required: true,
+                required: {
+                  value: true,
+                  message: FORM_ERRORS.REQUIRED_FIELDS,
+                },
               }}
               render={({ field: { onChange, value } }) => (
                 <InputText
@@ -113,7 +117,10 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
             <Controller
               name="symbol"
               rules={{
-                required: true,
+                required: {
+                  value: true,
+                  message: FORM_ERRORS.REQUIRED_FIELDS,
+                },
               }}
               render={({ field: { onChange, value } }) => (
                 <InputText

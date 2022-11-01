@@ -29,7 +29,7 @@ import { Suggest } from '@app/components/Suggest';
 
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
-import { _10MB, FILE_SIZE_LIMIT_ERROR } from '../constants';
+import { _10MB, FILE_SIZE_LIMIT_ERROR, FORM_ERRORS } from '../constants';
 
 interface CreateNftFormProps {
   collectionsOptions: Option[];
@@ -111,7 +111,12 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
             <LabelText>Collection*</LabelText>
             <Controller
               name="collectionId"
-              rules={{ required: true }}
+              rules={{
+                required: {
+                  value: true,
+                  message: FORM_ERRORS.REQUIRED_FIELDS,
+                },
+              }}
               render={({ field: { value, onChange } }) => (
                 <Suggest
                   components={{
@@ -140,7 +145,12 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
               <AdditionalText>Choose JPG, PNG, GIF (max 10 Mb)</AdditionalText>
               <Controller
                 name="imageIpfsCid"
-                rules={{ required: true }}
+                rules={{
+                  required: {
+                    value: true,
+                    message: FORM_ERRORS.REQUIRED_FIELDS,
+                  },
+                }}
                 render={({ field: { onChange, value } }) => (
                   <div className="upload-container">
                     <Upload

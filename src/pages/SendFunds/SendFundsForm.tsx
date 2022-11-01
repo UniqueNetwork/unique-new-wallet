@@ -13,6 +13,7 @@ import { AccountSelect, InputText } from '@app/components';
 import { Group, InputAmount, InputAmountButton, StyledAdditionalText } from './styles';
 import { ContentRow } from '../components/ModalComponents';
 import { FundsForm } from './types';
+import { FORM_ERRORS } from '../constants';
 
 interface SendFundsFormProps {
   apiEndpoint: string;
@@ -97,7 +98,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           </StyledAdditionalText>
           <Controller
             name="from"
-            rules={{ required: true }}
+            rules={{ required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS } }}
             render={({ field: { value, onChange } }) => (
               <AccountSelect
                 value={value}
@@ -119,7 +120,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           </StyledAdditionalText>
           <Controller
             name="to"
-            rules={{ required: true }}
+            rules={{ required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS } }}
             render={({ field: { value, onChange } }) => (
               <AccountSelect
                 isSearchable
@@ -141,7 +142,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
       <ContentRow space="calc(var(--prop-gap) * 1.5)">
         <Controller
           name="amount"
-          rules={{ required: true }}
+          rules={{ required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS } }}
           render={({ field: { value, onChange } }) => (
             <InputAmount>
               <InputText

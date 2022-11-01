@@ -1,11 +1,17 @@
 import { useEffect } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  useForm,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 import { TransferTokenBody } from '@unique-nft/sdk';
 import { useDebounce } from 'use-debounce';
 
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useFormValidator } from '@app/hooks';
 import { TransferStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferModal';
 import { useTokenTransfer } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
@@ -15,8 +21,9 @@ import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/Fo
 import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
+import { FORM_ERRORS } from '@app/pages/constants';
 
-export const TransferModal = <T extends TBaseToken>({
+export const TransferModalComponent = <T extends TBaseToken>({
   token,
   onComplete,
   onClose,
@@ -32,23 +39,9 @@ export const TransferModal = <T extends TBaseToken>({
     feeLoading,
     feeError,
   } = useTokenTransfer();
+  const { errorMessage, isValid } = useFormValidator();
 
-  const form = useForm<TransferFormDataType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      to: '',
-      from: selectedAccount?.address,
-      address: selectedAccount?.address,
-      tokenId: token?.tokenId,
-      collectionId: token?.collectionId,
-    },
-  });
-
-  const {
-    formState: { isValid },
-    control,
-  } = form;
+  const { control, handleSubmit } = useFormContext<TransferFormDataType>();
 
   const formValues = useWatch({ control });
   const [transferDebounceValue] = useDebounce(formValues, 300);
@@ -101,9 +94,10 @@ export const TransferModal = <T extends TBaseToken>({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
           role="primary"
-          onClick={form.handleSubmit(onSubmit)}
+          disabled={!isValid}
+          tooltip={errorMessage}
+          onClick={handleSubmit(onSubmit)}
         />
       }
       onClose={onClose}
@@ -111,22 +105,48 @@ export const TransferModal = <T extends TBaseToken>({
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
       >
-        <FormProvider {...form}>
-          <TransferRow>
-            <Controller
-              name="to"
-              render={({ field: { value, onChange } }) => {
-                return <InputTransfer value={value} onChange={onChange} />;
-              }}
-              rules={{
-                required: true,
-                validate: (val: string) =>
-                  Address.is.ethereumAddress(val) || Address.is.substrateAddress(val),
-              }}
-            />
-          </TransferRow>
-        </FormProvider>
+        <TransferRow>
+          <Controller
+            name="to"
+            render={({ field: { value, onChange } }) => {
+              return <InputTransfer value={value} onChange={onChange} />;
+            }}
+            rules={{
+              validate: (val: string) => {
+                if (
+                  !Address.is.ethereumAddress(val) &&
+                  !Address.is.substrateAddress(val)
+                ) {
+                  return FORM_ERRORS.INVALID_ADDRESS;
+                }
+              },
+            }}
+          />
+        </TransferRow>
       </FormWrapper>
     </Modal>
+  );
+};
+
+export const TransferModal = <T extends TBaseToken>(props: NFTModalsProps<T>) => {
+  const { token } = props;
+  const { selectedAccount } = useAccounts();
+
+  const form = useForm<TransferFormDataType>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      to: '',
+      from: selectedAccount?.address,
+      address: selectedAccount?.address,
+      tokenId: token?.tokenId,
+      collectionId: token?.collectionId,
+    },
+  });
+
+  return (
+    <FormProvider {...form}>
+      <TransferModalComponent {...props} />
+    </FormProvider>
   );
 };

@@ -7,7 +7,13 @@ import classNames from 'classnames';
 
 import { ROUTE } from '@app/routes';
 import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
-import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
+import {
+  DeviceSize,
+  useAccounts,
+  useApi,
+  useDeviceSize,
+  useFormValidator,
+} from '@app/hooks';
 import { StatusTransactionModal } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { BottomBar } from '@app/pages/components/BottomBar';
@@ -18,7 +24,7 @@ import { CollectionForm, Warning } from './types';
 import { CollectionTabs, WarningModal } from './components';
 import { FormWrapper } from '../components/FormComponents';
 import { CollectionSidebar, FeeInformationTransaction } from './features';
-import { useMainInformationValidator, useNftAttributesValidator } from './tabs';
+import { useFeeContext } from './context';
 
 interface CreateCollectionProps {
   className?: string;
@@ -31,6 +37,8 @@ const WrapperContentStyled = styled(WrapperContent)`
     margin-bottom: 0;
   }
 `;
+
+const firstPage = ['name', 'symbol'];
 
 export const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const deviceSize = useDeviceSize();
@@ -49,8 +57,13 @@ export const CreateCollectionComponent = ({ className }: CreateCollectionProps) 
 
   const { handleSubmit, getValues } = useFormContext<CollectionForm>();
 
-  const formValidator = useNftAttributesValidator();
-  const mainInformationValidator = useMainInformationValidator();
+  const { fee } = useFeeContext();
+
+  const { isValid, errorMessage } = useFormValidator({
+    balanceValidationEnabled: step === 2,
+    watchedFields: step === 1 ? firstPage : undefined,
+    cost: [fee],
+  });
 
   useEffect(() => {
     navigate(tabsUrls[step - 1]);
@@ -122,10 +135,10 @@ export const CreateCollectionComponent = ({ className }: CreateCollectionProps) 
         <FormWrapper>
           <CollectionTabs
             step={step}
-            creationDisabled={!formValidator.isValid}
-            nextStepDisabled={!mainInformationValidator.isValid}
-            nextStepTooltip={Object.values(mainInformationValidator.errors).join('.')}
-            creationTooltip={Object.values(formValidator.errors).join('.')}
+            creationDisabled={!isValid}
+            nextStepDisabled={!isValid}
+            nextStepTooltip={errorMessage}
+            creationTooltip={errorMessage}
             onClickStep={setStep}
             onClickNextStep={onNextStep}
             onClickPreviousStep={goToPreviousStep}

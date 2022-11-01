@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Controller, useFieldArray, useWatch } from 'react-hook-form';
 import { Button, Icon, InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
 
+import { FORM_ERRORS } from '@app/pages';
 import { Table, TooltipWrapper } from '@app/components';
 
 import { rules, types } from '../../constants';
@@ -28,7 +29,10 @@ const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
   return (
     <EnumsInputController
       rules={{
-        required: type.id !== 'string',
+        required: {
+          value: type.id !== 'string',
+          message: FORM_ERRORS.REQUIRED_FIELDS,
+        },
       }}
       defaultValue={null}
       isDisabled={type.id === 'string'}
@@ -56,7 +60,10 @@ const attributesColumns: TableColumnProps[] = [
         <Controller
           name={`attributes.${rowIndex}.name`}
           rules={{
-            required: true,
+            required: {
+              value: true,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
           }}
           render={({ field: { value, onChange } }) => (
             <InputText

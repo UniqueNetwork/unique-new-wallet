@@ -27,22 +27,22 @@ const attributeMapper = (attribute?: Attribute) => {
   return attribute;
 };
 
-export const useTokenFormMapper = () => {
-  const mapper = (formData: FilledTokenForm): CreateTokenNewDto => {
-    const request: CreateTokenNewDto = {
-      owner: formData.address,
-      address: formData.address,
-      collectionId: formData.collectionId,
-      data: {
-        image: {
-          ipfsCid: formData.imageIpfsCid,
-        },
-        encodedAttributes: {},
+export const mapTokenForm = (formData: FilledTokenForm): CreateTokenNewDto => {
+  const mappedTokenDto: CreateTokenNewDto = {
+    owner: formData.address,
+    address: formData.address,
+    collectionId: formData.collectionId,
+    data: {
+      image: {
+        ipfsCid: formData.imageIpfsCid,
       },
-    };
+      encodedAttributes: {},
+    },
+  };
 
-    if (formData.attributes?.length) {
-      request.data.encodedAttributes = formData.attributes.reduce((acc, attr, index) => {
+  if (formData.attributes?.length) {
+    mappedTokenDto.data.encodedAttributes = formData.attributes.reduce(
+      (acc, attr, index) => {
         const mapped = attributeMapper(attr);
         if (mapped === null) {
           return acc;
@@ -52,11 +52,10 @@ export const useTokenFormMapper = () => {
           ...acc,
           [index]: mapped,
         };
-      }, {});
-    }
+      },
+      {},
+    );
+  }
 
-    return request;
-  };
-
-  return mapper;
+  return mappedTokenDto;
 };

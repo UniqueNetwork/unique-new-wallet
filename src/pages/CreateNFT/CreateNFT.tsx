@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, VFC } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, Button, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
@@ -17,10 +17,9 @@ import {
   DeviceSize,
   useAccounts,
   useApi,
-  useBalanceInsufficient,
   useDeviceSize,
+  useFormValidator,
 } from '@app/hooks';
-import { NO_BALANCE_MESSAGE } from '@app/pages';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -33,7 +32,7 @@ import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponent
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 
 import { CreateNftForm } from './CreateNftForm';
-import { useTokenFormMapper } from './useTokenFormMapper';
+import { mapTokenForm } from './helpers';
 import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
 
 interface ICreateNFTProps {
@@ -61,11 +60,9 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
-  const [params] = useSearchParams();
   const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
   const { warning, info, error } = useNotifications();
-  const mapper = useTokenFormMapper();
 
   const {
     fee,
@@ -79,26 +76,9 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
-  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  const { control, reset, handleSubmit } = useFormContext();
 
-  const collectionId = params.get('collectionId');
-
-  const tokenForm = useForm<TokenForm>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      owner: selectedAccount?.address,
-      address: selectedAccount?.address,
-      collectionId: collectionId ? Number(collectionId) : null,
-    },
-  });
-
-  const {
-    control,
-    reset,
-    handleSubmit,
-    formState: { isValid },
-  } = tokenForm;
+  const { isValid, errorMessage } = useFormValidator();
 
   const formValues = useWatch({ control });
   const [debouncedFormValues] = useDebounce(formValues, 500);
@@ -111,16 +91,8 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const isOldCollection = collection?.schema?.schemaName === '_old_';
 
-  const mintingButtonTooltip = (() => {
-    if (isBalanceInsufficient) {
-      return NO_BALANCE_MESSAGE;
-    }
-    if (isOldCollection) {
-      return config.oldCollectionMessage;
-    }
-
-    return undefined;
-  })();
+  console.log(isOldCollection);
+  console.log(isValid);
 
   const tokenAttributes: AttributeView[] | undefined = useMemo(() => {
     const attrsSchema = collection?.schema?.attributesSchema;
@@ -175,7 +147,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     const { address, collectionId } = debouncedFormValues;
 
     if (collectionId && address && isValid && !isOldCollection) {
-      getFee(mapper(debouncedFormValues as FilledTokenForm));
+      getFee(mapTokenForm(debouncedFormValues as FilledTokenForm));
     }
   }, [debouncedFormValues]);
 
@@ -197,7 +169,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     if (isValid) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
-      const payload = mapper(tokenForm as FilledTokenForm);
+      const payload = mapTokenForm(tokenForm as FilledTokenForm);
 
       submitWaitResult({
         payload,
@@ -218,15 +190,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const isolatedTokenForm = useMemo(
     () => (
-      <FormProvider {...tokenForm}>
-        <CreateNftForm
-          selectedCollection={collection}
-          collectionsOptions={collectionsOptions}
-          collectionsOptionsLoading={isCollectionsLoading}
-        />
-      </FormProvider>
+      <CreateNftForm
+        selectedCollection={collection}
+        collectionsOptions={collectionsOptions}
+        collectionsOptionsLoading={isCollectionsLoading}
+      />
     ),
-    [collection, collectionsOptions, isCollectionsLoading, tokenForm],
+    [collection, collectionsOptions, isCollectionsLoading],
   );
 
   const renderSidebar = () => (
@@ -258,14 +228,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               <MintingBtn
                 role="primary"
                 title="Confirm and create more"
-                tooltip={mintingButtonTooltip}
-                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                disabled={!isValid || isOldCollection}
+                tooltip={isOldCollection ? config.oldCollectionMessage : errorMessage}
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
               <MintingBtn
                 title="Confirm and close"
-                tooltip={mintingButtonTooltip}
-                disabled={!isValid || isBalanceInsufficient || isOldCollection}
+                disabled={!isValid || isOldCollection}
+                tooltip={isOldCollection ? config.oldCollectionMessage : errorMessage}
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
               />
             </ButtonGroup>
@@ -298,7 +268,29 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   );
 };
 
+const CreateNFTForm = () => {
+  const [params] = useSearchParams();
+  const { selectedAccount } = useAccounts();
+  const collectionId = params.get('collectionId');
+
+  const tokenForm = useForm<TokenForm>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      owner: selectedAccount?.address,
+      address: selectedAccount?.address,
+      collectionId: collectionId ? Number(collectionId) : null,
+    },
+  });
+
+  return (
+    <FormProvider {...tokenForm}>
+      <CreateNFTComponent />
+    </FormProvider>
+  );
+};
+
 export const CreateNFT = withPageTitle({
   header: 'Create a NFT',
   backLink: `${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
-})(CreateNFTComponent);
+})(CreateNFTForm);

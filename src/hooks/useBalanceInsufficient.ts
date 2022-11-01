@@ -7,13 +7,13 @@ export const useIsSufficientBalance = (
   const { data } = useAccountBalanceService(address ?? undefined);
 
   if (!cost.length) {
-    return false;
+    return null;
   }
 
   const parsedCost = cost.reduce((acc, val) => acc + parseFloat(val ?? ''), 0);
 
   if (isNaN(parsedCost)) {
-    return false;
+    return null;
   }
 
   return +(data?.availableBalance.amount ?? 0) >= parsedCost;
