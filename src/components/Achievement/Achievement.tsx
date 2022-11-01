@@ -24,7 +24,6 @@ const AchievementWrapper = styled.span`
   font-size: 16px;
   font-weight: 500;
   z-index: 2;
-  cursor: default;
 
   & > span {
     padding: 4px 8px;

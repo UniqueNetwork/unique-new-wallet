@@ -1,13 +1,12 @@
 import { ReactNode } from 'react';
-import { Avatar } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
+import { Achievement, Image } from '@app/components';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTDetailsHeader } from '@app/pages/NFTDetails/components/NFTDetailsHeader';
 import { Divider } from '@app/pages/NFTDetails/components/Divider';
 import { TokenInformation } from '@app/pages/NFTDetails/components/TokenInformation';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { Achievement } from '@app/components';
 
 type Props<T extends TBaseToken> = {
   token?: T;
@@ -39,7 +38,7 @@ export const NftDetailsCard = <T extends TBaseToken>({
           }
         />
       )}
-      <Avatar fit="contain" src={token?.image?.fullUrl || undefined} />
+      <Image alt="" image={token?.image?.fullUrl || undefined} />
     </div>
     <div className="info-container">
       <NFTDetailsHeader
@@ -83,13 +82,9 @@ const NftDetailsInfo = styled.div`
   }
 
   .avatar {
-    overflow: hidden;
-    border-radius: calc(var(--prop-border-radius) * 2);
     position: relative;
     flex: 0 0 auto;
     width: 100%;
-    background-color: var(--color-blue-grey-100);
-    transform: translateZ(0);
 
     @media screen and (min-width: 768px) {
       flex: 0 0 30%;
@@ -103,27 +98,10 @@ const NftDetailsInfo = styled.div`
     @media screen and (min-width: 1280px) {
       flex: 3 0 0;
     }
-
-    &::before {
-      display: block;
-      padding-bottom: 100%;
-      content: '';
-    }
-
-    & > img {
-      border-radius: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: auto;
-      height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      transform: translate3d(-50%, -50%, 0);
-    }
   }
 
   .info-container {
+    overflow: hidden;
     flex: 1 1 auto;
     max-width: 100%;
 

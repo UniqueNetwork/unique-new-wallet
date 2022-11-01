@@ -6,6 +6,7 @@ import { useApi } from '@app/hooks';
 import { BurnBtn, Dropdown, ExternalLink } from '@app/components';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 interface NFTDetailsHeaderProps {
   title?: string;
@@ -104,10 +105,17 @@ const TextOwner = styled.div`
   display: flex;
   align-items: center;
   gap: calc(var(--prop-gap) / 2);
-  margin-bottom: calc(var(--prop-gap) * 1.5);
   color: var(--color-grey-500);
   font-size: 1rem;
   white-space: nowrap;
+
+  &:not(:last-child) {
+    margin-bottom: calc(var(--prop-gap) * 1.5);
+  }
+`;
+
+const ButtonGroupStyled = styled(ButtonGroup)`
+  margin-top: calc(var(--prop-gap) * 1.5);
 `;
 
 const MenuOption = (
@@ -237,7 +245,8 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
           />
         </Dropdown>
       </HeaderContainerInfo>
-      {buttons && <div className="nft-details-buttons">{buttons}</div>}
+
+      {buttons && <ButtonGroupStyled stack>{buttons}</ButtonGroupStyled>}
     </div>
   );
 };

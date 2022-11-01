@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, VFC } from 'react';
+import { ReactNode, useEffect, useRef, useState, VFC } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { Heading, Icon, Link, Text } from '@unique-nft/ui-kit';
@@ -21,19 +21,21 @@ const Drawer = styled.div<{ bottomGap?: number }>`
   bottom: 0;
   left: 0;
   right: 0;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   background-color: var(--color-additional-light);
-  padding: 80px var(--prop-gap)
-    ${(p) => `calc(${p.bottomGap}px + calc(var(--prop-gap) * 2.5))`};
+  padding: 80px 0 ${(p) => `${p.bottomGap}px`};
+`;
+
+const BarHeader = styled.div`
+  flex: 0 0 auto;
+  padding: calc(var(--prop-gap) * 1.5) var(--prop-gap) var(--prop-gap);
 
   @media screen and (min-width: 768px) {
     padding-left: calc(var(--prop-gap) * 1.5);
     padding-right: calc(var(--prop-gap) * 1.5);
   }
-`;
-
-const BarHeader = styled.div`
-  padding: calc(var(--prop-gap) * 1.5) 0 calc(var(--prop-gap) * 2);
 `;
 
 const HeadingStyled = styled(Heading)`
@@ -53,23 +55,41 @@ const BackLink = styled(Link)`
 `;
 
 export const BottomBarHeader = ({
+  children,
   title,
+  showBackLink = true,
   onBackClick,
 }: {
+  children?: ReactNode;
   title?: string;
+  showBackLink?: boolean;
   onBackClick?(): void;
 }) =>
   title ? (
     <BarHeader>
       <HeadingStyled size="2">{title}</HeadingStyled>
-      <BackLink href="#close" onClick={onBackClick}>
-        <Icon color="var(--color-blue-grey-500)" name="arrow-left" size={16} />
-        <Text color="blue-grey-500" weight="light">
-          back
-        </Text>
-      </BackLink>
+      {showBackLink && (
+        <BackLink href="#close" onClick={onBackClick}>
+          <Icon color="var(--color-blue-grey-500)" name="arrow-left" size={16} />
+          <Text color="blue-grey-500" weight="light">
+            back
+          </Text>
+        </BackLink>
+      )}
+      {children && children}
     </BarHeader>
   ) : null;
+
+const DrawerContent = styled.div`
+  overflow: auto;
+  flex: 1 1 auto;
+  padding: var(--prop-gap);
+
+  @media screen and (min-width: 768px) {
+    padding-left: calc(var(--prop-gap) * 1.5);
+    padding-right: calc(var(--prop-gap) * 1.5);
+  }
+`;
 
 const BottomPanelWrapper = styled.div<{ height: number }>`
   height: ${(p) => `${p.height}px`};
@@ -99,22 +119,23 @@ export const BottomBar: VFC<BottomBarProps> = ({
   parent,
 }: BottomBarProps) => {
   const panelRef = useRef<HTMLDivElement>(null);
-  const panelHeight = panelRef.current?.offsetHeight || 0;
+  const [panelHeight, setPanelHeight] = useState(0);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
+    setPanelHeight(panelRef.current?.offsetHeight || 0);
 
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [isOpen, panelRef.current?.offsetHeight]);
 
   return createPortal(
     <>
       {isOpen && (
         <Drawer bottomGap={panelHeight}>
           {header && header}
-          {children}
+          <DrawerContent>{children}</DrawerContent>
         </Drawer>
       )}
       <BottomPanelWrapper height={panelHeight}>
