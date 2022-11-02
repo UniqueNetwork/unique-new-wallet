@@ -134,9 +134,20 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     goToNextStep(currentStep + 1);
   };
 
+  const onCreateCollectionHandle = (form: CollectionForm) => {
+    if (!form.attributes?.length) {
+      setWarning(warnings.attributesAreNotDefine);
+
+      return;
+    }
+
+    onSubmit(form);
+  };
+
   const onSubmit = (form: CollectionForm) => {
     if (!selectedAccount) {
       error('Account is not found');
+
       return;
     }
 
@@ -204,7 +215,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 title="Create collection"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
                 disabled={!isValid || isBalanceInsufficient}
-                onClick={handleSubmit(onSubmit)}
+                onClick={handleSubmit(onCreateCollectionHandle)}
               />
             )}
           </ButtonGroup>
@@ -215,10 +226,15 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 title: 'Yes, I am sure',
                 role: 'primary',
                 type: 'submit',
-                onClick: () => {
-                  goToNextStep(2);
+                onClick: handleSubmit((form: CollectionForm) => {
+                  if (isLastStep) {
+                    onSubmit(form);
+                  } else {
+                    goToNextStep(2);
+                  }
+
                   setWarning(null);
-                },
+                }),
               },
             ]}
             isVisible={!!warning}

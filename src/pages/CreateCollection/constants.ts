@@ -14,9 +14,9 @@ export const warnings: Record<string, Warning> = {
       "Are you sure that you want to create the collection without it? You can't return to editing the cover in this product version.",
   },
   attributesAreNotDefine: {
-    title:
-      'You have not entered attributes. Are you sure that you want to create the collection without them?',
-    description: 'You cannot return to editing the attributes in this product version.',
+    title: "Warning! You haven't entered attributes. ",
+    description:
+      "Are you sure that you want to create the collection without them? You can't return to editing the attributes in this product version.",
   },
 };
 
