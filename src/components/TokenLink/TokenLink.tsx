@@ -27,6 +27,10 @@ const TokenLinkImageWrapper = styled.div`
   position: relative;
 `;
 
+const TokenImage = styled(Image)`
+  margin-bottom: calc(var(--prop-gap) / 2);
+`;
+
 const TokenLinkTitle = styled(Text).attrs({ appearance: 'block', size: 'l' })`
   margin-bottom: calc(var(--prop-gap) / 2);
   word-break: break-all;
@@ -46,7 +50,7 @@ export const TokenLink = ({
       <div onClick={onTokenClick}>
         <TokenLinkImageWrapper>
           {badge}
-          <Image alt={alt} image={image} />
+          <TokenImage alt={alt} image={image} />
         </TokenLinkImageWrapper>
         {typeof title === 'string' ? <TokenLinkTitle>{title}</TokenLinkTitle> : title}
       </div>

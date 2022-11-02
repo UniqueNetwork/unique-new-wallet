@@ -9,7 +9,6 @@ const Wrapper = styled.div`
   border-radius: var(--prop-border-radius);
   position: relative;
   background-color: var(--color-blue-grey-100);
-  margin-bottom: calc(var(--prop-gap) / 2);
   transform: translateZ(0);
 
   &::before {
