@@ -127,7 +127,7 @@ const NodeView: FC<INodeView<INestingToken>> = ({
                 <span className="tree-node-indent-item" key={`${data.tokenId}-${i}`} />
               );
             })}
-            {!!children && (
+            {children ? (
               <span
                 className={classNames(
                   'tree-node-indent-item',
@@ -139,6 +139,8 @@ const NodeView: FC<INodeView<INestingToken>> = ({
               >
                 <Icon size={16} name="triangle" color="currentColor" />
               </span>
+            ) : (
+              <span className="tree-node-indent-item" />
             )}
           </span>
           <NftInfo>
