@@ -10,6 +10,7 @@ import {
 } from '@unique-nft/ui-kit';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
+import { CollectionInfoWithSchemaResponse } from '@unique-nft/sdk';
 
 import {
   AdditionalText,
@@ -23,7 +24,6 @@ import {
   UploadWidget,
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { CollectionInfoWithSchemaResponse } from '@app/types/Api';
 import { useFileUpload } from '@app/api';
 import { Suggest } from '@app/components/Suggest';
 

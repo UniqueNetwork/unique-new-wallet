@@ -21,7 +21,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@unique-nft/sdk": "^0.1.6",
+    "@unique-nft/sdk": "^0.1.7",
     "@unique-nft/ui-kit": "^0.0.37",
     "@unique-nft/utils": "^0.1.4",
     "amplitude-js": "^8.19.0",
