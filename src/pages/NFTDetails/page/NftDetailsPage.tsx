@@ -11,7 +11,6 @@ import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
 
 export const NftDetailsPage = () => {
   const { collectionId = '', tokenId = '' } = useParams();
@@ -70,12 +69,12 @@ export const NftDetailsPage = () => {
         isOwner={isOwner}
         buttons={
           isOwner && (
-            <NftDetailsWrapperButtons>
+            <>
               <TransferBtn
                 className="transfer-btn"
+                role="primary"
                 title="Transfer"
                 wide={size <= DeviceSize.sm}
-                role="primary"
                 onClick={() => {
                   logUserEvent(UserEvents.TRANSFER_NFT);
                   setCurrentModal('transfer');
@@ -83,14 +82,16 @@ export const NftDetailsPage = () => {
               />
               {collection?.permissions?.nesting?.tokenOwner && (
                 <Button
+                  className="nesting-button"
                   title="Nest this token"
+                  wide={size <= DeviceSize.sm}
                   onClick={() => {
                     logUserEvent(UserEvents.CREATE_BUNDLE);
                     setCurrentModal('create-bundle');
                   }}
                 />
               )}
-            </NftDetailsWrapperButtons>
+            </>
           )
         }
         onCurrentModal={setCurrentModal}

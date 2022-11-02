@@ -17,7 +17,6 @@ import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
@@ -234,7 +233,7 @@ export const NftDetailsBundlePage = () => {
           achievement={isBundleToken() ? 'Bundle' : 'Nested'}
           buttons={
             isOwner && (
-              <NftDetailsWrapperButtons>
+              <>
                 <TransferBtn
                   className="transfer-btn"
                   wide={deviceSize === DeviceSize.xs}
@@ -250,7 +249,7 @@ export const NftDetailsBundlePage = () => {
                     onClick={unnestTokenAction}
                   />
                 )}
-              </NftDetailsWrapperButtons>
+              </>
             )
           }
           onCurrentModal={setCurrentModal}
