@@ -39,9 +39,9 @@ export const useGraphQlCollectionsByNestingAccount = ({
           { owner: { _eq: accountAddress } },
           { owner_normalized: { _eq: accountAddress } },
         ],
-        // tokens_count: {
-        //   _neq: 0,
-        // },
+        tokens_count: {
+          _neq: 0,
+        },
         nesting_enabled: {
           _eq: 'true',
         },
