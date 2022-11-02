@@ -14,10 +14,25 @@ $closeSize: 24px;
 
   &::before {
     display: inline-block;
-    vertical-align: middle;
     height: 100%;
     width: 0;
     content: '';
+  }
+
+  &-top {
+    &::before {
+      vertical-align: top;
+    }
+  }
+  &-bottom {
+    &::before {
+      vertical-align: bottom;
+    }
+  }
+  &-middle {
+    &::before {
+      vertical-align: middle;
+    }
   }
 }
 
@@ -89,7 +104,6 @@ $closeSize: 24px;
   z-index: $zIndex;
   border-radius: calc(var(--prop-border-radius) * 2);
   display: inline-block;
-  vertical-align: middle;
   width: 100%;
   min-width: 280px;
   padding: var(--prop-gap);

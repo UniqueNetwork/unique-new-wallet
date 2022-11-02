@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { INode, INodeContainer } from './types';
@@ -7,7 +7,6 @@ export function Node<T extends INode>({
   data,
   onNodeClicked,
   nodeView: NodeView,
-  isFirst,
   level,
   children,
   onViewNodeDetails,
@@ -35,7 +34,6 @@ export function Node<T extends INode>({
         isOpened={!!isOpened}
         data={data}
         textClicked={textClicked}
-        isFirst={isFirst}
         level={level}
         isSelected={!!data.selected}
         isParentSelected={!!data.parentSelected}

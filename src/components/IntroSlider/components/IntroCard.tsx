@@ -1,15 +1,15 @@
-import { Button, Heading, Text } from '@unique-nft/ui-kit';
-import styled from 'styled-components';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { Button, Heading, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { ROUTE } from '@app/routes';
 
 type IntroCardProps = {
   imgPath: string;
-  title: string;
-  description: string;
+  title: ReactNode;
+  description: ReactNode;
   setActiveSlide: Dispatch<SetStateAction<number>>;
   isLast?: boolean;
   onCloseModal?(): void;
