@@ -50,7 +50,7 @@ export const NftDetailsCard = <T extends TBaseToken>({
         collectionId={token?.collectionId}
         collectionName={token?.collectionName}
         buttons={buttons}
-        textOwner={owner}
+        owner={owner}
         menuButtons={menuButtons}
         onShowModal={onCurrentModal}
       />
