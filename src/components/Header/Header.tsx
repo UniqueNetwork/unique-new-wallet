@@ -151,7 +151,7 @@ export const Header = () => {
           <MobileMenu>
             <MenuLink
               name="My tokens"
-              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`}
               logEvent={UserEvents.HEADER_MY_TOKENS}
               mobileMenuToggle={mobileMenuToggle}
             />

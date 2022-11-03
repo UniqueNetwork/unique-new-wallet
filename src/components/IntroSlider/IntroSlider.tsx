@@ -35,7 +35,7 @@ export const IntroSlider = ({ activeSlide = 0, children }: IntroSliderProps) => 
   };
 
   return (
-    <Modal isVisible={open} onClose={() => setOpen(false)}>
+    <Modal align="top" isVisible={open} onClose={() => setOpen(false)}>
       <div>{renderContent()[active]}</div>
       <Dots>
         {renderContent().map((_, idx) => (

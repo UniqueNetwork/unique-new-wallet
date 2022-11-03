@@ -60,12 +60,11 @@ export function Tree<T extends INode>({
 
   return (
     <TreeStyled className={className}>
-      {dataSourceState.map((data: T, index) => (
+      {dataSourceState.map((data: T) => (
         <Node<T>
           key={getKey(data)}
           data={data}
           nodeView={nodeView}
-          isFirst={index === 0}
           level={level}
           getKey={getKey}
           childrenProperty={childrenProperty}

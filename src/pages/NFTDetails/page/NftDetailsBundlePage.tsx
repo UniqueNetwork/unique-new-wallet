@@ -275,6 +275,15 @@ export const NftDetailsBundlePage = () => {
                 key="show-bundle-tree"
                 role="primary"
                 wide={deviceSize === DeviceSize.xs}
+                iconLeft={
+                  isShowBundleTreeMobile
+                    ? {
+                        color: 'currentColor',
+                        name: 'arrow-left',
+                        size: 16,
+                      }
+                    : undefined
+                }
                 title={isShowBundleTreeMobile ? 'Back' : 'Show bundle tree structure'}
                 onClick={() => setShowBundleTreeMobile((prev) => !prev)}
               />,
