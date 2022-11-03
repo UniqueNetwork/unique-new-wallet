@@ -219,7 +219,6 @@ export const NftDetailsBundlePage = () => {
     />
   );
 
-  // className={classNames({hidden: isShowBundleTreeMobile && deviceSize === DeviceSize.xs})}
   return (
     <NftDetailsWrapper>
       <NftDetailsLayout
@@ -235,7 +234,6 @@ export const NftDetailsBundlePage = () => {
             isOwner && (
               <>
                 <TransferBtn
-                  className="transfer-btn"
                   wide={deviceSize === DeviceSize.xs}
                   title="Transfer"
                   role="primary"

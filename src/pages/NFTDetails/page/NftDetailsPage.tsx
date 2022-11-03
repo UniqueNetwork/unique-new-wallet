@@ -71,7 +71,6 @@ export const NftDetailsPage = () => {
           isOwner && (
             <>
               <TransferBtn
-                className="transfer-btn"
                 role="primary"
                 title="Transfer"
                 wide={size <= DeviceSize.sm}
@@ -82,7 +81,6 @@ export const NftDetailsPage = () => {
               />
               {collection?.permissions?.nesting?.tokenOwner && (
                 <Button
-                  className="nesting-button"
                   title="Nest this token"
                   wide={size <= DeviceSize.sm}
                   onClick={() => {
