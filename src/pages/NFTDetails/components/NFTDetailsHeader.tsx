@@ -219,7 +219,11 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
         </Dropdown>
       </HeaderContainerInfo>
 
-      {buttons && <ButtonGroupStyled stack>{buttons}</ButtonGroupStyled>}
+      {buttons && (
+        <ButtonGroupStyled stack gap={8}>
+          {buttons}
+        </ButtonGroupStyled>
+      )}
     </div>
   );
 };

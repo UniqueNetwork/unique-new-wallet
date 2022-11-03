@@ -17,7 +17,6 @@ import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
 
@@ -236,7 +235,6 @@ export const NftDetailsBundlePage = () => {
     />
   );
 
-  // className={classNames({hidden: isShowBundleTreeMobile && deviceSize === DeviceSize.xs})}
   return (
     <NftDetailsWrapper>
       <NftDetailsLayout
@@ -251,9 +249,8 @@ export const NftDetailsBundlePage = () => {
           achievement={isBundleToken() ? 'Bundle' : 'Nested'}
           buttons={
             isOwner && (
-              <NftDetailsWrapperButtons>
+              <>
                 <TransferBtn
-                  className="transfer-btn"
                   wide={deviceSize === DeviceSize.xs}
                   title="Transfer"
                   role="primary"
@@ -267,7 +264,7 @@ export const NftDetailsBundlePage = () => {
                     onClick={unnestTokenAction}
                   />
                 )}
-              </NftDetailsWrapperButtons>
+              </>
             )
           }
           onCurrentModal={setCurrentModal}
