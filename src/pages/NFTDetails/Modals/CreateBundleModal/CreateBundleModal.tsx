@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useDebounce } from 'use-debounce';
 import { useQueryClient } from 'react-query';
 
-import { Modal, TransferBtn } from '@app/components';
+import { Modal, BaseActionBtn } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
@@ -168,10 +168,12 @@ export const CreateBundleModal = <T extends TBaseToken>({
       title="Create bundle"
       isVisible={true}
       footerButtons={
-        <TransferBtn
+        <BaseActionBtn
           title="Confirm"
           disabled={!isValid || feeLoading}
           role="primary"
+          actionEnabled={isValid}
+          actionText="Please, select collection and token"
           onClick={handleSubmit(onSubmit)}
         />
       }
