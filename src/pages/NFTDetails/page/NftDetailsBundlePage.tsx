@@ -18,6 +18,7 @@ import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
+import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
   a.collectionId === b.collectionId && a.tokenId === b.tokenId;
@@ -202,6 +203,21 @@ export const NftDetailsBundlePage = () => {
     setCurrentModal('bundle-transfer');
   };
 
+  const menuButtons = useMemo(() => {
+    const items = [...menuButtonsNft];
+
+    if (isOwner && (selectedToken?.nestingChildTokens?.length || 0) === 0) {
+      items.push({
+        icon: 'burn',
+        id: 'burn',
+        title: 'Burn token',
+        type: 'danger',
+      });
+    }
+
+    return items;
+  }, [isOwner, selectedToken?.nestingChildTokens?.length]);
+
   const BundleTreeRendered = (
     <BundleTree<INestingToken>
       dataSource={bundle || []}
@@ -229,6 +245,7 @@ export const NftDetailsBundlePage = () => {
           className="nft-details-card"
           token={token}
           isOwner={isOwner}
+          menuButtons={menuButtons}
           achievement={isBundleToken() ? 'Bundle' : 'Nested'}
           buttons={
             isOwner && (

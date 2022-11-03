@@ -1,4 +1,4 @@
-import { memo, ReactNode, useMemo, VFC } from 'react';
+import { memo, ReactNode, VFC } from 'react';
 import styled from 'styled-components';
 import { Button, Heading, SelectOptionProps } from '@unique-nft/ui-kit';
 
@@ -17,7 +17,7 @@ interface NFTDetailsHeaderProps {
   isCurrentAccountOwner?: boolean;
   className?: string;
   buttons: ReactNode;
-
+  menuButtons: SelectOptionProps[];
   onShowModal(modal: TNFTModalType): void;
 }
 
@@ -148,36 +148,9 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   className,
   onShowModal,
   buttons,
+  menuButtons,
 }) => {
   const { currentChain } = useApi();
-
-  const options = useMemo(() => {
-    const items: SelectOptionProps[] = [
-      {
-        icon: 'shared',
-        id: 'share',
-        title: 'Share',
-        type: 'primary',
-      },
-      {
-        icon: 'arrow-up-right',
-        id: 'scan',
-        title: 'View NFT on UniqueScan',
-        type: 'primary',
-      },
-    ];
-
-    if (isCurrentAccountOwner) {
-      items.push({
-        icon: 'burn',
-        id: 'burn',
-        title: 'Burn token',
-        type: 'danger',
-      });
-    }
-
-    return items;
-  }, [isCurrentAccountOwner]);
 
   const openInNewTab = (url: string) => {
     const newWindow = window.open(url, '_blank', 'noopener, noreferrer');
@@ -215,7 +188,7 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
         </HeaderContent>
         <Dropdown
           placement="right"
-          options={options}
+          options={menuButtons}
           optionRender={(opt) => (
             <MenuOption
               {...(opt as MenuOptionItem)}
