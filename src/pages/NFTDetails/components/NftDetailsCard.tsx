@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
+import { SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { Achievement, Image } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
@@ -15,6 +16,7 @@ type Props<T extends TBaseToken> = {
   isOwner: boolean;
   buttons: ReactNode;
   className?: string;
+  menuButtons: SelectOptionProps[];
 };
 
 export const NftDetailsCard = <T extends TBaseToken>({
@@ -24,6 +26,7 @@ export const NftDetailsCard = <T extends TBaseToken>({
   isOwner,
   buttons,
   className,
+  menuButtons,
 }: Props<T>) => (
   <NftDetailsInfo className={className}>
     <div className="avatar">
@@ -49,6 +52,7 @@ export const NftDetailsCard = <T extends TBaseToken>({
         ownerAddress={token?.owner}
         isCurrentAccountOwner={isOwner}
         buttons={buttons}
+        menuButtons={menuButtons}
         onShowModal={onCurrentModal}
       />
       <Divider />

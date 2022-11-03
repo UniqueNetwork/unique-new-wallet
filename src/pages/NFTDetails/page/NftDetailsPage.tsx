@@ -12,6 +12,7 @@ import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
 import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
+import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
 
 export const NftDetailsPage = () => {
   const { collectionId = '', tokenId = '' } = useParams();
@@ -60,6 +61,21 @@ export const NftDetailsPage = () => {
     setCurrentModal('none');
   };
 
+  const menuButtons = useMemo(() => {
+    const items = [...menuButtonsNft];
+
+    if (isOwner) {
+      items.push({
+        icon: 'burn',
+        id: 'burn',
+        title: 'Burn token',
+        type: 'danger',
+      });
+    }
+
+    return items;
+  }, [isOwner]);
+
   return (
     <NftDetailsLayout
       isLoading={isLoadingToken || isLoadingCollection}
@@ -67,6 +83,7 @@ export const NftDetailsPage = () => {
     >
       <NftDetailsCard
         token={token}
+        menuButtons={menuButtons}
         isOwner={isOwner}
         buttons={
           isOwner && (
