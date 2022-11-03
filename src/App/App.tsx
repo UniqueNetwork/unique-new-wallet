@@ -10,6 +10,7 @@ import { IntroCard } from '@app/components/IntroSlider/components';
 import { IntroSlider } from '@app/components/IntroSlider';
 import confetti from '@app/components/IntroSlider/components/images/confetti.svg';
 import bundle from '@app/components/IntroSlider/components/images/bundle.svg';
+
 import './styles.scss';
 
 const ampKey = window.ENV?.AMPLITUDE_KEY || process.env.REACT_APP_AMPLITUDE_KEY || '';
@@ -40,22 +41,40 @@ export default function App() {
             return (
               <>
                 <IntroCard
-                  // title="Fractional tokens and Bundles finally here!"
+                  // title={<>Fractional tokens and Bundles finally here!</>}
                   title="Bundles finally here!"
-                  description="Meet the long-awaited update of Unique Wallet"
+                  description={<>Meet the long-awaited update of&nbsp;Unique Wallet</>}
                   imgPath={confetti}
                   setActiveSlide={setActiveSlide}
                 />
-                {/*<IntroCard*/}
-                {/*  title="Fractional tokens"*/}
-                {/*  description="A re-fungible format that allows for an NFT to be divided into many parts that can be distributed among any number of wallets"*/}
-                {/*  imgPath={puzzle}*/}
-                {/*  setActiveSlide={setActiveSlide}*/}
-                {/*/>*/}
+                {/*<IntroCard
+                  title="Fractional tokens"
+                  description={
+                    <>
+                      A&nbsp;re-fungible format that allows for an&nbsp;NFT
+                      to&nbsp;be&nbsp;divided into many parts that can be&nbsp;distributed
+                      among any number of&nbsp;wallets
+                    </>
+                  }
+                  imgPath={puzzle}
+                  setActiveSlide={setActiveSlide}
+                />*/}
                 <IntroCard
                   title="Bundle"
-                  // description="A way to group tokens in a nested, tree-like structure within NFT. Nesting of NFTs, Fractionals and coins in unlimited quantities is supported."
-                  description="A way to group tokens in a nested, tree-like structure within NFT. Nesting of NFTs and coins in unlimited quantities is supported."
+                  /*description={
+                    <>
+                      A&nbsp;way to&nbsp;group tokens in&nbsp;a&nbsp;nested, tree-like
+                      structure within NFT. Nesting of&nbsp;NFTs, Fractionals and coins
+                      in&nbsp;unlimited quantities is&nbsp;supported.
+                    </>
+                  }*/
+                  description={
+                    <>
+                      A&nbsp;way to&nbsp;group tokens in&nbsp;a&nbsp;nested, tree-like
+                      structure within NFT. Nesting of&nbsp;NFTs and coins
+                      in&nbsp;unlimited quantities is&nbsp;supported.
+                    </>
+                  }
                   imgPath={bundle}
                   setActiveSlide={setActiveSlide}
                   isLast={true}

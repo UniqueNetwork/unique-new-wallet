@@ -2,14 +2,13 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Dropdown, Icon, Loader } from '@unique-nft/ui-kit';
+import { Dropdown, Loader } from '@unique-nft/ui-kit';
 
 import Pin from 'static/icons/pin.svg';
-import MeatBallIcon from 'static/icons/meatball.svg';
-import SquareIcon from 'static/icons/square.svg';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { Image, TooltipWrapper } from '@app/components';
+import { Icon, Image, TooltipWrapper } from '@app/components';
+import { Button as UIButton } from '@app/components/Button';
 
 import { INestingToken, INodeView } from '../types';
 import MobileModalActions from './MobileModalActions';
@@ -20,7 +19,6 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   isOpened,
   data,
   textClicked,
-  isFirst,
   level,
   isSelected,
   isParentSelected,
@@ -113,13 +111,7 @@ const NodeView: FC<INodeView<INestingToken>> = ({
 
   return (
     <>
-      <ViewContainer
-        isFirst={isFirst}
-        isMobile={isMobileView}
-        onClick={onClick}
-        onMouseEnter={showMenu}
-        onMouseLeave={hideMenu}
-      >
+      <ViewContainer onClick={onClick} onMouseEnter={showMenu} onMouseLeave={hideMenu}>
         <ViewContainerInner isParentSelected={isParentSelected} isSelected={isSelected}>
           <span className="tree-node-indent">
             {[...Array(level - 1)].fill(0).map((x, i) => {
@@ -137,7 +129,7 @@ const NodeView: FC<INodeView<INestingToken>> = ({
                 role="button"
                 onClick={arrowClicked}
               >
-                <Icon size={16} name="triangle" color="currentColor" />
+                <Icon size={12} name="triangle" color="currentColor" />
               </span>
             ) : (
               <span className="tree-node-indent-item" />
@@ -159,77 +151,84 @@ const NodeView: FC<INodeView<INestingToken>> = ({
               prefix={collection?.tokenPrefix || ''}
             />
           </NftInfo>
-          <Actions>
+          <Actions onClick={(e) => e.stopPropagation()}>
             {deviceSize !== DeviceSize.sm && (
-              <ActionButtons
-                className="action-buttons"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
+              <>
                 {menuVisible && data.isCurrentAccountOwner && !isMobileView && (
                   <ActionsMenuWrapper>
-                    <TooltipWrapper
-                      align={{
-                        vertical: 'top',
-                        horizontal: 'middle',
-                        appearance: 'vertical',
-                      }}
-                      message="Open additional menu"
+                    <Dropdown
+                      placement="right"
+                      dropdownRender={() => (
+                        <DropdownMenu>{tokenMenuActions}</DropdownMenu>
+                      )}
                     >
-                      <Dropdown
-                        placement="right"
-                        dropdownRender={() => (
-                          <DropdownMenu>{tokenMenuActions}</DropdownMenu>
-                        )}
+                      <TooltipWrapper
+                        align={{
+                          vertical: 'top',
+                          horizontal: 'middle',
+                          appearance: 'vertical',
+                        }}
+                        message="Open additional menu"
                       >
-                        <Icon
-                          size={32}
-                          file={MeatBallIcon}
-                          color="var(--color-secondary-400)"
+                        <ActionButton
+                          iconRight={{
+                            color: 'currentColor',
+                            name: 'more-horiz',
+                            size: 24,
+                          }}
+                          role="ghost"
+                          title=""
                         />
-                      </Dropdown>
-                    </TooltipWrapper>
+                      </TooltipWrapper>
+                    </Dropdown>
                   </ActionsMenuWrapper>
                 )}
                 {menuVisible && !isCurrent && !isMobileView && (
-                  <span onClick={viewTokenDetails}>
-                    <TooltipWrapper
-                      align={{
-                        vertical: 'top',
-                        horizontal: 'middle',
-                        appearance: 'vertical',
+                  <TooltipWrapper
+                    align={{
+                      vertical: 'top',
+                      horizontal: 'middle',
+                      appearance: 'vertical',
+                    }}
+                    message="Go to the token page"
+                  >
+                    <ActionButton
+                      iconRight={{
+                        color: 'currentColor',
+                        name: 'arrow-out-outlined',
+                        size: 32,
                       }}
-                      message="Go to the token page"
-                    >
-                      <Icon
-                        size={32}
-                        file={SquareIcon}
-                        color="var(--color-secondary-400)"
-                      />
-                    </TooltipWrapper>
-                  </span>
+                      role="ghost"
+                      title=""
+                      onClick={viewTokenDetails}
+                    />
+                  </TooltipWrapper>
                 )}
-              </ActionButtons>
+              </>
             )}
             {isCurrent && (
-              <PinIcon className="pin-icon">
-                <TooltipWrapper
-                  align={{
-                    vertical: 'top',
-                    horizontal: 'middle',
-                    appearance: 'vertical',
-                  }}
-                  message="Current token page"
-                >
-                  <Icon size={32} file={Pin} />
-                </TooltipWrapper>
-              </PinIcon>
+              <TooltipWrapper
+                align={{
+                  vertical: 'top',
+                  horizontal: 'middle',
+                  appearance: 'vertical',
+                }}
+                message="Current token page"
+              >
+                <Icon size={32} file={Pin} />
+              </TooltipWrapper>
             )}
             {isMobileView && (
-              <span onClick={() => setModalVisible(true)}>
-                <Icon size={32} file={MeatBallIcon} />
-              </span>
+              <ActionButton
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'more-horiz',
+                  size: 24,
+                }}
+                role="ghost"
+                title=""
+                onClick={() => setModalVisible(true)}
+              />
             )}
           </Actions>
         </ViewContainerInner>
@@ -267,12 +266,12 @@ const ViewContainerInner = styled.div<{
       : isParentSelected
       ? 'var(--color-primary-100)'
       : 'none'} !important;
+  user-select: none;
 `;
 
-const ViewContainer = styled.div<{ isFirst: boolean | undefined; isMobile: boolean }>`
+const ViewContainer = styled.div`
   border-bottom: 1px dashed var(--color-grey-300);
   position: relative;
-  cursor: ${(p) => !p.isMobile && 'pointer'};
 
   &:hover {
     &::before {
@@ -336,24 +335,40 @@ const NftInfo = styled.div`
   align-items: center;
 `;
 
+export const ActionButton = styled(UIButton)`
+  flex: 0 0 auto;
+
+  &.unique-button {
+    &.size-middle {
+      appearance: none;
+      width: 32px;
+      height: 32px;
+      line-height: normal;
+      padding: 0;
+    }
+
+    &.ghost {
+      color: var(--color-secondary-400);
+
+      &:hover {
+        color: var(--color-secondary-200);
+      }
+    }
+
+    &.with-icon.to-right {
+      .icon {
+        margin-left: 0;
+      }
+    }
+  }
+`;
+
 const Actions = styled.div`
   display: flex;
   align-items: center;
   gap: calc(var(--prop-gap) / 2);
   padding-left: var(--prop-gap);
 `;
-
-const ActionButtons = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  svg:hover {
-    fill: var(--color-primary-500);
-  }
-`;
-
-const PinIcon = styled.div``;
 
 const ActionsMenuWrapper = styled.div`
   display: flex;
@@ -441,8 +456,6 @@ const IconWrapper = styled.div`
   }
 `;
 
-export default NodeView;
-
 const TokenTitle: FC<{
   isCollectionLoading: boolean;
   prefix: string;
@@ -483,3 +496,5 @@ const NestedCount = styled.p`
   line-height: 18px;
   color: var(--color-blue-grey-500);
 `;
+
+export default NodeView;
