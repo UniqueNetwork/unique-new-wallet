@@ -100,6 +100,24 @@
     color: var(--color-blue-grey-500);
   }
 
+  &.negative {
+    &.with-icon {
+      &.unique-button-icon {
+        border: 2px solid var(--color-additional-light);
+        padding: calc(var(--prop-gap) / 8);
+        height: auto;
+        background-color: var(--color-secondary-500);
+        color: var(--color-additional-light);
+
+        &:hover {
+          border-color: var(--color-additional-light);
+          background-color: var(--color-secondary-400);
+          color: var(--color-additional-light);
+        }
+      }
+    }
+  }
+
   &.disabled,
   &.disabled:hover,
   &.disabled:active {
