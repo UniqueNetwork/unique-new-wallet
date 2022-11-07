@@ -121,30 +121,11 @@ function List<T>({
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
   const size = SizeMap[deviceSize];
-  const listItemsKeys: { [index: number]: Key } = {};
-
-  const renderInnerItem = (item: T, index: number) => {
-    if (!renderItem) {
-      return null;
-    }
-
-    let key = (item as any).key;
-
-    if (!key) {
-      key = `list-item-${index}`;
-    }
-
-    listItemsKeys[index] = key;
-
-    return renderItem(item, index);
-  };
 
   let childrenContent = isLoading && <Loader isFullPage size="middle" />;
 
   if (dataSource.length > 0) {
-    const items = dataSource.map((item: T, index: number) =>
-      renderInnerItem(item, index),
-    );
+    const items = dataSource.map((item: T, index: number) => renderItem?.(item, index));
     childrenContent = (
       <ItemScope
         breakpoint={size}

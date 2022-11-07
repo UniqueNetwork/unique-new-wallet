@@ -37,6 +37,7 @@ const OWNER_TOKENS_QUERY = gql`
         image
         type
         children_count
+        parent_id
       }
     }
   }
