@@ -1,17 +1,18 @@
 import { useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { IconProps, InputText, Select } from '@unique-nft/ui-kit';
+import { Select } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
 import { useApi } from '@app/hooks';
-import { MintingBtn } from '@app/components';
+import { IconProps, MintingBtn } from '@app/components';
 import { Direction } from '@app/api/graphQL/types';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
+import { Search } from '@app/pages/components/Search';
 
 type SelectOption = {
   id: string;
@@ -92,10 +93,8 @@ export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
     <div className={classNames('my-collections-filter', className)}>
       {showFilter && (
         <ControlGroup className={'__as_' + view}>
-          <InputText
-            iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
+          <Search
             value={searchString}
-            placeholder="Search"
             onChange={setSearchString}
             onKeyDown={handleSearchString}
           />
@@ -168,8 +167,5 @@ export const TopFilter = styled(TopFilterComponent)`
   .unique-input-text,
   .unique-select {
     width: 100%;
-  }
-  .unique-input-text .input-wrapper:hover {
-    border: 1px solid var(--color-grey-500);
   }
 `;
