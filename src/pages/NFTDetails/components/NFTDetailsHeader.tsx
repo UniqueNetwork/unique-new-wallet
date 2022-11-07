@@ -5,7 +5,6 @@ import { Button, Heading, SelectOptionProps } from '@unique-nft/ui-kit';
 import { useApi } from '@app/hooks';
 import { BurnBtn, Dropdown, ExternalLink } from '@app/components';
 import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
-import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 interface NFTDetailsHeaderProps {
@@ -14,11 +13,11 @@ interface NFTDetailsHeaderProps {
   collectionId?: number;
   collectionName?: string;
   ownerAddress?: string;
-  isCurrentAccountOwner?: boolean;
   className?: string;
   buttons: ReactNode;
   menuButtons: SelectOptionProps[];
   onShowModal(modal: TNFTModalType): void;
+  owner: ReactNode;
 }
 
 interface MenuOptionItem extends SelectOptionProps {
@@ -143,12 +142,11 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   tokenId,
   collectionName = '',
   collectionId,
-  ownerAddress,
-  isCurrentAccountOwner,
   className,
   onShowModal,
   buttons,
   menuButtons,
+  owner,
 }) => {
   const { currentChain } = useApi();
 
@@ -171,20 +169,7 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
             </ExternalLink>
           </div>
           <Heading className="collection-heading">{title}</Heading>
-          <TextOwner>
-            {isCurrentAccountOwner ? (
-              'You own it'
-            ) : (
-              <>
-                Owned by
-                <AccountCard
-                  accountAddress={ownerAddress || ''}
-                  canCopy={false}
-                  scanLink={`${currentChain.uniquescanAddress}/account/${ownerAddress}`}
-                />
-              </>
-            )}
-          </TextOwner>
+          <TextOwner>{owner}</TextOwner>
         </HeaderContent>
         <Dropdown
           placement="right"

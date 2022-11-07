@@ -6,16 +6,18 @@ import { Button } from '@unique-nft/ui-kit';
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { useCollectionGetById, useTokenGetById } from '@app/api';
+import { useTokenGetById } from '@app/api';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 export const NftDetailsPage = () => {
   const { collectionId = '', tokenId = '' } = useParams();
   const size = useDeviceSize();
+  const { currentChain } = useApi();
 
   const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
 
@@ -28,12 +30,6 @@ export const NftDetailsPage = () => {
     collectionId: parseInt(collectionId),
   });
 
-  const {
-    data: collection,
-    isLoading: isLoadingCollection,
-    refetch: refetchCollection,
-  } = useCollectionGetById(parseInt(collectionId));
-
   const token:
     | (TokenByIdResponse & {
         collectionName: string;
@@ -45,10 +41,10 @@ export const NftDetailsPage = () => {
     }
     return {
       ...tokenById,
-      name: collection ? `${collection.tokenPrefix} #${tokenById.tokenId}` : '',
-      collectionName: collection?.name || '',
+      name: `${tokenById.collection.tokenPrefix} #${tokenById.tokenId}`,
+      collectionName: tokenById.collection?.name,
     };
-  }, [tokenById, collection]);
+  }, [tokenById]);
 
   const isOwner = useIsOwner(token);
 
@@ -56,7 +52,6 @@ export const NftDetailsPage = () => {
 
   const onComplete = () => {
     refetchToken();
-    refetchCollection();
     setCurrentModal('none');
   };
 
@@ -76,14 +71,24 @@ export const NftDetailsPage = () => {
   }, [isOwner]);
 
   return (
-    <NftDetailsLayout
-      isLoading={isLoadingToken || isLoadingCollection}
-      tokenExist={!!token}
-    >
+    <NftDetailsLayout isLoading={isLoadingToken} tokenExist={!!token}>
       <NftDetailsCard
         token={token}
         menuButtons={menuButtons}
-        isOwner={isOwner}
+        owner={
+          isOwner ? (
+            'You own it'
+          ) : (
+            <>
+              Owned by
+              <AccountCard
+                accountAddress={token?.owner || ''}
+                canCopy={false}
+                scanLink={`${currentChain.uniquescanAddress}/account/${token?.owner}`}
+              />
+            </>
+          )
+        }
         buttons={
           isOwner && (
             <>
@@ -96,7 +101,7 @@ export const NftDetailsPage = () => {
                   setCurrentModal('transfer');
                 }}
               />
-              {collection?.permissions?.nesting?.tokenOwner && (
+              {tokenById?.collection?.permissions?.nesting?.tokenOwner && (
                 <Button
                   title="Nest this token"
                   wide={size <= DeviceSize.sm}

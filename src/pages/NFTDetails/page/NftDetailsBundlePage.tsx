@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Button, Heading, Text } from '@unique-nft/ui-kit';
 import { TokenByIdResponse } from '@unique-nft/sdk';
@@ -7,7 +7,7 @@ import { TokenByIdResponse } from '@unique-nft/sdk';
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { useCollectionGetById, useTokenGetBundle, useTokenGetById } from '@app/api';
+import { useTokenGetBundle, useTokenGetById } from '@app/api';
 import BundleTree from '@app/components/BundleTree/BundleTree';
 import NodeView from '@app/components/BundleTree/Node/NodeView';
 import { INestingToken } from '@app/components/BundleTree/types';
@@ -19,6 +19,7 @@ import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
   a.collectionId === b.collectionId && a.tokenId === b.tokenId;
@@ -60,11 +61,9 @@ export const NftDetailsBundlePage = () => {
     tokenId: parseInt(tokenId),
   });
 
-  const {
-    data: collection,
-    isLoading: isLoadingCollection,
-    refetch: refetchCollection,
-  } = useCollectionGetById(parseInt(collectionId));
+  const { data: parentToken, isLoading: isLoadingParentToken } = useTokenGetById({
+    ...tokenById?.nestingParentToken,
+  });
 
   const token:
     | (TokenByIdResponse & {
@@ -77,10 +76,10 @@ export const NftDetailsBundlePage = () => {
     }
     return {
       ...tokenById,
-      name: collection ? `${collection.tokenPrefix} #${tokenById.tokenId}` : '',
-      collectionName: collection?.name || '',
+      name: `${tokenById?.collection.tokenPrefix} #${tokenById.tokenId}`,
+      collectionName: tokenById?.collection.name || '',
     };
-  }, [tokenById, collection]);
+  }, [tokenById]);
 
   const isOwner = useIsOwner(bundleToken);
 
@@ -92,7 +91,6 @@ export const NftDetailsBundlePage = () => {
   const onComplete = () => {
     refetchToken();
     refetchBundle();
-    refetchCollection();
     setCurrentModal('none');
   };
 
@@ -220,7 +218,7 @@ export const NftDetailsBundlePage = () => {
 
   const BundleTreeRendered = (
     <BundleTree<INestingToken>
-      dataSource={bundle || []}
+      dataSource={bundle}
       selectedToken={selectedToken}
       nodeView={NodeView}
       nestedSectionView={NestedSection}
@@ -235,16 +233,46 @@ export const NftDetailsBundlePage = () => {
     />
   );
 
+  const owner = () => {
+    const isBundle = isBundleToken();
+
+    if (!isOwner && isBundle) {
+      return (
+        <>
+          Owned by{' '}
+          <AccountCard
+            accountAddress={token?.owner || ''}
+            canCopy={false}
+            scanLink={`${currentChain.uniquescanAddress}/account/${token?.owner}`}
+          />
+        </>
+      );
+    }
+    if (isOwner && isBundle) {
+      return 'You own it';
+    }
+    return (
+      <>
+        Nested in bundle
+        <TokenLink
+          to={`/${currentChain?.network}/token/${parentToken?.collectionId}/${parentToken?.tokenId}`}
+        >
+          {parentToken?.collection.tokenPrefix} #{parentToken?.tokenId}
+        </TokenLink>
+      </>
+    );
+  };
+
   return (
     <NftDetailsWrapper>
       <NftDetailsLayout
-        isLoading={isLoadingBundleToken || isLoadingToken || isLoadingCollection}
+        isLoading={isLoadingBundleToken || isLoadingToken || isLoadingParentToken}
         tokenExist={!!bundleToken && !!token}
       >
         <NftDetailsCard
           className="nft-details-card"
           token={token}
-          isOwner={isOwner}
+          owner={owner()}
           menuButtons={menuButtons}
           achievement={isBundleToken() ? 'Bundle' : 'Nested'}
           buttons={
@@ -326,6 +354,14 @@ export const NftDetailsBundlePage = () => {
     </NftDetailsWrapper>
   );
 };
+
+const TokenLink = styled(Link)`
+  color: var(--color-primary-500);
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 const BundleWrapper = styled.div`
   margin-top: calc(var(--prop-gap) * 1.5);

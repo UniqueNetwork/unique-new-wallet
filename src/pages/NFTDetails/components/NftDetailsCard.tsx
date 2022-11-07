@@ -13,20 +13,20 @@ type Props<T extends TBaseToken> = {
   token?: T;
   achievement?: string;
   onCurrentModal: (type: TNFTModalType) => void;
-  isOwner: boolean;
   buttons: ReactNode;
   className?: string;
   menuButtons: SelectOptionProps[];
+  owner: ReactNode;
 };
 
 export const NftDetailsCard = <T extends TBaseToken>({
   token,
   onCurrentModal,
   achievement,
-  isOwner,
   buttons,
   className,
   menuButtons,
+  owner,
 }: Props<T>) => (
   <NftDetailsInfo className={className}>
     <div className="avatar">
@@ -49,9 +49,8 @@ export const NftDetailsCard = <T extends TBaseToken>({
         tokenId={token?.tokenId}
         collectionId={token?.collectionId}
         collectionName={token?.collectionName}
-        ownerAddress={token?.owner}
-        isCurrentAccountOwner={isOwner}
         buttons={buttons}
+        owner={owner}
         menuButtons={menuButtons}
         onShowModal={onCurrentModal}
       />
