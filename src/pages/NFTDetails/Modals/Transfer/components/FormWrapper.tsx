@@ -20,7 +20,7 @@ export const FormWrapper = ({ children, fee }: Props) => {
           Proceed with caution, once confirmed the transaction cannot be reverted.
         </Text>
       </TransferRow>
-      <TransferRow>
+      <TransferRow gap="sm">
         {fee ? (
           <FeeInformationTransaction fee={fee} />
         ) : (

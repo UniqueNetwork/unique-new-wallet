@@ -1,8 +1,17 @@
+import { memo, ReactNode } from 'react';
 import styled from 'styled-components';
 
-export const TransferRow = styled.div`
-  & + & {
-    margin-top: calc(var(--prop-gap) * 1.5);
+export const Wrapper = styled.div`
+  &.sm {
+    &:not(:first-child) {
+      margin-top: var(--prop-gap);
+    }
+  }
+
+  &.md {
+    &:not(:first-child) {
+      margin-top: calc(var(--prop-gap) * 1.5);
+    }
   }
 
   .unique-input-text {
@@ -15,3 +24,13 @@ export const TransferRow = styled.div`
     }
   }
 `;
+
+const TransferRowComponent = ({
+  gap = 'md',
+  children,
+}: {
+  gap?: 'sm' | 'md' | undefined;
+  children?: ReactNode;
+}) => <Wrapper className={gap}>{children}</Wrapper>;
+
+export const TransferRow = memo(TransferRowComponent);
