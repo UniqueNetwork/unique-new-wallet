@@ -26,6 +26,9 @@ const COLLECTION_TOKENS_QUERY = gql`
         collection_id
         collection_name
         image
+        type
+        children_count
+        parent_id
       }
     }
   }

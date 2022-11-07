@@ -53,12 +53,12 @@ export interface Token {
   token_name: string;
   token_prefix: number;
   owner: string;
-  owner_mormalized: string;
+  owner_normalized: string;
   attributes: Record<string, Attribute>;
   date_of_creation: number;
   image?: {
-    fullUrl: string | null;
-    ipfsCid: string | null;
+    fullUrl: Nullable<string>;
+    ipfsCid: Nullable<string>;
   };
   collection_id: number;
   collection_name: string;
@@ -66,6 +66,7 @@ export interface Token {
   collection_description: string;
   type: TokenTypeEnum;
   children_count: number;
+  parent_id: Nullable<string>;
 }
 
 export interface Collection {

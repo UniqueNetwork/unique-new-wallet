@@ -19,8 +19,8 @@ const AchievementWrapper = styled.span`
   border: 1px solid var(--color-blue-grey-200);
   border-radius: var(--prop-border-radius);
   position: absolute;
-  right: 15px;
-  top: 15px;
+  right: calc(var(--prop-gap) / 2);
+  top: calc(var(--prop-gap) / 2);
   font-size: 16px;
   font-weight: 500;
   z-index: 2;
