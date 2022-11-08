@@ -8,6 +8,8 @@ type SearchProps = Pick<ComponentProps, 'className' | 'value' | 'onKeyDown'> &
 
 const Wrapper = styled.div`
   .unique-input-text {
+    width: 100%;
+
     .input-wrapper {
       &:hover {
         border: 1px solid var(--color-grey-500);

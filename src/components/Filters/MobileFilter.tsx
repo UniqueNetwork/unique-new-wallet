@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, InputText, Select } from '@unique-nft/ui-kit';
+import { Button, Select } from '@unique-nft/ui-kit';
 
 import { Direction } from '@app/api/graphQL/types';
 import { CollectionsFilter, StatusFilter, TypeFilter } from '@app/pages';
@@ -8,6 +8,7 @@ import { defaultStatusFilter, defaultTypeFilter } from '@app/pages/MyTokens/cons
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { OptionChips as CollectionOption } from '@app/types';
 import { iconDown, iconUp, Option } from '@app/utils';
+import { Search } from '@app/pages/components/Search';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 
 export const MobileFilters = ({
@@ -87,15 +88,9 @@ export const MobileFilters = ({
         parent={document.body}
       >
         <FiltersWrapper>
-          <InputText
-            iconLeft={{
-              color: 'var(--color-blue-grey-500)',
-              name: 'magnify',
-              size: 18,
-            }}
+          <Search
             className="filter-input"
             value={search}
-            placeholder="Search"
             onChange={setSearch}
             onKeyDown={searchHandler}
           />
@@ -130,10 +125,12 @@ const FiltersWrapper = styled.div`
   flex-direction: column;
   gap: calc(var(--prop-gap) * 2);
   max-width: 756px;
+
   .filter-input {
     width: auto;
     max-width: 100%;
   }
+
   .collections-filter {
     margin: 0;
   }
