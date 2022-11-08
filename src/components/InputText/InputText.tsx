@@ -94,6 +94,7 @@ export const InputText = React.forwardRef(
           userIcon(iconRight)
         )}
       </div>
+
       {statusText && <div className="status-text">{statusText}</div>}
     </div>
   ),
