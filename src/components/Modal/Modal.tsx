@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import DrawerPopup, { DrawerPopupProps } from 'rc-drawer/lib/DrawerPopup';
 import classNames from 'classnames';
 import { Button, Heading } from '@unique-nft/ui-kit';
@@ -49,11 +49,17 @@ export const Modal = ({
   const deviceSize = useDeviceSize();
   const headingSize = () => (deviceSize >= DeviceSize.md ? '2' : '3');
 
+  useEffect(() => {
+    document.body.style.overflow = isVisible ? 'hidden' : '';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isVisible]);
+
   return isVisible ? (
     <DrawerPopup
-      className={classNames(`unique-modal-content--${size}`, {
-        'unique-modal-content--inline': inline,
-      })}
+      className={classNames({ 'unique-modal-content--inline': inline })}
       contentWrapperStyle={{ verticalAlign: align }}
       keyboard={isClosable}
       mask={true}
@@ -62,7 +68,7 @@ export const Modal = ({
       open={isVisible}
       placement="left"
       prefixCls="unique-modal"
-      rootClassName={classNames(`unique-modal-${align}`)}
+      rootClassName={classNames(`unique-modal-${align}`, `unique-modal--${size}`)}
       onClose={onClose}
       {...motionProps}
     >
