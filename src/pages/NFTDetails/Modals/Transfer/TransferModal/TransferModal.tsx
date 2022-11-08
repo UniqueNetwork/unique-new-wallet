@@ -116,7 +116,13 @@ export const TransferModal = <T extends TBaseToken>({
             <Controller
               name="to"
               render={({ field: { value, onChange } }) => {
-                return <InputTransfer value={value} onChange={onChange} />;
+                return (
+                  <InputTransfer
+                    value={value}
+                    onChange={onChange}
+                    onClear={() => onChange('')}
+                  />
+                );
               }}
               rules={{
                 required: true,

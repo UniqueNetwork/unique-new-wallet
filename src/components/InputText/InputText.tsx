@@ -1,19 +1,22 @@
-/* eslint-disable react/display-name */
 /* eslint-disable no-empty-character-class */
 
-import { ForwardedRef, forwardRef, ReactNode } from 'react';
-import { ComponentProps, DimentionType, IconType, userIcon } from '@unique-nft/ui-kit';
+import React, { ForwardedRef, ReactNode } from 'react';
 import classNames from 'classnames';
+import { ComponentProps, DimentionType } from '@unique-nft/ui-kit';
+
+import { Button, IconType, userIcon } from '@app/components';
 
 import './InputText.scss';
 
 export interface InputBaseProps {
   additionalText?: string;
+  clearable?: boolean;
   error?: boolean;
   label?: ReactNode;
   statusText?: string;
   size?: DimentionType;
   onChange?(value: string): void;
+  onClear?: () => void;
 }
 
 export type InputTextProps = InputBaseProps &
@@ -23,7 +26,7 @@ export type InputTextProps = InputBaseProps &
     role?: 'number' | 'decimal';
   };
 
-export const InputText = forwardRef(
+export const InputText = React.forwardRef(
   (
     {
       id,
@@ -31,15 +34,17 @@ export const InputText = forwardRef(
       additionalText,
       statusText,
       className,
+      clearable,
       error,
       disabled,
       value = '',
       iconLeft,
       iconRight,
-      onChange,
       role,
       size = 'middle',
       testid,
+      onChange,
+      onClear,
       ...rest
     }: InputTextProps,
     ref: ForwardedRef<HTMLInputElement>,
@@ -54,7 +59,8 @@ export const InputText = forwardRef(
         className={classNames('input-wrapper', {
           'with-icon': iconLeft || iconRight,
           'to-left': iconLeft,
-          'to-right': iconRight,
+          'to-right': iconRight || clearable,
+          clearable,
           disabled,
         })}
       >
@@ -72,7 +78,21 @@ export const InputText = forwardRef(
           })}
           {...rest}
         />
-        {userIcon(iconRight)}
+        {clearable && value ? (
+          <Button
+            className="unique-button-icon"
+            iconRight={{
+              color: 'currentColor',
+              name: 'clear',
+              size: 24,
+            }}
+            role="ghost"
+            title=""
+            onClick={onClear}
+          />
+        ) : (
+          userIcon(iconRight)
+        )}
       </div>
       {statusText && <div className="status-text">{statusText}</div>}
     </div>

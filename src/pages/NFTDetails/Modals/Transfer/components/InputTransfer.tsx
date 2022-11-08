@@ -1,10 +1,9 @@
-import { Icon, InputText, InputTextProps } from '@unique-nft/ui-kit';
-
-import { TooltipWrapper } from '@app/components';
+import { Icon, InputText, InputTextProps, TooltipWrapper } from '@app/components';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 export const InputTransfer = (inputProps: InputTextProps) => (
   <InputText
+    clearable
     label={
       <>
         Recipient address

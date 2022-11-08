@@ -29,10 +29,7 @@ export const GlobalStyle = createGlobalStyle`
       margin: 0;
       padding: calc(var(--prop-gap) / 2);
 
-      & > svg.icon {
-        margin: 0;
-      }
-
+      &:not(.ghost):not(.negative),
       &.outlined {
         border-color: var(--color-blue-grey-300);
         background-color: var(--color-additional-light);
@@ -45,17 +42,22 @@ export const GlobalStyle = createGlobalStyle`
           color: var(--color-secondary-400);
         }
       }
+
+      & > svg.icon {
+        margin: 0;
+      }
     }
   }
   
   .dropdown-wrapper.dropped {
     .unique-button.with-icon {
       &.unique-button-icon {
+        &:not(.ghost),
         &.outlined {
           background-color: var(--color-blue-grey-100);
         }
-        
-        &.negative {
+
+        &:not(.ghost).negative {
           background-color: var(--color-secondary-400);
         }
       }
