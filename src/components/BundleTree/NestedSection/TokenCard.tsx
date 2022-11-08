@@ -1,10 +1,8 @@
-import { FC, useCallback, useRef, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { Dropdown, Icon, Loader, Text, Tooltip } from '@unique-nft/ui-kit';
+import { Loader, Text } from '@unique-nft/ui-kit';
 
-import MeatBallIcon from 'static/icons/meatball.svg';
-
-import { Image } from '@app/components';
+import { Button, Dropdown, Icon, Image, TooltipWrapper } from '@app/components';
 
 import { INestingToken, ITokenCard } from '../types';
 import { useCollection } from '../useCollection';
@@ -17,7 +15,6 @@ function TokenCard({
 }: ITokenCard) {
   const [menuVisible, setMenuVisible] = useState(false);
   const { isCollectionLoading, collection } = useCollection(token.collectionId);
-  const meatballIconMenu = useRef(null);
 
   const onTransfer = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -81,12 +78,6 @@ function TokenCard({
             e.stopPropagation();
           }}
         >
-          <Tooltip
-            align={{ vertical: 'top', horizontal: 'middle', appearance: 'vertical' }}
-            targetRef={meatballIconMenu}
-          >
-            Open additional menu
-          </Tooltip>
           <Dropdown
             placement="left"
             dropdownRender={() => (
@@ -110,12 +101,21 @@ function TokenCard({
               </DropdownMenu>
             )}
           >
-            <Icon
-              size={32}
-              file={MeatBallIcon}
-              color="transparent"
-              ref={meatballIconMenu}
-            />
+            <TooltipWrapper
+              align={{ vertical: 'top', horizontal: 'middle', appearance: 'vertical' }}
+              message="Open additional menu"
+            >
+              <Button
+                className="unique-button-icon"
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'more-horiz',
+                  size: 24,
+                }}
+                role="negative"
+                title=""
+              />
+            </TooltipWrapper>
           </Dropdown>
         </ActionsMenuWrapper>
       )}
@@ -137,9 +137,11 @@ const TokenCardWrapper = styled.div`
     height: 128px;
   }
 
-  span:first-of-type,
-  span:last-of-type {
-    margin-top: calc(var(--gap) / 2);
+  & > span {
+    &:first-of-type,
+    &:last-of-type {
+      margin-top: calc(var(--gap) / 2);
+    }
   }
 
   &:hover {

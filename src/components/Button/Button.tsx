@@ -8,7 +8,14 @@ import './Button.scss';
 export interface ButtonBaseProps {
   title: string;
   size?: DimentionType;
-  role?: 'primary' | 'secondary' | 'tertiary' | 'outlined' | 'danger' | 'ghost';
+  role?:
+    | 'primary'
+    | 'secondary'
+    | 'tertiary'
+    | 'outlined'
+    | 'danger'
+    | 'ghost'
+    | 'negative';
   type?: 'submit' | 'button';
   wide?: boolean;
   iconLeft?: IconProps;
