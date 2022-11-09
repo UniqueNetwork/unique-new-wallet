@@ -1,14 +1,7 @@
 import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import {
-  Button,
-  Dropdown,
-  Icon,
-  InputText,
-  TableColumnProps,
-  Text,
-} from '@unique-nft/ui-kit';
+import { Button, Dropdown, Icon, TableColumnProps, Text } from '@unique-nft/ui-kit';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
@@ -22,6 +15,7 @@ import {
   TooltipWrapper,
   TransferBtn,
 } from '@app/components';
+import { Search } from '@app/pages/components/Search';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api';
@@ -95,13 +89,15 @@ const AccountsPageContent = styled.div`
   `;
 */
 
-const SearchInputStyled = styled(InputText)`
+const SearchStyled = styled(Search)`
   flex: 1 1 100%;
   margin-bottom: calc(var(--prop-gap) * 1.5);
+
   @media screen and (min-width: 1024px) {
     flex: 1 1 auto;
     margin-bottom: 0;
   }
+
   @media screen and (min-width: 1280px) {
     max-width: 500px;
     margin-left: auto;
@@ -409,12 +405,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
           {/* TODO: uncomment when AccountsTotalBalance will be ready
             <AccountsTotalBalanceStyled balance={totalBalance} />
           */}
-          <SearchInputStyled
-            placeholder="Search"
-            iconLeft={{ name: 'magnify', size: 18 }}
-            value={searchString}
-            onChange={setSearchString}
-          />
+          <SearchStyled value={searchString} onChange={setSearchString} />
           <ButtonGroup>
             <AccountsGroupButton />
           </ButtonGroup>
