@@ -48,7 +48,11 @@ export const IntroCard = ({
               title="Visit FAQ"
               onClick={() => {
                 onCloseModal?.();
-                navigation(`/${currentChain.network}/${ROUTE.FAQ}`);
+                navigation(`/${currentChain.network}/${ROUTE.FAQ}`, {
+                  state: {
+                    isNestedInfo: true,
+                  },
+                });
               }}
             />
           </div>

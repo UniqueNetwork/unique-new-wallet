@@ -21,9 +21,8 @@ const BUNDLE_SHOW_MODAL = 'new-wallet-bundle-show-modal';
 
 export default function App() {
   const [isShowIntroSlider] = useState<boolean>(() => {
-    // const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
-    // return status ? JSON.parse(status) : true;
-    return false;
+    const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
+    return status ? JSON.parse(status) : true;
   });
 
   useEffect(() => {
@@ -60,7 +59,7 @@ export default function App() {
                   setActiveSlide={setActiveSlide}
                 />*/}
                 <IntroCard
-                  title="Bundle"
+                  title="Nesting"
                   /*description={
                     <>
                       A&nbsp;way to&nbsp;group tokens in&nbsp;a&nbsp;nested, tree-like
