@@ -59,7 +59,7 @@ export default function App() {
                   setActiveSlide={setActiveSlide}
                 />*/}
                 <IntroCard
-                  title="Bundle"
+                  title="Nesting"
                   /*description={
                     <>
                       A&nbsp;way to&nbsp;group tokens in&nbsp;a&nbsp;nested, tree-like
