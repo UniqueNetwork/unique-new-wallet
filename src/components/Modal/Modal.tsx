@@ -1,13 +1,15 @@
-import React, { ReactNode } from 'react';
-import { Button, Heading } from '@unique-nft/ui-kit';
-import Drawer, { DrawerProps } from 'rc-drawer';
+import { ReactNode, useEffect } from 'react';
+import DrawerPopup, { DrawerPopupProps } from 'rc-drawer/lib/DrawerPopup';
 import classNames from 'classnames';
+import { Button, Heading } from '@unique-nft/ui-kit';
+
 import './Modal.scss';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 export interface ModalProps {
+  align?: 'top' | 'middle' | 'bottom';
   children: ReactNode;
   footerButtons?: ReactNode;
   isVisible: boolean;
@@ -18,22 +20,23 @@ export interface ModalProps {
   onClose?(): void;
 }
 
-const maskMotion: DrawerProps['maskMotion'] = {
+const maskMotion: DrawerPopupProps['maskMotion'] = {
   motionAppear: true,
   motionName: 'mask-motion',
 };
 
-export const motion: DrawerProps['motion'] = (placement) => ({
+export const motion: DrawerPopupProps['motion'] = (placement) => ({
   motionAppear: true,
   motionName: `panel-motion-${placement}`,
 });
 
-const motionProps: Partial<DrawerProps> = {
+const motionProps: Partial<DrawerPopupProps> = {
   maskMotion,
   motion,
 };
 
 export const Modal = ({
+  align = 'middle',
   children,
   footerButtons,
   isVisible,
@@ -46,16 +49,26 @@ export const Modal = ({
   const deviceSize = useDeviceSize();
   const headingSize = () => (deviceSize >= DeviceSize.md ? '2' : '3');
 
+  useEffect(() => {
+    document.body.style.overflow = isVisible ? 'hidden' : '';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isVisible]);
+
   return isVisible ? (
-    <Drawer
-      className={classNames(`unique-modal-content--${size}`, {
-        'unique-modal-content--inline': inline,
-      })}
+    <DrawerPopup
+      className={classNames({ 'unique-modal-content--inline': inline })}
+      contentWrapperStyle={{ verticalAlign: align }}
       keyboard={isClosable}
+      mask={true}
+      maskClassName={classNames(`unique-modal-mask-${align}`)}
       maskClosable={isClosable}
       open={isVisible}
-      placement="top"
+      placement="left"
       prefixCls="unique-modal"
+      rootClassName={classNames(`unique-modal-${align}`, `unique-modal--${size}`)}
       onClose={onClose}
       {...motionProps}
     >
@@ -80,6 +93,6 @@ export const Modal = ({
           </ButtonGroup>
         </div>
       )}
-    </Drawer>
+    </DrawerPopup>
   ) : null;
 };

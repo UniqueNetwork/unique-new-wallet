@@ -26,6 +26,9 @@ const COLLECTION_TOKENS_QUERY = gql`
         collection_id
         collection_name
         image
+        type
+        children_count
+        parent_id
       }
     }
   }
@@ -68,6 +71,7 @@ export const useGraphQlCollectionTokens = ({
         ],
         ...(type !== 'all' && { is_sold: { _eq: `${type === 'disowned'}` } }),
         ...getConditionBySearchText('token_name', search),
+        burned: { _eq: 'false' },
       },
     },
   });

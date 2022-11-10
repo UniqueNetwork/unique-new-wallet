@@ -6,7 +6,6 @@ import {
   Accordion,
   Button,
   IconProps,
-  InputText,
   RadioGroup,
   RadioOptionValueType,
   Select,
@@ -22,6 +21,7 @@ import {
   useNftFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import { MintingBtn } from '@app/components';
+import { Search } from '@app/pages/components/Search';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { FormBody, FormRow, SettingsRow } from '@app/pages/components/FormComponents';
@@ -65,7 +65,6 @@ const sortOptions: SelectOption[] = [
 const FormBodyStyled = styled(FormBody)`
   max-width: 520px;
 
-  .unique-input-text,
   .unique-select {
     width: 100%;
   }
@@ -148,17 +147,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               options={radioOptions}
               onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
             />
-            <InputText
-              iconLeft={{
-                name: 'magnify',
-                size: 18,
-                color: 'var(--color-blue-grey-500)',
-              }}
-              placeholder="Search"
-              value={search}
-              onKeyDown={handleSearch}
-              onChange={setSearch}
-            />
+            <Search value={search} onKeyDown={handleSearch} onChange={setSearch} />
             <Select
               options={sortOptions}
               value={direction}
@@ -179,17 +168,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
         >
           <FormBodyStyled>
             <SettingsRow>
-              <InputText
-                iconLeft={{
-                  name: 'magnify',
-                  size: 18,
-                  color: 'var(--color-blue-grey-500)',
-                }}
-                placeholder="Search"
-                value={search}
-                onKeyDown={handleSearch}
-                onChange={setSearch}
-              />
+              <Search value={search} onKeyDown={handleSearch} onChange={setSearch} />
             </SettingsRow>
             <FormRow>
               <Select

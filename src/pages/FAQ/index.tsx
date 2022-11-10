@@ -1,6 +1,7 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Accordion } from '@unique-nft/ui-kit';
+import { useLocation } from 'react-router-dom';
 
 import { useApi } from '@app/hooks';
 import {
@@ -83,19 +84,31 @@ const WrapperContentStyled = styled(WrapperContent)`
   }
 `;
 
+type LocationState = {
+  isNestedInfo?: boolean;
+};
+
 const FaqComponent = (): React.ReactElement<void> => {
   const { currentChain } = useApi();
+  const location = useLocation();
+  const state = (location.state || {}) as LocationState;
+
+  useEffect(() => {
+    window.history.replaceState({}, document.title);
+  }, []);
+
+  const keys = Object.keys(state);
 
   return (
     <MainWrapperStyled>
       <WrapperContentStyled>
-        {faqItems(currentChain.network).map(
+        {faqItems(currentChain.network, state).map(
           (item: Record<string, ReactNode>, i: number) => {
             return (
               <Accordion
                 key={i}
                 className="faq-item"
-                expanded={i === 0}
+                expanded={keys.length > 0 ? Boolean(item.defaultExpanded) : i === 0}
                 title={item.title}
               >
                 {item.content}

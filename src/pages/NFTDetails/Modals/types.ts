@@ -1,6 +1,8 @@
-export type TTransfer = {
-  sender: string;
-  recipient: string;
-};
-
-export type TNFTModalType = 'none' | 'transfer' | 'share' | 'burn';
+export type TNFTModalType =
+  | 'none'
+  | 'transfer'
+  | 'share'
+  | 'burn'
+  | 'create-bundle'
+  | 'unnest'
+  | 'bundle-transfer';

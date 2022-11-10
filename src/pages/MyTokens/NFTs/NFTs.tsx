@@ -5,15 +5,19 @@ import {
   useGraphQlCollectionsByTokensOwner,
   useGraphQlOwnerTokens,
 } from '@app/api/graphQL/tokens';
-import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { DeviceSize, useDeviceSize, useItemsLimit } from '@app/hooks';
 import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 import { PagePaper } from '@app/components';
 import { MobileFilters } from '@app/components/Filters/MobileFilter';
-import { CollectionsFilter, TypeFilter } from '@app/pages';
-import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
+import {
+  CollectionsFilter,
+  NFTsTemplateList,
+  StatusFilter,
+  TypeFilter,
+} from '@app/pages';
 
-import { defaultTypesFilters } from '../constants';
+import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useNFTsContext } from '../context';
 
 export interface NFTsComponentProps {
@@ -27,16 +31,17 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const { selectedAccount } = useContext(AccountContext);
   const {
     tokensPage,
-    typesFilters,
+    statusFilter,
     sortByTokenId,
     collectionsIds,
     searchText,
     changeSearchText,
-    setTypesFilters,
-    changeTypesFilters,
+    changeStatusFilter,
     changeCollectionsIds,
     setCollectionsIds,
     changeTokensPage,
+    typeFilter,
+    changeTypeFilter,
   } = useNFTsContext();
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
@@ -48,9 +53,10 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     useGraphQlOwnerTokens(
       selectedAccount?.address,
       {
-        typesFilters,
+        statusFilter,
         collectionsIds,
         searchText,
+        typeFilter,
       },
       {
         skip: !selectedAccount?.address,
@@ -64,7 +70,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const defaultCollections = useMemo(
     () =>
       collections?.map((c) => ({
-        id: c.collection_id,
+        value: c.collection_id,
         label: c.collection_name,
         icon: c.collection_cover,
       })),
@@ -78,15 +84,25 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         label: searchText,
         onClose: () => changeSearchText(''),
       });
-    typesFilters?.forEach((filter) =>
+
+    if (statusFilter !== 'allStatus') {
       chips.push({
-        label: Dictionary[`filter_type_${filter}`],
-        onClose: () => changeTypesFilters(filter),
-      }),
-    );
+        label:
+          defaultStatusFilter.find(({ value }) => value === statusFilter)?.label || '',
+        onClose: () => changeStatusFilter('allStatus'),
+      });
+    }
+
+    if (typeFilter !== 'allType') {
+      chips.push({
+        label: defaultTypeFilter.find(({ value }) => value === typeFilter)?.label || '',
+        onClose: () => changeTypeFilter('allType'),
+      });
+    }
+
     collectionsIds?.forEach((id) => {
       const { label, icon = null } =
-        defaultCollections?.find((c) => c.id === id && c) || {};
+        defaultCollections?.find((c) => c.value === id && c) || {};
       chips.push({
         label,
         iconLeft: { size: 22, file: getTokenIpfsUriByImagePath(icon) },
@@ -94,11 +110,12 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       });
     });
     return chips;
-  }, [searchText, typesFilters, collectionsIds, defaultCollections]);
+  }, [searchText, statusFilter, typeFilter, collectionsIds, defaultCollections]);
 
   const resetFilters = () => {
     changeSearchText('');
-    setTypesFilters([]);
+    changeStatusFilter('allStatus');
+    changeTypeFilter('allType');
     setCollectionsIds([]);
   };
 
@@ -109,7 +126,8 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         sidebar={
           !collectionsLoading && (
             <>
-              <TypeFilter defaultTypes={defaultTypesFilters} />
+              <StatusFilter status={defaultStatusFilter} />
+              <TypeFilter type={defaultTypeFilter} />
               <CollectionsFilter collections={defaultCollections} />
             </>
           )

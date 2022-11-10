@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { Address } from '@unique-nft/utils/address';
-import { TokenByIdResponse } from '@unique-nft/sdk';
+import { GetBundleResponse, TokenByIdResponse } from '@unique-nft/sdk';
 
 import { useAccounts } from '@app/hooks';
 
-export const useIsOwner = (token: TokenByIdResponse | undefined) => {
+export const useIsOwner = (token: TokenByIdResponse | GetBundleResponse | undefined) => {
   const { selectedAccount } = useAccounts();
 
   return useMemo(() => {

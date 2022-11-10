@@ -1,7 +1,8 @@
 import { VFC } from 'react';
 import styled from 'styled-components';
-import { Avatar, Tag, Text } from '@unique-nft/ui-kit';
+import { Avatar, Text } from '@unique-nft/ui-kit';
 
+import { Tag, Tags } from '@app/components';
 import { AttributeView } from '@app/pages/CreateNFT/types';
 
 interface IPreviewCard {
@@ -73,30 +74,6 @@ const AttributesGroup = styled.div`
   }
 `;
 
-const AttributeTags = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: calc(var(--prop-gap) / (-2));
-
-  & > span {
-    margin-top: calc(var(--prop-gap) / 2);
-  }
-
-  .unique-tag-wrapper {
-    overflow: hidden;
-    max-width: 100%;
-    margin-left: calc(var(--prop-gap) / 2);
-
-    .unique-tag {
-      overflow: hidden;
-      max-width: calc(100% - 18px);
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      cursor: auto;
-    }
-  }
-`;
-
 export const Card: VFC<IPreviewCard> = ({
   attributes,
   attributesInline,
@@ -129,15 +106,13 @@ export const Card: VFC<IPreviewCard> = ({
                     {item.group}
                   </Text>
                   {item.values && (
-                    <AttributeTags>
+                    <Tags>
                       {item.values
                         .filter((val: string) => !!val)
-                        .map((value: string) => (
-                          <span className="unique-tag-wrapper" key={value} title={value}>
-                            <Tag label={value} role="default" />
-                          </span>
+                        .map((value: string, index) => (
+                          <Tag key={`${value}-${index}`} label={value} type="default" />
                         ))}
-                    </AttributeTags>
+                    </Tags>
                   )}
                 </AttributesGroup>
               );

@@ -8,12 +8,13 @@ export const queryKeys = createQueryKeyStore({
     */
     balance: (address?: string) => [address],
     chain: (baseUrl?: string) => ['balance', baseUrl],
-    balances: (addresses: Array<string>): any => [...addresses],
   },
   token: {
     byId: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
     bundle: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
     isBundle: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
+    parent: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
+    owner: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
   },
   collection: {
     byId: (collectionId?: number) => [collectionId],

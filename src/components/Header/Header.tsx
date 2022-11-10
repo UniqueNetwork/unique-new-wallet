@@ -6,13 +6,7 @@ import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian
 
 import { IdentityIcon } from '@app/components';
 import { config } from '@app/config';
-import {
-  DeviceSize,
-  useAccounts,
-  useApi,
-  useDeviceSize,
-  useScreenWidthFromThreshold,
-} from '@app/hooks';
+import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
@@ -27,12 +21,12 @@ export const Header = () => {
   const deviceSize = useDeviceSize();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
-  const { lessThanThreshold: showMobileMenu } = useScreenWidthFromThreshold(1024);
   const [isAccountManagerOpen, setAccountManagerOpen] = useState<boolean>(false);
   const [mobileMenuIsOpen, toggleMobileMenu] = useState(false);
   const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
     networks.find(({ id }) => id === currentChain?.network),
   );
+  const showMobileMenu = deviceSize <= DeviceSize.lg;
 
   useEffect(() => {
     const active = networks.find(({ id }) => id === currentChain?.network);
@@ -157,7 +151,7 @@ export const Header = () => {
           <MobileMenu>
             <MenuLink
               name="My tokens"
-              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}`}
+              path={`${activeNetwork?.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`}
               logEvent={UserEvents.HEADER_MY_TOKENS}
               mobileMenuToggle={mobileMenuToggle}
             />
@@ -191,6 +185,7 @@ const HeaderStyled = styled.div`
 
   nav {
     display: flex;
+
     & > span {
       margin-right: calc(var(--prop-gap) / 1.5);
     }
@@ -223,6 +218,7 @@ const LogoIcon = styled.img`
   @media (max-width: 700px) {
     width: 100px;
   }
+
   &.hidden-logo {
     @media (max-width: 500px) {
       display: none;
@@ -233,8 +229,10 @@ const LogoIcon = styled.img`
 const RightSide = styled.div`
   display: flex;
   align-items: center;
+
   .unique-dropdown.touch {
     position: unset;
+
     .dropdown-options.touch {
       padding: calc(var(--prop-gap) * 1.5) var(--prop-gap);
       top: 100%;

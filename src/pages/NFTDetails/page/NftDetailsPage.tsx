@@ -1,19 +1,23 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TokenByIdResponse } from '@unique-nft/sdk';
+import { Button } from '@unique-nft/ui-kit';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
 import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { useCollectionGetById, useTokenGetById } from '@app/api';
+import { useTokenGetById } from '@app/api';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
+import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 export const NftDetailsPage = () => {
   const { collectionId = '', tokenId = '' } = useParams();
   const size = useDeviceSize();
+  const { currentChain } = useApi();
 
   const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
 
@@ -26,12 +30,6 @@ export const NftDetailsPage = () => {
     collectionId: parseInt(collectionId),
   });
 
-  const {
-    data: collection,
-    isLoading: isLoadingCollection,
-    refetch: refetchCollection,
-  } = useCollectionGetById(parseInt(collectionId));
-
   const token:
     | (TokenByIdResponse & {
         collectionName: string;
@@ -43,10 +41,10 @@ export const NftDetailsPage = () => {
     }
     return {
       ...tokenById,
-      name: collection ? `${collection.tokenPrefix} #${tokenById.tokenId}` : '',
-      collectionName: collection?.name || '',
+      name: `${tokenById.collection.tokenPrefix} #${tokenById.tokenId}`,
+      collectionName: tokenById.collection?.name,
     };
-  }, [tokenById, collection]);
+  }, [tokenById]);
 
   const isOwner = useIsOwner(token);
 
@@ -54,30 +52,66 @@ export const NftDetailsPage = () => {
 
   const onComplete = () => {
     refetchToken();
-    refetchCollection();
     setCurrentModal('none');
   };
 
+  const menuButtons = useMemo(() => {
+    const items = [...menuButtonsNft];
+
+    if (isOwner) {
+      items.push({
+        icon: 'burn',
+        id: 'burn',
+        title: 'Burn token',
+        type: 'danger',
+      });
+    }
+
+    return items;
+  }, [isOwner]);
+
   return (
-    <NftDetailsLayout
-      isLoading={isLoadingToken || isLoadingCollection}
-      tokenExist={!!token}
-    >
+    <NftDetailsLayout isLoading={isLoadingToken} tokenExist={!!token}>
       <NftDetailsCard
         token={token}
-        isOwner={isOwner}
+        menuButtons={menuButtons}
+        owner={
+          isOwner ? (
+            'You own it'
+          ) : (
+            <>
+              Owned by
+              <AccountCard
+                accountAddress={token?.owner || ''}
+                canCopy={false}
+                scanLink={`${currentChain.uniquescanAddress}/account/${token?.owner}`}
+              />
+            </>
+          )
+        }
         buttons={
           isOwner && (
-            <TransferBtn
-              className="transfer-btn"
-              title="Transfer"
-              wide={size <= DeviceSize.sm}
-              role="primary"
-              onClick={() => {
-                logUserEvent(UserEvents.TRANSFER_NFT);
-                setCurrentModal('transfer');
-              }}
-            />
+            <>
+              <TransferBtn
+                role="primary"
+                title="Transfer"
+                wide={size <= DeviceSize.sm}
+                onClick={() => {
+                  logUserEvent(UserEvents.TRANSFER_NFT);
+                  setCurrentModal('transfer');
+                }}
+              />
+              {tokenById?.collection?.permissions?.nesting?.tokenOwner && (
+                <Button
+                  title="Nest this token"
+                  wide={size <= DeviceSize.sm}
+                  onClick={() => {
+                    logUserEvent(UserEvents.CREATE_BUNDLE);
+                    setCurrentModal('create-bundle');
+                  }}
+                />
+              )}
+            </>
           )
         }
         onCurrentModal={setCurrentModal}

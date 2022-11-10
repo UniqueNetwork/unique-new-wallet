@@ -6,7 +6,6 @@ import {
   Icon,
   InputText,
   Text,
-  TooltipAlign,
   Toggle,
 } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
@@ -19,14 +18,9 @@ import {
   SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
+import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 import { AttributesTable } from './AttributesTable';
-
-const tooltipAlign: TooltipAlign = {
-  appearance: 'horizontal',
-  horizontal: 'right',
-  vertical: 'top',
-};
 
 export const NFTAttributes = () => {
   return (
@@ -72,7 +66,7 @@ export const NFTAttributes = () => {
                     <>
                       Collection sponsor address
                       <TooltipWrapper
-                        align={tooltipAlign}
+                        align={DEFAULT_POSITION_TOOLTIP}
                         message={
                           <>
                             The collection sponsor pays for all transactions related
@@ -117,7 +111,7 @@ export const NFTAttributes = () => {
                     <>
                       Token limit
                       <TooltipWrapper
-                        align={tooltipAlign}
+                        align={DEFAULT_POSITION_TOOLTIP}
                         message={
                           <>
                             The token limit (collection size) is&nbsp;a&nbsp;mandatory
@@ -160,7 +154,7 @@ export const NFTAttributes = () => {
                     <>
                       Owner can burn collection
                       <TooltipWrapper
-                        align={tooltipAlign}
+                        align={DEFAULT_POSITION_TOOLTIP}
                         message={
                           <>
                             Should you decide to&nbsp;keep the right to&nbsp;destroy the

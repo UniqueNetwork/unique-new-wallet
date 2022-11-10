@@ -78,7 +78,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       description: '',
       address: selectedAccount?.address,
       nesting: {
-        tokenOwner: false,
+        tokenOwner: true,
       },
     },
   });
@@ -99,6 +99,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     }
     error(feeError);
   }, [feeError]);
+
+  useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
 
   useEffect(() => {
     navigate(tabsUrls[currentStep - 1]);
@@ -127,29 +134,36 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     goToNextStep(currentStep + 1);
   };
 
+  const onCreateCollectionHandle = (form: CollectionForm) => {
+    if (!form.attributes?.length) {
+      setWarning(warnings.attributesAreNotDefine);
+
+      return;
+    }
+
+    onSubmit(form);
+  };
+
   const onSubmit = (form: CollectionForm) => {
     if (!selectedAccount) {
       error('Account is not found');
+
       return;
     }
 
     const payload = formMapper(form);
 
-    submitWaitResult({ payload })
-      .then((res) => {
-        info('Collection created successfully');
+    submitWaitResult({ payload }).then((res) => {
+      info('Collection created successfully');
 
-        setPayloadEntity({
-          type: 'create-collection',
-          parsed: res?.parsed,
-          entityData: payload,
-        });
-
-        navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
-      })
-      .catch(() => {
-        submitWaitResultError && error(submitWaitResultError);
+      setPayloadEntity({
+        type: 'create-collection',
+        parsed: res?.parsed,
+        entityData: payload,
       });
+
+      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
+    });
   };
 
   const isFirstStep = currentStep - 1 === 0;
@@ -201,7 +215,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 title="Create collection"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
                 disabled={!isValid || isBalanceInsufficient}
-                onClick={handleSubmit(onSubmit)}
+                onClick={handleSubmit(onCreateCollectionHandle)}
               />
             )}
           </ButtonGroup>
@@ -212,10 +226,15 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 title: 'Yes, I am sure',
                 role: 'primary',
                 type: 'submit',
-                onClick: () => {
-                  goToNextStep(2);
+                onClick: handleSubmit((form: CollectionForm) => {
+                  if (isLastStep) {
+                    onSubmit(form);
+                  } else {
+                    goToNextStep(2);
+                  }
+
                   setWarning(null);
-                },
+                }),
               },
             ]}
             isVisible={!!warning}

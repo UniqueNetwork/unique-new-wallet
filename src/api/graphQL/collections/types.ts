@@ -1,4 +1,4 @@
-import { Direction, Pagination } from '../types';
+import { Collection, Direction, Pagination } from '../types';
 
 export type TOrderBy = {
   collection_id?: Direction;
@@ -11,3 +11,8 @@ export type OptionsAccountCollection = {
   pagination: Pagination;
   search?: string;
 };
+
+export type CollectionNestingOption = Pick<
+  Collection,
+  'collection_id' | 'name' | 'collection_cover'
+>;

@@ -31,8 +31,9 @@ const TabsFilterWrapper = styled.div`
     width: 100%;
   }
 
-  .unique-input-text {
+  .filter-search-wrapper {
     max-width: 370px;
+    width: 100%;
   }
 
   .unique-select {

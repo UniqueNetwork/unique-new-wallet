@@ -4,10 +4,13 @@ import { Icon, Link as UiLink } from '@unique-nft/ui-kit';
 import { config } from '@app/config';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 
-export const faqItems = (activeNetwork: string) => {
+export const faqItems = <T extends Record<string, unknown>>(
+  activeNetwork: string,
+  state: T,
+) => {
   return [
     {
-      title: 'How can I create a wallet?',
+      title: 'How can I create an account?',
       content: (
         <>
           <p>
@@ -32,7 +35,7 @@ export const faqItems = (activeNetwork: string) => {
       ),
     },
     {
-      title: 'How can I connect my wallet?',
+      title: 'How do I connect my crypto wallet?',
       content: (
         <>
           <p>
@@ -61,7 +64,7 @@ export const faqItems = (activeNetwork: string) => {
       ),
     },
     {
-      title: 'How can I mint an NFT?',
+      title: 'What should I do to mint my first NFT?',
       content: (
         <>
           <p>
@@ -77,6 +80,70 @@ export const faqItems = (activeNetwork: string) => {
             After creating the collection, you can click on the “Create an NFT” button to
             create a token.
           </p>
+        </>
+      ),
+    },
+    {
+      title: 'What is nesting',
+      defaultExpanded: 'isNestedInfo' in state,
+      content: (
+        <>
+          <p>
+            Nesting is the creation of an on-chain connection between tokens. The elements
+            are grouped into a nested tree-like structure within a single NFT. This NFT is
+            called a bundle root. Tokens nested in a bundle are called a tree branches. Of
+            the two connected tokens, a token with a connection that is closer to the root
+            is considered a parent and all its other attachments children. In an ordered
+            tree, each branch can have only one parent but a parent may have many
+            children.
+          </p>
+          <p>
+            Only an NFT can be a parent; however, a child can be any of the following: an
+            NFT, a Fraction or a Coin. <br />
+            The owner of the bundle is the user (wallet), but the owner of the nested
+            token is another token. <br />
+            The number of attachments is unlimited, but there can be no more than 5 levels
+            of nesting.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'How do I nest and manipulate a nested token?',
+      defaultExpanded: 'isNestedInfo' in state,
+      content: (
+        <>
+          <p>
+            Nesting is performed by transferring a token to the address of a (parent) NFT.
+            Both tokens must belong to the same owner. To nest to a token one must own it.
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
+            To perform the nesting click on "Nest this token" in the token details page. A
+            modal window will display a list of collections (of which you are the owner)
+            that allow nesting, as well as an opportunity to chose a token that you wish
+            to nest. If the token you are nesting is an NFT it will automatically become
+            the parent of subsequent nesting operations.
+          </p>
+          <p>
+            Bundles and nested tokens can be stored in a wallet, transferred to other
+            accounts, withdrawn and burned. Some important nesting rules to remember are:
+          </p>
+          <div>
+            <div>
+              1. Transferring a parent transfers the entire branch below the parent with
+              all the children.
+            </div>
+            <div>
+              2. Only the owner of the parent token can withdraw the token from the
+              bundle.
+            </div>
+            <div>
+              3. A token that contains nested branches (a non-empty bundle) cannot be
+              burned; for this, all branches must first be unnested. Only then will the
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
+              "Burn token" menu item in the ellipsis menu (in the upper right corner)
+              become accessible.
+            </div>
+          </div>
         </>
       ),
     },
@@ -100,7 +167,7 @@ export const faqItems = (activeNetwork: string) => {
       ),
     },
     {
-      title: 'How can I get coins?',
+      title: 'Where can I get coins?',
       content: (
         <p>
           To obtain QTZ visit the{' '}
@@ -148,7 +215,7 @@ export const faqItems = (activeNetwork: string) => {
       ),
     },
     {
-      title: 'How can I transfer tokens to the other wallet or exchange?',
+      title: 'How do I transfer tokens to another wallet or exchange?',
       content: (
         <>
           <p>
@@ -182,7 +249,8 @@ export const faqItems = (activeNetwork: string) => {
       ),
     },
     {
-      title: 'How can I find my collection in the blockchain?',
+      title:
+        'I want to find my collections and tokens in the blockchain. Where can I see them?',
       content: (
         <p>
           Use our{' '}
@@ -194,7 +262,7 @@ export const faqItems = (activeNetwork: string) => {
       ),
     },
     {
-      title: 'How can I change an existing collection’s name?',
+      title: 'Is it possible to change an existing collection’s name?',
       content: (
         <p>
           The core collection information cannot be modified once approved/signed. For any
