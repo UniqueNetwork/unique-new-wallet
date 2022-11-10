@@ -1,5 +1,5 @@
 import React, { VFC } from 'react';
-import { Text } from '@unique-nft/ui-kit';
+import { Text, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { Confirm } from '@app/components';
@@ -10,6 +10,7 @@ interface AskBurnModalProps {
   isVisible: boolean;
   onBurn(): void;
   onClose(): void;
+  isLoading: boolean;
 }
 
 export const AskBurnModal: VFC<AskBurnModalProps> = ({
@@ -17,15 +18,24 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
   isVisible,
   onBurn,
   onClose,
+  isLoading,
 }) => {
   return (
     <Confirm
       isClosable
       isVisible={isVisible}
       title="Burn NFT"
-      buttons={[{ title: 'Confirm', role: 'primary', onClick: onBurn }]}
+      buttons={[
+        {
+          title: 'Confirm',
+          role: 'primary',
+          onClick: onBurn,
+          disabled: isLoading,
+        },
+      ]}
       onClose={onClose}
     >
+      {isLoading && <Loader isFullPage={true} />}
       <TextWrapper size="m" appearance="block">
         You will not be able to undo this action.
       </TextWrapper>
