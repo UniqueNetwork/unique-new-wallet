@@ -1,14 +1,14 @@
-import React, { useEffect, VFC } from 'react';
 import { Tabs } from '@unique-nft/ui-kit';
+import React, { useEffect, VFC } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { useAccounts, useApi } from '@app/hooks';
-import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useGraphQlCollectionById } from '@app/api/graphQL/collections';
-import { ROUTE } from '@app/routes';
-import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
-import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { useAccounts, useApi } from '@app/hooks';
+import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
+import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
+import { ROUTE } from '@app/routes';
+import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
@@ -52,8 +52,7 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
       <TabsHeader>
         <Tabs
           activeIndex={currentTabIndex}
-          // labels={['NFTs', 'Settings']}
-          labels={['NFTs']}
+          labels={['NFTs', 'Settings']}
           type="slim"
           onClick={handleClick}
         />

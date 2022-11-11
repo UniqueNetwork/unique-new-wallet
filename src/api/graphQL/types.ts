@@ -82,4 +82,5 @@ export interface Collection {
   token_limit: number;
   name: string;
   sponsorship: string;
+  nesting_enabled: boolean;
 }

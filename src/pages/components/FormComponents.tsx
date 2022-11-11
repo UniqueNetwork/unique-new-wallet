@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { Text } from '@unique-nft/ui-kit';
+import styled from 'styled-components';
 
 export const Form = styled.form``;
 
@@ -51,6 +51,9 @@ export const FormWrapper = styled.div`
       font-weight: normal;
     }
   }
+  .setting-title {
+    margin-bottom: 24px;
+  }
 `;
 
 export const FormRow = styled.div`
@@ -88,7 +91,11 @@ export const SettingsRow = styled.div`
   }
 
   label {
-    font-weight: 500;
+    font-weight: 400;
+  }
+
+  .unique-toggle-wrapper {
+    margin: 24px 0;
   }
 
   label,
@@ -171,4 +178,12 @@ export const ButtonGroup = styled.div<{
       width: 100%;
     }
   }
+`;
+
+export const SettingText = styled.p`
+  font-weight: 400;
+  color: var(--color-additional-dark);
+  font-family: var(--prop-font-family);
+  font-size: 16px;
+  margin-bottom: 8px;
 `;
