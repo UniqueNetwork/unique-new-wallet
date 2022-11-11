@@ -1,8 +1,9 @@
-import { Heading } from '@unique-nft/ui-kit';
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { UseQueryResult } from 'react-query';
 import { AllBalancesResponse } from '@unique-nft/sdk';
+import { Heading } from '@unique-nft/ui-kit';
+import { Address } from '@unique-nft/utils/address';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { UseQueryResult } from 'react-query';
+import styled from 'styled-components';
 
 import { ApiWrapper, useAccountBalancesService } from '@app/api';
 import { config } from '@app/config';
@@ -72,6 +73,7 @@ export const Coins: FC = () => {
   interface NetworkInfo {
     getDisabled: boolean;
     onGet?: () => void;
+    normalizedAddress: string;
   }
 
   const coinConfig: Record<NetworkType, NetworkInfo> = {
@@ -80,6 +82,10 @@ export const Coins: FC = () => {
       onGet: () => {
         window.open(config.telegramBot, '_blank', 'noopener');
       },
+      normalizedAddress: Address.normalize.substrateAddress(
+        selectedAccount!.address,
+        config.allChains.OPAL.prefix,
+      ),
     },
     KUSAMA: {
       getDisabled: false,
@@ -87,18 +93,27 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('KSM');
       },
+      normalizedAddress: selectedAccount!.address,
     },
     QUARTZ: {
       getDisabled: false,
       onGet: () => {
         window.open(config.mexcQTZUSDT, '_blank', 'noopener');
       },
+      normalizedAddress: Address.normalize.substrateAddress(
+        selectedAccount!.address,
+        config.allChains.QUARTZ.prefix,
+      ),
     },
     UNIQUE: {
       getDisabled: false,
       onGet: () => {
         window.open(config.cryptoExchangeUNQ, '_blank', 'noopener');
       },
+      normalizedAddress: Address.normalize.substrateAddress(
+        selectedAccount!.address,
+        config.allChains.UNIQUE.prefix,
+      ),
     },
     POLKADOT: {
       getDisabled: false,
@@ -106,6 +121,7 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('DOT');
       },
+      normalizedAddress: selectedAccount!.address,
     },
   };
 
@@ -114,18 +130,18 @@ export const Coins: FC = () => {
       <CoinsHeading size="4">Network</CoinsHeading>
       <CoinsList>
         {Object.values(config.allChains).map((chain, idx) => {
-          if (!coinConfig[chain.network]) {
+          if (!coinConfig[chain.network] && selectedAccount) {
             return null;
           }
 
-          const { getDisabled, onGet } = coinConfig[chain.network];
+          const { getDisabled, onGet, normalizedAddress } = coinConfig[chain.network];
           return (
             <CoinsRow
               getDisabled={getDisabled}
               key={chain.network}
               loading={accountBalances[idx].isLoading}
               sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
-              address={selectedAccount?.address}
+              address={normalizedAddress}
               balanceFull={accountBalances[idx].data?.freeBalance.amount}
               balanceLocked={accountBalances[idx].data?.lockedBalance.amount}
               balanceTransferable={accountBalances[idx].data?.availableBalance.amount}

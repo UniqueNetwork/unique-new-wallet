@@ -87,6 +87,7 @@ export const getNetworkParams = (
     network,
     subscanAddress: findNetworkParamByName(config, network, 'SUBSCAN_ADDRESS'),
     uniquescanAddress: findNetworkParamByName(config, network, 'UNIQUESCAN_ADDRESS'),
+    prefix: findNetworkParamByName(config, network, 'PREFIX') || null,
   };
 };
 
