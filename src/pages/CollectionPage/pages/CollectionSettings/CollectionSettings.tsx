@@ -1,18 +1,19 @@
-import {
-  Button,
-  Checkbox,
-  Heading,
-  Icon,
-  InputText,
-  Loader,
-  Text,
-} from '@unique-nft/ui-kit';
+import { Button, Heading, Icon, Loader, Text } from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  useCollectionLimits,
+  useCollectionPermissions,
+  useCollectionSponsorship,
+} from '@app/api/restApi/collection/useCollectionSetting';
 import { PagePaper, StatusTransactionModal, TooltipWrapper } from '@app/components';
-import { ToggleController } from '@app/components/FormControllerComponents';
+import {
+  CheckboxController,
+  InputController,
+  ToggleController,
+} from '@app/components/FormControllerComponents';
 import { useAccounts } from '@app/hooks';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
@@ -29,8 +30,14 @@ import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
   const { collection, collectionLoading } = useCollectionContext() || {};
+  const { submitWaitResult: submitWaitResultSponsorship } = useCollectionSponsorship();
+  const { submitWaitResult: submitWaitResultLimits } = useCollectionLimits();
+  const { submitWaitResult: submitWaitPermissions } = useCollectionPermissions();
   const { selectedAccount } = useAccounts();
   const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
+  const [isLoadingSponsorship, setLoadingSponsorship] = useState(false);
+  const [isLoadingLimits, setLoadingLimits] = useState(false);
+  const [isLoadingPermissions, setLoadingPermissions] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,18 +53,89 @@ const CollectionSettings = () => {
   const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
 
   const form = useForm({
-    mode: 'onChange',
+    mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {
       nesting: false,
+      sponsorAddress: '',
+      tokenLimit: 0,
+      destroy: false,
     },
   });
 
   useEffect(() => {
     if (collection) {
       form.setValue('nesting', collection.nesting_enabled);
+      form.setValue('sponsorAddress', collection.sponsorship);
+      form.setValue('tokenLimit', collection.token_limit);
+      form.setValue('destroy', collection.owner_can_destroy);
     }
   }, [collection]);
+
+  const submitHandler = () => {
+    const { destroy, nesting, sponsorAddress, tokenLimit } = form.getValues();
+    if (
+      destroy !== collection?.owner_can_destroy ||
+      tokenLimit !== collection?.token_limit
+    ) {
+      setLoadingLimits(true);
+      submitWaitResultLimits({
+        payload: {
+          address: selectedAccount!.address,
+          collectionId: Number(collection_id),
+          limits: {
+            tokenLimit,
+            ownerCanDestroy: destroy,
+          },
+        },
+      })
+        .then(() => {
+          setLoadingLimits(false);
+        })
+        .catch((e) => {
+          console.error(e);
+          setLoadingLimits(false);
+        });
+    }
+    if (nesting !== collection?.nesting_enabled) {
+      setLoadingPermissions(true);
+      submitWaitPermissions({
+        payload: {
+          address: selectedAccount!.address,
+          collectionId: Number(collection_id),
+          permissions: {
+            nesting: {
+              tokenOwner: nesting,
+            },
+          },
+        },
+      })
+        .then(() => {
+          setLoadingPermissions(false);
+        })
+        .catch((e) => {
+          console.error(e);
+          setLoadingLimits(false);
+        });
+    }
+    if (sponsorAddress !== collection?.sponsorship) {
+      setLoadingSponsorship(true);
+      submitWaitResultSponsorship({
+        payload: {
+          address: selectedAccount!.address,
+          collectionId: Number(collection_id),
+          newSponsor: sponsorAddress,
+        },
+      })
+        .then(() => {
+          setLoadingSponsorship(false);
+        })
+        .catch((e) => {
+          console.error(e);
+          setLoadingLimits(false);
+        });
+    }
+  };
 
   const handleBurnCollection = () => {
     if (!collection_id || !selectedAccount) {
@@ -87,18 +165,6 @@ const CollectionSettings = () => {
     }
   };
 
-  const handleTokenLimit = (value: string) => {
-    // if (!value) {
-    //   form.setFieldValue('limit', '');
-    //   return;
-    // }
-    // const numVal = Number(value);
-    // if (numVal > maxTokenLimit || numVal < 0) {
-    //   return;
-    // }
-    // form.setFieldValue('limit', numVal);
-  };
-
   return (
     <PagePaper>
       <FormWrapper>
@@ -120,13 +186,13 @@ const CollectionSettings = () => {
                 tokens. However, nesting of new ones will not be possible.
               </SettingText>
               <SettingsRow>
-                <ToggleController label="Nesting enabled" name="nesting" />
+                <ToggleController label="Nesting enabled" name="nesting" size="m" />
               </SettingsRow>
               <Heading className="setting-title" size="3">
                 Marketplace related settings
               </Heading>
               <SettingsRow>
-                <InputText
+                <InputController
                   label={
                     <>
                       Collection sponsor address
@@ -153,10 +219,7 @@ const CollectionSettings = () => {
                   additionalText="The designated sponsor should approve the request"
                   id="address"
                   maxLength={49}
-                  value=""
-                  onChange={(value) => {
-                    // form.setFieldValue('address', value);
-                  }}
+                  name="sponsorAddress"
                 />
               </SettingsRow>
               <FormRow>
@@ -168,7 +231,7 @@ const CollectionSettings = () => {
                 </Text>
               </FormRow>
               <SettingsRow>
-                <InputText
+                <InputController
                   label={
                     <>
                       Token limit
@@ -192,14 +255,12 @@ const CollectionSettings = () => {
                   }
                   additionalText="Unlimited by default"
                   id="limit"
-                  value=""
                   role="number"
-                  onChange={handleTokenLimit}
+                  name="tokenLimit"
                 />
               </SettingsRow>
               <SettingsRow>
-                <Checkbox
-                  checked={false}
+                <CheckboxController
                   label={
                     <>
                       Owner can burn collection
@@ -224,15 +285,13 @@ const CollectionSettings = () => {
                       </TooltipWrapper>
                     </>
                   }
+                  name="destroy"
                   disabled={!ownerCanDestroy}
-                  onChange={(value) => {
-                    // form.setFieldValue('ownerCanDestroy', value);
-                  }}
                 />
               </SettingsRow>
               <ButtonGroup>
                 <TooltipWrapper message={<>The form in&nbsp;development progress</>}>
-                  <Button title="Save changes" disabled={true} type="submit" />
+                  <Button title="Save changes" onClick={submitHandler} />
                 </TooltipWrapper>
                 {/* TODO: WAL-343
                   {ownerCanDestroy && (
@@ -251,6 +310,15 @@ const CollectionSettings = () => {
       <StatusTransactionModal
         isVisible={isLoadingBurnCollection}
         description="Burning collection"
+      />
+      <StatusTransactionModal
+        isVisible={isLoadingSponsorship}
+        description="Set sponsorship"
+      />
+      <StatusTransactionModal isVisible={isLoadingLimits} description="Set limits" />
+      <StatusTransactionModal
+        isVisible={isLoadingPermissions}
+        description="Set permissions"
       />
 
       <BurnCollectionModal

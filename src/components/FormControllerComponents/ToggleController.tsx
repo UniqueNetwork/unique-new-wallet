@@ -9,16 +9,23 @@ type InputControllerProps = BaseControllerProps<
 
 export const ToggleController = ({
   name,
-  control: userControl,
   rules,
   label,
+  size,
+  disabled,
 }: InputControllerProps) => {
   const { control } = useFormContext();
   return (
     <Controller
-      control={userControl || control}
+      control={control}
       render={({ field: { value, onChange } }) => (
-        <Toggle label={`${label}`} on={value} size="m" onChange={onChange} />
+        <Toggle
+          label={label}
+          on={value}
+          size={size}
+          disabled={disabled}
+          onChange={onChange}
+        />
       )}
       name={name}
       rules={rules}
