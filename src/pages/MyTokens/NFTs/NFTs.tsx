@@ -1,5 +1,6 @@
-import { useContext, useMemo, VFC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, VFC } from 'react';
 
+import ApiContext from '@app/api/ApiContext';
 import AccountContext from '@app/account/AccountContext';
 import {
   useGraphQlCollectionsByTokensOwner,
@@ -29,6 +30,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 6, xl: 8 });
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
+  const { currentChain } = useContext(ApiContext);
   const {
     tokensPage,
     statusFilter,
@@ -112,12 +114,16 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     return chips;
   }, [searchText, statusFilter, typeFilter, collectionsIds, defaultCollections]);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     changeSearchText('');
     changeStatusFilter('allStatus');
     changeTypeFilter('allType');
     setCollectionsIds([]);
-  };
+  }, [changeSearchText, changeStatusFilter, changeTypeFilter, setCollectionsIds]);
+
+  useEffect(() => {
+    resetFilters();
+  }, [currentChain.network, resetFilters, selectedAccount]);
 
   return (
     <>
