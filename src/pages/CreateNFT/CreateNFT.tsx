@@ -34,7 +34,7 @@ import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 
 import { CreateNftForm } from './CreateNftForm';
 import { useTokenFormMapper } from './useTokenFormMapper';
-import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
+import { AttributeView, FilledTokenForm, TokenForm } from './types';
 
 interface ICreateNFTProps {
   className?: string;
@@ -154,17 +154,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     return attrs;
   }, [collection, formValues]);
 
-  const collectionsOptions = useMemo(
-    () =>
-      collections?.map<Option>((collection) => ({
-        id: collection.collection_id,
-        title: collection.name,
-        description: collection.description,
-        img: getTokenIpfsUriByImagePath(collection.collection_cover),
-      })) ?? [],
-    [collections],
-  );
-
   useEffect(() => {
     if (isOldCollection) {
       warning(config.oldCollectionMessage);
@@ -219,14 +208,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const isolatedTokenForm = useMemo(
     () => (
       <FormProvider {...tokenForm}>
-        <CreateNftForm
-          selectedCollection={collection}
-          collectionsOptions={collectionsOptions}
-          collectionsOptionsLoading={isCollectionsLoading}
-        />
+        <CreateNftForm selectedCollection={collection} />
       </FormProvider>
     ),
-    [collection, collectionsOptions, isCollectionsLoading, tokenForm],
+    [collection, isCollectionsLoading, tokenForm],
   );
 
   const renderSidebar = () => (

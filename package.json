@@ -42,6 +42,7 @@
     "react-router-dom": "^6.0.2",
     "react-scripts": "5.0.0",
     "react-select": "^5.4.0",
+    "react-select-async-paginate": "^0.7.0",
     "socket.io-client": "^4.4.1",
     "use-debounce": "^8.0.2",
     "web-vitals": "^1.0.1",

@@ -31,3 +31,4 @@ export * from './TokenLink';
 export * from './Tooltip';
 export * from './TooltipWrapper';
 export * from './Upload';
+export * from './Select';

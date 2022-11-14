@@ -28,9 +28,11 @@ const COLLECTIONS_BY_ACCOUNT_QUERY = gql`
 export const useGraphQlCollectionsByAccount = ({
   accountAddress,
   options,
+  enabled,
 }: {
   accountAddress: string | undefined;
   options: OptionsAccountCollection;
+  enabled?: boolean;
 }) => {
   const {
     order,
@@ -62,12 +64,37 @@ export const useGraphQlCollectionsByAccount = ({
     },
   });
 
+  const fetchMoreCollections = async (page: number, search?: string) => {
+    const response = await fetchMore({
+      variables: {
+        limit,
+        offset: limit * page,
+        order_by: order,
+        where: {
+          _or: [
+            { owner: { _eq: accountAddress } },
+            { owner_normalized: { _eq: accountAddress } },
+          ],
+          ...getConditionBySearchText('name', search),
+        },
+      },
+    });
+
+    const collectionsCount = response?.data?.collections?.count ?? 0;
+
+    return {
+      collections: response?.data?.collections?.data,
+      isPagination: collectionsCount > limit,
+      collectionsCount,
+    };
+  };
+
   const collectionsCount = response?.collections.count ?? 0;
 
   return {
     collections: response?.collections.data ?? [],
     collectionsCount,
-    fetchMore,
+    fetchMore: fetchMoreCollections,
     isPagination: collectionsCount > limit,
     isCollectionsLoading: loading,
     error,

@@ -25,40 +25,32 @@ import {
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { useFileUpload } from '@app/api';
-import { Suggest } from '@app/components/Suggest';
+import { Select, Option } from '@app/components';
+import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
+import { useAccounts } from '@app/hooks';
+import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
-import { AttributeType, Option } from './types';
+import { AttributeType } from './types';
 import { AttributesRow } from './AttributesRow';
 import { _10MB, FILE_SIZE_LIMIT_ERROR } from '../constants';
 
 interface CreateNftFormProps {
-  collectionsOptions: Option[];
-  collectionsOptionsLoading: boolean;
   selectedCollection?: CollectionInfoWithSchemaResponse;
   className?: string;
 }
 
-const CollectionSuggestion: FC<{
-  suggestion: Option;
-  isActive?: boolean;
-}> = ({ suggestion, isActive }) => {
+const OptionItem = ({ label, value, cover }: Option) => {
   return (
-    <SuggestOption
-      className={classNames('suggestion-item', {
-        isActive,
-      })}
-    >
-      <Avatar size={24} type="circle" src={suggestion.img || undefined} />
+    <SuggestOption className={classNames('suggestion-item')}>
+      <Avatar size={24} type="circle" src={cover || undefined} />
       <span className="suggestion-item__title">
-        {suggestion.title} [id {suggestion.id}]
+        {label} [id {value}]
       </span>
     </SuggestOption>
   );
 };
 
 const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
-  collectionsOptions,
-  collectionsOptionsLoading,
   selectedCollection,
   className,
 }) => {
@@ -67,6 +59,40 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   const { resetField } = useFormContext();
 
   const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
+
+  const defaultOptions = {
+    skip: false,
+    pagination: {
+      page: 0,
+      limit: 20,
+    },
+  };
+  const { selectedAccount } = useAccounts();
+  const { fetchMore, isPagination } = useGraphQlCollectionsByAccount({
+    accountAddress: selectedAccount?.address,
+    options: defaultOptions,
+    enabled: false,
+  });
+
+  const loadOptions: any = async (
+    searchQuery: string | undefined,
+    loadedOptions: any,
+    { page }: any,
+  ) => {
+    const { collections, isPagination } = await fetchMore(page, searchQuery);
+
+    return {
+      options: collections?.map<Option>((c) => ({
+        label: c.name,
+        value: c.collection_id.toString(),
+        cover: getTokenIpfsUriByImagePath(c.collection_cover),
+      })),
+      hasMore: isPagination,
+      additional: {
+        page: isPagination ? page + 1 : 0,
+      },
+    };
+  };
 
   const attributes = useMemo(
     () => Object.values(selectedCollection?.schema?.attributesSchema ?? []),
@@ -108,27 +134,20 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
       <FormBody className={className}>
         <Form>
           <FormRow>
-            <LabelText>Collection*</LabelText>
             <Controller
               name="collectionId"
               rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <Suggest
-                  components={{
-                    SuggestItem: CollectionSuggestion,
-                  }}
-                  suggestions={collectionsOptions}
-                  isLoading={collectionsOptionsLoading}
-                  value={collectionsOptions.find((co) => co.id === value)}
-                  getActiveSuggestOption={(option: Option) => {
-                    return option.id === (value as number);
-                  }}
-                  getSuggestionValue={({ title }: Option) => title}
-                  onChange={(val) => {
+              render={({ field: { onChange } }) => (
+                <Select
+                  // @ts-ignore
+                  render={<OptionItem />}
+                  debounceTimeout={500}
+                  loadOptions={loadOptions}
+                  onChange={(c) => {
                     resetField('attributes');
                     resetField('imageIpfsCid');
 
-                    onChange(val?.id);
+                    onChange(c?.value);
                   }}
                 />
               )}
