@@ -1,15 +1,16 @@
 import { Text } from '@unique-nft/ui-kit';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Achievement, TokenLink } from '@app/components';
 import { Token, TokenTypeEnum } from '@app/api/graphQL/types';
-import { useApi } from '@app/hooks';
 
-export const TokenNftLink = ({ token }: { token: Token }) => {
-  const { currentChain } = useApi();
-  const navigate = useNavigate();
-
+export const TokenNftLink = ({
+  token,
+  navigate,
+}: {
+  token: Token;
+  navigate: () => void;
+}) => {
   const renderBadge = (type: TokenTypeEnum) => {
     if (!token.parent_id && type === 'NESTED') {
       return (
@@ -49,11 +50,7 @@ export const TokenNftLink = ({ token }: { token: Token }) => {
           )}
         </>
       }
-      onTokenClick={() =>
-        navigate(
-          `/${currentChain?.network}/token/${token.collection_id}/${token.token_id}`,
-        )
-      }
+      onTokenClick={() => navigate()}
     />
   );
 };
