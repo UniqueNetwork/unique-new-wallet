@@ -140,7 +140,7 @@ export const BottomBar: VFC<BottomBarProps> = ({
       )}
       <BottomPanelWrapper height={panelHeight}>
         <BottomPanel ref={panelRef}>
-          <ButtonGroup fill gap={8}>
+          <ButtonGroup $fill gap={8}>
             {buttons}
           </ButtonGroup>
         </BottomPanel>

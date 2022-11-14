@@ -1,4 +1,4 @@
-import { Key, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { OperationVariables } from '@apollo/client/core/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
@@ -180,20 +180,20 @@ function List<T>({
 
   return (
     <Wrapper>
-      {!!dataSource.length &&
-        (panelSettings.viewMode === 'both' || panelSettings.viewMode === 'top') && (
-          <ListPanel as={PagePaper.Panel} stacked="bottom">
-            <ListExtra>
-              {!!dataSource.length && ResultItemText}
-              {panelSettings.extraText && panelSettings.extraText}
-            </ListExtra>
+      {(panelSettings.viewMode === 'both' || panelSettings.viewMode === 'top') && (
+        <ListPanel as={PagePaper.Panel} stacked="bottom">
+          <ListExtra>
+            {!!dataSource.length && ResultItemText}
+            {panelSettings.extraText}
+          </ListExtra>
 
-            {!fetchMore &&
-              (panelSettings.pagination.viewMode === 'both' ||
-                panelSettings.pagination.viewMode === 'top') &&
-              paginationContent}
-          </ListPanel>
-        )}
+          {!!dataSource.length &&
+            !fetchMore &&
+            (panelSettings.pagination.viewMode === 'both' ||
+              panelSettings.pagination.viewMode === 'top') &&
+            paginationContent}
+        </ListPanel>
+      )}
 
       <ListBody className={classNames({ __empty: !dataSource.length })}>
         {childrenContent}
