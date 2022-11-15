@@ -45,6 +45,7 @@ export const useGraphQlCheckInExistTokensByAccount = ({
     notifyOnNetworkStatusChange: true,
     variables: {
       where: {
+        burned: { _eq: 'false' },
         ...(collectionId !== undefined
           ? {
               collection_id: { _eq: collectionId },

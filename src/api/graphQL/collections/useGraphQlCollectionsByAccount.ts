@@ -58,6 +58,7 @@ export const useGraphQlCollectionsByAccount = ({
           { owner_normalized: { _eq: accountAddress } },
         ],
         ...getConditionBySearchText('name', search),
+        burned: { _eq: 'false' },
       },
     },
   });
