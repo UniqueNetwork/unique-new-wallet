@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
 
-type InputControllerProps = BaseControllerProps<
+type ToggleControllerProps = BaseControllerProps<
   Omit<ToggleProps, 'checked' | 'onChange'>
 >;
 
@@ -13,7 +13,8 @@ export const ToggleController = ({
   label,
   size,
   disabled,
-}: InputControllerProps) => {
+  ...toggleProps
+}: ToggleControllerProps) => {
   const { control } = useFormContext();
   return (
     <Controller
@@ -25,6 +26,7 @@ export const ToggleController = ({
           size={size}
           disabled={disabled}
           onChange={onChange}
+          {...toggleProps}
         />
       )}
       name={name}

@@ -1,13 +1,18 @@
-import { Button, Heading, Icon, Loader, Text } from '@unique-nft/ui-kit';
+import {
+  Button,
+  Heading,
+  Icon,
+  Loader,
+  Text,
+  useNotifications,
+} from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
-import {
-  useCollectionLimits,
-  useCollectionPermissions,
-  useCollectionSponsorship,
-} from '@app/api/restApi/collection/useCollectionSetting';
+import { useCollectionLimits } from '@app/api/restApi/collection/useCollectionLimits';
+import { useCollectionPermissions } from '@app/api/restApi/collection/useCollectionPermissions';
+import { useCollectionSponsorship } from '@app/api/restApi/collection/useCollectionSponsorship';
 import { PagePaper, StatusTransactionModal, TooltipWrapper } from '@app/components';
 import {
   CheckboxController,
@@ -28,16 +33,26 @@ import {
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 const CollectionSettings = () => {
+  const { error } = useNotifications();
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
   const { collection, collectionLoading } = useCollectionContext() || {};
-  const { submitWaitResult: submitWaitResultSponsorship } = useCollectionSponsorship();
-  const { submitWaitResult: submitWaitResultLimits } = useCollectionLimits();
-  const { submitWaitResult: submitWaitPermissions } = useCollectionPermissions();
+  const {
+    submitWaitResult: submitWaitResultSponsorship,
+    isLoadingSubmitResult: isLoadingSubmitResultSponsorship,
+    submitWaitResultError: submitWaitResultErrorSponsorship,
+  } = useCollectionSponsorship();
+  const {
+    submitWaitResult: submitWaitResultLimits,
+    isLoadingSubmitResult: isLoadingSubmitResultLimits,
+    submitWaitResultError: submitWaitResultErrorLimits,
+  } = useCollectionLimits();
+  const {
+    submitWaitResult: submitWaitPermissions,
+    isLoadingSubmitResult: isLoadingSubmitResultPermissions,
+    submitWaitResultError: submitWaitResultErrorPermissions,
+  } = useCollectionPermissions();
   const { selectedAccount } = useAccounts();
   const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
-  const [isLoadingSponsorship, setLoadingSponsorship] = useState(false);
-  const [isLoadingLimits, setLoadingLimits] = useState(false);
-  const [isLoadingPermissions, setLoadingPermissions] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,88 +66,93 @@ const CollectionSettings = () => {
     collection_id,
   } = collection || {};
   const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
-
-  const form = useForm({
+  const methods = useForm({
     mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {
       nesting: false,
-      sponsorAddress: '',
+      newSponsor: '',
       tokenLimit: 0,
-      destroy: false,
+      ownerCanDestroy: false,
     },
   });
+  const {
+    getValues,
+    setValue,
+    formState: { dirtyFields },
+  } = methods;
 
   useEffect(() => {
     if (collection) {
-      form.setValue('nesting', collection.nesting_enabled);
-      form.setValue('sponsorAddress', collection.sponsorship);
-      form.setValue('tokenLimit', collection.token_limit);
-      form.setValue('destroy', collection.owner_can_destroy);
+      setValue('nesting', collection.nesting_enabled);
+      setValue('newSponsor', collection.sponsorship);
+      setValue('tokenLimit', collection.token_limit);
+      setValue('ownerCanDestroy', collection.owner_can_destroy);
     }
   }, [collection]);
 
+  useEffect(() => {
+    if (submitWaitResultErrorSponsorship) {
+      error(submitWaitResultErrorSponsorship);
+    }
+    if (submitWaitResultErrorLimits) {
+      error(submitWaitResultErrorLimits);
+    }
+    if (submitWaitResultErrorPermissions) {
+      error(submitWaitResultErrorPermissions);
+    }
+  }, [
+    submitWaitResultErrorSponsorship,
+    submitWaitResultErrorLimits,
+    submitWaitResultErrorPermissions,
+  ]);
+
   const submitHandler = () => {
-    const { destroy, nesting, sponsorAddress, tokenLimit } = form.getValues();
-    if (
-      destroy !== collection?.owner_can_destroy ||
-      tokenLimit !== collection?.token_limit
-    ) {
-      setLoadingLimits(true);
+    const { ownerCanDestroy, nesting, newSponsor, tokenLimit } = dirtyFields;
+    if (ownerCanDestroy || tokenLimit) {
       submitWaitResultLimits({
         payload: {
           address: selectedAccount!.address,
           collectionId: Number(collection_id),
           limits: {
-            tokenLimit,
-            ownerCanDestroy: destroy,
+            tokenLimit: getValues('tokenLimit'),
+            ownerCanDestroy: getValues('ownerCanDestroy'),
           },
         },
       })
-        .then(() => {
-          setLoadingLimits(false);
-        })
+        .then(() => {})
         .catch((e) => {
           console.error(e);
-          setLoadingLimits(false);
         });
     }
     if (nesting !== collection?.nesting_enabled) {
-      setLoadingPermissions(true);
       submitWaitPermissions({
         payload: {
           address: selectedAccount!.address,
           collectionId: Number(collection_id),
           permissions: {
             nesting: {
-              tokenOwner: nesting,
+              tokenOwner: getValues('nesting'),
             },
           },
         },
       })
-        .then(() => {
-          setLoadingPermissions(false);
-        })
+        .then(() => {})
         .catch((e) => {
           console.error(e);
-          setLoadingLimits(false);
         });
     }
-    if (sponsorAddress !== collection?.sponsorship) {
-      setLoadingSponsorship(true);
+    if (newSponsor) {
       submitWaitResultSponsorship({
         payload: {
           address: selectedAccount!.address,
           collectionId: Number(collection_id),
-          newSponsor: sponsorAddress,
+          newSponsor: getValues('newSponsor'),
         },
       })
-        .then(() => {
-          setLoadingSponsorship(false);
-        })
+        .then(() => {})
         .catch((e) => {
           console.error(e);
-          setLoadingLimits(false);
         });
     }
   };
@@ -172,7 +192,7 @@ const CollectionSettings = () => {
           <Loader />
         ) : (
           <>
-            <FormProvider {...form}>
+            <FormProvider {...methods}>
               <Heading size="3" className="setting-title">
                 Advanced settings
               </Heading>
@@ -312,12 +332,15 @@ const CollectionSettings = () => {
         description="Burning collection"
       />
       <StatusTransactionModal
-        isVisible={isLoadingSponsorship}
+        isVisible={isLoadingSubmitResultSponsorship}
         description="Set sponsorship"
       />
-      <StatusTransactionModal isVisible={isLoadingLimits} description="Set limits" />
       <StatusTransactionModal
-        isVisible={isLoadingPermissions}
+        isVisible={isLoadingSubmitResultLimits}
+        description="Set limits"
+      />
+      <StatusTransactionModal
+        isVisible={isLoadingSubmitResultPermissions}
         description="Set permissions"
       />
 
