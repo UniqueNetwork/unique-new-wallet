@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import { Chip, IconProps, IPaginationProps, Link } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
-import { useItemsLimit } from '@app/hooks';
+import { useApi, useItemsLimit } from '@app/hooks';
 import { PagePaper } from '@app/components';
 import List from '@app/components/List';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
@@ -46,6 +47,8 @@ export const NFTsTemplateList = ({
   cacheTokens,
 }: NFTsListComponentProps) => {
   const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const navigate = useNavigate();
+  const { currentChain } = useApi();
 
   return (
     <PagePaper.Processing>
@@ -77,7 +80,15 @@ export const NFTsTemplateList = ({
           viewMode: 'both',
         }}
         renderItem={(token: Token) => (
-          <TokenNftLink key={`${token.collection_id}-${token.token_id}`} token={token} />
+          <TokenNftLink
+            key={`${token.collection_id}-${token.token_id}`}
+            token={token}
+            navigate={() => {
+              navigate(
+                `/${currentChain?.network}/token/${token.collection_id}/${token.token_id}`,
+              );
+            }}
+          />
         )}
         visibleItems={getLimit}
         onPageChange={onPageChange}
