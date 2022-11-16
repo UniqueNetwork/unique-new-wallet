@@ -32,6 +32,7 @@ export const useGraphQlCheckInExistCollectionsByAccount = ({
       variables: {
         where: {
           collection_id: { _in: collectionsIds },
+          burned: { _eq: 'false' },
         },
       },
     },
