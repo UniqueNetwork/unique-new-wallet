@@ -7,6 +7,7 @@ const ACCOUNT_COMMON_INFO_QUERY = gql`
     tokens(
       where: {
         _or: [{ owner: { _eq: $accountId } }, { owner_normalized: { _eq: $accountId } }]
+        burned: { _eq: "false" }
       }
     ) {
       count
@@ -14,6 +15,7 @@ const ACCOUNT_COMMON_INFO_QUERY = gql`
     collections(
       where: {
         _or: [{ owner: { _eq: $accountId } }, { owner_normalized: { _eq: $accountId } }]
+        burned: { _eq: "false" }
       }
     ) {
       count
