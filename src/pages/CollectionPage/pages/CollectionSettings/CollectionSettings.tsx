@@ -1,11 +1,4 @@
-import {
-  Button,
-  Heading,
-  Icon,
-  Loader,
-  Text,
-  useNotifications,
-} from '@unique-nft/ui-kit';
+import { Button, Heading, Icon, Loader, useNotifications } from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCollectionLimits } from '@app/api/restApi/collection/useCollectionLimits';
 import { useCollectionPermissions } from '@app/api/restApi/collection/useCollectionPermissions';
 import { useCollectionSponsorship } from '@app/api/restApi/collection/useCollectionSponsorship';
-import { PagePaper, StatusTransactionModal, TooltipWrapper } from '@app/components';
+import { PagePaper, TooltipWrapper } from '@app/components';
+import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import {
   CheckboxController,
   InputController,
@@ -21,32 +15,45 @@ import {
 } from '@app/components/FormControllerComponents';
 import { useAccounts } from '@app/hooks';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
-import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
+import {
+  SettingsCollectionModal,
+  Step,
+} from '@app/pages/CollectionNft/components/SettingsCollectionModal';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import {
   ButtonGroup,
-  FormRow,
   FormWrapper,
   SettingsRow,
   SettingText,
 } from '@app/pages/components/FormComponents';
+import { truncateDecimalsBalanceSheet } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 const CollectionSettings = () => {
   const { error } = useNotifications();
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
+  const [steps, setSteps] = useState<Step[]>([]);
+  const [totalFee, setTotalFee] = useState({
+    sponsorshipFee: 0,
+    limitFee: 0,
+    permissionsFee: 0,
+    sum: 0,
+  });
   const { collection, collectionLoading } = useCollectionContext() || {};
   const {
+    getFee: getFeeSponsorship,
     submitWaitResult: submitWaitResultSponsorship,
     isLoadingSubmitResult: isLoadingSubmitResultSponsorship,
     submitWaitResultError: submitWaitResultErrorSponsorship,
   } = useCollectionSponsorship();
   const {
+    getFee: getFeeLimits,
     submitWaitResult: submitWaitResultLimits,
     isLoadingSubmitResult: isLoadingSubmitResultLimits,
     submitWaitResultError: submitWaitResultErrorLimits,
   } = useCollectionLimits();
   const {
+    getFee: getFeePermissions,
     submitWaitResult: submitWaitPermissions,
     isLoadingSubmitResult: isLoadingSubmitResultPermissions,
     submitWaitResultError: submitWaitResultErrorPermissions,
@@ -59,10 +66,18 @@ const CollectionSettings = () => {
     logUserEvent(UserEvents.SETTINGS_OF_COLLECTION);
   }, []);
 
+  useEffect(() => {
+    setTotalFee({
+      ...totalFee,
+      sum: 0 + totalFee.limitFee + totalFee.permissionsFee + totalFee.sponsorshipFee,
+    });
+  }, [totalFee.limitFee, totalFee.permissionsFee, totalFee.sponsorshipFee]);
+
   const {
     token_limit,
     owner_can_destroy,
     sponsorship = null,
+    nesting_enabled,
     collection_id,
   } = collection || {};
   const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
@@ -70,10 +85,10 @@ const CollectionSettings = () => {
     mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {
-      nesting: false,
-      newSponsor: '',
-      tokenLimit: 0,
-      ownerCanDestroy: false,
+      nesting: nesting_enabled,
+      newSponsor: sponsorship || '',
+      tokenLimit: token_limit,
+      ownerCanDestroy,
     },
   });
   const {
@@ -90,6 +105,59 @@ const CollectionSettings = () => {
       setValue('ownerCanDestroy', collection.owner_can_destroy);
     }
   }, [collection]);
+
+  useEffect(() => {
+    if (dirtyFields.nesting) {
+      getFeePermissions({
+        address: selectedAccount!.address,
+        collectionId: Number(collection_id),
+        permissions: {
+          nesting: {
+            tokenOwner: getValues('nesting'),
+          },
+        },
+      }).then((value) => {
+        setTotalFee({
+          ...totalFee,
+          permissionsFee: parseFloat(value.amount),
+        });
+      });
+    }
+  }, [dirtyFields.nesting]);
+
+  useEffect(() => {
+    if (dirtyFields.newSponsor) {
+      getFeeSponsorship({
+        address: selectedAccount!.address,
+        collectionId: Number(collection_id),
+        newSponsor: getValues('newSponsor'),
+      }).then((value) => {
+        setTotalFee({
+          ...totalFee,
+          sponsorshipFee: parseFloat(value.amount),
+        });
+      });
+    }
+  }, [dirtyFields.newSponsor]);
+
+  useEffect(() => {
+    const { ownerCanDestroy, tokenLimit } = dirtyFields;
+    if (ownerCanDestroy || tokenLimit) {
+      getFeeLimits({
+        address: selectedAccount!.address,
+        collectionId: Number(collection_id),
+        limits: {
+          tokenLimit: getValues('tokenLimit'),
+          ownerCanDestroy: getValues('ownerCanDestroy'),
+        },
+      }).then((value) => {
+        setTotalFee({
+          ...totalFee,
+          limitFee: parseFloat(value.amount),
+        });
+      });
+    }
+  }, [dirtyFields.ownerCanDestroy, dirtyFields.tokenLimit]);
 
   useEffect(() => {
     if (submitWaitResultErrorSponsorship) {
@@ -109,7 +177,13 @@ const CollectionSettings = () => {
 
   const submitHandler = () => {
     const { ownerCanDestroy, nesting, newSponsor, tokenLimit } = dirtyFields;
+    const stepArr: Step[] = [];
+    setVisibleConfirmModal(true);
     if (ownerCanDestroy || tokenLimit) {
+      stepArr.push({
+        name: 'Setting up token limit',
+        pending: true,
+      });
       submitWaitResultLimits({
         payload: {
           address: selectedAccount!.address,
@@ -120,12 +194,22 @@ const CollectionSettings = () => {
           },
         },
       })
-        .then(() => {})
+        .then(() => {
+          const foundIndex = stepArr.findIndex(
+            (step) => step.name === 'Setting up token limit',
+          );
+          stepArr[foundIndex].pending = false;
+          setSteps(stepArr);
+        })
         .catch((e) => {
           console.error(e);
         });
     }
-    if (nesting !== collection?.nesting_enabled) {
+    if (nesting) {
+      stepArr.push({
+        name: 'Setting up collection permissions',
+        pending: true,
+      });
       submitWaitPermissions({
         payload: {
           address: selectedAccount!.address,
@@ -137,12 +221,22 @@ const CollectionSettings = () => {
           },
         },
       })
-        .then(() => {})
+        .then(() => {
+          const foundIndex = stepArr.findIndex(
+            (step) => step.name === 'Setting up collection permissions',
+          );
+          stepArr[foundIndex].pending = false;
+          setSteps(stepArr);
+        })
         .catch((e) => {
           console.error(e);
         });
     }
     if (newSponsor) {
+      stepArr.push({
+        name: 'Setting up collection sponsor',
+        pending: true,
+      });
       submitWaitResultSponsorship({
         payload: {
           address: selectedAccount!.address,
@@ -150,11 +244,18 @@ const CollectionSettings = () => {
           newSponsor: getValues('newSponsor'),
         },
       })
-        .then(() => {})
+        .then(() => {
+          const foundIndex = stepArr.findIndex(
+            (step) => step.name === 'Setting up collection sponsor',
+          );
+          stepArr[foundIndex].pending = false;
+          setSteps(stepArr);
+        })
         .catch((e) => {
           console.error(e);
         });
     }
+    setSteps(stepArr);
   };
 
   const handleBurnCollection = () => {
@@ -211,74 +312,46 @@ const CollectionSettings = () => {
               <Heading className="setting-title" size="3">
                 Marketplace related settings
               </Heading>
+              <Heading size="4">Collection sponsor</Heading>
+              <SettingText>
+                An address from which all transaction fees related to the collection are
+                paid from (i.e. a sponsoring fund address).
+              </SettingText>
+              <SettingText>
+                This can be a regular account or a market contract address.
+              </SettingText>
               <SettingsRow>
                 <InputController
-                  label={
-                    <>
-                      Collection sponsor address
-                      <TooltipWrapper
-                        align={DEFAULT_POSITION_TOOLTIP}
-                        message={
-                          <>
-                            The collection sponsor pays for all transactions related
-                            to&nbsp;this collection. You can set as&nbsp;a&nbsp;sponsor
-                            a&nbsp;regular account or&nbsp;a&nbsp;market contract. The
-                            sponsor will need to&nbsp;confirm the sponsorship before the
-                            sponsoring begins
-                          </>
-                        }
-                      >
-                        <Icon
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
-                      </TooltipWrapper>
-                    </>
-                  }
-                  additionalText="The designated sponsor should approve the request"
+                  label="Address"
                   id="address"
                   maxLength={49}
-                  name="sponsorAddress"
+                  name="newSponsor"
                 />
               </SettingsRow>
-              <FormRow>
-                <Heading size="4">One-time install options</Heading>
-                <Text>
-                  Please note that once installed, these settings cannot be changed later.
-                  If you do not change them now, you can change them once on the Settings
-                  tab in the collection detail card.
-                </Text>
-              </FormRow>
+              <Heading size="4">Token limit</Heading>
+              <SettingText>
+                Collection size — mandatory for listing a collection on a marketplace.
+              </SettingText>
+              <SettingText>
+                Unlimited by default. This value can be changed many times over but with
+                the following caveats: each successive value must be smaller than the
+                previous one and it can never be reset back to &apos;unlimited&apos;.
+              </SettingText>
               <SettingsRow>
                 <InputController
-                  label={
-                    <>
-                      Token limit
-                      <TooltipWrapper
-                        align={DEFAULT_POSITION_TOOLTIP}
-                        message={
-                          <>
-                            The token limit (collection size) is&nbsp;a&nbsp;mandatory
-                            parameter if&nbsp;you want to&nbsp;list your collection
-                            on&nbsp;a&nbsp;marketplace.
-                          </>
-                        }
-                      >
-                        <Icon
-                          name="question"
-                          size={22}
-                          color="var(--color-primary-500)"
-                        />
-                      </TooltipWrapper>
-                    </>
-                  }
-                  additionalText="Unlimited by default"
+                  label="Number of tokens"
                   id="limit"
                   role="number"
                   name="tokenLimit"
                 />
               </SettingsRow>
+              <Heading size="4">Burn collection</Heading>
+              <SettingText>
+                Although this is an immutable setting, when enabling it during the initial
+                collection creation an additional one-time opportunity is provided in
+                which it can be reverted in the settings panel. On the other hand,
+                accepting the default value will render it permanent.
+              </SettingText>
               <SettingsRow>
                 <CheckboxController
                   label={
@@ -309,6 +382,13 @@ const CollectionSettings = () => {
                   disabled={!ownerCanDestroy}
                 />
               </SettingsRow>
+              {totalFee.sum > 0 && (
+                <FeeInformationTransaction
+                  fee={`${truncateDecimalsBalanceSheet(`${totalFee.sum}`)} ${
+                    selectedAccount?.balance?.availableBalance.unit
+                  }`}
+                />
+              )}
               <ButtonGroup>
                 <TooltipWrapper message={<>The form in&nbsp;development progress</>}>
                   <Button title="Save changes" onClick={submitHandler} />
@@ -327,24 +407,9 @@ const CollectionSettings = () => {
           </>
         )}
       </FormWrapper>
-      <StatusTransactionModal
-        isVisible={isLoadingBurnCollection}
-        description="Burning collection"
-      />
-      <StatusTransactionModal
-        isVisible={isLoadingSubmitResultSponsorship}
-        description="Set sponsorship"
-      />
-      <StatusTransactionModal
-        isVisible={isLoadingSubmitResultLimits}
-        description="Set limits"
-      />
-      <StatusTransactionModal
-        isVisible={isLoadingSubmitResultPermissions}
-        description="Set permissions"
-      />
-
-      <BurnCollectionModal
+      <SettingsCollectionModal
+        title="Please wait"
+        steps={steps}
         isVisible={isVisibleConfirmModal}
         onConfirm={handleBurnCollection}
         onClose={() => setVisibleConfirmModal(false)}
