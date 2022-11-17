@@ -51,23 +51,32 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     !selectedAccount?.address,
   );
 
-  const { tokens, tokensCount, tokensLoading, isPagination, fetchMore } =
-    useGraphQlOwnerTokens(
-      selectedAccount?.address,
-      {
-        statusFilter,
-        collectionsIds,
-        searchText,
-        typeFilter,
-      },
-      {
-        skip: !selectedAccount?.address,
-        direction: sortByTokenId,
-        pagination: { page: tokensPage, limit: getLimit },
-      },
-    );
+  const {
+    tokens,
+    tokensCount,
+    tokensLoading,
+    isPagination,
+    fetchMore,
+    refetchOwnerTokens,
+  } = useGraphQlOwnerTokens(
+    selectedAccount?.address,
+    {
+      statusFilter,
+      collectionsIds,
+      searchText,
+      typeFilter,
+    },
+    {
+      skip: !selectedAccount?.address,
+      direction: sortByTokenId,
+      pagination: { page: tokensPage, limit: getLimit },
+    },
+  );
 
-  const { cacheTokens } = useCheckExistTokensByAccount({ tokens });
+  const { cacheTokens } = useCheckExistTokensByAccount({
+    tokens,
+    refetchTokens: refetchOwnerTokens,
+  });
 
   const defaultCollections = useMemo(
     () =>

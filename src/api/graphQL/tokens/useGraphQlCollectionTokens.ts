@@ -55,6 +55,7 @@ export const useGraphQlCollectionTokens = ({
     fetchMore,
     loading,
     error,
+    refetch,
   } = useQuery<QueryResponse<Token>>(COLLECTION_TOKENS_QUERY, {
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'network-only',
@@ -78,6 +79,7 @@ export const useGraphQlCollectionTokens = ({
   const tokensCount = response?.tokens.count ?? 0;
 
   return {
+    refetchCollectionTokens: refetch,
     fetchMore,
     isPagination: tokensCount > limit,
     isLoadingTokens: loading,
