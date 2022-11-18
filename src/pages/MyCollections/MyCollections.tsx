@@ -7,7 +7,7 @@ import { PagePaper, TokenLink } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
-import { DeviceSize, useApi, useDeviceSize, useItemsLimit } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize, useItemsLimit, useTimer } from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
 import { useExtrinsicCacheEntities } from '@app/api';
 import { Collection } from '@app/api/graphQL/types';
@@ -46,23 +46,47 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
 
   const isChildExist = useOutlet();
 
-  const { collections, collectionsCount, isCollectionsLoading, isPagination, fetchMore } =
-    useGraphQlCollectionsByAccount({
-      accountAddress: selectedAccount?.address,
-      options: {
-        order,
-        pagination: {
-          page,
-          limit: getLimit,
-        },
-        search,
+  const {
+    collections,
+    collectionsCount,
+    isCollectionsLoading,
+    isPagination,
+    fetchMore,
+    refetchCollectionsByAccount,
+  } = useGraphQlCollectionsByAccount({
+    accountAddress: selectedAccount?.address,
+    options: {
+      order,
+      pagination: {
+        page,
+        limit: getLimit,
       },
+      search,
+    },
+  });
+
+  const { time, setTime } = useTimer(10);
+
+  const { synchronizedCollectionsIds, refetchCheckInExistCollections } =
+    useGraphQlCheckInExistCollectionsByAccount({
+      collections: cacheCollections,
+      skip: [cacheCollections.length, collections.length].includes(0),
     });
 
-  const { synchronizedCollectionsIds } = useGraphQlCheckInExistCollectionsByAccount({
-    collections: cacheCollections,
-    skip: [cacheCollections.length, collections.length].includes(0),
-  });
+  useEffect(() => {
+    if (time === 0 && cacheCollections.length > 0) {
+      setTime(10);
+      refetchCheckInExistCollections().then((res) => {
+        (res.data?.collections?.data?.length || 0) > 0 && refetchCollectionsByAccount();
+      });
+    }
+  }, [
+    cacheCollections.length,
+    refetchCollectionsByAccount,
+    refetchCheckInExistCollections,
+    setTime,
+    time,
+  ]);
 
   useEffect(() => {
     if (synchronizedCollectionsIds.length > 0) {

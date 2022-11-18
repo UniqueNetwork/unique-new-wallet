@@ -23,27 +23,34 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
 
-  const { tokens, tokensCount, isLoadingTokens, isPagination, fetchMore } =
-    useGraphQlCollectionTokens({
-      collectionId: parseInt(collectionId || ''),
-      collectionOwner: selectedAccount?.address,
-      filter: {
-        search,
-        type,
+  const {
+    tokens,
+    tokensCount,
+    isLoadingTokens,
+    isPagination,
+    fetchMore,
+    refetchCollectionTokens,
+  } = useGraphQlCollectionTokens({
+    collectionId: parseInt(collectionId || ''),
+    collectionOwner: selectedAccount?.address,
+    filter: {
+      search,
+      type,
+    },
+    options: {
+      skip: !selectedAccount?.address,
+      direction,
+      pagination: {
+        page,
+        limit: getLimit,
       },
-      options: {
-        skip: !selectedAccount?.address,
-        direction,
-        pagination: {
-          page,
-          limit: getLimit,
-        },
-      },
-    });
+    },
+  });
 
   const { cacheTokens } = useCheckExistTokensByAccount({
     tokens,
     collectionId: parseInt(collectionId),
+    refetchTokens: refetchCollectionTokens,
   });
 
   return (
