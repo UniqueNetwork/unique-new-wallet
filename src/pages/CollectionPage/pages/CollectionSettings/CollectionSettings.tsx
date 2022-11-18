@@ -43,19 +43,16 @@ const CollectionSettings = () => {
   const {
     getFee: getFeeSponsorship,
     submitWaitResult: submitWaitResultSponsorship,
-    isLoadingSubmitResult: isLoadingSubmitResultSponsorship,
     submitWaitResultError: submitWaitResultErrorSponsorship,
   } = useCollectionSponsorship();
   const {
     getFee: getFeeLimits,
     submitWaitResult: submitWaitResultLimits,
-    isLoadingSubmitResult: isLoadingSubmitResultLimits,
     submitWaitResultError: submitWaitResultErrorLimits,
   } = useCollectionLimits();
   const {
     getFee: getFeePermissions,
     submitWaitResult: submitWaitPermissions,
-    isLoadingSubmitResult: isLoadingSubmitResultPermissions,
     submitWaitResultError: submitWaitResultErrorPermissions,
   } = useCollectionPermissions();
   const { selectedAccount } = useAccounts();
@@ -193,17 +190,13 @@ const CollectionSettings = () => {
             ownerCanDestroy: getValues('ownerCanDestroy'),
           },
         },
-      })
-        .then(() => {
-          const foundIndex = stepArr.findIndex(
-            (step) => step.name === 'Setting up token limit',
-          );
-          stepArr[foundIndex].pending = false;
-          setSteps(stepArr);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      }).then(() => {
+        const foundIndex = stepArr.findIndex(
+          (step) => step.name === 'Setting up token limit',
+        );
+        stepArr[foundIndex].pending = false;
+        setSteps(stepArr);
+      });
     }
     if (nesting) {
       stepArr.push({
@@ -220,17 +213,13 @@ const CollectionSettings = () => {
             },
           },
         },
-      })
-        .then(() => {
-          const foundIndex = stepArr.findIndex(
-            (step) => step.name === 'Setting up collection permissions',
-          );
-          stepArr[foundIndex].pending = false;
-          setSteps(stepArr);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      }).then(() => {
+        const foundIndex = stepArr.findIndex(
+          (step) => step.name === 'Setting up collection permissions',
+        );
+        stepArr[foundIndex].pending = false;
+        setSteps(stepArr);
+      });
     }
     if (newSponsor) {
       stepArr.push({
@@ -243,17 +232,13 @@ const CollectionSettings = () => {
           collectionId: Number(collection_id),
           newSponsor: getValues('newSponsor'),
         },
-      })
-        .then(() => {
-          const foundIndex = stepArr.findIndex(
-            (step) => step.name === 'Setting up collection sponsor',
-          );
-          stepArr[foundIndex].pending = false;
-          setSteps(stepArr);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      }).then(() => {
+        const foundIndex = stepArr.findIndex(
+          (step) => step.name === 'Setting up collection sponsor',
+        );
+        stepArr[foundIndex].pending = false;
+        setSteps(stepArr);
+      });
     }
     setSteps(stepArr);
   };
