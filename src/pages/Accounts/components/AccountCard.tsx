@@ -1,9 +1,11 @@
+import React from 'react';
+import classNames from 'classnames';
 import styled from 'styled-components';
-import { Icon, Link, useNotifications } from '@unique-nft/ui-kit';
+import { Link, useNotifications } from '@unique-nft/ui-kit';
 
 import { shortcutText } from '@app/utils';
-import { IdentityIcon } from '@app/components';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { Icon, IdentityIcon } from '@app/components';
 
 interface AccountCardProps {
   accountAddress: string;
@@ -20,10 +22,6 @@ const Wrapper = styled.div`
   overflow: hidden;
   display: flex;
   align-items: center;
-`;
-
-const NotificationInfo = styled.p`
-  word-break: break-all;
 `;
 
 const AccountInfoWrapper = styled.div`
@@ -128,19 +126,15 @@ const AccountCard = ({
     ? shortcutText(accountAddress)
     : accountAddress;
 
-  const onCopyAddress = (account: string) => () => {
-    if (account) {
-      info(
-        <NotificationInfo>
-          Address <i>{account}</i>
-          <br />
-          successfully copied
-        </NotificationInfo>,
-      );
+  const onCopyAddress = (account: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
+    if (account) {
+      info('Address copied successfully');
       navigator.clipboard.writeText(account);
     } else {
-      error(<NotificationInfo>Address not found</NotificationInfo>);
+      error('Address not found');
     }
   };
 
@@ -170,7 +164,7 @@ const AccountCard = ({
           <AddressRow title={accountAddress}>
             {scanLink ? (
               <Link
-                className="truncate-text"
+                className={classNames({ 'truncate-text': !isShort })}
                 href={scanLink}
                 target="_blank"
                 rel="noreferrer noopener"
@@ -178,7 +172,7 @@ const AccountCard = ({
                 {address}
               </Link>
             ) : (
-              <span className="truncate-text">{address}</span>
+              <span className={classNames({ 'truncate-text': !isShort })}>{address}</span>
             )}
             {canCopy && (
               <ActionButton title="Copy address" onClick={onCopyAddress(accountAddress)}>

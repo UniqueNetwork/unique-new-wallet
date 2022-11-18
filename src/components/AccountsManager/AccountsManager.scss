@@ -5,6 +5,7 @@
     }
   }
 }
+
 @media (max-width: 568px) {
   .unique-dropdown {
     > .dropdown-wrapper {
@@ -36,6 +37,8 @@
 }
 
 .unique-dropdown {
+  user-select: none;
+
   &.touch {
     > .dropdown-options {
       left: 0;
@@ -45,6 +48,7 @@
 
       .accounts-manager-dropdown {
         padding: 0;
+
         .unique-dropdown.touch > .dropdown-options {
           height: auto;
           padding: 0;
@@ -67,7 +71,7 @@
     border: 1px solid var(--color-blue-grey-400);
   }
 
-  svg:not(.active-network-icon) {
+  & > svg:not(.active-network-icon) {
     display: none;
   }
 
@@ -78,26 +82,35 @@
     padding-right: var(--prop-gap);
     cursor: pointer;
     justify-content: center;
+
     .unique-text {
       white-space: nowrap;
     }
+
     .accounts-manager-selected-account-name {
       display: flex;
       column-gap: calc(var(--prop-gap) / 4);
-      .account-copy {
-        cursor: pointer;
-      }
     }
   }
+
   .accounts-manager-network {
     display: flex;
     align-items: center;
     padding-left: var(--prop-gap);
   }
-  .account-copy {
-    cursor: pointer;
-  }
+
   .icon.icon-copy:hover {
     fill: var(--color-primary-500);
+  }
+
+  .address-copy {
+    border: 0;
+    padding: 0;
+    background: 0 none;
+    cursor: pointer;
+
+    & > svg {
+      display: block;
+    }
   }
 }

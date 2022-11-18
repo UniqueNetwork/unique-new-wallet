@@ -1,4 +1,4 @@
-import { Button, IAccount, Icon, INetwork } from '@unique-nft/ui-kit';
+import { Button, Icon, INetwork } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
+import { Account } from '@app/account';
 
 import logo from '../../static/icons/logo.svg';
 import { AccountsManager } from '../AccountsManager';
@@ -37,15 +38,8 @@ export const Header = () => {
     toggleMobileMenu((prevState) => !prevState);
   }, []);
 
-  const accountsForManager = accounts.map((account) => ({
-    address: account.address,
-    name: account.meta.name,
-  }));
-
-  const onAccountChange = (iAccount: IAccount) => {
-    const targetAccount = accounts.find(
-      (account) => account.address === iAccount.address,
-    );
+  const onAccountChange = (account: Account) => {
+    const targetAccount = accounts.find((item) => account.address === item.address);
 
     if (targetAccount) {
       changeAccount(targetAccount);
@@ -108,7 +102,7 @@ export const Header = () => {
       <RightSide>
         {!isLoading && !!accounts.length && (
           <AccountsManager
-            accounts={accountsForManager}
+            accounts={accounts}
             avatarRender={(address: string) => <IdentityIcon address={address} />}
             activeNetwork={activeNetwork}
             balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
@@ -126,10 +120,7 @@ export const Header = () => {
               description:
                 'Soon you can stake some of your holdings and earn a percentage-rate reward over time.',
             }}
-            selectedAccount={{
-              address: selectedAccount?.address,
-              name: selectedAccount?.meta.name,
-            }}
+            selectedAccount={selectedAccount}
             symbol={selectedAccount?.unitBalance ?? ''}
             onAccountChange={onAccountChange}
             onManageBalanceClick={gotoManageBalance}
