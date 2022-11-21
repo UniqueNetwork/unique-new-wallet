@@ -33,6 +33,9 @@ const CollectionSettings = () => {
   const { error } = useNotifications();
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
   const [steps, setSteps] = useState<Step[]>([]);
+  const [nestingStep, setNestingStep] = useState(false);
+  const [sponsorStep, setSponsorStep] = useState(false);
+  const [limitStep, setLimitStep] = useState(false);
   const [totalFee, setTotalFee] = useState({
     sponsorshipFee: 0,
     limitFee: 0,
@@ -91,7 +94,7 @@ const CollectionSettings = () => {
   const {
     getValues,
     setValue,
-    formState: { dirtyFields },
+    formState: { dirtyFields, touchedFields },
   } = methods;
 
   useEffect(() => {
@@ -172,11 +175,35 @@ const CollectionSettings = () => {
     submitWaitResultErrorPermissions,
   ]);
 
+  useEffect(() => {
+    changeStep('Setting up collection permissions', nestingStep);
+  }, [nestingStep]);
+
+  useEffect(() => {
+    changeStep('Setting up collection sponsor', sponsorStep);
+  }, [sponsorStep]);
+
+  useEffect(() => {
+    changeStep('Setting up token limit', limitStep);
+  }, [limitStep]);
+
+  const changeStep = (stepName: string, status: boolean) => {
+    const stepsArr = steps;
+    const foundIndex = stepsArr.findIndex((step) => {
+      return step.name === stepName;
+    });
+    if (foundIndex >= 0) {
+      stepsArr[foundIndex].pending = status;
+      setSteps(stepsArr);
+    }
+  };
+
   const submitHandler = () => {
     const { ownerCanDestroy, nesting, newSponsor, tokenLimit } = dirtyFields;
     const stepArr: Step[] = [];
-    setVisibleConfirmModal(true);
     if (ownerCanDestroy || tokenLimit) {
+      setVisibleConfirmModal(true);
+      setLimitStep(true);
       stepArr.push({
         name: 'Setting up token limit',
         pending: true,
@@ -190,15 +217,17 @@ const CollectionSettings = () => {
             ownerCanDestroy: getValues('ownerCanDestroy'),
           },
         },
-      }).then(() => {
-        const foundIndex = stepArr.findIndex(
-          (step) => step.name === 'Setting up token limit',
-        );
-        stepArr[foundIndex].pending = false;
-        setSteps(stepArr);
-      });
+      })
+        .then(() => {
+          setLimitStep(false);
+        })
+        .catch(() => {
+          setLimitStep(false);
+        });
     }
     if (nesting) {
+      setVisibleConfirmModal(true);
+      setNestingStep(true);
       stepArr.push({
         name: 'Setting up collection permissions',
         pending: true,
@@ -213,15 +242,17 @@ const CollectionSettings = () => {
             },
           },
         },
-      }).then(() => {
-        const foundIndex = stepArr.findIndex(
-          (step) => step.name === 'Setting up collection permissions',
-        );
-        stepArr[foundIndex].pending = false;
-        setSteps(stepArr);
-      });
+      })
+        .then(() => {
+          setNestingStep(false);
+        })
+        .catch(() => {
+          setNestingStep(false);
+        });
     }
     if (newSponsor) {
+      setVisibleConfirmModal(true);
+      setSponsorStep(true);
       stepArr.push({
         name: 'Setting up collection sponsor',
         pending: true,
@@ -232,13 +263,13 @@ const CollectionSettings = () => {
           collectionId: Number(collection_id),
           newSponsor: getValues('newSponsor'),
         },
-      }).then(() => {
-        const foundIndex = stepArr.findIndex(
-          (step) => step.name === 'Setting up collection sponsor',
-        );
-        stepArr[foundIndex].pending = false;
-        setSteps(stepArr);
-      });
+      })
+        .then(() => {
+          setSponsorStep(false);
+        })
+        .catch(() => {
+          setSponsorStep(false);
+        });
     }
     setSteps(stepArr);
   };
