@@ -18,5 +18,4 @@ export interface Chain {
   switchingEnabled: boolean;
   subscanAddress: string;
   uniquescanAddress: string;
-  prefix: number;
 }

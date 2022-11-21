@@ -1,4 +1,4 @@
-import { AllBalancesResponse } from '@unique-nft/sdk';
+import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
 import { Heading } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import React, { FC, useCallback, useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
 
 import { ApiWrapper, useAccountBalancesService } from '@app/api';
+import { useChainProperties } from '@app/api/restApi/properties/useChainProperties';
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
 import { RampModal } from '@app/pages';
@@ -53,6 +54,18 @@ export const Coins: FC = () => {
     selectedAccount?.address,
   ) as UseQueryResult<AllBalancesResponse>[];
 
+  const chainPrefixesRaw = useChainProperties(
+    Object.values(config.allChains).map((chain) => chain.apiEndpoint),
+  ) as UseQueryResult<ChainPropertiesResponse>[];
+
+  const chainPrefixes: { [x: string]: number } = {};
+
+  chainPrefixesRaw.forEach((prefix) => {
+    if (prefix.data && prefix.data.token && prefix.data.SS58Prefix) {
+      chainPrefixes[prefix.data.token] = prefix.data.SS58Prefix;
+    }
+  });
+
   useEffect(() => {
     logUserEvent(UserEvents.COINS);
   }, []);
@@ -84,7 +97,7 @@ export const Coins: FC = () => {
       },
       normalizedAddress: Address.normalize.substrateAddress(
         selectedAccount!.address,
-        config.allChains.OPAL.prefix,
+        chainPrefixes.OPAL,
       ),
     },
     KUSAMA: {
@@ -102,7 +115,7 @@ export const Coins: FC = () => {
       },
       normalizedAddress: Address.normalize.substrateAddress(
         selectedAccount!.address,
-        config.allChains.QUARTZ.prefix,
+        chainPrefixes.QUARTZ,
       ),
     },
     UNIQUE: {
@@ -112,7 +125,7 @@ export const Coins: FC = () => {
       },
       normalizedAddress: Address.normalize.substrateAddress(
         selectedAccount!.address,
-        config.allChains.UNIQUE.prefix,
+        chainPrefixes.UNIQUE,
       ),
     },
     POLKADOT: {

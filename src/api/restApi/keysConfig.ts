@@ -20,7 +20,7 @@ export const queryKeys = createQueryKeyStore({
     byId: (collectionId?: number) => [collectionId],
   },
   chain: {
-    properties: null,
+    properties: (baseUrl?: string) => ['property', baseUrl],
   },
 });
 
