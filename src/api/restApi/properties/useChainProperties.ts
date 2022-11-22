@@ -1,17 +1,29 @@
 import { ChainPropertiesResponse, Sdk } from '@unique-nft/sdk';
-import { QueriesResults, useQueries } from 'react-query';
+import { useQueries, UseQueryResult } from 'react-query';
+
+import { NetworkType } from '@app/types';
 
 import { queryKeys } from '../keysConfig';
 
-export const useChainProperties = (
-  chainsUrl: string[],
-): QueriesResults<ChainPropertiesResponse[]> => {
-  return useQueries<ChainPropertiesResponse[]>(
-    chainsUrl.map((baseUrl) => {
+type chains = {
+  network: string;
+  api: string;
+};
+
+export const useChainProperties = (chains: chains[]) => {
+  const queryResults = useQueries<ChainPropertiesResponse[]>(
+    chains.map(({ api, network }) => {
       return {
-        queryKey: queryKeys.chain.properties(baseUrl),
-        queryFn: () => new Sdk({ baseUrl, signer: null }).chain.properties(),
+        queryKey: queryKeys.chain.properties(network),
+        queryFn: () => new Sdk({ baseUrl: api, signer: null }).chain.properties(),
       };
     }),
   );
+  const chainProperty: Record<NetworkType, UseQueryResult> = {};
+
+  chains.forEach(({ api, network }, idx) => {
+    chainProperty[network] = queryResults[idx];
+  });
+
+  return chainProperty;
 };

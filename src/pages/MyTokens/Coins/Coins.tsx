@@ -54,17 +54,12 @@ export const Coins: FC = () => {
     selectedAccount?.address,
   ) as UseQueryResult<AllBalancesResponse>[];
 
-  const chainPrefixesRaw = useChainProperties(
-    Object.values(config.allChains).map((chain) => chain.apiEndpoint),
-  ) as UseQueryResult<ChainPropertiesResponse>[];
-
-  const chainPrefixes: { [x: string]: number } = {};
-
-  chainPrefixesRaw.forEach((prefix) => {
-    if (prefix.data && prefix.data.token && prefix.data.SS58Prefix) {
-      chainPrefixes[prefix.data.token] = prefix.data.SS58Prefix;
-    }
-  });
+  const chainProperty = useChainProperties(
+    Object.values(config.allChains).map((chain) => ({
+      network: chain.network,
+      api: chain.apiEndpoint,
+    })),
+  );
 
   useEffect(() => {
     logUserEvent(UserEvents.COINS);
@@ -86,7 +81,7 @@ export const Coins: FC = () => {
   interface NetworkInfo {
     getDisabled: boolean;
     onGet?: () => void;
-    normalizedAddress: string;
+    normalizedAddress: (address: string, prefix?: number) => string;
   }
 
   const coinConfig: Record<NetworkType, NetworkInfo> = {
@@ -95,10 +90,8 @@ export const Coins: FC = () => {
       onGet: () => {
         window.open(config.telegramBot, '_blank', 'noopener');
       },
-      normalizedAddress: Address.normalize.substrateAddress(
-        selectedAccount!.address,
-        chainPrefixes.OPAL,
-      ),
+      normalizedAddress: (address, prefix) =>
+        Address.normalize.substrateAddress(address, prefix),
     },
     KUSAMA: {
       getDisabled: false,
@@ -106,27 +99,24 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('KSM');
       },
-      normalizedAddress: selectedAccount!.address,
+      normalizedAddress: (address, prefix) =>
+        Address.normalize.substrateAddress(address, prefix),
     },
     QUARTZ: {
       getDisabled: false,
       onGet: () => {
         window.open(config.mexcQTZUSDT, '_blank', 'noopener');
       },
-      normalizedAddress: Address.normalize.substrateAddress(
-        selectedAccount!.address,
-        chainPrefixes.QUARTZ,
-      ),
+      normalizedAddress: (address, prefix) =>
+        Address.normalize.substrateAddress(address, prefix),
     },
     UNIQUE: {
       getDisabled: false,
       onGet: () => {
         window.open(config.cryptoExchangeUNQ, '_blank', 'noopener');
       },
-      normalizedAddress: Address.normalize.substrateAddress(
-        selectedAccount!.address,
-        chainPrefixes.UNIQUE,
-      ),
+      normalizedAddress: (address, prefix) =>
+        Address.normalize.substrateAddress(address, prefix),
     },
     POLKADOT: {
       getDisabled: false,
@@ -134,7 +124,8 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('DOT');
       },
-      normalizedAddress: selectedAccount!.address,
+      normalizedAddress: (address, prefix) =>
+        Address.normalize.substrateAddress(address, prefix),
     },
   };
 
@@ -148,13 +139,15 @@ export const Coins: FC = () => {
           }
 
           const { getDisabled, onGet, normalizedAddress } = coinConfig[chain.network];
+          const data = chainProperty[chain.network].data as ChainPropertiesResponse;
+          const SS58Prefix = data?.SS58Prefix;
           return (
             <CoinsRow
               getDisabled={getDisabled}
               key={chain.network}
-              loading={accountBalances[idx].isLoading}
+              loading={chainProperty[chain.network].isLoading}
               sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
-              address={normalizedAddress}
+              address={normalizedAddress(selectedAccount!.address, SS58Prefix)}
               balanceFull={accountBalances[idx].data?.freeBalance.amount}
               balanceLocked={accountBalances[idx].data?.lockedBalance.amount}
               balanceTransferable={accountBalances[idx].data?.availableBalance.amount}
