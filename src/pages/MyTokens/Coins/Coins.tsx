@@ -1,7 +1,7 @@
 import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
 import { Heading } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
 
@@ -40,7 +40,7 @@ const CoinsHeading = styled(Heading)`
   }
 `;
 
-export const Coins: FC = () => {
+export const Coins = () => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [rampModalToken, setRampModalToken] = useState('KSM');
@@ -90,8 +90,7 @@ export const Coins: FC = () => {
       onGet: () => {
         window.open(config.telegramBot, '_blank', 'noopener');
       },
-      normalizedAddress: (address, prefix) =>
-        Address.normalize.substrateAddress(address, prefix),
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     KUSAMA: {
       getDisabled: false,
@@ -99,24 +98,21 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('KSM');
       },
-      normalizedAddress: (address, prefix) =>
-        Address.normalize.substrateAddress(address, prefix),
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     QUARTZ: {
       getDisabled: false,
       onGet: () => {
         window.open(config.mexcQTZUSDT, '_blank', 'noopener');
       },
-      normalizedAddress: (address, prefix) =>
-        Address.normalize.substrateAddress(address, prefix),
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     UNIQUE: {
       getDisabled: false,
       onGet: () => {
         window.open(config.cryptoExchangeUNQ, '_blank', 'noopener');
       },
-      normalizedAddress: (address, prefix) =>
-        Address.normalize.substrateAddress(address, prefix),
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     POLKADOT: {
       getDisabled: false,
@@ -124,8 +120,7 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('DOT');
       },
-      normalizedAddress: (address, prefix) =>
-        Address.normalize.substrateAddress(address, prefix),
+      normalizedAddress: Address.normalize.substrateAddress,
     },
   };
 
@@ -145,7 +140,9 @@ export const Coins: FC = () => {
             <CoinsRow
               getDisabled={getDisabled}
               key={chain.network}
-              loading={chainProperty[chain.network].isLoading}
+              loading={
+                chainProperty[chain.network].isLoading || accountBalances[idx].isLoading
+              }
               sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
               address={normalizedAddress(selectedAccount!.address, SS58Prefix)}
               balanceFull={accountBalances[idx].data?.freeBalance.amount}
