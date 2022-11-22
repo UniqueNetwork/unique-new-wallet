@@ -94,7 +94,8 @@ const CollectionSettings = () => {
   const {
     getValues,
     setValue,
-    formState: { dirtyFields, touchedFields },
+    watch,
+    formState: { dirtyFields },
   } = methods;
 
   useEffect(() => {
@@ -107,57 +108,54 @@ const CollectionSettings = () => {
   }, [collection]);
 
   useEffect(() => {
-    if (dirtyFields.nesting) {
-      getFeePermissions({
-        address: selectedAccount!.address,
-        collectionId: Number(collection_id),
-        permissions: {
-          nesting: {
-            tokenOwner: getValues('nesting'),
+    const subscription = watch((value, { name, type }) => {
+      if (name === 'nesting') {
+        getFeePermissions({
+          address: selectedAccount!.address,
+          collectionId: Number(collection_id),
+          permissions: {
+            nesting: {
+              tokenOwner: getValues('nesting'),
+            },
           },
-        },
-      }).then((value) => {
-        setTotalFee({
-          ...totalFee,
-          permissionsFee: parseFloat(value.amount),
+        }).then((value) => {
+          setTotalFee({
+            ...totalFee,
+            permissionsFee: parseFloat(value.amount),
+          });
         });
-      });
-    }
-  }, [dirtyFields.nesting]);
+      }
+      if (name === 'newSponsor') {
+        getFeeSponsorship({
+          address: selectedAccount!.address,
+          collectionId: Number(collection_id),
+          newSponsor: getValues('newSponsor'),
+        }).then((value) => {
+          setTotalFee({
+            ...totalFee,
+            sponsorshipFee: parseFloat(value.amount),
+          });
+        });
+      }
 
-  useEffect(() => {
-    if (dirtyFields.newSponsor) {
-      getFeeSponsorship({
-        address: selectedAccount!.address,
-        collectionId: Number(collection_id),
-        newSponsor: getValues('newSponsor'),
-      }).then((value) => {
-        setTotalFee({
-          ...totalFee,
-          sponsorshipFee: parseFloat(value.amount),
+      if (name === 'ownerCanDestroy' || name === 'tokenLimit') {
+        getFeeLimits({
+          address: selectedAccount!.address,
+          collectionId: Number(collection_id),
+          limits: {
+            tokenLimit: getValues('tokenLimit'),
+            ownerCanDestroy: getValues('ownerCanDestroy'),
+          },
+        }).then((value) => {
+          setTotalFee({
+            ...totalFee,
+            limitFee: parseFloat(value.amount),
+          });
         });
-      });
-    }
-  }, [dirtyFields.newSponsor]);
-
-  useEffect(() => {
-    const { ownerCanDestroy, tokenLimit } = dirtyFields;
-    if (ownerCanDestroy || tokenLimit) {
-      getFeeLimits({
-        address: selectedAccount!.address,
-        collectionId: Number(collection_id),
-        limits: {
-          tokenLimit: getValues('tokenLimit'),
-          ownerCanDestroy: getValues('ownerCanDestroy'),
-        },
-      }).then((value) => {
-        setTotalFee({
-          ...totalFee,
-          limitFee: parseFloat(value.amount),
-        });
-      });
-    }
-  }, [dirtyFields.ownerCanDestroy, dirtyFields.tokenLimit]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   useEffect(() => {
     if (submitWaitResultErrorSponsorship) {
