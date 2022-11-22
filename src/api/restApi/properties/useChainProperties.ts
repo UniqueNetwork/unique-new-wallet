@@ -10,14 +10,7 @@ export const useChainProperties = (
     chainsUrl.map((baseUrl) => {
       return {
         queryKey: queryKeys.chain.properties(baseUrl),
-        queryFn: async () => {
-          try {
-            const api = new Sdk({ baseUrl, signer: null });
-            return Promise.resolve(api.chain.properties());
-          } catch (e) {
-            return Promise.reject(e);
-          }
-        },
+        queryFn: () => new Sdk({ baseUrl, signer: null }).chain.properties(),
       };
     }),
   );
