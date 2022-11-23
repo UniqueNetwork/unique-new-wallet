@@ -15,7 +15,8 @@ import { Account } from '@app/account';
 import { Icon } from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
-import { styles, theme } from './styles';
+import { theme } from '../theme';
+import { styles } from './styles';
 
 const DropdownIndicator = (props: DropdownIndicatorProps<Account, false>) => {
   return (

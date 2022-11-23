@@ -1,5 +1,5 @@
 export * from './AccountLinkComponent';
-export * from './AccountSelect';
+export * from './Select/AccountSelect';
 export * from './AccountsGroupButton';
 export * from './Achievement';
 export * from './ActionBtn';

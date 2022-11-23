@@ -6,11 +6,17 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { AsyncPaginate, AsyncPaginateProps } from 'react-select-async-paginate';
+import {
+  AsyncPaginate,
+  AsyncPaginateProps,
+  LoadOptions,
+} from 'react-select-async-paginate';
 import {
   ClearIndicatorProps,
   components,
   DropdownIndicatorProps,
+  GetOptionLabel,
+  GetOptionValue,
   GroupBase,
   OptionProps,
   SelectInstance,
@@ -18,14 +24,30 @@ import {
 } from 'react-select';
 import { Icon } from '@unique-nft/ui-kit';
 
-import { styles, theme } from './styles';
+import { theme } from './theme';
+import { styles } from './styles';
 
 const defaultPage = 0;
 
 export type Option = {
-  label: string;
-  value: string;
+  label?: string;
+  value?: string;
 } & Record<string, any>;
+
+export type AdditionalSettings = {
+  page: number;
+};
+
+export type SelectLoadOptions = LoadOptions<
+  Option,
+  GroupBase<Option>,
+  AdditionalSettings
+>;
+
+export interface SelectProps
+  extends AsyncPaginateProps<Option, GroupBase<Option>, AdditionalSettings, false> {
+  render?: ReactNode;
+}
 
 export const optionTypeGuard = (option: unknown): option is Option => {
   return (
@@ -35,14 +57,6 @@ export const optionTypeGuard = (option: unknown): option is Option => {
     Object.hasOwn(option, 'value')
   );
 };
-
-export interface SelectProps
-  extends Omit<
-    AsyncPaginateProps<Option, GroupBase<Option>, unknown, false>,
-    'components'
-  > {
-  render?: ReactNode;
-}
 
 const DropdownIndicator = (props: DropdownIndicatorProps<Option, false>) => {
   return (
@@ -128,9 +142,18 @@ export const Select = (props: SelectProps) => {
     setInputValue(inputValue);
   }, []);
 
+  const getOptionLabel: GetOptionLabel<Option> = useCallback(
+    (option: Option) => option.label || '',
+    [],
+  );
+
+  const getOptionValue: GetOptionValue<Option> = useCallback(
+    (option: Option) => option.value || '',
+    [],
+  );
+
   return (
     <AsyncPaginate
-      {...props}
       isClearable
       isSearchable
       styles={styles}
@@ -147,13 +170,15 @@ export const Select = (props: SelectProps) => {
         DropdownIndicator,
         Option: CustomOption,
         IndicatorSeparator: null,
+        ...props.components,
       }}
-      getOptionLabel={(opt: Option) => opt.label}
-      getOptionValue={(opt: Option) => opt.value}
+      getOptionLabel={getOptionLabel}
+      getOptionValue={getOptionValue}
       onMenuOpen={menuOpenHandler}
       onMenuClose={menuCloseHandler}
       onInputChange={changeInputHandler}
       onChange={changeHandler}
+      {...props}
     />
   );
 };

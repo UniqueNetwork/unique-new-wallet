@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, VFC } from 'react';
+import { useCallback, useMemo, VFC } from 'react';
 import classNames from 'classnames';
 import {
   Avatar,
@@ -25,10 +25,9 @@ import {
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { useFileUpload } from '@app/api';
-import { Select, Option } from '@app/components';
+import { Select, Option, SelectLoadOptions } from '@app/components';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { useAccounts } from '@app/hooks';
-import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
 import { AttributeType } from './types';
 import { AttributesRow } from './AttributesRow';
@@ -68,25 +67,27 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
     },
   };
   const { selectedAccount } = useAccounts();
-  const { fetchMore, isPagination } = useGraphQlCollectionsByAccount({
+  const { fetchMore } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
     options: defaultOptions,
     enabled: false,
   });
 
-  const loadOptions: any = async (
-    searchQuery: string | undefined,
-    loadedOptions: any,
-    { page }: any,
+  const loadOptions: SelectLoadOptions = async (
+    searchQuery,
+    loadedOptions,
+    additionalSettings,
   ) => {
+    const { page } = additionalSettings ?? { page: 0 };
     const { collections, isPagination } = await fetchMore(page, searchQuery);
 
     return {
-      options: collections?.map<Option>((c) => ({
-        label: c.name,
-        value: c.collection_id.toString(),
-        cover: getTokenIpfsUriByImagePath(c.collection_cover),
-      })),
+      options:
+        collections?.map<Option>((c) => ({
+          label: c.name,
+          value: c.collection_id.toString(),
+          cover: getTokenIpfsUriByImagePath(c.collection_cover),
+        })) ?? [],
       hasMore: isPagination,
       additional: {
         page: isPagination ? page + 1 : 0,
@@ -139,7 +140,6 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
               rules={{ required: true }}
               render={({ field: { onChange } }) => (
                 <Select
-                  // @ts-ignore
                   render={<OptionItem />}
                   debounceTimeout={500}
                   loadOptions={loadOptions}

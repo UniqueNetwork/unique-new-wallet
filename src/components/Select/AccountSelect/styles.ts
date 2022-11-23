@@ -1,19 +1,16 @@
 import { GroupBase, StylesConfig } from 'react-select';
 
-import { Option } from './Select';
+import { Account } from '@app/account';
 
-export const styles: StylesConfig<Option, false, GroupBase<any>> = {
+export const styles: StylesConfig<Account, false, GroupBase<Account>> = {
   control: (css) => ({
     ...css,
-    padding: '7px var(--prop-gap)',
-    height: 'calc(var(--prop-gap) * 2.5)',
+    padding: 'calc(var(--prop-gap) / 4) var(--prop-gap)',
+    height: 'calc(var(--prop-gap) * 4)',
     borderColor: 'var(--color-grey-300)',
     boxShadow: 'none',
-    '&:hover': {
-      borderColor: 'var(--color-grey-300)',
-    },
-    '&:focus-within': {
-      borderColor: 'var(--color-grey-400)',
+    '&:hover, &:focus-within': {
+      borderColor: 'var(--color-blue-grey-400)',
     },
   }),
   valueContainer: (css) => ({ ...css, padding: 0 }),
@@ -25,6 +22,15 @@ export const styles: StylesConfig<Option, false, GroupBase<any>> = {
   dropdownIndicator: (css) => ({
     ...css,
     padding: 0,
+  }),
+  menu: (css) => ({
+    ...css,
+    border: '1px solid var(--color-grey-300)',
+    boxShadow: 'none',
+  }),
+  option: (css) => ({
+    ...css,
+    padding: 'calc(var(--prop-gap) / 4) var(--prop-gap)',
   }),
   placeholder: (css) => ({
     ...css,
@@ -44,9 +50,5 @@ export const styles: StylesConfig<Option, false, GroupBase<any>> = {
   singleValue: (css) => ({
     ...css,
     marginLeft: 0,
-  }),
-  option: (css) => ({
-    ...css,
-    color: 'inherit',
   }),
 };
