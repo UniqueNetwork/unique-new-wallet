@@ -78,7 +78,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       description: '',
       address: selectedAccount?.address,
       nesting: {
-        tokenOwner: false,
+        tokenOwner: true,
       },
     },
   });

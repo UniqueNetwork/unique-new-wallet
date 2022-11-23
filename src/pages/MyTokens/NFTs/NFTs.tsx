@@ -1,5 +1,6 @@
-import { useContext, useMemo, VFC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, VFC } from 'react';
 
+import ApiContext from '@app/api/ApiContext';
 import AccountContext from '@app/account/AccountContext';
 import {
   useGraphQlCollectionsByTokensOwner,
@@ -29,6 +30,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 6, xl: 8 });
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
+  const { currentChain } = useContext(ApiContext);
   const {
     tokensPage,
     statusFilter,
@@ -49,23 +51,32 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     !selectedAccount?.address,
   );
 
-  const { tokens, tokensCount, tokensLoading, isPagination, fetchMore } =
-    useGraphQlOwnerTokens(
-      selectedAccount?.address,
-      {
-        statusFilter,
-        collectionsIds,
-        searchText,
-        typeFilter,
-      },
-      {
-        skip: !selectedAccount?.address,
-        direction: sortByTokenId,
-        pagination: { page: tokensPage, limit: getLimit },
-      },
-    );
+  const {
+    tokens,
+    tokensCount,
+    tokensLoading,
+    isPagination,
+    fetchMore,
+    refetchOwnerTokens,
+  } = useGraphQlOwnerTokens(
+    selectedAccount?.address,
+    {
+      statusFilter,
+      collectionsIds,
+      searchText,
+      typeFilter,
+    },
+    {
+      skip: !selectedAccount?.address,
+      direction: sortByTokenId,
+      pagination: { page: tokensPage, limit: getLimit },
+    },
+  );
 
-  const { cacheTokens } = useCheckExistTokensByAccount({ tokens });
+  const { cacheTokens } = useCheckExistTokensByAccount({
+    tokens,
+    refetchTokens: refetchOwnerTokens,
+  });
 
   const defaultCollections = useMemo(
     () =>
@@ -112,12 +123,16 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     return chips;
   }, [searchText, statusFilter, typeFilter, collectionsIds, defaultCollections]);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     changeSearchText('');
     changeStatusFilter('allStatus');
     changeTypeFilter('allType');
     setCollectionsIds([]);
-  };
+  }, [changeSearchText, changeStatusFilter, changeTypeFilter, setCollectionsIds]);
+
+  useEffect(() => {
+    resetFilters();
+  }, [currentChain.network, resetFilters, selectedAccount]);
 
   return (
     <>

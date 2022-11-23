@@ -22,22 +22,23 @@ export const useGraphQlCheckInExistCollectionsByAccount = ({
   skip: boolean;
 }) => {
   const collectionsIds = collections.map(({ collectionId }) => collectionId);
-  const { data: response } = useQuery<QueryResponse<Pick<Collection, 'collection_id'>>>(
-    COLLECTIONS_BY_CACHE_QUERY,
-    {
-      skip,
-      fetchPolicy: 'network-only',
-      nextFetchPolicy: 'network-only',
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        where: {
-          collection_id: { _in: collectionsIds },
-        },
+  const { data: response, refetch } = useQuery<
+    QueryResponse<Pick<Collection, 'collection_id'>>
+  >(COLLECTIONS_BY_CACHE_QUERY, {
+    skip,
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      where: {
+        collection_id: { _in: collectionsIds },
+        burned: { _eq: 'false' },
       },
     },
-  );
+  });
 
   return {
+    refetchCheckInExistCollections: refetch,
     synchronizedCollectionsIds:
       response?.collections.data?.map(({ collection_id }) => collection_id) ?? [],
   };

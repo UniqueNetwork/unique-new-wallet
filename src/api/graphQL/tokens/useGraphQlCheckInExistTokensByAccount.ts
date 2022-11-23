@@ -36,7 +36,7 @@ export const useGraphQlCheckInExistTokensByAccount = ({
     {},
   );
 
-  const { data: response } = useQuery<
+  const { data: response, refetch } = useQuery<
     QueryResponse<Pick<Token, 'token_id' | 'collection_id'>>
   >(TOKENS_QUERY, {
     skip,
@@ -45,6 +45,7 @@ export const useGraphQlCheckInExistTokensByAccount = ({
     notifyOnNetworkStatusChange: true,
     variables: {
       where: {
+        burned: { _eq: 'false' },
         ...(collectionId !== undefined
           ? {
               collection_id: { _eq: collectionId },
@@ -65,6 +66,7 @@ export const useGraphQlCheckInExistTokensByAccount = ({
   });
 
   return {
+    refetchCheckInExistTokensByAccount: refetch,
     synchronizedTokensIds: response?.tokens.data || [],
   };
 };

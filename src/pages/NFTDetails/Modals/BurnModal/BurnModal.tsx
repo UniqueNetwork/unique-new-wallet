@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
-import { useTokenBurn } from '@app/api';
+import { useTokenBurn, useTokenOwner } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
 
@@ -25,7 +25,13 @@ export const BurnModal = <T extends TBaseToken>({
     isLoadingSubmitResult,
     feeError,
     submitWaitResultError,
+    feeLoading,
   } = useTokenBurn();
+
+  const { data: tokenOwner, isRefetching: isLoadingTokenOwner } = useTokenOwner({
+    tokenId: token?.tokenId,
+    collectionId: token?.collectionId,
+  });
 
   useEffect(() => {
     if (!feeError) {
@@ -42,7 +48,7 @@ export const BurnModal = <T extends TBaseToken>({
   }, [submitWaitResultError]);
 
   useEffect(() => {
-    if (!token || !selectedAccount?.address) {
+    if (!token || !selectedAccount?.address || !tokenOwner) {
       return;
     }
 
@@ -50,11 +56,12 @@ export const BurnModal = <T extends TBaseToken>({
       address: selectedAccount.address,
       collectionId: token.collectionId,
       tokenId: token.tokenId,
+      from: tokenOwner?.owner,
     });
-  }, []);
+  }, [tokenOwner]);
 
   const burnHandler = () => {
-    if (!token || !selectedAccount?.address) {
+    if (!token || !selectedAccount?.address || !tokenOwner) {
       return;
     }
 
@@ -63,6 +70,7 @@ export const BurnModal = <T extends TBaseToken>({
         address: selectedAccount.address,
         collectionId: token.collectionId,
         tokenId: token.tokenId,
+        from: tokenOwner?.owner,
       },
     }).then(() => {
       info('NFT burned successfully');
@@ -82,6 +90,7 @@ export const BurnModal = <T extends TBaseToken>({
   return (
     <AskBurnModal
       fee={feeFormatted ?? ''}
+      isLoading={isLoadingTokenOwner || feeLoading}
       isVisible={true}
       onBurn={burnHandler}
       onClose={onClose}

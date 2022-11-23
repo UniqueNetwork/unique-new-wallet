@@ -45,6 +45,7 @@ export const useGraphQlCollectionsByAccount = ({
     error,
     fetchMore,
     loading,
+    refetch,
   } = useQuery<QueryResponse<Collection>>(COLLECTIONS_BY_ACCOUNT_QUERY, {
     skip: !accountAddress,
     fetchPolicy: 'network-only',
@@ -60,6 +61,7 @@ export const useGraphQlCollectionsByAccount = ({
           { owner_normalized: { _eq: accountAddress } },
         ],
         ...getConditionBySearchText('name', search),
+        burned: { _eq: 'false' },
       },
     },
   });

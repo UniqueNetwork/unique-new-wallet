@@ -48,6 +48,7 @@ export const useGraphQlGetTokensCollection = ({
       variables: {
         limit: 10000,
         where: {
+          burned: { _eq: 'false' },
           ...(excludeCurrentTokenId !== undefined && {
             token_id: { _neq: excludeCurrentTokenId },
           }),

@@ -1,18 +1,19 @@
-import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
+// @ts-nocheck
+import React, { useCallback, useRef, useState } from 'react';
 import {
-  OptionProps,
-  SingleValueProps,
   ClearIndicatorProps,
-  DropdownIndicatorProps,
-  SelectInstance,
   components,
+  DropdownIndicatorProps,
   GroupBase,
+  OptionProps,
+  SelectInstance,
+  SingleValueProps,
 } from 'react-select';
 import CreatebleSelect, { CreatableProps } from 'react-select/creatable';
-import { Icon, useNotifications } from '@unique-nft/ui-kit';
 
 import { Account } from '@app/account';
-import { AccountInfo } from '@app/components/AccountSelect/AccountInfo';
+import { Icon } from '@app/components';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 import { styles, theme } from './styles';
 
@@ -37,20 +38,7 @@ const AccountSingleValue = (props: SingleValueProps<Account, false>) => {
     data,
     selectProps: { isSearchable, menuIsOpen },
   } = props;
-  const { info } = useNotifications();
-
   const label = props.data?.address;
-
-  //question: should we keep this functionality here
-  //maybe will be better to get pages and bussiness components the opportunity to pass onCopy handler
-  const onCopyHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
-    navigator.clipboard.writeText(label || '');
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    info('Address copied successfully');
-  };
 
   if (isSearchable && menuIsOpen) {
     return null;
@@ -58,12 +46,11 @@ const AccountSingleValue = (props: SingleValueProps<Account, false>) => {
 
   return (
     <components.SingleValue {...props}>
-      <AccountInfo
-        canCopy
+      <AccountCard
+        accountAddress={label}
+        isShort={props.selectProps.shortenLabel}
+        accountName={data?.meta?.name}
         key={label}
-        address={label}
-        name={data?.meta?.name}
-        onCopy={onCopyHandler}
       />
     </components.SingleValue>
   );
@@ -72,17 +59,18 @@ const AccountSingleValue = (props: SingleValueProps<Account, false>) => {
 const AccountOption = (props: OptionProps<Account, false>) => {
   return (
     <components.Option {...props}>
-      <AccountInfo
+      <AccountCard
+        accountAddress={props?.label}
+        accountName={props?.data?.meta?.name}
+        isShort={props.selectProps.shortenLabel}
         key={props?.label}
-        name={props?.data?.meta?.name}
-        address={props?.label}
       />
     </components.Option>
   );
 };
 
 export const AccountSelect = (
-  props: CreatableProps<Account, false, GroupBase<Account>>,
+  props: CreatableProps<Account, false, GroupBase<Account>> & { shortenLabel?: boolean },
 ) => {
   const { isSearchable, value } = props;
 
@@ -127,6 +115,7 @@ export const AccountSelect = (
       theme={theme}
       styles={styles}
       ref={selectRef}
+      classNamePrefix="account-select"
       isClearable={props.isClearable ?? true}
       isSearchable={props.isSearchable ?? false}
       inputValue={inputValue}
@@ -137,6 +126,7 @@ export const AccountSelect = (
         ClearIndicator,
         DropdownIndicator,
       }}
+      shortenLabel={props.shortenLabel}
       getOptionLabel={getOptionLabel}
       getOptionValue={getOptionLabel}
       getNewOptionData={getNewOptionData}
