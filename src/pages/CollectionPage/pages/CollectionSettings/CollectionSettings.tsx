@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useGraphQlCollectionTokens } from '@app/api/graphQL/tokens/useGraphQlCollectionTokens';
+import { useCollectionBurn } from '@app/api/restApi/collection/useCollectionBurn';
 import { useCollectionLimits } from '@app/api/restApi/collection/useCollectionLimits';
 import { useCollectionPermissions } from '@app/api/restApi/collection/useCollectionPermissions';
 import { useCollectionSponsorship } from '@app/api/restApi/collection/useCollectionSponsorship';
@@ -30,7 +31,6 @@ import {
 } from '@app/pages/components/FormComponents';
 import { truncateDecimalsBalanceSheet } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { useCollectionBurn } from '@app/api/restApi/collection/useCollectionBurn';
 
 import { useNftFilterContext } from '../../components/CollectionNftFilters/context';
 
@@ -330,11 +330,6 @@ const CollectionSettings = () => {
           },
         ]);
       });
-
-    // const { data } = await deleteCollection(api!, {
-    //   collectionId: collection_id,
-    //   address: selectedAccount.address,
-    // });
   };
 
   return (
