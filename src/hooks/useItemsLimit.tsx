@@ -1,6 +1,6 @@
 import { SizeMap, useDeviceSize } from '@app/hooks/useDeviceSize';
 
-const DEFAULT_ITEMS_COUNT = 10;
+export const DEFAULT_ITEMS_COUNT = 10;
 
 export const useItemsLimit = (breakpoints: Record<string, number>): number => {
   const deviceSize = useDeviceSize();

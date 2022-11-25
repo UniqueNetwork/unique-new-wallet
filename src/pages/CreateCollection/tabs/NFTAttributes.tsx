@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import {
   Accordion,
   Checkbox,
@@ -9,8 +8,10 @@ import {
   Toggle,
 } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
+import styled from 'styled-components';
 
 import { TooltipWrapper } from '@app/components';
+import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 import {
   FormBody,
   FormHeader,
@@ -18,7 +19,6 @@ import {
   SettingsRow,
 } from '@app/pages/components/FormComponents';
 import { maxTokenLimit } from '@app/pages/constants/token';
-import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 import { AttributesTable } from './AttributesTable';
 
@@ -147,7 +147,7 @@ export const NFTAttributes = () => {
           </SettingsRow>
           <SettingsRow>
             <Controller
-              name="ownerCanDestroy"
+              name="limits.ownerCanDestroy"
               render={({ field: { value, onChange } }) => (
                 <Checkbox
                   label={

@@ -1,8 +1,10 @@
 import { Button, Heading, Icon, Loader, useNotifications } from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
 
+import { useGraphQlCollectionTokens } from '@app/api/graphQL/tokens/useGraphQlCollectionTokens';
 import { useCollectionLimits } from '@app/api/restApi/collection/useCollectionLimits';
 import { useCollectionPermissions } from '@app/api/restApi/collection/useCollectionPermissions';
 import { useCollectionSponsorship } from '@app/api/restApi/collection/useCollectionSponsorship';
@@ -13,7 +15,7 @@ import {
   InputController,
   ToggleController,
 } from '@app/components/FormControllerComponents';
-import { useAccounts } from '@app/hooks';
+import { DEFAULT_ITEMS_COUNT, useAccounts } from '@app/hooks';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 import {
   SettingsCollectionModal,
@@ -28,6 +30,9 @@ import {
 } from '@app/pages/components/FormComponents';
 import { truncateDecimalsBalanceSheet } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { useCollectionBurn } from '@app/api/restApi/collection/useCollectionBurn';
+
+import { useNftFilterContext } from '../../components/CollectionNftFilters/context';
 
 const CollectionSettings = () => {
   const { error } = useNotifications();
@@ -58,9 +63,28 @@ const CollectionSettings = () => {
     submitWaitResult: submitWaitPermissions,
     submitWaitResultError: submitWaitResultErrorPermissions,
   } = useCollectionPermissions();
+  const { submitWaitResult: submitWaitResultCollectionburn } = useCollectionBurn();
   const { selectedAccount } = useAccounts();
-  const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
   const navigate = useNavigate();
+  const { collectionId } = useParams<'collectionId'>();
+  const { search, direction, page, type } = useNftFilterContext();
+
+  const { tokensCount } = useGraphQlCollectionTokens({
+    collectionId: parseInt(collectionId || ''),
+    collectionOwner: selectedAccount?.address,
+    filter: {
+      search,
+      type,
+    },
+    options: {
+      skip: !selectedAccount?.address,
+      direction,
+      pagination: {
+        page,
+        limit: DEFAULT_ITEMS_COUNT,
+      },
+    },
+  });
 
   useEffect(() => {
     logUserEvent(UserEvents.SETTINGS_OF_COLLECTION);
@@ -273,31 +297,44 @@ const CollectionSettings = () => {
   };
 
   const handleBurnCollection = () => {
-    if (!collection_id || !selectedAccount) {
-      return;
-    }
+    setVisibleConfirmModal(true);
+    setSteps([
+      {
+        name: 'Burn collection',
+        pending: true,
+      },
+    ]);
 
-    setVisibleConfirmModal(false);
-    setLoadingBurnCollection(true);
-
-    try {
-      /* const { data } = await deleteCollection(api!, {
-        collectionId: collection_id,
-        address: selectedAccount.address,
+    submitWaitResultCollectionburn({
+      payload: {
+        address: selectedAccount!.address,
+        collectionId: Number(collection_id),
+      },
+    })
+      .then(() => {
+        setVisibleConfirmModal(false);
+        setSteps([
+          {
+            name: 'Burn collection',
+            pending: false,
+          },
+        ]);
+        navigate('/my-collections');
+      })
+      .catch(() => {
+        setVisibleConfirmModal(false);
+        setSteps([
+          {
+            name: 'Burn collection',
+            pending: false,
+          },
+        ]);
       });
 
-      const signature = await signMessage(data.signerPayloadJSON, selectedAccount);
-
-      await extrinsicSubmit(api!, {
-        signerPayloadJSON: { ...data.signerPayloadJSON },
-        signature,
-      }); */
-      navigate('/my-collections');
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoadingBurnCollection(false);
-    }
+    // const { data } = await deleteCollection(api!, {
+    //   collectionId: collection_id,
+    //   address: selectedAccount.address,
+    // });
   };
 
   return (
@@ -392,7 +429,8 @@ const CollectionSettings = () => {
                       </TooltipWrapper>
                     </>
                   }
-                  name="destroy"
+                  name="ownerCanDestroy"
+                  id="ownerCanDestroy"
                   disabled={!ownerCanDestroy}
                 />
               </SettingsRow>
@@ -403,20 +441,42 @@ const CollectionSettings = () => {
                   }`}
                 />
               )}
-              <ButtonGroup>
+              <SettingsButtonGroup>
                 <TooltipWrapper message={<>The form in&nbsp;development progress</>}>
                   <Button title="Save changes" onClick={submitHandler} />
                 </TooltipWrapper>
-                {/* TODO: WAL-343
-                  {ownerCanDestroy && (
-                    <Button
-                      title="Burn collection"
-                      iconLeft={{ size: 15, name: 'burn', color: 'var(--color-coral-500)' }}
-                      role="ghost"
-                      onClick={() => setVisibleConfirmModal(true)}
-                    />
-                  )} */}
-              </ButtonGroup>
+                {ownerCanDestroy && (
+                  <>
+                    <TooltipWrapper
+                      align={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                        appearance: 'horizontal',
+                      }}
+                      message="You cannot burn a collection if it contains tokens"
+                    >
+                      <Button
+                        title="Burn collection"
+                        className={tokensCount !== 0 ? 'disable' : ''}
+                        iconLeft={{
+                          size: 15,
+                          name: 'burn',
+                          color:
+                            tokensCount !== 0
+                              ? 'var(--color-grey-500)'
+                              : 'var(--color-coral-500)',
+                        }}
+                        role="ghost"
+                        onClick={() => {
+                          if (tokensCount === 0) {
+                            handleBurnCollection();
+                          }
+                        }}
+                      />
+                    </TooltipWrapper>
+                  </>
+                )}
+              </SettingsButtonGroup>
             </FormProvider>
           </>
         )}
@@ -425,19 +485,23 @@ const CollectionSettings = () => {
         title="Please wait"
         steps={steps}
         isVisible={isVisibleConfirmModal}
-        onConfirm={handleBurnCollection}
+        onConfirm={() => {}}
         onClose={() => setVisibleConfirmModal(false)}
       />
     </PagePaper>
   );
 };
 
-/* TODO: WAL-343
 const SettingsButtonGroup = styled(ButtonGroup)`
+  justify-content: space-between;
   .unique-button.ghost {
     padding: 0;
     color: var(--color-coral-500);
   }
-`; */
+  .unique-button.disable {
+    pointer-events: none;
+    color: var(--color-grey-500);
+  }
+`;
 
 export default CollectionSettings;
