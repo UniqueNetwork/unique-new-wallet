@@ -1,10 +1,12 @@
+import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
 import { Heading } from '@unique-nft/ui-kit';
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { Address } from '@unique-nft/utils/address';
+import React, { useCallback, useEffect, useState } from 'react';
 import { UseQueryResult } from 'react-query';
-import { AllBalancesResponse } from '@unique-nft/sdk';
+import styled from 'styled-components';
 
 import { ApiWrapper, useAccountBalancesService } from '@app/api';
+import { useChainProperties } from '@app/api/restApi/properties/useChainProperties';
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
 import { RampModal } from '@app/pages';
@@ -38,7 +40,7 @@ const CoinsHeading = styled(Heading)`
   }
 `;
 
-export const Coins: FC = () => {
+export const Coins = () => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [rampModalToken, setRampModalToken] = useState('KSM');
@@ -51,6 +53,13 @@ export const Coins: FC = () => {
     Object.values(config.allChains).map((chain) => chain.apiEndpoint),
     selectedAccount?.address,
   ) as UseQueryResult<AllBalancesResponse>[];
+
+  const chainProperty = useChainProperties(
+    Object.values(config.allChains).map((chain) => ({
+      network: chain.network,
+      api: chain.apiEndpoint,
+    })),
+  );
 
   useEffect(() => {
     logUserEvent(UserEvents.COINS);
@@ -72,6 +81,7 @@ export const Coins: FC = () => {
   interface NetworkInfo {
     getDisabled: boolean;
     onGet?: () => void;
+    normalizedAddress: (address: string, prefix?: number) => string;
   }
 
   const coinConfig: Record<NetworkType, NetworkInfo> = {
@@ -80,6 +90,7 @@ export const Coins: FC = () => {
       onGet: () => {
         window.open(config.telegramBot, '_blank', 'noopener');
       },
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     KUSAMA: {
       getDisabled: false,
@@ -87,18 +98,21 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('KSM');
       },
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     QUARTZ: {
       getDisabled: false,
       onGet: () => {
         window.open(config.mexcQTZUSDT, '_blank', 'noopener');
       },
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     UNIQUE: {
       getDisabled: false,
       onGet: () => {
         window.open(config.cryptoExchangeUNQ, '_blank', 'noopener');
       },
+      normalizedAddress: Address.normalize.substrateAddress,
     },
     POLKADOT: {
       getDisabled: false,
@@ -106,6 +120,7 @@ export const Coins: FC = () => {
         getCoinsHandler();
         setRampModalToken('DOT');
       },
+      normalizedAddress: Address.normalize.substrateAddress,
     },
   };
 
@@ -114,18 +129,22 @@ export const Coins: FC = () => {
       <CoinsHeading size="4">Network</CoinsHeading>
       <CoinsList>
         {Object.values(config.allChains).map((chain, idx) => {
-          if (!coinConfig[chain.network]) {
+          if (!coinConfig[chain.network] && selectedAccount) {
             return null;
           }
 
-          const { getDisabled, onGet } = coinConfig[chain.network];
+          const { getDisabled, onGet, normalizedAddress } = coinConfig[chain.network];
+          const data = chainProperty[chain.network].data as ChainPropertiesResponse;
+          const SS58Prefix = data?.SS58Prefix;
           return (
             <CoinsRow
               getDisabled={getDisabled}
               key={chain.network}
-              loading={accountBalances[idx].isLoading}
+              loading={
+                chainProperty[chain.network].isLoading || accountBalances[idx].isLoading
+              }
               sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
-              address={selectedAccount?.address}
+              address={normalizedAddress(selectedAccount!.address, SS58Prefix)}
               balanceFull={accountBalances[idx].data?.freeBalance.amount}
               balanceLocked={accountBalances[idx].data?.lockedBalance.amount}
               balanceTransferable={accountBalances[idx].data?.availableBalance.amount}

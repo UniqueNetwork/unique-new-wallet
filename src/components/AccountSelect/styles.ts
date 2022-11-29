@@ -15,18 +15,14 @@ export const theme = (theme: Theme) => ({
 });
 
 export const styles: StylesConfig<Account, false, GroupBase<Account>> = {
-  container: (css) => ({ ...css, height: 'calc(var(--prop-gap) * 4)' }),
   control: (css) => ({
     ...css,
-    padding: 'calc(var(--prop-gap) / 2) var(--prop-gap)',
+    padding: 'calc(var(--prop-gap) / 4) var(--prop-gap)',
     height: 'calc(var(--prop-gap) * 4)',
     borderColor: 'var(--color-grey-300)',
     boxShadow: 'none',
-    '&:hover': {
-      borderColor: 'var(--color-grey-300)',
-    },
-    '&:focus-within': {
-      borderColor: 'var(--color-grey-400)',
+    '&:hover, &:focus-within': {
+      borderColor: 'var(--color-blue-grey-400)',
     },
   }),
   valueContainer: (css) => ({ ...css, padding: 0 }),
@@ -38,6 +34,15 @@ export const styles: StylesConfig<Account, false, GroupBase<Account>> = {
   dropdownIndicator: (css) => ({
     ...css,
     padding: 0,
+  }),
+  menu: (css) => ({
+    ...css,
+    border: '1px solid var(--color-grey-300)',
+    boxShadow: 'none',
+  }),
+  option: (css) => ({
+    ...css,
+    padding: 'calc(var(--prop-gap) / 4) var(--prop-gap)',
   }),
   placeholder: (css) => ({
     ...css,

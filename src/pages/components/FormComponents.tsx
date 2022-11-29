@@ -145,7 +145,7 @@ export const AdditionalText = styled(Text).attrs({
 
 export const ButtonGroup = styled.div<{
   align?: 'flex-start' | 'center' | 'flex-end';
-  fill?: boolean;
+  $fill?: boolean;
   gap?: number;
   stack?: boolean;
 }>`
@@ -160,7 +160,7 @@ export const ButtonGroup = styled.div<{
   }
 
   & > * {
-    flex: ${(p) => (p.stack ? '1 1 100%' : p.fill ? '1 1 auto' : '0 0 auto')};
+    flex: ${(p) => (p.stack ? '1 1 100%' : p.$fill ? '1 1 auto' : '0 0 auto')};
 
     @media screen and (min-width: 568px) {
       flex: 0 0 auto;

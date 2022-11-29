@@ -93,6 +93,7 @@ export const useGraphQlOwnerTokens = (
     loading: tokensLoading,
     error,
     fetchMore,
+    refetch,
   } = useQuery<QueryResponse<Token>>(OWNER_TOKENS_QUERY, {
     skip: skip || !owner,
     fetchPolicy: 'network-only',
@@ -125,5 +126,6 @@ export const useGraphQlOwnerTokens = (
     fetchMore,
     tokensLoading,
     error,
+    refetchOwnerTokens: refetch,
   };
 };

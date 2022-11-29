@@ -45,6 +45,7 @@ export const useGraphQlCollectionsByNestingAccount = ({
         nesting_enabled: {
           _eq: 'true',
         },
+        burned: { _eq: 'false' },
       },
     },
   });
