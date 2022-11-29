@@ -84,7 +84,11 @@ export const faqItems = <T extends Record<string, unknown>>(
       ),
     },
     {
-      title: 'What is nesting',
+      title: (
+        <>
+          What is nesting <span className="tooltip">NEW</span>
+        </>
+      ),
       defaultExpanded: 'isNestedInfo' in state,
       content: (
         <>
@@ -109,7 +113,12 @@ export const faqItems = <T extends Record<string, unknown>>(
       ),
     },
     {
-      title: 'How do I nest and manipulate a nested token?',
+      title: (
+        <>
+          How do I nest and manipulate a nested token?
+          <span className="tooltip">NEW</span>
+        </>
+      ),
       defaultExpanded: 'isNestedInfo' in state,
       content: (
         <>
