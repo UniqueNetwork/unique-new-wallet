@@ -3,7 +3,6 @@ import { ApolloProvider } from '@apollo/client';
 import { IClient, Sdk } from '@unique-nft/sdk';
 
 import { Chain } from '@app/types';
-import { BaseApi, IBaseApi } from '@app/api';
 import { defaultChainKey } from '@app/utils/configParser';
 
 import { GqlClient } from './graphQL/gqlClient';

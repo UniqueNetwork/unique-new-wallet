@@ -49,7 +49,7 @@ const AccountSingleValue = (props: SingleValueProps<Account, false>) => {
       <AccountCard
         accountAddress={label}
         isShort={props.selectProps.shortenLabel}
-        accountName={data?.meta?.name}
+        accountName={data?.name}
         key={label}
       />
     </components.SingleValue>
@@ -61,7 +61,7 @@ const AccountOption = (props: OptionProps<Account, false>) => {
     <components.Option {...props}>
       <AccountCard
         accountAddress={props?.label}
-        accountName={props?.data?.meta?.name}
+        accountName={props?.data?.name}
         isShort={props.selectProps.shortenLabel}
         key={props?.label}
       />

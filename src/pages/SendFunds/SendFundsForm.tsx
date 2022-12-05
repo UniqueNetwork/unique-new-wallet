@@ -12,7 +12,6 @@ import { AccountSelect, InputText } from '@app/components';
 
 import { Group, InputAmount, InputAmountButton, StyledAdditionalText } from './styles';
 import { ContentRow } from '../components/ModalComponents';
-import { FundsForm } from './types';
 
 interface SendFundsFormProps {
   apiEndpoint: string;
@@ -23,7 +22,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
 
   const { chainProperties } = useContext(ChainPropertiesContext);
 
-  const [to, from] = useWatch<FundsForm, ['to', 'from']>({
+  const [to, from] = useWatch({
     name: ['to', 'from'],
   });
 
@@ -31,11 +30,11 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
   const { data: recipientBalance } = useAccountBalanceService(to?.address, apiEndpoint);
 
   const senders = useMemo(
-    () => accounts.filter((acc) => acc.address !== to?.address),
+    () => new Map([...accounts].filter(([_, value]) => value.address !== to?.address)),
     [to],
   );
   const recipients = useMemo(
-    () => accounts.filter((acc) => acc.address !== from?.address),
+    () => new Map([...accounts].filter(([_, value]) => value.address !== from?.address)),
     [from],
   );
 
@@ -101,7 +100,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
             render={({ field: { value, onChange } }) => (
               <AccountSelect
                 value={value}
-                options={senders}
+                options={[...senders.values()]}
                 placeholder="Select the sender"
                 onChange={onChange}
               />
@@ -124,7 +123,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
               <AccountSelect
                 isSearchable
                 value={value}
-                options={recipients}
+                options={[...recipients.values()]}
                 placeholder="Select the recipient"
                 isValidNewOption={externalRecipientValidator}
                 onChange={onChange}

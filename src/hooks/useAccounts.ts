@@ -1,8 +1,6 @@
 import { useCallback, useContext } from 'react';
-import { u8aToHex } from '@polkadot/util';
 import keyring from '@polkadot/ui-keyring';
 import { KeyringPair } from '@polkadot/keyring/types';
-import { web3FromSource } from '@polkadot/extension-dapp';
 import { KeypairType } from '@polkadot/util-crypto/types';
 
 import { useMessage } from '@app/hooks/useMessage';
@@ -18,12 +16,14 @@ export const useAccounts = () => {
     accounts,
     selectedAccount,
     isLoading,
-    fetchAccounts,
     fetchAccountsError,
     changeAccount,
     forgetLocalAccount,
     showSignDialog,
+    walletsCenter,
   } = useContext(AccountContext);
+
+  const { connectWallet } = walletsCenter;
 
   const addLocalAccount = useCallback(
     async (
@@ -47,9 +47,9 @@ export const useAccounts = () => {
         pairType as KeypairType,
       );
 
-      await fetchAccounts();
+      await connectWallet('keyring');
     },
-    [fetchAccounts],
+    [connectWallet],
   );
 
   const addAccountViaQR = useCallback(
@@ -81,7 +81,7 @@ export const useAccounts = () => {
     async (pair: KeyringPair, password: string) => {
       try {
         keyring.addPair(pair, password);
-        await fetchAccounts();
+        await connectWallet('keyring');
       } catch (e: any) {
         showError({
           name: 'warning',
@@ -89,27 +89,12 @@ export const useAccounts = () => {
         });
       }
     },
-    [fetchAccounts, showError],
-  );
-
-  const unlockLocalAccount = useCallback(
-    (password: string) => {
-      if (!signer) {
-        return;
-      }
-
-      const signature = keyring.getPair(signer.address);
-      signature.unlock(password);
-
-      return signature;
-    },
-    [signer],
+    [connectWallet, showError],
   );
 
   const signMessage = useCallback(
     async (unsignedTxPayload: UnsignedTxPayloadResponse, accountAddress?: string) => {
-      const account =
-        accounts.find((acc) => acc.address === accountAddress) || selectedAccount;
+      const account = accounts.get(accountAddress || '') || selectedAccount;
 
       if (!account) {
         throw new Error('Account was not provided');
@@ -121,25 +106,10 @@ export const useAccounts = () => {
       let signature: string | undefined;
 
       if (account.signerType === AccountSigner.local) {
-        const { signerPayloadHex } = unsignedTxPayload;
-        const pair = await showSignDialog(account);
-
-        signature = u8aToHex(
-          pair.sign(signerPayloadHex, {
-            withType: true,
-          }),
-        );
+        const password = await showSignDialog(account);
+        signature = await account.sign(unsignedTxPayload, account, { password });
       } else {
-        const injector = await web3FromSource(account.meta.source);
-        if (!injector.signer.signPayload) {
-          throw new Error('Web3 not available');
-        }
-
-        const result = await injector.signer.signPayload(
-          unsignedTxPayload?.signerPayloadJSON,
-        );
-
-        signature = result.signature;
+        signature = await account.sign(unsignedTxPayload, account);
       }
 
       if (!signature) {
@@ -157,13 +127,12 @@ export const useAccounts = () => {
     addAccountViaQR,
     changeAccount,
     isLoading,
-    fetchAccounts,
     fetchAccountsError,
     selectedAccount,
-    unlockLocalAccount,
     signer,
     signMessage,
     forgetLocalAccount,
     restoreJSONAccount,
+    walletsCenter,
   };
 };

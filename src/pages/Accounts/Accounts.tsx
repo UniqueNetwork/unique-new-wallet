@@ -7,20 +7,14 @@ import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import {
-  AccountsGroupButton,
-  Confirm,
-  PagePaper,
-  Table,
-  TooltipWrapper,
-  TransferBtn,
-} from '@app/components';
+import { Confirm, PagePaper, Table, TooltipWrapper, TransferBtn } from '@app/components';
 import { Search } from '@app/pages/components/Search';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { ConnectWallets } from '@app/pages';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
@@ -99,23 +93,8 @@ const SearchStyled = styled(Search)`
   }
 
   @media screen and (min-width: 1280px) {
-    max-width: 500px;
+    max-width: 720px;
     margin-left: auto;
-  }
-`;
-
-const ButtonGroup = styled.div`
-  flex: 1 1 100%;
-  display: flex;
-  @media screen and (min-width: 1024px) {
-    flex: 0 0 auto;
-    margin-left: calc(var(--prop-gap) * 3);
-  }
-  @media screen and (min-width: 1280px) {
-    margin-left: calc(var(--prop-gap) * 2);
-  }
-  .btn-container {
-    flex: 1 1 100%;
   }
 `;
 
@@ -285,7 +264,7 @@ const getAccountsColumns = ({
         <AccountCard
           canCopy
           accountAddress={`${rowData?.address}`}
-          accountName={`${rowData?.meta.name}`}
+          accountName={`${rowData?.name}`}
           accountType={`${rowData?.signerType.toLowerCase()}`}
         />
       );
@@ -344,18 +323,21 @@ const getAccountsColumns = ({
 ];
 
 const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
-  const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
+  const { accounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
+  const [isOpenConnectWallet, setOpenConnectWallet] = useState(false);
 
-  const balances = useAccountsBalanceService(accounts.map(({ address }) => address));
+  const balances = useAccountsBalanceService(
+    [...accounts].map(([_, { address }]) => address),
+  );
 
   const accountBalances = useMemo(
     () =>
-      accounts.map((account, idx) => ({
+      [...accounts].map(([_, account], idx) => ({
         ...account,
         balance: balances?.[idx].data,
       })),
@@ -384,15 +366,13 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
     return accountBalances?.filter(
       (account) =>
         account.address.toLowerCase().includes(searchString.toLowerCase()) ||
-        account.meta.name?.toLowerCase().includes(searchString.toLowerCase()),
+        account.name?.toLowerCase().includes(searchString.toLowerCase()),
     );
   }, [accountBalances, searchString]);
 
   const onChangeAccountsFinish = useCallback(() => {
     setIsOpenModal(false);
-
-    void fetchAccounts();
-  }, [fetchAccounts]);
+  }, []);
 
   return (
     <>
@@ -402,13 +382,15 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
         flexLayout="column"
       >
         <AccountsPageHeader>
+          <Button
+            role="primary"
+            title="Connect or create wallet"
+            onClick={() => setOpenConnectWallet(true)}
+          />
           {/* TODO: uncomment when AccountsTotalBalance will be ready
             <AccountsTotalBalanceStyled balance={totalBalance} />
           */}
           <SearchStyled value={searchString} onChange={setSearchString} />
-          <ButtonGroup>
-            <AccountsGroupButton />
-          </ButtonGroup>
         </AccountsPageHeader>
         <AccountsPageContent>
           <Table
@@ -440,6 +422,9 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
             });
           }}
         />
+      )}
+      {isOpenConnectWallet && (
+        <ConnectWallets onClose={() => setOpenConnectWallet(false)} />
       )}
       <Confirm
         buttons={[

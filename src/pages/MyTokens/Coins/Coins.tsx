@@ -81,7 +81,6 @@ export const Coins = () => {
   interface NetworkInfo {
     getDisabled: boolean;
     onGet?: () => void;
-    normalizedAddress: (address: string, prefix?: number) => string;
   }
 
   const coinConfig: Record<NetworkType, NetworkInfo> = {
@@ -90,7 +89,6 @@ export const Coins = () => {
       onGet: () => {
         window.open(config.telegramBot, '_blank', 'noopener');
       },
-      normalizedAddress: Address.normalize.substrateAddress,
     },
     KUSAMA: {
       getDisabled: false,
@@ -98,21 +96,18 @@ export const Coins = () => {
         getCoinsHandler();
         setRampModalToken('KSM');
       },
-      normalizedAddress: Address.normalize.substrateAddress,
     },
     QUARTZ: {
       getDisabled: false,
       onGet: () => {
         window.open(config.mexcQTZUSDT, '_blank', 'noopener');
       },
-      normalizedAddress: Address.normalize.substrateAddress,
     },
     UNIQUE: {
       getDisabled: false,
       onGet: () => {
         window.open(config.cryptoExchangeUNQ, '_blank', 'noopener');
       },
-      normalizedAddress: Address.normalize.substrateAddress,
     },
     POLKADOT: {
       getDisabled: false,
@@ -120,7 +115,6 @@ export const Coins = () => {
         getCoinsHandler();
         setRampModalToken('DOT');
       },
-      normalizedAddress: Address.normalize.substrateAddress,
     },
   };
 
@@ -133,9 +127,18 @@ export const Coins = () => {
             return null;
           }
 
-          const { getDisabled, onGet, normalizedAddress } = coinConfig[chain.network];
+          const { getDisabled, onGet } = coinConfig[chain.network];
           const data = chainProperty[chain.network].data as ChainPropertiesResponse;
-          const SS58Prefix = data?.SS58Prefix;
+          const formattedAddress = Address.is.ethereumAddress(selectedAccount!.address)
+            ? Address.mirror.ethereumToSubstrate(
+                selectedAccount!.address,
+                data?.SS58Prefix,
+              )
+            : Address.normalize.substrateAddress(
+                selectedAccount!.address,
+                data?.SS58Prefix,
+              );
+
           return (
             <CoinsRow
               getDisabled={getDisabled}
@@ -144,7 +147,7 @@ export const Coins = () => {
                 chainProperty[chain.network].isLoading || accountBalances[idx].isLoading
               }
               sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
-              address={normalizedAddress(selectedAccount!.address, SS58Prefix)}
+              address={formattedAddress}
               balanceFull={accountBalances[idx].data?.freeBalance.amount}
               balanceLocked={accountBalances[idx].data?.lockedBalance.amount}
               balanceTransferable={accountBalances[idx].data?.availableBalance.amount}

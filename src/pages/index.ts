@@ -8,5 +8,5 @@ export * from './errors';
 export * from './FAQ';
 export * from './MyTokens';
 export * from './MyCollections';
-export * from './Welcome';
+export * from './ConnectWallets';
 export * from './NFTDetails';
