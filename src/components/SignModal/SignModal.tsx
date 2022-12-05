@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
 import { Button, Text } from '@unique-nft/ui-kit';
-import { KeyringPair } from '@polkadot/keyring/types';
 
 import { AccountSigner } from '@app/account';
 import { useAccounts } from '@app/hooks';
@@ -10,14 +9,14 @@ import { Modal } from '@app/components/Modal';
 
 export type TSignModalProps = {
   isVisible: boolean;
-  onFinish(signature?: KeyringPair): void;
+  onFinish(password: string): void;
   onClose(): void;
 };
 
 export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose }) => {
   const [password, setPassword] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string | undefined>();
-  const { signer, unlockLocalAccount } = useAccounts();
+  const { signer } = useAccounts();
 
   const onSignClick = useCallback(() => {
     if (signer?.signerType !== AccountSigner.local) {
@@ -26,16 +25,15 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
 
     try {
       setPasswordError(undefined);
-      const signature = unlockLocalAccount(password);
-      if (signature) {
-        onFinish(signature);
+      if (password) {
+        onFinish(password);
       }
     } catch (e) {
       setPasswordError('Unable to decode using the supplied passphrase');
     }
 
     setPassword('');
-  }, [signer, unlockLocalAccount, password, onFinish]);
+  }, [signer, password, onFinish]);
 
   if (!signer) {
     return null;

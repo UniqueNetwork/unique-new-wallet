@@ -13,7 +13,6 @@ import {
   NFTDetails,
   NFTs,
   NotFound,
-  Welcome,
 } from '@app/pages';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
 import { MainInformation, NFTAttributes } from '@app/pages/CreateCollection/tabs';
@@ -41,11 +40,6 @@ export interface RouteConfig {
 export const routes: RouteConfig = {
   base: ROUTE.BASE,
   protectedRoutes: [
-    {
-      index: true,
-      element: <Welcome />,
-      name: 'Welcome',
-    },
     {
       name: 'My tokens',
       path: ROUTE.MY_TOKENS,

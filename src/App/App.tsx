@@ -10,6 +10,8 @@ import { IntroCard } from '@app/components/IntroSlider/components';
 import { IntroSlider } from '@app/components/IntroSlider';
 import confetti from '@app/components/IntroSlider/components/images/confetti.svg';
 import bundle from '@app/components/IntroSlider/components/images/bundle.svg';
+import { ConnectWallets } from '@app/pages';
+import { CONNECTED_WALLET_TYPE } from '@app/account/useWalletCenter';
 
 import './styles.scss';
 
@@ -18,6 +20,8 @@ const ampKey = window.ENV?.AMPLITUDE_KEY || process.env.REACT_APP_AMPLITUDE_KEY 
 amplitude.getInstance().init(ampKey);
 
 const BUNDLE_SHOW_MODAL = 'new-wallet-bundle-show-modal';
+
+const getConnectedWallets = localStorage.getItem(CONNECTED_WALLET_TYPE);
 
 export default function App() {
   const [isShowIntroSlider] = useState<boolean>(() => {
@@ -86,6 +90,9 @@ export default function App() {
       )}
       <AccountWrapper>
         <PageSettingsWrapper>
+          <ConnectWallets
+            isOpen={!getConnectedWallets || getConnectedWallets.split(';').length === 0}
+          />
           <PageLayout>
             <Outlet />
           </PageLayout>
