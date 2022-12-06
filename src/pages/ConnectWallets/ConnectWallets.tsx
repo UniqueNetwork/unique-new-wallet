@@ -55,6 +55,7 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
   };
 
   const handleConnectToMetamask = async () => {
+    console.log('connect metamask');
     try {
       await Ethereum.requestAccounts();
       await walletsCenter.connectWallet('metamask');
@@ -66,6 +67,7 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
   };
 
   const handleConnectToPolkadotExtension = async () => {
+    console.log('connect polkadot');
     try {
       await walletsCenter.connectWallet('polkadot');
       await walletsCenter.connectWallet('keyring');

@@ -14,6 +14,7 @@ export class PolkadotWallet implements BaseWalletEntity<IPolkadotExtensionAccoun
 
   static async existExtension() {
     const result = await Polkadot.enableAndLoadAllWallets();
+    console.log(result);
     return result.info.extensionFound;
   }
 

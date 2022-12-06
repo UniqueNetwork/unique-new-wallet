@@ -31,7 +31,9 @@ export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
     async (typeWallet: ConnectedWalletsName) => {
       try {
         const wallet = new (wallets.get(typeWallet)!)(chainProperties);
+        console.log('typeWallet', typeWallet, wallet);
         const currentWallets = await wallet.getAccounts();
+        console.log('currentWallets', currentWallets);
 
         const connectedWallets =
           localStorage.getItem(CONNECTED_WALLET_TYPE)?.split(';') || [];
