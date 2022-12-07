@@ -52,8 +52,7 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
       <TabsHeader>
         <Tabs
           activeIndex={currentTabIndex}
-          // labels={['NFTs', 'Settings']}
-          labels={['NFTs']}
+          labels={['NFTs', 'Settings']}
           type="slim"
           onClick={handleClick}
         />
