@@ -7,6 +7,7 @@ import { Account, AccountSigner } from '@app/account/AccountContext';
 
 export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> {
   private _accounts = new Map<string, BaseWalletType<IEthereumAccountResult>>();
+  isMintingEnabled = false;
 
   // eslint-disable-next-line no-useless-constructor
   constructor(private readonly chainProperties: ChainPropertiesResponse) {}
@@ -56,6 +57,7 @@ export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> 
           signerType: AccountSigner.extension,
           sign: this.getSignature,
           changeChain: this.changeChain.bind(this),
+          isMintingEnabled: this.isMintingEnabled,
         },
       ],
     ]);

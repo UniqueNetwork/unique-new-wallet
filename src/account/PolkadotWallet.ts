@@ -8,6 +8,7 @@ import { BaseWalletEntity, BaseWalletType } from '@app/account/type';
 
 export class PolkadotWallet implements BaseWalletEntity<IPolkadotExtensionAccount> {
   _accounts = new Map<string, BaseWalletType<IPolkadotExtensionAccount>>();
+  isMintingEnabled = true;
 
   // eslint-disable-next-line no-useless-constructor
   constructor(private readonly chainProperties: ChainPropertiesResponse) {}
@@ -46,6 +47,7 @@ export class PolkadotWallet implements BaseWalletEntity<IPolkadotExtensionAccoun
             signerType: AccountSigner.extension,
             sign: this.getSignature.bind(this),
             changeChain: this.changeChain.bind(this),
+            isMintingEnabled: this.isMintingEnabled,
           },
         ];
       }),

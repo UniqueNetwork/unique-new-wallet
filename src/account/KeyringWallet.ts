@@ -9,6 +9,7 @@ import { Account, AccountSigner } from '@app/account/AccountContext';
 
 export class KeyringWallet implements BaseWalletEntity<KeyringAddress> {
   private _accounts = new Map<string, BaseWalletType<KeyringAddress>>();
+  isMintingEnabled = true;
 
   // eslint-disable-next-line no-useless-constructor
   constructor(private readonly chainProperties: ChainPropertiesResponse) {}
@@ -31,6 +32,7 @@ export class KeyringWallet implements BaseWalletEntity<KeyringAddress> {
             signerType: AccountSigner.local,
             sign: this.getSignature,
             changeChain: this.changeChain.bind(this),
+            isMintingEnabled: this.isMintingEnabled,
           },
         ];
       }),
