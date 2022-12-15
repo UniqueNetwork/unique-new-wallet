@@ -1,3 +1,4 @@
+import { Address } from '@unique-nft/utils';
 import { gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
@@ -108,7 +109,16 @@ export const useGraphQlOwnerTokens = (
         ...getConditionByStatusFilter(statusFilter),
         ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
-        _or: [{ owner: { _eq: owner } }, { owner_normalized: { _eq: owner } }],
+        _or: [
+          { owner: { _eq: owner } },
+          {
+            owner_normalized: {
+              _eq: Address.is.ethereumAddress(owner!)
+                ? Address.mirror.ethereumToSubstrate(owner!)
+                : owner,
+            },
+          },
+        ],
         burned: { _eq: 'false' },
         parent_id: {
           _is_null: true,
