@@ -1,42 +1,42 @@
 import { Consumer, Context, createContext, Provider } from 'react';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { KeyringPair } from '@polkadot/keyring/types';
+import { KeyringAddress } from '@polkadot/ui-keyring/types';
+import { IEthereumAccountResult } from '@unique-nft/utils/extension';
 
 import { AllBalancesResponse } from '@app/types/Api';
 import { NetworkType } from '@app/types';
+import { BaseWalletType } from '@app/account/type';
+import { useWalletCenter } from '@app/account/useWalletCenter';
 
 export enum AccountSigner {
   extension = 'Extension',
   local = 'Local',
 }
 
-export interface Account extends InjectedAccountWithMeta {
+export type WalletsType =
+  | InjectedAccountWithMeta
+  | KeyringAddress
+  | IEthereumAccountResult;
+
+export type Account<T extends WalletsType = WalletsType> = BaseWalletType<T> & {
   balance?: AllBalancesResponse;
-  unitBalance: NetworkType;
-  signerType: AccountSigner;
+  unitBalance?: NetworkType;
   collectionsTotal?: number;
   tokensTotal?: number;
-  /*
-   * При смене чейна у нас меняется address.
-   * Необходимо добавить статический адрес, который не меняется
-   * К примеру, при смене чейна, у нас ранее скидывался аккаунт на дефолтный ввиду того, что менялся его address
-   * */
-  normalizedAddress: string;
-}
+};
 
 export type AccountContextProps = {
   isLoading: boolean;
   signer?: Account;
-  accounts: Account[];
+  accounts: Map<string, Account>;
   selectedAccount: Account | undefined;
-  fetchAccounts: () => Promise<void>;
   fetchAccountsError: string | undefined;
   changeAccount(account: Account): void;
   setFetchAccountsError(error: string | undefined): void;
-  setAccounts(accounts: Account[]): void;
   setIsLoading(loading: boolean): void;
-  showSignDialog(signer: Account): Promise<KeyringPair>;
+  showSignDialog(signer: Account): Promise<string>;
   forgetLocalAccount(addressWallet: string): void;
+  walletsCenter: ReturnType<typeof useWalletCenter>;
 };
 
 const AccountContext: Context<AccountContextProps> = createContext(

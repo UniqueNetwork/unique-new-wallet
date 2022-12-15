@@ -93,7 +93,7 @@ export const AccountsManager = (props: AccountsManagerProps) => {
           <Icon size={20} name="user" />
           <div className="accounts-manager-selected-account-name">
             <Text color="blue-grey-500" size="s">
-              {selectedAccount?.meta.name}
+              {selectedAccount?.name}
             </Text>
             <button
               className="address-copy"

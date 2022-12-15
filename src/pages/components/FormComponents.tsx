@@ -144,7 +144,7 @@ export const AdditionalText = styled(Text).attrs({
 `;
 
 export const ButtonGroup = styled.div<{
-  align?: 'flex-start' | 'center' | 'flex-end';
+  align?: 'flex-start' | 'center' | 'flex-end' | 'space-between';
   $fill?: boolean;
   gap?: number;
   stack?: boolean;

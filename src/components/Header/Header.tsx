@@ -1,4 +1,4 @@
-import { Button, Icon, INetwork } from '@unique-nft/ui-kit';
+import { Button, Icon, INetwork, useNotifications } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -27,6 +27,8 @@ export const Header = () => {
   const [activeNetwork, setActiveNetwork] = useState<INetwork | undefined>(() =>
     networks.find(({ id }) => id === currentChain?.network),
   );
+  const { error } = useNotifications();
+
   const showMobileMenu = deviceSize <= DeviceSize.lg;
 
   useEffect(() => {
@@ -38,20 +40,30 @@ export const Header = () => {
     toggleMobileMenu((prevState) => !prevState);
   }, []);
 
-  const onAccountChange = (account: Account) => {
-    const targetAccount = accounts.find((item) => account.address === item.address);
+  const onAccountChange = async (account: Account) => {
+    try {
+      const targetAccount = accounts.get(account.normalizedAddress);
 
-    if (targetAccount) {
-      changeAccount(targetAccount);
+      if (targetAccount) {
+        await targetAccount.changeChain(currentChain.network);
+        changeAccount(targetAccount);
+      }
+
+      setAccountManagerOpen(false);
+    } catch (e: any) {
+      error(e.message || `Failed to switch network ${currentChain.network}`);
     }
-
-    setAccountManagerOpen(false);
   };
 
-  const handleChangeNetwork = (val: INetwork) => {
-    setCurrentChain(config.activeChains[val.id]);
-    setAccountManagerOpen(false);
-    navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+  const handleChangeNetwork = async (val: INetwork) => {
+    try {
+      await selectedAccount?.changeChain(val.id);
+      setCurrentChain(config.activeChains[val.id]);
+      setAccountManagerOpen(false);
+      navigate(`${val.id}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    } catch (e: any) {
+      error(e.message || `Failed to switch network ${val.id}`);
+    }
   };
 
   const gotoManageBalance = () => {
@@ -75,7 +87,7 @@ export const Header = () => {
           <LogoIcon
             src={logo}
             className={classNames({
-              'hidden-logo': !accounts.length,
+              'hidden-logo': !accounts.size,
             })}
           />
         </Link>
@@ -100,9 +112,9 @@ export const Header = () => {
         )}
       </LeftSideColumn>
       <RightSide>
-        {!isLoading && !!accounts.length && (
+        {!isLoading && !!accounts.size && (
           <AccountsManager
-            accounts={accounts}
+            accounts={[...accounts.values()]}
             avatarRender={(address: string) => <IdentityIcon address={address} />}
             activeNetwork={activeNetwork}
             balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
@@ -128,9 +140,9 @@ export const Header = () => {
             onOpenChange={(open) => setAccountManagerOpen(open)}
           />
         )}
-        {!isLoading && !accounts.length && (
+        {!isLoading && !accounts.size && (
           <Button
-            title="Create or connect account"
+            title="Connect wallet"
             className="create-account-btn account-group-btn-medium-font"
             onClick={gotoManageBalance}
           />

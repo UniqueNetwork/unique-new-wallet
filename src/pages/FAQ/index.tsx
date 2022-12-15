@@ -15,10 +15,29 @@ import { AskQuestion, faqItems } from './components';
 
 const WrapperContentStyled = styled(WrapperContent)`
   .faq-item {
+    position: relative;
     border-bottom: 1px dashed var(--color-blue-grey-300);
     font-size: 1rem;
     line-height: 1.4;
     color: var(--color-additional-dark);
+
+    .tooltip {
+      position: absolute;
+      width: 48px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      right: 0;
+      background: var(--color-primary-300);
+      color: var(--color-additional-light);
+      @media screen and (max-width: 567px) {
+        width: 24px;
+        height: 12px;
+        font-size: 8px;
+      }
+    }
 
     &:not(:last-child) {
       margin-bottom: calc(var(--prop-gap) * 2);
@@ -29,6 +48,9 @@ const WrapperContentStyled = styled(WrapperContent)`
       color: inherit;
       font-weight: 700;
       font-size: 1.25rem;
+      @media screen and (max-width: 567px) {
+        margin-right: 40px;
+      }
     }
 
     .unique-accordion-content {
