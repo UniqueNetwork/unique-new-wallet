@@ -8,9 +8,7 @@ export const TransferBtn = (props: ButtonProps) => {
   return (
     <BaseActionBtn
       {...props}
-      actionEnabled={
-        Boolean(selectedAccount?.isMintingEnabled) && currentChain.transfersEnabled
-      }
+      actionEnabled={currentChain.transfersEnabled}
       actionText="Transfer temporary unavailable due to a chain upgrade"
     />
   );

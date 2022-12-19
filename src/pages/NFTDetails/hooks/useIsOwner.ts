@@ -13,7 +13,10 @@ export const useIsOwner = (token: TokenByIdResponse | GetBundleResponse | undefi
     }
     let address = token.owner;
 
-    if (Address.is.ethereumAddress(token.owner)) {
+    if (
+      Address.is.ethereumAddress(token.owner) &&
+      !Address.is.ethereumAddress(selectedAccount.address)
+    ) {
       address = Address.extract.substrateOrMirrorIfEthereum(token.owner);
     }
     return (

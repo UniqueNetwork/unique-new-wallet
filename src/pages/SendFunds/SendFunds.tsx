@@ -41,18 +41,6 @@ const TransferStagesModal: VFC = () => {
 export const SendFunds: FC<SendFundsProps> = (props) => {
   const { onClose, senderAccount, onSendSuccess, chain } = props;
 
-  const {
-    fee,
-    feeFormatted,
-    feeLoading,
-    feeStatus,
-    feeError,
-    isLoadingSubmitResult,
-    getFee,
-    submitWaitResult,
-    submitWaitResultError,
-  } = useAccountBalanceTransfer();
-
   const sendFundsForm = useForm<FundsForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -67,6 +55,20 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   } = sendFundsForm;
   const sendFundsValues = useWatch<FundsForm>({ control });
   const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
+
+  const {
+    fee,
+    feeFormatted,
+    feeLoading,
+    feeStatus,
+    feeError,
+    isLoadingSubmitResult,
+    getFee,
+    submitWaitResult,
+    submitWaitResultError,
+  } = useAccountBalanceTransfer({
+    senderAccount: sendFundsDebounceValues.from,
+  });
 
   const size = useDeviceSize();
   const { setCurrentChain } = useApi();
@@ -91,6 +93,9 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   }, [chain, setCurrentChain]);
 
   useEffect(() => {
+    if (sendFundsDebounceValues.from.name === 'Metamask Account') {
+      return;
+    }
     if (isValid) {
       getFee({
         address: sendFundsDebounceValues.from?.address,
