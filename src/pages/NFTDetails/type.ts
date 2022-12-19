@@ -7,6 +7,7 @@ export type TBaseToken = Pick<
   collectionName?: string;
   name?: string;
   attributes: Record<string, any>;
+  file?: any; // TODO: remove after SDK update
 };
 
 export type TNestingToken = TBaseToken &
