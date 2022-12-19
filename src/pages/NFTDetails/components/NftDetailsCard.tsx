@@ -41,7 +41,20 @@ export const NftDetailsCard = <T extends TBaseToken>({
           }
         />
       )}
-      <Image alt="" image={token?.image?.fullUrl || undefined} />
+      {token?.video ? (
+        <VideoStyled
+          playsInline
+          // ref={videoRef}
+          src={token.video.fullUrl || undefined}
+          poster={token.image.fullUrl || undefined}
+          controls={true}
+          autoPlay={false}
+          loop={true}
+          muted={true}
+        />
+      ) : (
+        <Image alt="" image={token?.image?.fullUrl || undefined} />
+      )}
     </div>
     <div className="info-container">
       <NFTDetailsHeader
@@ -125,5 +138,15 @@ const NftDetailsInfo = styled.div`
       flex: 4.5 0 0;
       max-width: none;
     }
+  }
+`;
+
+const VideoStyled = styled.video`
+  width: 100%;
+  @media (min-width: 1920px) {
+    height: 536px;
+  }
+  @media (max-width: 767px) {
+    height: 100%;
   }
 `;
