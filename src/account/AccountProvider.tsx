@@ -101,7 +101,7 @@ export const AccountWrapper: FC = ({ children }) => {
   );
 
   useEffect(() => {
-    if (!accounts?.size) {
+    if (!accounts?.size || isLoading) {
       return;
     }
 
@@ -115,7 +115,7 @@ export const AccountWrapper: FC = ({ children }) => {
     if (selectedAccount) {
       changeAccount(selectedAccount);
     }
-  }, [accounts, changeAccount]);
+  }, [accounts, changeAccount, isLoading]);
 
   useEffect(() => {
     const map = new Map();
