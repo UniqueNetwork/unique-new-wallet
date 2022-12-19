@@ -2,7 +2,7 @@ import { TokenByIdResponse } from '@unique-nft/sdk';
 
 export type TBaseToken = Pick<
   TokenByIdResponse,
-  'tokenId' | 'collectionId' | 'image' | 'owner' | 'video'
+  'tokenId' | 'collectionId' | 'image' | 'owner' | 'video' | 'audio'
 > & {
   collectionName?: string;
   name?: string;

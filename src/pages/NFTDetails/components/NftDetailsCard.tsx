@@ -52,6 +52,14 @@ export const NftDetailsCard = <T extends TBaseToken>({
           loop={true}
           muted={true}
         />
+      ) : token?.audio ? (
+        <AudioStyled
+          src={token.audio.fullUrl || undefined}
+          controls={true}
+          autoPlay={false}
+          loop={false}
+          muted={false}
+        />
       ) : (
         <Image alt="" image={token?.image?.fullUrl || undefined} />
       )}
@@ -142,6 +150,16 @@ const NftDetailsInfo = styled.div`
 `;
 
 const VideoStyled = styled.video`
+  width: 100%;
+  @media (min-width: 1920px) {
+    height: 536px;
+  }
+  @media (max-width: 767px) {
+    height: 100%;
+  }
+`;
+
+const AudioStyled = styled.audio`
   width: 100%;
   @media (min-width: 1920px) {
     height: 536px;
