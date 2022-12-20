@@ -129,15 +129,17 @@ export const Coins = () => {
 
           const { getDisabled, onGet } = coinConfig[chain.network];
           const data = chainProperty[chain.network].data as ChainPropertiesResponse;
-          const formattedAddress = Address.is.ethereumAddress(selectedAccount!.address)
-            ? Address.mirror.ethereumToSubstrate(
-                selectedAccount!.address,
-                data?.SS58Prefix,
-              )
-            : Address.normalize.substrateAddress(
-                selectedAccount!.address,
-                data?.SS58Prefix,
-              );
+          const formattedAddress =
+            selectedAccount &&
+            (Address.is.ethereumAddress(selectedAccount.address)
+              ? Address.mirror.ethereumToSubstrate(
+                  selectedAccount.address,
+                  data?.SS58Prefix,
+                )
+              : Address.normalize.substrateAddress(
+                  selectedAccount.address,
+                  data?.SS58Prefix,
+                ));
 
           return (
             <CoinsRow

@@ -55,11 +55,17 @@ export const AccountWrapper: FC = ({ children }) => {
     }
   }, [chainProperties, refetchAccount, selectedAccount?.address]);
 
-  const changeAccount = useCallback((account: Account) => {
-    localStorage.setItem(DefaultAccountKey, account.normalizedAddress);
+  const changeAccount = useCallback(
+    (account: Account) => {
+      if (selectedAccount?.address === account.address) {
+        return;
+      }
+      localStorage.setItem(DefaultAccountKey, account.normalizedAddress);
 
-    setSelectedAccount(account);
-  }, []);
+      setSelectedAccount(account);
+    },
+    [selectedAccount?.address],
+  );
 
   const [isSignModalVisible, setIsSignModalVisible] = useState<boolean>(false);
 
@@ -101,7 +107,7 @@ export const AccountWrapper: FC = ({ children }) => {
   );
 
   useEffect(() => {
-    if (!accounts?.size) {
+    if (!accounts?.size || isLoading) {
       return;
     }
 
@@ -115,7 +121,7 @@ export const AccountWrapper: FC = ({ children }) => {
     if (selectedAccount) {
       changeAccount(selectedAccount);
     }
-  }, [accounts, changeAccount]);
+  }, [accounts, changeAccount, isLoading]);
 
   useEffect(() => {
     const map = new Map();

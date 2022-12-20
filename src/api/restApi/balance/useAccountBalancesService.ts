@@ -22,7 +22,7 @@ export const useAccountBalancesService = (
             return Promise.reject(e);
           }
         },
-        enabled: chainsUrl.length !== 0 || !address,
+        enabled: chainsUrl.length !== 0 && !!address,
         refetchOnMount: 'always',
       };
     }),

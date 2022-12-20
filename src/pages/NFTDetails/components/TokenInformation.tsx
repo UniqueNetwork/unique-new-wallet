@@ -1,4 +1,5 @@
 import { memo, useMemo } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import { Heading, Icon, Text } from '@unique-nft/ui-kit';
 
@@ -67,6 +68,31 @@ const TokenInformationComponent = <T extends TBaseToken>({
           </Tags>
         </div>
       ))}
+      {token?.file && (
+        <>
+          <Heading className="attributes-header" size="4">
+            Attached files
+          </Heading>
+          <DownloadFileButton
+            onClick={async () => {
+              const response = await axios.get(token.file.fullUrl, {
+                responseType: 'arraybuffer',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+              const type = response.headers['content-type'];
+              const blob = new Blob([response.data], { type });
+              const link = document.createElement('a');
+              link.href = window.URL.createObjectURL(blob);
+              link.download = '';
+              link.click();
+            }}
+          >
+            Download
+          </DownloadFileButton>
+        </>
+      )}
     </div>
   );
 };
@@ -88,5 +114,7 @@ const TokenInformationStyled = styled(TokenInformationComponent)`
     margin-bottom: calc(var(--prop-gap) / 2);
   }
 `;
+
+const DownloadFileButton = styled.button``;
 
 export const TokenInformation = memo(TokenInformationStyled);
