@@ -93,9 +93,6 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   }, [chain, setCurrentChain]);
 
   useEffect(() => {
-    if (sendFundsDebounceValues.from.name === 'Metamask Account') {
-      return;
-    }
     if (isValid) {
       getFee({
         address: sendFundsDebounceValues.from?.address,
