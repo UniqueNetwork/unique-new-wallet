@@ -41,7 +41,8 @@ export const NftDetailsCard = <T extends TBaseToken>({
           }
         />
       )}
-      {token?.video ? (
+      <Image alt={token?.name || ''} image={token?.image?.fullUrl || undefined} />
+      {token?.video && (
         <VideoStyled
           playsInline
           // ref={videoRef}
@@ -50,9 +51,10 @@ export const NftDetailsCard = <T extends TBaseToken>({
           controls={true}
           autoPlay={false}
           loop={true}
-          muted={true}
+          muted={false}
         />
-      ) : token?.audio ? (
+      )}
+      {token?.audio && (
         <AudioStyled
           src={token.audio.fullUrl || undefined}
           controls={true}
@@ -60,8 +62,6 @@ export const NftDetailsCard = <T extends TBaseToken>({
           loop={false}
           muted={false}
         />
-      ) : (
-        <Image alt="" image={token?.image?.fullUrl || undefined} />
       )}
     </div>
     <div className="info-container">
@@ -151,19 +151,12 @@ const NftDetailsInfo = styled.div`
 
 const VideoStyled = styled.video`
   width: 100%;
-  @media (min-width: 1920px) {
-    height: 536px;
-  }
-  @media (max-width: 767px) {
-    height: 100%;
-  }
+  margin-top: 1rem;
 `;
 
 const AudioStyled = styled.audio`
   width: 100%;
-  @media (min-width: 1920px) {
-    height: 536px;
-  }
+  margin-top: 1rem;
   @media (max-width: 767px) {
     height: 100%;
   }
