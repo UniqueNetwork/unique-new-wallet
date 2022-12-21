@@ -71,26 +71,17 @@ const TokenInformationComponent = <T extends TBaseToken>({
       {token?.file && (
         <>
           <Heading className="attributes-header" size="4">
-            Attached files
+            Attached file
           </Heading>
-          <DownloadFileButton
-            onClick={async () => {
-              const response = await axios.get(token.file.fullUrl, {
-                responseType: 'arraybuffer',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              });
-              const type = response.headers['content-type'];
-              const blob = new Blob([response.data], { type });
-              const link = document.createElement('a');
-              link.href = window.URL.createObjectURL(blob);
-              link.download = '';
-              link.click();
-            }}
+          <a
+            className="unique-button primary size-small"
+            target="_blank"
+            rel="noreferrer"
+            href={token.file.fullUrl}
           >
-            Download
-          </DownloadFileButton>
+            Download file&nbsp;
+            <Icon size={16} name="logout" color="lightgrey" />
+          </a>
         </>
       )}
     </div>
