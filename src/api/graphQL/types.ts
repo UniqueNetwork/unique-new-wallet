@@ -46,7 +46,7 @@ export interface Attribute {
   };
 }
 
-export type TokenTypeEnum = 'FRACTIONAL' | 'NESTED' | 'NFT';
+export type TokenTypeEnum = 'NFT' | 'RFT';
 
 export interface Token {
   token_id: number;
@@ -67,6 +67,7 @@ export interface Token {
   type: TokenTypeEnum;
   children_count: number;
   parent_id: Nullable<string>;
+  nested: boolean;
 }
 
 export interface Collection {

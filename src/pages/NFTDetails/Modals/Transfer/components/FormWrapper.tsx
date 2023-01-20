@@ -9,9 +9,14 @@ import { Alert } from '@app/components';
 type Props = {
   children: ReactNode;
   fee?: string;
+  feeWarning?: string;
 };
 
-export const FormWrapper = ({ children, fee }: Props) => {
+export const FormWrapper = ({
+  children,
+  fee,
+  feeWarning = 'A fee will be calculated after entering the address',
+}: Props) => {
   return (
     <ModalContent>
       {children}
@@ -24,9 +29,7 @@ export const FormWrapper = ({ children, fee }: Props) => {
         {fee ? (
           <FeeInformationTransaction fee={fee} />
         ) : (
-          <Alert type="warning">
-            A fee will be calculated after entering the address
-          </Alert>
+          <Alert type="warning">{feeWarning}</Alert>
         )}
       </TransferRow>
     </ModalContent>

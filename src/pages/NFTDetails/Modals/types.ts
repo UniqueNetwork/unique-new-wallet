@@ -1,8 +1,11 @@
-export type TNFTModalType =
+export type TTokenModalType =
   | 'none'
   | 'transfer'
+  | 'transfer-refungible'
   | 'share'
   | 'burn'
+  | 'burn-refungible'
   | 'create-bundle'
   | 'unnest'
-  | 'bundle-transfer';
+  | 'bundle-transfer'
+  | 'nest-refungible';

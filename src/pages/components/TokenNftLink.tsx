@@ -11,8 +11,8 @@ export const TokenNftLink = ({
   token: Token;
   navigate: () => void;
 }) => {
-  const renderBadge = (type: TokenTypeEnum) => {
-    if (!token.parent_id && type === 'NESTED') {
+  const renderBadge = (type: TokenTypeEnum, nested: boolean) => {
+    if (!token.parent_id && nested) {
       return (
         <Achievement
           achievement="Bundle"
@@ -25,6 +25,19 @@ export const TokenNftLink = ({
         />
       );
     }
+    if (type === 'RFT') {
+      return (
+        <Achievement
+          achievement="Fractional"
+          tooltipDescription={
+            <>
+              A&nbsp;fractional token provides a&nbsp;way for many users to&nbsp;own
+              a&nbsp;part of&nbsp;an&nbsp;NFT
+            </>
+          }
+        />
+      );
+    }
     return null;
   };
 
@@ -32,7 +45,7 @@ export const TokenNftLink = ({
     <TokenLink
       alt={token.token_name}
       image={token.image?.fullUrl || undefined}
-      badge={renderBadge(token.type)}
+      badge={renderBadge(token.type, token.nested)}
       title={
         <>
           <Text appearance="block" size="l">
@@ -41,7 +54,7 @@ export const TokenNftLink = ({
           <Text appearance="block" weight="light" size="s">
             {token.collection_name} [id {token.collection_id}]
           </Text>
-          {!token.parent_id && token.type === 'NESTED' && (
+          {!token.parent_id && token.nested && (
             <NestedWrapper>
               <Text appearance="block" weight="light" size="s" color="grey-500">
                 Nested items: <span className="count">{token.children_count}</span>

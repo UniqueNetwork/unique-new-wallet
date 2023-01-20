@@ -5,10 +5,10 @@ import { Button } from '@unique-nft/ui-kit';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
-import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
+import { NFTModals, TTokenModalType } from '@app/pages/NFTDetails/Modals';
 import { useTokenGetById } from '@app/api';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
-import { TransferBtn } from '@app/components';
+import { Achievement, TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
@@ -19,7 +19,7 @@ export const NftDetailsPage = () => {
   const size = useDeviceSize();
   const { currentChain } = useApi();
 
-  const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
+  const [currentModal, setCurrentModal] = useState<TTokenModalType>('none');
 
   const {
     data: tokenById,
@@ -61,7 +61,7 @@ export const NftDetailsPage = () => {
     if (isOwner) {
       items.push({
         icon: 'burn',
-        id: 'burn',
+        id: token?.collection.mode === 'ReFungible' ? 'burn-refungible' : 'burn',
         title: 'Burn token',
         type: 'danger',
       });
@@ -70,11 +70,27 @@ export const NftDetailsPage = () => {
     return items;
   }, [isOwner]);
 
+  const isFractional = token?.collection.mode === 'ReFungible';
+
   return (
     <NftDetailsLayout isLoading={isLoadingToken} tokenExist={!!token}>
       <NftDetailsCard
         token={token}
         menuButtons={menuButtons}
+        isReFungible={isFractional}
+        achievement={
+          isFractional ? (
+            <Achievement
+              achievement="Fractional"
+              tooltipDescription={
+                <>
+                  A&nbsp;fractional token provides a&nbsp;way for many users to&nbsp;own
+                  a&nbsp;part of&nbsp;an&nbsp;NFT
+                </>
+              }
+            />
+          ) : undefined
+        }
         owner={
           isOwner ? (
             'You own it'
@@ -98,19 +114,21 @@ export const NftDetailsPage = () => {
                 wide={size <= DeviceSize.sm}
                 onClick={() => {
                   logUserEvent(UserEvents.TRANSFER_NFT);
-                  setCurrentModal('transfer');
+                  setCurrentModal(isFractional ? 'transfer-refungible' : 'transfer');
                 }}
               />
-              {tokenById?.collection?.permissions?.nesting?.tokenOwner && (
-                <Button
-                  title="Nest this token"
-                  wide={size <= DeviceSize.sm}
-                  onClick={() => {
-                    logUserEvent(UserEvents.CREATE_BUNDLE);
-                    setCurrentModal('create-bundle');
-                  }}
-                />
-              )}
+
+              {isFractional ||
+                (tokenById?.collection?.permissions?.nesting?.tokenOwner && (
+                  <Button
+                    title="Nest this token"
+                    wide={size <= DeviceSize.sm}
+                    onClick={() => {
+                      logUserEvent(UserEvents.CREATE_BUNDLE);
+                      setCurrentModal(isFractional ? 'nest-refungible' : 'create-bundle');
+                    }}
+                  />
+                ))}
             </>
           )
         }

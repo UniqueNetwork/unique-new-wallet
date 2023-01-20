@@ -7,16 +7,18 @@ import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTDetailsHeader } from '@app/pages/NFTDetails/components/NFTDetailsHeader';
 import { Divider } from '@app/pages/NFTDetails/components/Divider';
 import { TokenInformation } from '@app/pages/NFTDetails/components/TokenInformation';
-import { TNFTModalType } from '@app/pages/NFTDetails/Modals';
+import { TTokenModalType } from '@app/pages/NFTDetails/Modals';
+import { FractionalInformation } from '@app/pages/NFTDetails/components/FractionalInformation';
 
 type Props<T extends TBaseToken> = {
   token?: T;
-  achievement?: string;
-  onCurrentModal: (type: TNFTModalType) => void;
+  achievement?: ReactNode;
+  onCurrentModal: (type: TTokenModalType) => void;
   buttons: ReactNode;
   className?: string;
   menuButtons: SelectOptionProps[];
   owner: ReactNode;
+  isReFungible?: boolean;
 };
 
 export const NftDetailsCard = <T extends TBaseToken>({
@@ -27,20 +29,11 @@ export const NftDetailsCard = <T extends TBaseToken>({
   className,
   menuButtons,
   owner,
+  isReFungible,
 }: Props<T>) => (
   <NftDetailsInfo className={className}>
     <div className="avatar">
-      {achievement && (
-        <Achievement
-          achievement={achievement}
-          tooltipDescription={
-            <>
-              A&nbsp;group of&nbsp;tokens nested in&nbsp;an&nbsp;NFT and having
-              a&nbsp;nested, ordered, tree-like structure
-            </>
-          }
-        />
-      )}
+      {achievement && achievement}
       <Image alt={token?.name || ''} image={token?.image?.fullUrl || undefined} />
       {token?.video && (
         <VideoStyled
@@ -75,6 +68,12 @@ export const NftDetailsCard = <T extends TBaseToken>({
         menuButtons={menuButtons}
         onShowModal={onCurrentModal}
       />
+      {isReFungible && (
+        <>
+          <Divider />
+          <FractionalInformation token={token} />
+        </>
+      )}
       <Divider />
       <TokenInformation token={token} />
     </div>

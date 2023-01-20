@@ -6,7 +6,7 @@ import { TokenByIdResponse } from '@unique-nft/sdk';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
-import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
+import { NFTModals, TTokenModalType } from '@app/pages/NFTDetails/Modals';
 import { useTokenGetBundle, useTokenGetById } from '@app/api';
 import BundleTree from '@app/components/BundleTree/BundleTree';
 import NodeView from '@app/components/BundleTree/Node/NodeView';
@@ -34,7 +34,7 @@ export const NftDetailsBundlePage = () => {
 
   const [bundle, setBundle] = useState<INestingToken[]>([]);
 
-  const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
+  const [currentModal, setCurrentModal] = useState<TTokenModalType>('none');
 
   const [isShowBundleTreeMobile, setShowBundleTreeMobile] = useState(false);
 
@@ -81,7 +81,7 @@ export const NftDetailsBundlePage = () => {
     };
   }, [tokenById]);
 
-  const isOwner = useIsOwner(bundleToken);
+  const isOwner = useIsOwner(token);
 
   const onModalClose = () => {
     setCurrentModal('none');
