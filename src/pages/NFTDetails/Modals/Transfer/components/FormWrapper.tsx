@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
+import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { ModalContent } from '@app/pages/components/ModalComponents';
 import { Alert } from '@app/components';
@@ -9,9 +9,14 @@ import { Alert } from '@app/components';
 type Props = {
   children: ReactNode;
   fee?: string;
+  feeWarning?: string;
 };
 
-export const FormWrapper = ({ children, fee }: Props) => {
+export const FormWrapper = ({
+  children,
+  fee,
+  feeWarning = 'A fee will be calculated after entering the address',
+}: Props) => {
   return (
     <ModalContent>
       {children}
@@ -24,9 +29,7 @@ export const FormWrapper = ({ children, fee }: Props) => {
         {fee ? (
           <FeeInformationTransaction fee={fee} />
         ) : (
-          <Alert type="warning">
-            A fee will be calculated after entering the address
-          </Alert>
+          <Alert type="warning">{feeWarning}</Alert>
         )}
       </TransferRow>
     </ModalContent>

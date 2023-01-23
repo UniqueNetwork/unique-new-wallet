@@ -3,7 +3,7 @@ import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
 
-import { NFTModalsProps, UnnestStagesModal } from '@app/pages/NFTDetails/Modals';
+import { TokenModalsProps, UnnestStagesModal } from '@app/pages/NFTDetails/Modals';
 import { Modal, TransferBtn } from '@app/components';
 import { TNestingToken } from '@app/pages/NFTDetails/type';
 import { useTokenUnnest } from '@app/api';
@@ -11,7 +11,7 @@ import { useAccounts } from '@app/hooks';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { queryKeys } from '@app/api/restApi/keysConfig';
 
-export const UnnestModal = ({ onClose, token }: NFTModalsProps<TNestingToken>) => {
+export const UnnestModal = ({ onClose, token }: TokenModalsProps<TNestingToken>) => {
   const {
     getFee,
     feeFormatted,

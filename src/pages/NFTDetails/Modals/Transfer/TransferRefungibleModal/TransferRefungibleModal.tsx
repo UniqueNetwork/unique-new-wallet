@@ -6,17 +6,17 @@ import { TransferTokenBody } from '@unique-nft/sdk';
 import { useDebounce } from 'use-debounce';
 
 import { useAccounts } from '@app/hooks';
-import { TransferStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferModal';
+import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenTransfer } from '@app/api';
-import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { Modal, TransferBtn } from '@app/components';
-import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
-import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
-import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
 
-export const TransferModal = <T extends TBaseToken>({
+import { TBaseToken } from '../../../type';
+import { TokenModalsProps } from '../../NFTModals';
+import { TransferRefungibleStagesModal } from './TransferRefungibleStagesModal';
+import { FormWrapper, TransferRow, InputTransfer, InputAmount } from '../components';
+import { TransferRefungibleFormDataType } from '../type';
+
+export const TransferRefungibleModal = <T extends TBaseToken>({
   token,
   onComplete,
   onClose,
@@ -33,7 +33,14 @@ export const TransferModal = <T extends TBaseToken>({
     feeError,
   } = useTokenTransfer();
 
-  const form = useForm<TransferFormDataType>({
+  const { data: fractionsBalance } = useTokenGetBalance({
+    collectionId: token?.collectionId,
+    tokenId: token?.tokenId,
+    address: selectedAccount?.address,
+    isRefungble: true,
+  });
+
+  const form = useForm<TransferRefungibleFormDataType>({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -42,6 +49,7 @@ export const TransferModal = <T extends TBaseToken>({
       address: selectedAccount?.address,
       tokenId: token?.tokenId,
       collectionId: token?.collectionId,
+      amount: 1,
     },
   });
 
@@ -67,7 +75,7 @@ export const TransferModal = <T extends TBaseToken>({
     error(submitWaitResultError);
   }, [submitWaitResultError]);
 
-  const onSubmit = (data: TransferFormDataType) => {
+  const onSubmit = (data: TransferRefungibleFormDataType) => {
     submitWaitResult({
       payload: data,
     })
@@ -91,13 +99,13 @@ export const TransferModal = <T extends TBaseToken>({
   }
 
   if (isLoadingSubmitResult) {
-    return <TransferStagesModal />;
+    return <TransferRefungibleStagesModal />;
   }
 
   return (
     <Modal
       isVisible={true}
-      title="Transfer NFT"
+      title="Transfer fractional token"
       footerButtons={
         <TransferBtn
           title="Confirm"
@@ -112,6 +120,25 @@ export const TransferModal = <T extends TBaseToken>({
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
       >
         <FormProvider {...form}>
+          <TransferRow>
+            <Controller
+              name="amount"
+              render={({ field: { value, onChange } }) => {
+                return (
+                  <InputAmount
+                    value={value}
+                    maxValue={fractionsBalance?.amount || 0}
+                    onChange={onChange}
+                    onClear={() => onChange('')}
+                  />
+                );
+              }}
+              rules={{
+                required: true,
+                validate: (val: string) => Number(val) > 0,
+              }}
+            />
+          </TransferRow>
           <TransferRow>
             <Controller
               name="to"

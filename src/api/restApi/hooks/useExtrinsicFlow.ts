@@ -29,7 +29,7 @@ export const useExtrinsicFlow = <A, R>(mutation: IMutation<A, R>) => {
       signature,
     });
 
-    if (res.isError) {
+    if (res.error) {
       // eslint-disable-next-line prefer-promise-reject-errors
       return Promise.reject({
         extrinsicError: res,

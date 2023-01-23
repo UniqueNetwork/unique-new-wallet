@@ -10,6 +10,7 @@ export const defaultStatusFilter: OptionChips<StatusFilterNft>[] = [
 export const defaultTypeFilter: OptionChips<TypeFilterNft>[] = [
   { value: 'allType', label: 'All' },
   { value: 'NFT', label: 'NFT' },
+  { value: 'RFT', label: 'Fractional' },
   { value: 'NESTED', label: 'Bundle' },
 ];
 
