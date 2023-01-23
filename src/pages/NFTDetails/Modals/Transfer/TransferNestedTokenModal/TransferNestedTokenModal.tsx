@@ -11,7 +11,7 @@ import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/
 import { useTokenParentGetById, useTokenTransfer } from '@app/api';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { TNestingToken } from '@app/pages/NFTDetails/type';
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
+import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
 import { TransferNestedStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferNestedTokenModal/TransferNestedStagesModal';
 import { useAccounts } from '@app/hooks';

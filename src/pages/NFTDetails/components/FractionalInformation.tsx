@@ -2,11 +2,12 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import { Heading, Text } from '@unique-nft/ui-kit';
 
-import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { useTokenGetTotalPieces } from '@app/api/restApi/token/useTokenGetTotalPieces';
 import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useAccounts } from '@app/hooks';
 import { ProgressBar } from '@app/components';
+
+import { TBaseToken } from '../type';
 
 interface FractionalInformationProps<T extends TBaseToken> {
   token?: T;

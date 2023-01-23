@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { SelectOptionProps } from '@unique-nft/ui-kit';
 
-import { Achievement, Image } from '@app/components';
+import { Image } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTDetailsHeader } from '@app/pages/NFTDetails/components/NFTDetailsHeader';
 import { Divider } from '@app/pages/NFTDetails/components/Divider';
@@ -24,7 +24,7 @@ type Props<T extends TBaseToken> = {
 export const NftDetailsCard = <T extends TBaseToken>({
   token,
   onCurrentModal,
-  achievement,
+  achievement = null,
   buttons,
   className,
   menuButtons,
@@ -33,12 +33,11 @@ export const NftDetailsCard = <T extends TBaseToken>({
 }: Props<T>) => (
   <NftDetailsInfo className={className}>
     <div className="avatar">
-      {achievement && achievement}
+      {achievement}
       <Image alt={token?.name || ''} image={token?.image?.fullUrl || undefined} />
       {token?.video && (
         <VideoStyled
           playsInline
-          // ref={videoRef}
           src={token.video.fullUrl || undefined}
           poster={token.image.fullUrl || undefined}
           controls={true}

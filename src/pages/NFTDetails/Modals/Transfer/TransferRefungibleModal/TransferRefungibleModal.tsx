@@ -6,17 +6,15 @@ import { TransferTokenBody } from '@unique-nft/sdk';
 import { useDebounce } from 'use-debounce';
 
 import { useAccounts } from '@app/hooks';
-import { TransferRefungibleStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferRefungibleModal';
+import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenTransfer } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { Modal, TransferBtn } from '@app/components';
-import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
-import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
-import { TransferRefungibleFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
-import { InputAmount } from '@app/pages/NFTDetails/Modals/Transfer/components/InputAmount';
-import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
+
+import { TransferRefungibleStagesModal } from './TransferRefungibleStagesModal';
+import { FormWrapper, TransferRow, InputTransfer, InputAmount } from '../components';
+import { TransferRefungibleFormDataType } from '../type';
 
 export const TransferRefungibleModal = <T extends TBaseToken>({
   token,

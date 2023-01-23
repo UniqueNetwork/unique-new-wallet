@@ -7,13 +7,16 @@ import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
-import { BurnRefungibleStagesModal } from '@app/pages/NFTDetails/Modals/BurnRefungibleModal';
-import { BurnRefungibleFormDataType } from '@app/pages/NFTDetails/Modals/BurnRefungibleModal/types';
 import { useTokenRefungibleBurn } from '@app/api/restApi/token/useTokenRefungibleBurn';
 import { Button, Modal } from '@app/components';
-import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
-import { InputAmount } from '@app/pages/NFTDetails/Modals/Transfer/components/InputAmount';
+import {
+  FormWrapper,
+  TransferRow,
+  InputAmount,
+} from '@app/pages/NFTDetails/Modals/Transfer';
+
+import { BurnRefungibleFormDataType } from './types';
+import { BurnRefungibleStagesModal } from './BurnRefungibleStagesModal';
 
 export const BurnRefungibleModal = <T extends TBaseToken>({
   token,

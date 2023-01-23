@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Text } from '@unique-nft/ui-kit';
 
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
+import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { ModalContent } from '@app/pages/components/ModalComponents';
 import { Alert } from '@app/components';

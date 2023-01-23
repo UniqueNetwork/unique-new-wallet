@@ -12,7 +12,7 @@ import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { Modal, TransferBtn } from '@app/components';
 import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
+import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
 
