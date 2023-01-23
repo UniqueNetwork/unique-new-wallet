@@ -7,15 +7,15 @@ import styled from 'styled-components';
 import { useAccounts } from '@app/hooks';
 import { CollectionNestingOption, useTokenGetBalance, useTokenNest } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { Alert, Button, Modal } from '@app/components';
-import { FormWrapper, InputAmount } from '@app/pages/NFTDetails/Modals/Transfer';
 import { Suggest } from '@app/components/Suggest';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
-import { SuggestOptionNesting } from '@app/pages/NFTDetails/Modals/CreateBundleModal/components';
 import { Token } from '@app/api/graphQL/types';
 import { useGraphQlGetTokensCollection } from '@app/api/graphQL/tokens/useGraphQlGetTokensCollection';
 
+import { SuggestOptionNesting } from '../CreateBundleModal/components';
+import { FormWrapper, InputAmount } from '../Transfer';
+import { TokenModalsProps } from '../NFTModals';
 import { NestRefungibleFormDataType } from './types';
 import { NestRefungibleStagesModal } from './NestRefungibleStagesModal';
 

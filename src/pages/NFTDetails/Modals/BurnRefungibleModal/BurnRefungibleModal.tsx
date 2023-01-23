@@ -5,8 +5,6 @@ import { useDebounce } from 'use-debounce';
 
 import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
-import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { useTokenRefungibleBurn } from '@app/api/restApi/token/useTokenRefungibleBurn';
 import { Button, Modal } from '@app/components';
 import {
@@ -15,6 +13,8 @@ import {
   InputAmount,
 } from '@app/pages/NFTDetails/Modals/Transfer';
 
+import { TokenModalsProps } from '../NFTModals';
+import { TBaseToken } from '../../type';
 import { BurnRefungibleFormDataType } from './types';
 import { BurnRefungibleStagesModal } from './BurnRefungibleStagesModal';
 

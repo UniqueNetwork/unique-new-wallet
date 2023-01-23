@@ -8,10 +8,10 @@ import { useDebounce } from 'use-debounce';
 import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenTransfer } from '@app/api';
-import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { Modal, TransferBtn } from '@app/components';
 
+import { TBaseToken } from '../../../type';
+import { TokenModalsProps } from '../../NFTModals';
 import { TransferRefungibleStagesModal } from './TransferRefungibleStagesModal';
 import { FormWrapper, TransferRow, InputTransfer, InputAmount } from '../components';
 import { TransferRefungibleFormDataType } from '../type';
