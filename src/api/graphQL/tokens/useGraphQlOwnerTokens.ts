@@ -7,7 +7,7 @@ import { QueryOptions, QueryResponse, Token } from '../types';
 
 export type StatusFilterNft = 'purchased' | 'createdByMe' | 'allStatus';
 
-export type TypeFilterNft = 'allType' | 'NFT' | 'NESTED' | 'FRACTIONAL';
+export type TypeFilterNft = 'allType' | 'NESTED' | 'NFT' | 'RFT';
 
 type AdditionalFilters = {
   collectionsIds?: number[];
@@ -39,6 +39,7 @@ const OWNER_TOKENS_QUERY = gql`
         type
         children_count
         parent_id
+        nested
       }
     }
   }
@@ -57,6 +58,13 @@ const getConditionByStatusFilter = (statusFilter: StatusFilterNft = 'allStatus')
 const getConditionByTypeFilter = (statusFilter: TypeFilterNft = 'allType') => {
   if (statusFilter === 'allType') {
     return undefined;
+  }
+  if (statusFilter === 'NESTED') {
+    return {
+      nested: {
+        _eq: 'true',
+      },
+    };
   }
   return {
     type: {

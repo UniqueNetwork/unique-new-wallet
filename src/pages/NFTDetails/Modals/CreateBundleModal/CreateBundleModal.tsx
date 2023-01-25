@@ -7,7 +7,7 @@ import { useQueryClient } from 'react-query';
 
 import { Modal, BaseActionBtn } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
+import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
 import { useAccounts } from '@app/hooks';
 import { CollectionNestingOption, useTokenNest } from '@app/api';
@@ -26,7 +26,7 @@ export type TCreateBundleForm = {
 export const CreateBundleModal = <T extends TBaseToken>({
   token,
   onClose,
-}: NFTModalsProps<T>) => {
+}: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const form = useForm<TCreateBundleForm>({
     mode: 'onChange',

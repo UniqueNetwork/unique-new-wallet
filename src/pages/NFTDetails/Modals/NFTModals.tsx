@@ -3,20 +3,23 @@ import {
   ShareModal,
   BurnModal,
   TransferModal,
-  TNFTModalType,
+  TTokenModalType,
   CreateBundleModal,
   TransferNestedTokenModal,
+  TransferRefungibleModal,
+  BurnRefungibleModal,
+  NestRefungibleModal,
 } from '@app/pages/NFTDetails/Modals';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 
-export type NFTModalsProps<T> = {
+export type TokenModalsProps<T> = {
   token?: T;
   onComplete(): void;
   onClose(): void;
 };
 
-type BaseNFTModalsProps<T> = NFTModalsProps<T> & {
-  modalType: TNFTModalType;
+type BaseTokenModalsProps<T> = TokenModalsProps<T> & {
+  modalType: TTokenModalType;
 };
 
 export const NFTModals = <T extends TBaseToken>({
@@ -24,7 +27,7 @@ export const NFTModals = <T extends TBaseToken>({
   token,
   onComplete,
   onClose,
-}: BaseNFTModalsProps<T>) => {
+}: BaseTokenModalsProps<T>) => {
   if (!token) {
     return null;
   }
@@ -32,10 +35,23 @@ export const NFTModals = <T extends TBaseToken>({
   switch (modalType) {
     case 'transfer':
       return <TransferModal token={token} onClose={onClose} onComplete={onComplete} />;
+    case 'transfer-refungible':
+      return (
+        <TransferRefungibleModal
+          token={token}
+          onClose={onClose}
+          onComplete={onComplete}
+        />
+      );
+
     case 'share':
       return <ShareModal token={token} onClose={onClose} />;
     case 'burn':
       return <BurnModal token={token} onClose={onClose} onComplete={onComplete} />;
+    case 'burn-refungible':
+      return (
+        <BurnRefungibleModal token={token} onClose={onClose} onComplete={onComplete} />
+      );
 
     case 'create-bundle':
       return (
@@ -52,6 +68,10 @@ export const NFTModals = <T extends TBaseToken>({
           onClose={onClose}
           onComplete={onComplete}
         />
+      );
+    case 'nest-refungible':
+      return (
+        <NestRefungibleModal token={token} onClose={onClose} onComplete={onComplete} />
       );
   }
   return null;

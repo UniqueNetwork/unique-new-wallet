@@ -7,12 +7,12 @@ import { useAccounts, useApi } from '@app/hooks';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useTokenBurn, useTokenOwner } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
+import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 
 export const BurnModal = <T extends TBaseToken>({
   token,
   onClose,
-}: NFTModalsProps<T>) => {
+}: TokenModalsProps<T>) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
   const { selectedAccount } = useAccounts();

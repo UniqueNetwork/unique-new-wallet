@@ -15,6 +15,11 @@ export const queryKeys = createQueryKeyStore({
     isBundle: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
     parent: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
     owner: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],
+    balance: (collectionId?: number, tokenId?: number, owner?: string) => [
+      collectionId,
+      tokenId,
+      owner,
+    ],
   },
   collection: {
     byId: (collectionId?: number) => [collectionId],
