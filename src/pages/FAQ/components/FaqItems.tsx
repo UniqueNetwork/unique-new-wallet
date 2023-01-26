@@ -10,61 +10,35 @@ export const faqItems = <T extends Record<string, unknown>>(
 ) => {
   return [
     {
-      title: 'How can I create an account?',
+      title: 'How can I create or connect my account?',
       content: (
         <>
           <p>
-            Use either the{' '}
-            <UiLink
-              href="https://polkadot.js.org/extension/"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {`Polkadot{.js} extension`}
-              <Icon color="currentColor" name="arrow-up-right" size={16} />
-            </UiLink>{' '}
-            or <Link to={`/${activeNetwork}/${ROUTE.ACCOUNTS}`}>Manage accounts</Link> in
-            the drop-down list in the upper right corner of the screen page and follow the
-            instructions.
+            Use the “
+            <Link to={`/${activeNetwork}/${ROUTE.ACCOUNTS}`}>Connect wallet</Link>” button
+            in&nbsp;the upper right corner of&nbsp;the screen and follow the instructions.
+            You can choose between Polkadot.js and Metamask or&nbsp;create/connect
+            a&nbsp;wallet directly via the Unique Wallet on-line interface. When using
+            Chrome or&nbsp;Firefox desktop with the Polkadot.js browser extension, set
+            your account to&nbsp;“allow use on any chain”.
           </p>
           <p>
-            Keep your wallet seed phrase safe! Write it down on a paper or export the JSON
-            key with a password you’ll never forget.
+            Note that this option is&nbsp;not available to&nbsp;Ledger or&nbsp;Trust
+            Wallet users. Support for these wallets will be&nbsp;added
+            at&nbsp;a&nbsp;later date. If, by&nbsp;chance, you happened to&nbsp;transfer
+            any tokens to&nbsp;one of&nbsp;the unsupported wallets,rest assured that your
+            funds are safe in&nbsp;the wallet, but they are currently inaccessible until
+            support for the wallet is&nbsp;added.
           </p>
         </>
       ),
     },
     {
-      title: 'How do I connect my crypto wallet?',
-      content: (
+      title: (
         <>
-          <p>
-            Use the{' '}
-            <UiLink
-              href="https://polkadot.js.org/extension/"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {`Polkadot{.js} extension`}
-              <Icon color="currentColor" name="arrow-up-right" size={16} />
-            </UiLink>{' '}
-            or the <Link to={`/${activeNetwork}/${ROUTE.ACCOUNTS}`}>Manage accounts</Link>{' '}
-            in the drop-down list in the upper right corner of the screen to set up or
-            restore an account. Restore your wallet through the seed phrase, JSON
-            file+password or QR code. When using Chrome or Firefox desktop with the
-            Polkadot.js browser extension, set your account to “allow use on any chain”.
-          </p>
-          <p>
-            Note that this option is not available to Ledger or TrustWallet users. Support
-            for them will be added at a later date. If an NFT or a token was at any point
-            transferred to one of these hardware wallets they are safe but you won’t be
-            able to transfer them out until the support is added.
-          </p>
+          What should I do to mint my first NFT? <span className="tooltip">NEW</span>
         </>
       ),
-    },
-    {
-      title: 'What should I do to mint my first NFT?',
       content: (
         <>
           <p>
@@ -79,6 +53,27 @@ export const faqItems = <T extends Record<string, unknown>>(
           <p>
             After creating the collection, you can click on the “Create an NFT” button to
             create a token.
+          </p>
+        </>
+      ),
+    },
+    {
+      title: 'What is a fractional token?',
+      content: (
+        <>
+          <p>
+            This is a re-fungible format that allows for an&nbsp;NFT
+            to&nbsp;be&nbsp;divided into many parts that can be&nbsp;distributed among any
+            number of&nbsp;wallets. You can learn more aboout this in this article:{' '}
+            <UiLink
+              href="https://unique.network/blog/re-fungible-nfts/"
+              title="@unique2faucet_opal_bot"
+              role="primary"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              https://unique.network/blog/re-fungible-nfts/
+            </UiLink>
           </p>
         </>
       ),
@@ -259,7 +254,7 @@ export const faqItems = <T extends Record<string, unknown>>(
     },
     {
       title:
-        'I want to find my collections and tokens in the blockchain. Where can I see them?',
+        'I want to find my collections and tokens in the blockchain. Where can I search for them?',
       content: (
         <p>
           Use our{' '}
