@@ -1,6 +1,7 @@
 import { ChainPropertiesResponse } from '@unique-nft/sdk';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { Account, AccountSigner } from '@app/account/AccountContext';
 import { AccountUtils } from '@app/account/AccountUtils';
@@ -36,7 +37,9 @@ export class PolkadotWallet implements BaseWalletEntity<InjectedAccountWithMeta>
       throw new Error('Polkadot extension not found');
     }
 
-    const accounts = await web3Accounts();
+    const accounts = (await web3Accounts()).filter(
+      (account) => !isEthereumAddress(account.address),
+    );
 
     this._accounts = new Map(
       accounts.map((account) => {
