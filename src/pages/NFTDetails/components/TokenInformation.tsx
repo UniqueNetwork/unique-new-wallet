@@ -47,7 +47,7 @@ const TokenInformationComponent = <T extends TBaseToken>({
             </>
           }
         >
-          <Icon name="question" size={20} color="var(--color-primary-500)" />
+          <Icon name="question" size={24} color="var(--color-primary-500)" />
         </TooltipWrapper>
       </Heading>
       {attributes?.map(({ title, tags }, index) => (
@@ -105,7 +105,5 @@ const TokenInformationStyled = styled(TokenInformationComponent)`
     margin-bottom: calc(var(--prop-gap) / 2);
   }
 `;
-
-const DownloadFileButton = styled.button``;
 
 export const TokenInformation = memo(TokenInformationStyled);
