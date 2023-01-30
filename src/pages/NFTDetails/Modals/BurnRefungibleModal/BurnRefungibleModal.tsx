@@ -39,7 +39,7 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
     collectionId: token?.collectionId,
     tokenId: token?.tokenId,
     address: selectedAccount?.address,
-    isRefungble: true,
+    isFractional: true,
   });
 
   const form = useForm<BurnRefungibleFormDataType>({

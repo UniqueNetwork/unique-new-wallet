@@ -12,7 +12,7 @@ export const useIsOwner = (token: TokenByIdResponse | undefined) => {
     tokenId: token?.tokenId,
     collectionId: token?.collectionId,
     address: selectedAccount?.address,
-    isRefungble: token?.collection.mode === 'ReFungible',
+    isFractional: token?.collection.mode === 'ReFungible',
   });
 
   return useMemo(() => {

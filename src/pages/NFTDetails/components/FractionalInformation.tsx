@@ -2,36 +2,23 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import { Heading, Text } from '@unique-nft/ui-kit';
 
-import { useTokenGetTotalPieces } from '@app/api/restApi/token/useTokenGetTotalPieces';
-import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
-import { useAccounts } from '@app/hooks';
 import { ProgressBar } from '@app/components';
+import { formatBlockNumber } from '@app/utils';
 
 import { TBaseToken } from '../type';
 
 interface FractionalInformationProps<T extends TBaseToken> {
-  token?: T;
+  balance?: number;
+  pieces?: number;
   className?: string;
 }
 
 const FractionalInformationComponent = <T extends TBaseToken>({
-  token,
+  balance,
+  pieces,
   className,
 }: FractionalInformationProps<T>) => {
-  const { selectedAccount } = useAccounts();
-
-  const { data: pieces } = useTokenGetTotalPieces({
-    tokenId: token?.tokenId,
-    collectionId: token?.collectionId,
-  });
-
-  const { data: balance } = useTokenGetBalance({
-    tokenId: token?.tokenId,
-    collectionId: token?.collectionId,
-    address: selectedAccount?.address,
-  });
-
-  const percent = ((balance?.amount || 0) / (pieces?.amount || 1)) * 100;
+  const percent = ((balance || 0) / (pieces || 1)) * 100;
 
   return (
     <div className={className}>
@@ -42,19 +29,19 @@ const FractionalInformationComponent = <T extends TBaseToken>({
         <Text size="m" weight="light" color="grey-500">
           Total minted fractions:
         </Text>
-        <Text>{pieces?.amount || 0}</Text>
+        <Text>{formatBlockNumber(pieces || 0)}</Text>
       </Row>
       <Row>
         <Text size="m" weight="light" color="grey-500">
           Owned fractions:
         </Text>
-        <Text>{balance?.amount || 0}</Text>
+        <Text>{formatBlockNumber(balance || 0)}</Text>
       </Row>
       <Row>
         <Text size="m" weight="light" color="grey-500">
           Ownership percentage:
         </Text>
-        <Text>{`${percent.toFixed(0)}%`}</Text>
+        <Text>{`${percent.toFixed(2)}%`}</Text>
       </Row>
       <Row>
         <ProgressBar filledPercent={percent} height={14} />

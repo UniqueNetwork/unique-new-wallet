@@ -9,12 +9,12 @@ export const useTokenGetBalance = ({
   collectionId,
   tokenId,
   address,
-  isRefungble,
+  isFractional,
 }: {
   collectionId?: number;
   tokenId?: number;
   address?: string;
-  isRefungble?: boolean;
+  isFractional?: boolean;
 }): UseQueryResult<TokenBalanceResponse> => {
   const { api } = useApi();
 
@@ -27,7 +27,7 @@ export const useTokenGetBalance = ({
         address: address!,
       }),
     {
-      enabled: !!collectionId && !!tokenId && !!address && isRefungble,
+      enabled: !!collectionId && !!tokenId && !!address && isFractional,
       retryOnMount: true,
     },
   );

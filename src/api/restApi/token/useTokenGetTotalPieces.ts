@@ -18,7 +18,7 @@ export const useTokenGetTotalPieces = ({
     queryKeys.token.owner(collectionId, tokenId),
     () => api.refungible.totalPieces({ collectionId: collectionId!, tokenId: tokenId! }),
     {
-      enabled: !!collectionId || !!tokenId,
+      enabled: !!collectionId && !!tokenId,
       refetchOnMount: true,
     },
   );
