@@ -264,7 +264,7 @@ export const NftDetailsBundlePage = () => {
   };
 
   const renderAchievements = () => (
-    <>
+    <AchievementsWrapper>
       <Achievement
         achievement={isBundleToken() ? 'Bundle' : 'Nested'}
         tooltipDescription={
@@ -275,7 +275,7 @@ export const NftDetailsBundlePage = () => {
         }
       />
       {token?.collection.mode === 'ReFungible' && (
-        <AchievementStyled
+        <Achievement
           achievement="Fractional"
           tooltipDescription={
             <>
@@ -285,7 +285,7 @@ export const NftDetailsBundlePage = () => {
           }
         />
       )}
-    </>
+    </AchievementsWrapper>
   );
 
   return (
@@ -412,6 +412,12 @@ const NftDetailsWrapper = styled.div`
   flex: 1;
 `;
 
-const AchievementStyled = styled(Achievement)`
-  top: calc(var(--prop-gap) * 3) !important;
+const AchievementsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--prop-gap) / 2);
+  align-items: flex-end;
+  span {
+    position: relative;
+  }
 `;
