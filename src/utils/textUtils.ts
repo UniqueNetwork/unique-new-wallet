@@ -17,7 +17,7 @@ export const formatAmount = (amount: number | string, initialValue = '0') => {
   return parts.join('.');
 };
 
-export const formatBlockNumber = (blockNumber: number | undefined) => {
+export const formatBlockNumber = (blockNumber: number | string | undefined) => {
   if (!blockNumber) {
     return '';
   }

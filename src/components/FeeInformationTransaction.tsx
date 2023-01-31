@@ -1,4 +1,4 @@
-import { Alert } from '@unique-nft/ui-kit';
+import { Alert } from './Alert';
 
 type Props = {
   fee?: string;

@@ -40,6 +40,7 @@ const OWNER_TOKENS_QUERY = gql`
         children_count
         parent_id
         nested
+        total_pieces
       }
     }
   }
