@@ -7,7 +7,7 @@ import { useDebounce } from 'use-debounce';
 
 import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
-import { useTokenTransfer } from '@app/api';
+import { useTokenRefungibleTransfer } from '@app/api';
 import { Modal, TransferBtn } from '@app/components';
 
 import { TBaseToken } from '../../../type';
@@ -31,7 +31,7 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
     submitWaitResultError,
     feeLoading,
     feeError,
-  } = useTokenTransfer();
+  } = useTokenRefungibleTransfer();
 
   const { data: fractionsBalance } = useTokenGetBalance({
     collectionId: token?.collectionId,
@@ -77,7 +77,10 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
 
   const onSubmit = (data: TransferRefungibleFormDataType) => {
     submitWaitResult({
-      payload: data,
+      payload: {
+        ...data,
+        amount: Number(data.amount),
+      },
     })
       .then(() => {
         info('Transfer completed successfully');
@@ -135,7 +138,10 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
               }}
               rules={{
                 required: true,
-                validate: (val: string) => Number(val) > 0,
+                validate: (val: string) =>
+                  Number(val) > 0 &&
+                  Number(val) <= (fractionsBalance?.amount || 0) &&
+                  /^\d+$/.test(val),
               }}
             />
           </TransferRow>
