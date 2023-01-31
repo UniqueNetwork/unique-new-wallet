@@ -137,6 +137,7 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
               render={({ field: { value, onChange } }) => {
                 return (
                   <InputAmount
+                    label="Number of fractions"
                     value={value}
                     maxValue={fractionsBalance?.amount || 0}
                     onChange={onChange}
@@ -146,7 +147,10 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
               }}
               rules={{
                 required: true,
-                validate: (val: string) => Number(val) > 0,
+                validate: (val: string) =>
+                  Number(val) > 0 &&
+                  Number(val) <= (fractionsBalance?.amount || 0) &&
+                  /^\d+$/.test(val),
               }}
             />
           </TransferRow>
