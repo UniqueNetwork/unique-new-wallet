@@ -96,19 +96,17 @@ export const NftDetailsPage = () => {
         balance={balance?.amount}
         pieces={pieces?.amount}
         achievement={
-          isFractional
-            ? [
-                <Achievement
-                  achievement="Fractional"
-                  tooltipDescription={
-                    <>
-                      A&nbsp;fractional token provides a&nbsp;way for many users
-                      to&nbsp;own a&nbsp;part of&nbsp;an&nbsp;NFT
-                    </>
-                  }
-                />,
-              ]
-            : undefined
+          isFractional && (
+            <Achievement
+              achievement="Fractional"
+              tooltipDescription={
+                <>
+                  A&nbsp;fractional token provides a&nbsp;way for many users to&nbsp;own
+                  a&nbsp;part of&nbsp;an&nbsp;NFT
+                </>
+              }
+            />
+          )
         }
         owner={
           isOwner ? (
