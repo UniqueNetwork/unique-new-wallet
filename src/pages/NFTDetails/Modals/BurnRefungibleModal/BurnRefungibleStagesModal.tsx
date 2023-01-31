@@ -6,7 +6,7 @@ import { Modal } from '@app/components/Modal';
 
 const stages = [
   {
-    title: 'Burn fractional token',
+    title: 'Burning fractional token',
     status: StageStatus.inProgress,
   },
 ];

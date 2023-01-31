@@ -15,7 +15,7 @@ import { NestedSection } from '@app/components/BundleTree/NestedSection/NestedSe
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
-import { Button, TransferBtn } from '@app/components';
+import { Achievement, Button, TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
@@ -263,6 +263,31 @@ export const NftDetailsBundlePage = () => {
     );
   };
 
+  const renderAchievements = () => (
+    <>
+      <Achievement
+        achievement={isBundleToken() ? 'Bundle' : 'Nested'}
+        tooltipDescription={
+          <>
+            A&nbsp;group of&nbsp;tokens nested in&nbsp;an&nbsp;NFT and having
+            a&nbsp;nested, ordered, tree-like structure
+          </>
+        }
+      />
+      {token?.collection.mode === 'ReFungible' && (
+        <AchievementStyled
+          achievement="Fractional"
+          tooltipDescription={
+            <>
+              A&nbsp;fractional token provides a&nbsp;way for many users to&nbsp;own
+              a&nbsp;part of&nbsp;an&nbsp;NFT
+            </>
+          }
+        />
+      )}
+    </>
+  );
+
   return (
     <NftDetailsWrapper>
       <NftDetailsLayout
@@ -274,7 +299,7 @@ export const NftDetailsBundlePage = () => {
           token={token}
           owner={owner()}
           menuButtons={menuButtons}
-          achievement={isBundleToken() ? 'Bundle' : 'Nested'}
+          achievement={renderAchievements()}
           buttons={
             isOwner && (
               <>
@@ -385,4 +410,8 @@ const HeaderStyled = styled.div`
 const NftDetailsWrapper = styled.div`
   display: flex;
   flex: 1;
+`;
+
+const AchievementStyled = styled(Achievement)`
+  top: calc(var(--prop-gap) * 3) !important;
 `;

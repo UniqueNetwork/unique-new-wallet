@@ -46,7 +46,10 @@ export interface Attribute {
   };
 }
 
-export type TokenTypeEnum = 'NFT' | 'RFT';
+export enum TokenTypeEnum {
+  NFT = 'NFT',
+  RFT = 'RFT',
+}
 
 export interface Token {
   token_id: number;
@@ -68,6 +71,7 @@ export interface Token {
   children_count: number;
   parent_id: Nullable<string>;
   nested: boolean;
+  total_pieces: string;
 }
 
 export interface Collection {
@@ -83,4 +87,11 @@ export interface Collection {
   token_limit: number;
   name: string;
   sponsorship: string;
+}
+
+export interface RftFraction {
+  owner: string;
+  amount: string;
+  token_id: number;
+  collection_id: number;
 }

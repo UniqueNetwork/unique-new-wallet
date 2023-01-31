@@ -17,6 +17,8 @@ import {
   StatusFilter,
   TypeFilter,
 } from '@app/pages';
+import { useGraphQlGetRftFractionsByOwner } from '@app/api/graphQL/tokens/useGraphQlGetRftFractionsByOwner';
+import { TokenTypeEnum } from '@app/api/graphQL/types';
 
 import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useNFTsContext } from '../context';
@@ -72,6 +74,12 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       pagination: { page: tokensPage, limit: getLimit },
     },
   );
+
+  const {
+    fractions,
+    loading: fractionsLoading,
+    refetch: fractionsRefetch,
+  } = useGraphQlGetRftFractionsByOwner(selectedAccount?.address, tokens || []);
 
   const { cacheTokens } = useCheckExistTokensByAccount({
     tokens,
@@ -134,6 +142,23 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     resetFilters();
   }, [currentChain.network, resetFilters, selectedAccount]);
 
+  const tokensWithFractions = useMemo(() => {
+    return (
+      tokens?.map((token) => {
+        if (token.type === TokenTypeEnum.RFT) {
+          const ownedFractions =
+            fractions?.find(
+              ({ collection_id, token_id }) =>
+                collection_id === token.collection_id && token_id === token.token_id,
+            )?.amount || '0';
+
+          return { ...token, ownedFractions };
+        }
+        return token;
+      }) || []
+    );
+  }, [tokens, fractions]);
+
   return (
     <>
       <PagePaper.Layout
@@ -150,8 +175,8 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       >
         <NFTsTemplateList
           cacheTokens={cacheTokens}
-          tokens={tokens}
-          isLoading={tokensLoading}
+          tokens={tokensWithFractions}
+          isLoading={tokensLoading || fractionsLoading}
           chips={chips}
           fetchMore={fetchMore}
           paginationSettings={{
