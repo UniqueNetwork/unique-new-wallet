@@ -4,6 +4,7 @@ import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { TransferTokenBody } from '@unique-nft/sdk';
 import { useDebounce } from 'use-debounce';
+import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
 import { TransferStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferModal';
@@ -15,14 +16,16 @@ import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/Fo
 import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 export const TransferModal = <T extends TBaseToken>({
   token,
-  onComplete,
   onClose,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const { error, info } = useNotifications();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
   const {
     submitWaitResult,
     getFee,
@@ -73,7 +76,7 @@ export const TransferModal = <T extends TBaseToken>({
     })
       .then(() => {
         info('Transfer completed successfully');
-        onComplete();
+        navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
       })
       .catch(() => {
         onClose();

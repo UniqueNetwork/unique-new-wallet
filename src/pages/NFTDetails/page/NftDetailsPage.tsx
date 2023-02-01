@@ -2,20 +2,21 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TokenByIdResponse } from '@unique-nft/sdk';
 import { Button } from '@unique-nft/ui-kit';
+import { Address } from '@unique-nft/utils';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
 import { NFTModals, TTokenModalType } from '@app/pages/NFTDetails/Modals';
 import { useTokenGetBalance, useTokenGetById, useTokenGetTotalPieces } from '@app/api';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
-import { Achievement, TransferBtn } from '@app/components';
+import { Achievement, ErrorPage, TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 export const NftDetailsPage = () => {
-  const { collectionId = '', tokenId = '' } = useParams();
+  const { collectionId = '', tokenId = '', address = '' } = useParams();
   const size = useDeviceSize();
   const { currentChain } = useApi();
   const { selectedAccount } = useAccounts();
@@ -56,7 +57,11 @@ export const NftDetailsPage = () => {
     collectionId: parseInt(collectionId),
   });
 
-  const { data: balance, refetch: refetchTokenBalance } = useTokenGetBalance({
+  const {
+    data: balance,
+    refetch: refetchTokenBalance,
+    isFetching: isFetchingBalance,
+  } = useTokenGetBalance({
     tokenId: parseInt(tokenId),
     collectionId: parseInt(collectionId),
     address: selectedAccount?.address,
@@ -86,6 +91,19 @@ export const NftDetailsPage = () => {
 
     return items;
   }, [isOwner]);
+
+  if (
+    !isLoadingToken &&
+    !isFetchingBalance &&
+    ((isFractional && !balance?.amount) ||
+      (token?.owner &&
+        !Address.compare.ethereumAddresses(
+          address,
+          Address.mirror.substrateToEthereum(token.owner),
+        )))
+  ) {
+    return <ErrorPage />;
+  }
 
   return (
     <NftDetailsLayout isLoading={isLoadingToken} tokenExist={!!token}>

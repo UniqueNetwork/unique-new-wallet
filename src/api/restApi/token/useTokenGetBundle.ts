@@ -1,5 +1,6 @@
 import { useQuery, UseQueryResult } from 'react-query';
-import { GetBundleResponse } from '@unique-nft/sdk';
+import { GetBundleResponse, NestedToken } from '@unique-nft/sdk';
+import { useMemo } from 'react';
 
 import { useApi } from '@app/hooks';
 
@@ -11,7 +12,7 @@ export const useTokenGetBundle = ({
 }: {
   collectionId?: number;
   tokenId?: number;
-}): UseQueryResult<GetBundleResponse & { collectionName: string; name: string }> => {
+}) => {
   const { api } = useApi();
 
   const getBundle = async () => {
@@ -26,8 +27,37 @@ export const useTokenGetBundle = ({
     };
   };
 
-  return useQuery(queryKeys.token.bundle(collectionId, tokenId), () => getBundle(), {
+  const {
+    data,
+    isLoading: isLoadingBundleToken,
+    refetch: refetchBundle,
+  }: UseQueryResult<
+    GetBundleResponse & { collectionName: string; name: string }
+  > = useQuery(queryKeys.token.bundle(collectionId, tokenId), () => getBundle(), {
     enabled: !!collectionId || !!tokenId,
     refetchOnMount: true,
   });
+
+  const bundleToken = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+    const setParent = (parent: NestedToken) => {
+      parent.nestingChildTokens = parent.nestingChildTokens?.map((child) => ({
+        ...setParent(child),
+        nestingParentToken: {
+          collectionId: parent.collectionId,
+          tokenId: parent.tokenId,
+        },
+      }));
+      return parent;
+    };
+    return setParent(data);
+  }, [data]);
+
+  return {
+    bundleToken,
+    isLoadingBundleToken,
+    refetchBundle,
+  };
 };

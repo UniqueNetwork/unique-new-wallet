@@ -41,6 +41,7 @@ const OWNER_TOKENS_QUERY = gql`
         parent_id
         nested
         total_pieces
+        owner
       }
     }
   }

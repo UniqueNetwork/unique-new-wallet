@@ -5,6 +5,7 @@ import { Address } from '@unique-nft/utils/address';
 import { TransferTokenBody } from '@unique-nft/sdk';
 import { useQueryClient } from 'react-query';
 import { useDebounce } from 'use-debounce';
+import { useNavigate } from 'react-router-dom';
 
 import { Modal, TransferBtn } from '@app/components';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
@@ -17,6 +18,7 @@ import { TransferNestedStagesModal } from '@app/pages/NFTDetails/Modals/Transfer
 import { useAccounts } from '@app/hooks';
 import { queryKeys } from '@app/api/restApi/keysConfig';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 export const TransferNestedTokenModal = ({
   token,
@@ -36,6 +38,8 @@ export const TransferNestedTokenModal = ({
   const queryClient = useQueryClient();
   const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
 
   const form = useForm<TransferFormDataType>({
     mode: 'onChange',
@@ -111,7 +115,8 @@ export const TransferNestedTokenModal = ({
         info('Transfer completed successfully');
 
         queryClient.invalidateQueries(queryKeys.token._def);
-        onComplete();
+
+        navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
       })
       .catch(() => {
         onClose();

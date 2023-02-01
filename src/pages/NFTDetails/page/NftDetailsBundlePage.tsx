@@ -3,11 +3,17 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Heading, Text } from '@unique-nft/ui-kit';
 import { TokenByIdResponse } from '@unique-nft/sdk';
+import { Address } from '@unique-nft/utils';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
 import { NFTModals, TTokenModalType } from '@app/pages/NFTDetails/Modals';
-import { useTokenGetBundle, useTokenGetById } from '@app/api';
+import {
+  useTokenGetBalance,
+  useTokenGetBundle,
+  useTokenGetById,
+  useTokenGetTotalPieces,
+} from '@app/api';
 import BundleTree from '@app/components/BundleTree/BundleTree';
 import NodeView from '@app/components/BundleTree/Node/NodeView';
 import { INestingToken } from '@app/components/BundleTree/types';
@@ -20,6 +26,7 @@ import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
   a.collectionId === b.collectionId && a.tokenId === b.tokenId;
@@ -27,12 +34,16 @@ const areNodesEqual = (a: INestingToken, b: INestingToken) =>
 const getKey = (a: INestingToken) => `T${a.tokenId}C${a.collectionId}`;
 
 export const NftDetailsBundlePage = () => {
-  const { collectionId = '', tokenId = '' } = useParams();
+  const { collectionId = '', tokenId = '', address = '' } = useParams();
   const navigate = useNavigate();
   const { currentChain } = useApi();
   const deviceSize = useDeviceSize();
+  const getTokenPath = useGetTokenPath();
 
   const [bundle, setBundle] = useState<INestingToken[]>([]);
+  const parentBundle = Address.is.nestingAddress(address)
+    ? Address.nesting.addressToIds(address)
+    : undefined;
 
   const [currentModal, setCurrentModal] = useState<TTokenModalType>('none');
 
@@ -43,13 +54,9 @@ export const NftDetailsBundlePage = () => {
 
   const [selectedToken, setSelectedToken] = useState<INestingToken>();
 
-  const {
-    data: bundleToken,
-    isLoading: isLoadingBundleToken,
-    refetch: refetchBundle,
-  } = useTokenGetBundle({
-    collectionId: parseInt(collectionId),
-    tokenId: parseInt(tokenId),
+  const { bundleToken, isLoadingBundleToken, refetchBundle } = useTokenGetBundle({
+    collectionId: parentBundle?.collectionId || parseInt(collectionId),
+    tokenId: parentBundle?.tokenId || parseInt(tokenId),
   });
 
   const {
@@ -62,7 +69,7 @@ export const NftDetailsBundlePage = () => {
   });
 
   const { data: parentToken, isLoading: isLoadingParentToken } = useTokenGetById({
-    ...tokenById?.nestingParentToken,
+    ...(parentBundle || tokenById?.nestingParentToken),
   });
 
   const token:
@@ -74,14 +81,41 @@ export const NftDetailsBundlePage = () => {
     if (!tokenById) {
       return undefined;
     }
-    return {
+
+    const tokenWithNames = {
       ...tokenById,
       name: `${tokenById?.collection.tokenPrefix} #${tokenById.tokenId}`,
       collectionName: tokenById?.collection.name || '',
     };
-  }, [tokenById]);
 
-  const isOwner = useIsOwner(token);
+    if (parentToken) {
+      return {
+        ...tokenWithNames,
+        nestingParentToken: {
+          collectionId: parentToken.collectionId,
+          tokenId: parentToken.tokenId,
+        },
+      };
+    }
+
+    return tokenWithNames;
+  }, [tokenById, parentToken]);
+
+  const isReFungible = token?.collection.mode === 'ReFungible';
+
+  const { data: pieces, refetch: refetchTotalPieces } = useTokenGetTotalPieces({
+    tokenId: parseInt(tokenId),
+    collectionId: parseInt(collectionId),
+  });
+
+  const { data: balance, refetch: refetchTokenBalance } = useTokenGetBalance({
+    tokenId: parseInt(tokenId),
+    collectionId: parseInt(collectionId),
+    address,
+    isFractional: isReFungible,
+  });
+
+  const isOwner = useIsOwner(token, address);
 
   const onModalClose = () => {
     setCurrentModal('none');
@@ -91,6 +125,8 @@ export const NftDetailsBundlePage = () => {
   const onComplete = () => {
     refetchToken();
     refetchBundle();
+    refetchTokenBalance();
+    refetchTotalPieces();
     setCurrentModal('none');
   };
 
@@ -98,8 +134,21 @@ export const NftDetailsBundlePage = () => {
     console.log(data);
   };
 
-  const handleViewTokenDetails = (token: INestingToken) => {
-    navigate(`/${currentChain?.network}/token/${token.collectionId}/${token.tokenId}`);
+  const handleViewTokenDetails = ({
+    nestingParentToken,
+    tokenId,
+    collectionId,
+    owner,
+  }: INestingToken) => {
+    if (nestingParentToken) {
+      const parentAddress = Address.nesting.idsToAddress(
+        nestingParentToken.collectionId,
+        nestingParentToken.tokenId,
+      );
+      navigate(getTokenPath(parentAddress, collectionId, tokenId));
+      return;
+    }
+    navigate(getTokenPath(owner, collectionId, tokenId));
   };
 
   const isBundleToken = () => {
@@ -127,9 +176,12 @@ export const NftDetailsBundlePage = () => {
 
     const sortTokensInBundleAndSelectOpened = (bundle: INestingToken) => {
       bundle.isCurrentAccountOwner = isOwner;
+
       if (
         bundle.tokenId === token?.tokenId &&
-        bundle.collectionId === token.collectionId
+        bundle.collectionId === token.collectionId &&
+        bundle.nestingParentToken?.collectionId === parentBundle?.collectionId &&
+        bundle.nestingParentToken?.tokenId === parentBundle?.tokenId
       ) {
         bundle.selected = true;
         bundle.opened = true;
@@ -149,7 +201,10 @@ export const NftDetailsBundlePage = () => {
     const openNodeIfChildsPageOpened = (bundle: INestingToken) => {
       if (!bundle.nestingChildTokens?.length) {
         return (
-          bundle.tokenId === token?.tokenId && bundle.collectionId === token.collectionId
+          bundle.tokenId === token?.tokenId &&
+          bundle.collectionId === token.collectionId &&
+          bundle.nestingParentToken?.collectionId === parentBundle?.collectionId &&
+          bundle.nestingParentToken?.tokenId === parentBundle?.tokenId
         );
       }
 
@@ -171,6 +226,8 @@ export const NftDetailsBundlePage = () => {
     isLoadingBundleToken,
     token?.tokenId,
     token?.collectionId,
+    parentBundle?.collectionId,
+    parentBundle?.tokenId,
     isOwner,
   ]);
 
@@ -188,7 +245,7 @@ export const NftDetailsBundlePage = () => {
 
   const unnestTokenAction = () => {
     logUserEvent(UserEvents.UNNEST_TOKEN);
-    setCurrentModal('unnest');
+    setCurrentModal(isReFungible ? 'unnest-refungible' : 'unnest');
   };
 
   const handleTransferToken = (token: INestingToken) => {
@@ -198,7 +255,7 @@ export const NftDetailsBundlePage = () => {
 
   const transferTokenAction = () => {
     logUserEvent(UserEvents.TRANSFER_NFT);
-    setCurrentModal('bundle-transfer');
+    setCurrentModal(isReFungible ? 'transfer-refungible' : 'bundle-transfer');
   };
 
   const menuButtons = useMemo(() => {
@@ -251,11 +308,19 @@ export const NftDetailsBundlePage = () => {
     if (isOwner && isBundle) {
       return 'You own it';
     }
+    if (!parentToken) {
+      return null;
+    }
+
+    const parentOwnerEthAddress = Address.is.ethereumAddress(parentToken?.owner || '')
+      ? parentToken?.owner
+      : Address.mirror.substrateToEthereum(parentToken?.owner || '');
+
     return (
       <>
         Nested in bundle
         <TokenLink
-          to={`/${currentChain?.network}/token/${parentToken?.collectionId}/${parentToken?.tokenId}`}
+          to={`/${currentChain?.network}/token/${parentOwnerEthAddress}/${parentToken?.collectionId}/${parentToken?.tokenId}`}
         >
           {parentToken?.collection.tokenPrefix} #{parentToken?.tokenId}
         </TokenLink>
@@ -274,7 +339,7 @@ export const NftDetailsBundlePage = () => {
           </>
         }
       />
-      {token?.collection.mode === 'ReFungible' && (
+      {isReFungible && (
         <Achievement
           achievement="Fractional"
           tooltipDescription={
@@ -300,6 +365,9 @@ export const NftDetailsBundlePage = () => {
           owner={owner()}
           menuButtons={menuButtons}
           achievement={renderAchievements()}
+          isReFungible={isReFungible}
+          balance={balance?.amount}
+          pieces={pieces?.amount}
           buttons={
             isOwner && (
               <>

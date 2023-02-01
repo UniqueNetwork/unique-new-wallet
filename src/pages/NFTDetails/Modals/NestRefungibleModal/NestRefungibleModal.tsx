@@ -3,15 +3,22 @@ import { useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
+import { Address } from '@unique-nft/utils';
+import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
-import { CollectionNestingOption, useTokenGetBalance, useTokenNest } from '@app/api';
+import {
+  CollectionNestingOption,
+  useTokenGetBalance,
+  useTokenRefungibleTransfer,
+} from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { Alert, Button, Modal } from '@app/components';
 import { Suggest } from '@app/components/Suggest';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
 import { Token } from '@app/api/graphQL/types';
 import { useGraphQlGetTokensCollection } from '@app/api/graphQL/tokens/useGraphQlGetTokensCollection';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 import { SuggestOptionNesting } from '../CreateBundleModal/components';
 import { FormWrapper, InputAmount } from '../Transfer';
@@ -26,6 +33,8 @@ export const NestRefungibleModal = <T extends TBaseToken>({
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
 
   const {
     getFee,
@@ -34,7 +43,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     isLoadingSubmitResult,
     feeError,
     submitWaitResultError,
-  } = useTokenNest();
+  } = useTokenRefungibleTransfer();
 
   const { data: fractionsBalance } = useTokenGetBalance({
     collectionId: token?.collectionId,
@@ -91,25 +100,25 @@ export const NestRefungibleModal = <T extends TBaseToken>({
 
   useEffect(() => {
     const { amount, collection, token: parentToken } = debouncedFormValues;
-    const collectionId = collection?.collection_id;
-    const tokenId = parentToken?.token_id;
+    const parentCollectionId = collection?.collection_id;
+    const parentTokenId = parentToken?.token_id;
 
     if (
       !token ||
-      !parentToken ||
       !selectedAccount?.address ||
-      !collectionId ||
-      !tokenId ||
+      !parentCollectionId ||
+      !parentTokenId ||
       !amount
     ) {
       return;
     }
 
     getFee({
+      collectionId: token.collectionId,
+      tokenId: token.tokenId,
       address: selectedAccount.address,
-      parent: { collectionId, tokenId },
-      nested: token,
-      value: amount,
+      to: Address.nesting.idsToAddress(parentCollectionId, parentTokenId),
+      amount,
     });
   }, [debouncedFormValues, token, selectedAccount?.address]);
 
@@ -118,22 +127,35 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     collection,
     token: parentToken,
   }: NestRefungibleFormDataType) => {
-    const collectionId = collection?.collection_id;
-    const tokenId = parentToken?.token_id;
-    if (!token || !selectedAccount?.address || !isValid || !tokenId || !collectionId) {
+    const parentCollectionId = collection?.collection_id;
+    const parentTokenId = parentToken?.token_id;
+    if (
+      !token ||
+      !selectedAccount?.address ||
+      !parentCollectionId ||
+      !parentTokenId ||
+      !amount
+    ) {
       return;
     }
 
+    const to = Address.nesting.idsToAddress(parentCollectionId, parentTokenId);
+    const { collectionId, tokenId } = token;
+
     submitWaitResult({
       payload: {
+        collectionId,
+        tokenId,
         address: selectedAccount.address,
-        parent: { collectionId, tokenId },
-        nested: token,
-        value: amount,
+        to,
+        amount,
       },
     }).then(() => {
       info('RFT transferred successfully');
-
+      if (fractionsBalance?.amount === amount) {
+        navigate(getTokenPath(to, collectionId, tokenId));
+        return;
+      }
       onComplete();
     });
   };
