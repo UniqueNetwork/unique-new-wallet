@@ -78,7 +78,6 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
             key={token.token_id}
             token={token}
             navigate={() => {
-              console.log(token.owner, token.collection_id, token.token_id);
               navigate(getTokenPath(token.owner, token.collection_id, token.token_id), {
                 state: {
                   backLink: `${ROUTE.MY_COLLECTIONS}/${token.collection_id}/${MY_COLLECTIONS_ROUTE.NFT}`,
