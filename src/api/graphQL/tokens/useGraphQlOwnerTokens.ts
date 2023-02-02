@@ -42,6 +42,8 @@ const OWNER_TOKENS_QUERY = gql`
         nested
         total_pieces
         owner
+        tokens_owner
+        tokens_amount
       }
     }
   }
@@ -119,16 +121,8 @@ export const useGraphQlOwnerTokens = (
         ...getConditionByStatusFilter(statusFilter),
         ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
-        _or: [
-          { owner: { _eq: owner } },
-          {
-            owner_normalized: {
-              _eq: Address.is.ethereumAddress(owner!)
-                ? Address.mirror.ethereumToSubstrate(owner!)
-                : owner,
-            },
-          },
-        ],
+        _or: [{ tokens_owner: { _eq: owner } }],
+        tokens_amount: { _neq: '0' },
         burned: { _eq: 'false' },
         parent_id: {
           _is_null: true,

@@ -83,14 +83,14 @@ export const NftDetailsPage = () => {
     if (isOwner) {
       items.push({
         icon: 'burn',
-        id: token?.collection.mode === 'ReFungible' ? 'burn-refungible' : 'burn',
+        id: isFractional ? 'burn-refungible' : 'burn',
         title: 'Burn token',
         type: 'danger',
       });
     }
 
     return items;
-  }, [isOwner]);
+  }, [isOwner, isFractional]);
 
   if (
     !isLoadingToken &&
