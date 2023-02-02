@@ -72,6 +72,8 @@ export interface Token {
   parent_id: Nullable<string>;
   nested: boolean;
   total_pieces: string;
+  tokens_owner: string;
+  tokens_amount: string;
 }
 
 export interface Collection {
@@ -87,6 +89,7 @@ export interface Collection {
   token_limit: number;
   name: string;
   sponsorship: string;
+  mode: TokenTypeEnum;
 }
 
 export interface RftFraction {

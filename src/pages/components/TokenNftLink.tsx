@@ -9,7 +9,7 @@ export const TokenNftLink = ({
   token,
   navigate,
 }: {
-  token: Token & { ownedFractions?: string };
+  token: Token;
   navigate: () => void;
 }) => {
   const renderBadge = (type: TokenTypeEnum, nested: boolean) => {
@@ -67,7 +67,7 @@ export const TokenNftLink = ({
               <Text appearance="block" weight="light" size="s" color="grey-500">
                 Owned fractions:{' '}
                 <span className="count">
-                  {formatBlockNumber(token.ownedFractions)}/
+                  {formatBlockNumber(token.tokens_amount)}/
                   {formatBlockNumber(token.total_pieces)}
                 </span>
               </Text>
