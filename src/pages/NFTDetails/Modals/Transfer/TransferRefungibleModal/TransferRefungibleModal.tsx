@@ -120,7 +120,7 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
+          disabled={!isValid}
           role="primary"
           onClick={form.handleSubmit(onSubmit)}
         />
