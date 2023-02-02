@@ -4,11 +4,13 @@ import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { TransferTokenBody } from '@unique-nft/sdk';
 import { useDebounce } from 'use-debounce';
+import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenRefungibleTransfer } from '@app/api';
 import { Modal, TransferBtn } from '@app/components';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 import { TBaseToken } from '../../../type';
 import { TokenModalsProps } from '../../NFTModals';
@@ -23,6 +25,8 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const { error, info } = useNotifications();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
   const {
     submitWaitResult,
     getFee,
@@ -84,6 +88,10 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
     })
       .then(() => {
         info('Transfer completed successfully');
+        if (fractionsBalance?.amount === Number(data.amount)) {
+          navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+          return;
+        }
         onComplete();
       })
       .catch(() => {

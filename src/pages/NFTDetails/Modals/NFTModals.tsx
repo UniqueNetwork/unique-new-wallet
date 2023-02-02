@@ -9,6 +9,7 @@ import {
   TransferRefungibleModal,
   BurnRefungibleModal,
   NestRefungibleModal,
+  UnnestRefungibleModal,
 } from '@app/pages/NFTDetails/Modals';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 
@@ -72,6 +73,10 @@ export const NFTModals = <T extends TBaseToken>({
     case 'nest-refungible':
       return (
         <NestRefungibleModal token={token} onClose={onClose} onComplete={onComplete} />
+      );
+    case 'unnest-refungible':
+      return (
+        <UnnestRefungibleModal token={token} onClose={onClose} onComplete={onComplete} />
       );
   }
   return null;

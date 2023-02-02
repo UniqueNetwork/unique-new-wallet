@@ -2,18 +2,23 @@ import { useEffect, useMemo } from 'react';
 import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
+import { Address } from '@unique-nft/utils';
 import { useNavigate } from 'react-router-dom';
 
 import { TokenModalsProps, UnnestStagesModal } from '@app/pages/NFTDetails/Modals';
 import { Modal, TransferBtn } from '@app/components';
 import { TNestingToken } from '@app/pages/NFTDetails/type';
-import { useTokenUnnest } from '@app/api';
+import { useTokenGetBalance, useTokenRefungibleTransfer } from '@app/api';
 import { useAccounts } from '@app/hooks';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { queryKeys } from '@app/api/restApi/keysConfig';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
-export const UnnestModal = ({ onClose, token }: TokenModalsProps<TNestingToken>) => {
+export const UnnestRefungibleModal = ({
+  onClose,
+  onComplete,
+  token,
+}: TokenModalsProps<TNestingToken>) => {
   const {
     getFee,
     feeFormatted,
@@ -22,26 +27,42 @@ export const UnnestModal = ({ onClose, token }: TokenModalsProps<TNestingToken>)
     submitWaitResult,
     isLoadingSubmitResult,
     submitWaitResultError,
-  } = useTokenUnnest();
+  } = useTokenRefungibleTransfer();
   const { selectedAccount } = useAccounts();
-  const getTokenPath = useGetTokenPath();
-  const navigate = useNavigate();
   const { error, info } = useNotifications();
   const queryClient = useQueryClient();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
 
-  const unnestData = useMemo(() => {
-    if (!token || !token.nestingParentToken || !selectedAccount) {
+  const parentBundleAddress = useMemo(() => {
+    if (!token || !token.nestingParentToken) {
       return;
     }
+    const { collectionId, tokenId } = token.nestingParentToken;
+    return Address.nesting.idsToAddress(collectionId, tokenId);
+  }, [token]);
+
+  const { data: fractionsBalance } = useTokenGetBalance({
+    collectionId: token?.collectionId,
+    tokenId: token?.tokenId,
+    address: parentBundleAddress,
+    isFractional: true,
+  });
+
+  const unnestData = useMemo(() => {
+    if (!token || !parentBundleAddress || !selectedAccount) {
+      return;
+    }
+
     return {
-      parent: { ...token.nestingParentToken },
       address: selectedAccount?.address,
-      nested: {
-        collectionId: token.collectionId,
-        tokenId: token.tokenId,
-      },
+      collectionId: token.collectionId,
+      tokenId: token.tokenId,
+      from: parentBundleAddress,
+      to: selectedAccount.address,
+      amount: fractionsBalance?.amount,
     };
-  }, [selectedAccount, token]);
+  }, [selectedAccount, token, fractionsBalance, parentBundleAddress]);
 
   useEffect(() => {
     unnestData && getFee(unnestData);
@@ -71,15 +92,11 @@ export const UnnestModal = ({ onClose, token }: TokenModalsProps<TNestingToken>)
       .then(() => {
         info(`${token?.name} belongs to you now`);
 
-        queryClient.invalidateQueries(queryKeys.token._def);
-
         navigate(
-          getTokenPath(
-            selectedAccount?.address,
-            unnestData.nested.collectionId,
-            unnestData.nested.tokenId,
-          ),
+          getTokenPath(unnestData.to, unnestData.collectionId, unnestData.tokenId),
         );
+
+        queryClient.invalidateQueries(queryKeys.token._def);
       })
       .catch(() => {
         onClose();

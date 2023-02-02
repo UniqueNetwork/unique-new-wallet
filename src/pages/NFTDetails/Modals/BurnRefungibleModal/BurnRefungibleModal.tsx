@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
+import { useNavigate } from 'react-router-dom';
 
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
 import { useTokenRefungibleBurn } from '@app/api/restApi/token/useTokenRefungibleBurn';
 import { Button, Modal } from '@app/components';
@@ -12,6 +13,7 @@ import {
   TransferRow,
   InputAmount,
 } from '@app/pages/NFTDetails/Modals/Transfer';
+import { ROUTE } from '@app/routes';
 
 import { TokenModalsProps } from '../NFTModals';
 import { TBaseToken } from '../../type';
@@ -25,6 +27,8 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const { info, error } = useNotifications();
+  const { currentChain } = useApi();
+  const navigate = useNavigate();
 
   const {
     getFee,
@@ -99,7 +103,9 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
       },
     }).then(() => {
       info('RFT burned successfully');
-
+      if (amount === fractionsBalance?.amount) {
+        navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+      }
       onComplete();
     });
   };

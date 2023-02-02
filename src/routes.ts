@@ -4,7 +4,7 @@ export const enum ROUTE {
   MY_COLLECTIONS = 'my-collections',
   CREATE_COLLECTION = 'create-collection',
   CREATE_NFT = 'create-nft',
-  TOKEN = 'token/:collectionId/:tokenId',
+  TOKEN = 'token/:address/:collectionId/:tokenId',
   FAQ = 'faq',
   ACCOUNTS = 'accounts',
   NOT_FOUND = '*',

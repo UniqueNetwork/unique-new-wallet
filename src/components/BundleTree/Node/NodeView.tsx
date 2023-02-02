@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Dropdown, Loader } from '@unique-nft/ui-kit';
+import { Address } from '@unique-nft/utils';
 
 import Pin from 'static/icons/pin.svg';
 
@@ -27,14 +28,19 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   onTransferClick,
   onUnnestClick,
 }) => {
-  const { tokenId, collectionId } = useParams<{
+  const { tokenId, collectionId, address } = useParams<{
     tokenId: string;
     collectionId: string;
+    address: string;
   }>();
   const [menuVisible, setMenuVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const deviceSize = useDeviceSize();
   const { isCollectionLoading, collection } = useCollection(data.collectionId);
+  const parentBundle =
+    address && Address.is.nestingAddress(address)
+      ? Address.nesting.addressToIds(address)
+      : undefined;
 
   const isMobileView = [DeviceSize.sm, DeviceSize.md, DeviceSize.xs].includes(deviceSize);
 
@@ -107,7 +113,10 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   }, []);
 
   const isCurrent =
-    tokenId === data.tokenId.toString() && collectionId === data.collectionId.toString();
+    tokenId === data.tokenId.toString() &&
+    collectionId === data.collectionId.toString() &&
+    parentBundle?.collectionId === data.nestingParentToken?.collectionId &&
+    parentBundle?.tokenId === data.nestingParentToken?.tokenId;
 
   return (
     <>
