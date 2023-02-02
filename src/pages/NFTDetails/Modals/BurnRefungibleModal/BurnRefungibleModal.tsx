@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
+import { Text, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 import { useAccounts, useApi } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
@@ -14,6 +15,7 @@ import {
   InputAmount,
 } from '@app/pages/NFTDetails/Modals/Transfer';
 import { ROUTE } from '@app/routes';
+import { formatBlockNumber } from '@app/utils';
 
 import { TokenModalsProps } from '../NFTModals';
 import { TBaseToken } from '../../type';
@@ -125,7 +127,7 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
       footerButtons={
         <Button
           title="Confirm"
-          disabled={false}
+          disabled={!isValid}
           role="primary"
           onClick={form.handleSubmit(burnHandler)}
         />
@@ -143,7 +145,14 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
               render={({ field: { value, onChange } }) => {
                 return (
                   <InputAmount
-                    label="Number of fractions"
+                    label={
+                      <LabelWrapper>
+                        Number of fractions
+                        <Text size="s" color="grey-500">{`You own: ${formatBlockNumber(
+                          fractionsBalance?.amount || 0,
+                        )}`}</Text>
+                      </LabelWrapper>
+                    }
                     value={value}
                     maxValue={fractionsBalance?.amount || 0}
                     onChange={onChange}
@@ -165,3 +174,9 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
     </Modal>
   );
 };
+
+const LabelWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--prop-gap) / 4);
+`;
