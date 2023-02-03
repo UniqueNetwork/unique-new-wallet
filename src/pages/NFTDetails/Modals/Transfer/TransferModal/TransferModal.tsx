@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
@@ -21,11 +21,13 @@ import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 export const TransferModal = <T extends TBaseToken>({
   token,
   onClose,
+  onComplete,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const { error, info } = useNotifications();
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
   const {
     submitWaitResult,
     getFee,
@@ -70,17 +72,20 @@ export const TransferModal = <T extends TBaseToken>({
     error(submitWaitResultError);
   }, [submitWaitResultError]);
 
-  const onSubmit = (data: TransferFormDataType) => {
-    submitWaitResult({
-      payload: data,
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-        navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
-      })
-      .catch(() => {
-        onClose();
+  const onSubmit = async (data: TransferFormDataType) => {
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: data,
       });
+      await onComplete();
+      setIsWaitingComplete(false);
+      info('Transfer completed successfully');
+      navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+    } catch {
+      setIsWaitingComplete(false);
+      onClose();
+    }
   };
 
   useEffect(() => {
@@ -93,7 +98,7 @@ export const TransferModal = <T extends TBaseToken>({
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <TransferStagesModal />;
   }
 
@@ -104,7 +109,7 @@ export const TransferModal = <T extends TBaseToken>({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
+          disabled={!isValid}
           role="primary"
           onClick={form.handleSubmit(onSubmit)}
         />

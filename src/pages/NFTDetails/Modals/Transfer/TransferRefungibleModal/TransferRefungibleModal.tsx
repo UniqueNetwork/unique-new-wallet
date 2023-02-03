@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
@@ -27,6 +27,7 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
   const { error, info } = useNotifications();
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
   const {
     submitWaitResult,
     getFee,
@@ -79,24 +80,26 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
     error(submitWaitResultError);
   }, [submitWaitResultError]);
 
-  const onSubmit = (data: TransferRefungibleFormDataType) => {
-    submitWaitResult({
-      payload: {
-        ...data,
-        amount: Number(data.amount),
-      },
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-        if (fractionsBalance?.amount === Number(data.amount)) {
-          navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
-          return;
-        }
-        onComplete();
-      })
-      .catch(() => {
-        onClose();
+  const onSubmit = async (data: TransferRefungibleFormDataType) => {
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: {
+          ...data,
+          amount: Number(data.amount),
+        },
       });
+      await onComplete();
+      setIsWaitingComplete(false);
+      info('Transfer completed successfully');
+      if (fractionsBalance?.amount === Number(data.amount)) {
+        navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+        return;
+      }
+    } catch {
+      setIsWaitingComplete(false);
+      onClose();
+    }
   };
 
   useEffect(() => {
@@ -109,7 +112,7 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <TransferRefungibleStagesModal />;
   }
 

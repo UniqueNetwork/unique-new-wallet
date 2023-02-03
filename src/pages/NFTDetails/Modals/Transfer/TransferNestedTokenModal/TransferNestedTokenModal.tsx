@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller, FormProvider, useWatch } from 'react-hook-form';
 import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
@@ -40,6 +40,7 @@ export const TransferNestedTokenModal = ({
   const { selectedAccount } = useAccounts();
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const form = useForm<TransferFormDataType>({
     mode: 'onChange',
@@ -107,23 +108,25 @@ export const TransferNestedTokenModal = ({
       getFee(transferDebounceValue as TransferTokenBody);
   }, [transferDebounceValue, getFee]);
 
-  const onSubmit = (data: TransferFormDataType) => {
-    submitWaitResult({
-      payload: data,
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-
-        queryClient.invalidateQueries(queryKeys.token._def);
-
-        navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
-      })
-      .catch(() => {
-        onClose();
+  const onSubmit = async (data: TransferFormDataType) => {
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: data,
       });
+      await onComplete();
+      setIsWaitingComplete(false);
+
+      queryClient.invalidateQueries(queryKeys.token._def);
+      info('Transfer completed successfully');
+      navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+    } catch {
+      setIsWaitingComplete(false);
+      onClose();
+    }
   };
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <TransferNestedStagesModal />;
   }
 
@@ -134,7 +137,7 @@ export const TransferNestedTokenModal = ({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
+          disabled={!isValid}
           role="primary"
           onClick={form.handleSubmit(onSubmit)}
         />
