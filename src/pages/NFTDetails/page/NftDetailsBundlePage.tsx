@@ -101,7 +101,7 @@ export const NftDetailsBundlePage = () => {
     return tokenWithNames;
   }, [tokenById, parentToken]);
 
-  const isReFungible = token?.collection.mode === 'ReFungible';
+  const isFractional = token?.collection.mode === 'ReFungible';
 
   const { data: pieces, refetch: refetchTotalPieces } = useTokenGetTotalPieces({
     tokenId: parseInt(tokenId),
@@ -112,7 +112,7 @@ export const NftDetailsBundlePage = () => {
     tokenId: parseInt(tokenId),
     collectionId: parseInt(collectionId),
     address,
-    isFractional: isReFungible,
+    isFractional,
   });
 
   const isOwner = useIsOwner(token, address);
@@ -125,7 +125,7 @@ export const NftDetailsBundlePage = () => {
   const onComplete = async () => {
     await refetchToken();
     await refetchBundle();
-    if (isReFungible) {
+    if (isFractional) {
       await refetchTokenBalance();
       await refetchTotalPieces();
     }
@@ -241,23 +241,29 @@ export const NftDetailsBundlePage = () => {
   }, [bundle]);
 
   const handleUnnestToken = (token: INestingToken) => {
-    unnestTokenAction();
+    unnestTokenAction(token);
     setSelectedTokenBundleTable(token);
   };
 
-  const unnestTokenAction = () => {
+  const unnestTokenAction = (_token?: INestingToken) => {
     logUserEvent(UserEvents.UNNEST_TOKEN);
-    setCurrentModal(isReFungible ? 'unnest-refungible' : 'unnest');
+
+    const isTokenFractional = _token ? _token.isFractional : isFractional;
+
+    setCurrentModal(isTokenFractional ? 'unnest-refungible' : 'unnest');
   };
 
   const handleTransferToken = (token: INestingToken) => {
-    transferTokenAction();
+    transferTokenAction(token);
     setSelectedTokenBundleTable(token);
   };
 
-  const transferTokenAction = () => {
+  const transferTokenAction = (_token?: INestingToken) => {
     logUserEvent(UserEvents.TRANSFER_NFT);
-    setCurrentModal(isReFungible ? 'transfer-refungible' : 'bundle-transfer');
+
+    const isTokenFractional = _token ? _token.isFractional : isFractional;
+
+    setCurrentModal(isTokenFractional ? 'transfer-refungible' : 'bundle-transfer');
   };
 
   const menuButtons = useMemo(() => {
@@ -266,14 +272,14 @@ export const NftDetailsBundlePage = () => {
     if (isOwner && (selectedToken?.nestingChildTokens?.length || 0) === 0) {
       items.push({
         icon: 'burn',
-        id: 'burn',
+        id: isFractional ? 'burn-refungible' : 'burn',
         title: 'Burn token',
         type: 'danger',
       });
     }
 
     return items;
-  }, [isOwner, selectedToken?.nestingChildTokens?.length]);
+  }, [isOwner, selectedToken?.nestingChildTokens?.length, isFractional]);
 
   const BundleTreeRendered = (
     <BundleTree<INestingToken>
@@ -341,7 +347,7 @@ export const NftDetailsBundlePage = () => {
           </>
         }
       />
-      {isReFungible && (
+      {isFractional && (
         <Achievement
           achievement="Fractional"
           tooltipDescription={
@@ -361,13 +367,13 @@ export const NftDetailsBundlePage = () => {
         isLoading={isLoadingBundleToken || isLoadingToken || isLoadingParentToken}
         tokenExist={!!bundleToken && !!token}
       >
-        <NftDetailsCard
+        <NftDetailsCard<TokenByIdResponse & { collectionName: string; name: string }>
           className="nft-details-card"
           token={token}
           owner={owner()}
           menuButtons={menuButtons}
           achievement={renderAchievements()}
-          isReFungible={isReFungible}
+          isFractional={isFractional}
           balance={balance?.amount}
           pieces={pieces?.amount}
           buttons={
@@ -377,14 +383,14 @@ export const NftDetailsBundlePage = () => {
                   wide={deviceSize === DeviceSize.xs}
                   title="Transfer"
                   role="primary"
-                  onClick={transferTokenAction}
+                  onClick={() => transferTokenAction()}
                 />
                 {!isBundleToken() && (
                   <TransferBtn
                     wide={deviceSize === DeviceSize.xs}
                     title="Unnest Token"
                     role="danger"
-                    onClick={unnestTokenAction}
+                    onClick={() => unnestTokenAction()}
                   />
                 )}
               </>
@@ -439,7 +445,9 @@ export const NftDetailsBundlePage = () => {
           </BottomBar>
         )}
 
-        <NFTModals
+        <NFTModals<
+          INestingToken | (TokenByIdResponse & { collectionName: string; name: string })
+        >
           modalType={currentModal}
           token={selectedTokenBundleTable || token}
           onComplete={onComplete}

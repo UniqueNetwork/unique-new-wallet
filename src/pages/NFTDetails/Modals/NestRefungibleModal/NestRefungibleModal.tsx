@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
+import { Loader, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
@@ -45,7 +45,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     submitWaitResultError,
   } = useTokenRefungibleTransfer();
 
-  const { data: fractionsBalance } = useTokenGetBalance({
+  const { data: fractionsBalance, isFetching: isFetchingBalance } = useTokenGetBalance({
     collectionId: token?.collectionId,
     tokenId: token?.tokenId,
     address: selectedAccount?.address,
@@ -122,7 +122,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     });
   }, [debouncedFormValues, token, selectedAccount?.address]);
 
-  const burnHandler = ({
+  const nestHandler = ({
     amount,
     collection,
     token: parentToken,
@@ -179,11 +179,12 @@ export const NestRefungibleModal = <T extends TBaseToken>({
           title="Confirm"
           disabled={!isValid}
           role="primary"
-          onClick={form.handleSubmit(burnHandler)}
+          onClick={form.handleSubmit(nestHandler)}
         />
       }
       onClose={onClose}
     >
+      {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
         fee={feeFormatted}
         feeWarning="A fee will be calculated after entering the amount"

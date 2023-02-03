@@ -4,6 +4,7 @@ import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { Address } from '@unique-nft/utils/address';
 
 import { useAccounts, useApi } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
@@ -18,11 +19,11 @@ import { ROUTE } from '@app/routes';
 import { formatBlockNumber } from '@app/utils';
 
 import { TokenModalsProps } from '../NFTModals';
-import { TBaseToken } from '../../type';
+import { TNestingToken } from '../../type';
 import { BurnRefungibleFormDataType } from './types';
 import { BurnRefungibleStagesModal } from './BurnRefungibleStagesModal';
 
-export const BurnRefungibleModal = <T extends TBaseToken>({
+export const BurnRefungibleModal = <T extends TNestingToken>({
   token,
   onClose,
   onComplete,
@@ -44,7 +45,12 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
   const { data: fractionsBalance } = useTokenGetBalance({
     collectionId: token?.collectionId,
     tokenId: token?.tokenId,
-    address: selectedAccount?.address,
+    address: token?.nestingParentToken
+      ? Address.nesting.idsToAddress(
+          token.nestingParentToken.collectionId,
+          token.nestingParentToken.tokenId,
+        )
+      : selectedAccount?.address,
     isFractional: true,
   });
 

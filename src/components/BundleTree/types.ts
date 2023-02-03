@@ -7,6 +7,7 @@ export interface INestingToken extends GetBundleResponse {
   selected?: boolean;
   isCurrentAccountOwner?: boolean;
   name?: string;
+  collectionName?: string;
   isFractional?: boolean;
 }
 

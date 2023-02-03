@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
+import { Loader, useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { TransferTokenBody } from '@unique-nft/sdk';
@@ -12,13 +12,13 @@ import { useTokenRefungibleTransfer } from '@app/api';
 import { Modal, TransferBtn } from '@app/components';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
-import { TBaseToken } from '../../../type';
+import { TNestingToken } from '../../../type';
 import { TokenModalsProps } from '../../NFTModals';
 import { TransferRefungibleStagesModal } from './TransferRefungibleStagesModal';
 import { FormWrapper, TransferRow, InputTransfer, InputAmount } from '../components';
 import { TransferRefungibleFormDataType } from '../type';
 
-export const TransferRefungibleModal = <T extends TBaseToken>({
+export const TransferRefungibleModal = <T extends TNestingToken>({
   token,
   onComplete,
   onClose,
@@ -38,10 +38,15 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
     feeError,
   } = useTokenRefungibleTransfer();
 
-  const { data: fractionsBalance } = useTokenGetBalance({
+  const { data: fractionsBalance, isFetching: isFetchingBalance } = useTokenGetBalance({
     collectionId: token?.collectionId,
     tokenId: token?.tokenId,
-    address: selectedAccount?.address,
+    address: token?.nestingParentToken
+      ? Address.nesting.idsToAddress(
+          token.nestingParentToken.collectionId,
+          token.nestingParentToken.tokenId,
+        )
+      : selectedAccount?.address,
     isFractional: true,
   });
 
@@ -50,7 +55,7 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
     reValidateMode: 'onChange',
     defaultValues: {
       to: '',
-      from: selectedAccount?.address,
+      from: token?.nestingParentToken ? '' : token?.owner,
       address: selectedAccount?.address,
       tokenId: token?.tokenId,
       collectionId: token?.collectionId,
@@ -130,6 +135,7 @@ export const TransferRefungibleModal = <T extends TBaseToken>({
       }
       onClose={onClose}
     >
+      {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
       >

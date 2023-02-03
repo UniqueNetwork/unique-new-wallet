@@ -35,10 +35,10 @@ export const NFTModals = <T extends TBaseToken>({
 
   switch (modalType) {
     case 'transfer':
-      return <TransferModal token={token} onClose={onClose} onComplete={onComplete} />;
+      return <TransferModal<T> token={token} onClose={onClose} onComplete={onComplete} />;
     case 'transfer-refungible':
       return (
-        <TransferRefungibleModal
+        <TransferRefungibleModal<T>
           token={token}
           onClose={onClose}
           onComplete={onComplete}
@@ -48,10 +48,10 @@ export const NFTModals = <T extends TBaseToken>({
     case 'share':
       return <ShareModal token={token} onClose={onClose} />;
     case 'burn':
-      return <BurnModal token={token} onClose={onClose} onComplete={onComplete} />;
+      return <BurnModal<T> token={token} onClose={onClose} onComplete={onComplete} />;
     case 'burn-refungible':
       return (
-        <BurnRefungibleModal token={token} onClose={onClose} onComplete={onComplete} />
+        <BurnRefungibleModal<T> token={token} onClose={onClose} onComplete={onComplete} />
       );
 
     case 'create-bundle':
@@ -72,7 +72,7 @@ export const NFTModals = <T extends TBaseToken>({
       );
     case 'nest-refungible':
       return (
-        <NestRefungibleModal token={token} onClose={onClose} onComplete={onComplete} />
+        <NestRefungibleModal<T> token={token} onClose={onClose} onComplete={onComplete} />
       );
     case 'unnest-refungible':
       return (
