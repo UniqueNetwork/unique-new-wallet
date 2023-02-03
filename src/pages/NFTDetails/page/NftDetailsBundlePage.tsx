@@ -122,11 +122,13 @@ export const NftDetailsBundlePage = () => {
     setSelectedTokenBundleTable(null);
   };
 
-  const onComplete = () => {
-    refetchToken();
-    refetchBundle();
-    refetchTokenBalance();
-    refetchTotalPieces();
+  const onComplete = async () => {
+    await refetchToken();
+    await refetchBundle();
+    if (isReFungible) {
+      await refetchTokenBalance();
+      await refetchTotalPieces();
+    }
     setCurrentModal('none');
   };
 

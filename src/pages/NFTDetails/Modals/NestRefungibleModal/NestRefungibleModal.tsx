@@ -177,7 +177,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
       footerButtons={
         <Button
           title="Confirm"
-          disabled={false}
+          disabled={!isValid}
           role="primary"
           onClick={form.handleSubmit(burnHandler)}
         />

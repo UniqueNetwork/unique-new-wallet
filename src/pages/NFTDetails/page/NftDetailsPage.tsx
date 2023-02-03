@@ -70,10 +70,13 @@ export const NftDetailsPage = () => {
 
   const onModalClose = () => setCurrentModal('none');
 
-  const onComplete = () => {
-    refetchToken();
-    refetchTotalPieces();
-    refetchTokenBalance();
+  const onComplete = async () => {
+    await refetchToken();
+    if (isFractional) {
+      await refetchTotalPieces();
+      await refetchTokenBalance();
+    }
+
     setCurrentModal('none');
   };
 

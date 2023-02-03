@@ -15,7 +15,7 @@ import { TBaseToken } from '@app/pages/NFTDetails/type';
 
 export type TokenModalsProps<T> = {
   token?: T;
-  onComplete(): void;
+  onComplete(): Promise<void>;
   onClose(): void;
 };
 
