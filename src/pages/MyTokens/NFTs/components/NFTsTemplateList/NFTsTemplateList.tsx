@@ -86,7 +86,11 @@ export const NFTsTemplateList = ({
             token={token}
             navigate={() => {
               navigate(
-                getTokenPath(token.owner || '', token.collection_id, token.token_id),
+                getTokenPath(
+                  token.tokens_owner || '',
+                  token.collection_id,
+                  token.token_id,
+                ),
               );
             }}
           />
