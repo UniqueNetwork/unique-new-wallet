@@ -1,8 +1,8 @@
 import { useQuery, UseQueryResult } from 'react-query';
-import { GetBundleResponse, NestedToken } from '@unique-nft/sdk';
-import { useMemo } from 'react';
+import { GetBundleResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
+import { INestingToken } from '@app/components/BundleTree/types';
 
 import { queryKeys } from '../keysConfig';
 
@@ -16,15 +16,29 @@ export const useTokenGetBundle = ({
   const { api } = useApi();
 
   const getBundle = async () => {
-    const [token, collection] = await Promise.all([
+    const [bundle, collection] = await Promise.all([
       api.tokens.getBundle({ collectionId: collectionId!, tokenId: tokenId! }),
       api.collections.get({ collectionId: collectionId! }),
     ]);
-    return {
-      ...token,
-      name: `${collection.tokenPrefix} #${token.tokenId}`,
-      collectionName: collection.name,
+
+    const enhance = (node: INestingToken): INestingToken => {
+      return {
+        ...node,
+        nestingChildTokens: node.nestingChildTokens?.map((child) => ({
+          ...enhance(child),
+          nestingParentToken: {
+            collectionId: node.collectionId,
+            tokenId: node.tokenId,
+          },
+        })),
+      };
     };
+
+    return enhance({
+      ...bundle,
+      name: `${collection.tokenPrefix} #${bundle.tokenId}`,
+      collectionName: collection.name,
+    });
   };
 
   const {
@@ -33,30 +47,13 @@ export const useTokenGetBundle = ({
     refetch: refetchBundle,
   }: UseQueryResult<
     GetBundleResponse & { collectionName: string; name: string }
-  > = useQuery(queryKeys.token.bundle(collectionId, tokenId), () => getBundle(), {
+  > = useQuery(queryKeys.token.bundle(collectionId, tokenId), getBundle, {
     enabled: !!collectionId || !!tokenId,
     refetchOnMount: true,
   });
 
-  const bundleToken = useMemo(() => {
-    if (!data) {
-      return undefined;
-    }
-    const setParent = (parent: NestedToken) => {
-      parent.nestingChildTokens = parent.nestingChildTokens?.map((child) => ({
-        ...setParent(child),
-        nestingParentToken: {
-          collectionId: parent.collectionId,
-          tokenId: parent.tokenId,
-        },
-      }));
-      return parent;
-    };
-    return setParent(data);
-  }, [data]);
-
   return {
-    bundleToken,
+    bundleToken: data,
     isLoadingBundleToken,
     refetchBundle,
   };

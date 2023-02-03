@@ -57,18 +57,25 @@ const NodeView: FC<INodeView<INestingToken>> = ({
 
   const onTransfer = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onTransferClick?.(data);
+      onTransferClick?.({
+        ...data,
+        isFractional: collection?.mode === 'ReFungible',
+      });
       event.stopPropagation();
     },
-    [onTransferClick, data],
+    [onTransferClick, data, collection],
   );
 
   const onUnnest = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onUnnestClick?.({ ...data, name: `${collection?.tokenPrefix} #${data.tokenId}` });
+      onUnnestClick?.({
+        ...data,
+        name: `${collection?.tokenPrefix} #${data.tokenId}`,
+        isFractional: collection?.mode === 'ReFungible',
+      });
       event.stopPropagation();
     },
-    [onUnnestClick, data, collection?.tokenPrefix],
+    [onUnnestClick, data, collection],
   );
 
   const showMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {

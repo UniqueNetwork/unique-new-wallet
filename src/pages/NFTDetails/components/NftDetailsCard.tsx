@@ -18,7 +18,7 @@ type Props<T extends TBaseToken> = {
   className?: string;
   menuButtons: SelectOptionProps[];
   owner: ReactNode;
-  isReFungible?: boolean;
+  isFractional?: boolean;
   pieces?: number;
   balance?: number;
 };
@@ -31,7 +31,7 @@ export const NftDetailsCard = <T extends TBaseToken>({
   className,
   menuButtons,
   owner,
-  isReFungible,
+  isFractional,
   pieces,
   balance,
 }: Props<T>) => (
@@ -71,7 +71,7 @@ export const NftDetailsCard = <T extends TBaseToken>({
         menuButtons={menuButtons}
         onShowModal={onCurrentModal}
       />
-      {isReFungible && (
+      {isFractional && (
         <>
           <Divider />
           <FractionalInformation balance={balance} pieces={pieces} />

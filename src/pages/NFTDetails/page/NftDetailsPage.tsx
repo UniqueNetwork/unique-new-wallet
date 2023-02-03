@@ -98,12 +98,11 @@ export const NftDetailsPage = () => {
   if (
     !isLoadingToken &&
     !isFetchingBalance &&
-    ((isFractional && !balance?.amount) ||
-      (token?.owner &&
-        !Address.compare.ethereumAddresses(
-          address,
-          Address.mirror.substrateToEthereum(token.owner),
-        )))
+    token?.owner &&
+    !Address.compare.ethereumAddresses(
+      address,
+      Address.mirror.substrateToEthereum(token.owner),
+    )
   ) {
     return <ErrorPage />;
   }
@@ -113,7 +112,7 @@ export const NftDetailsPage = () => {
       <NftDetailsCard
         token={token}
         menuButtons={menuButtons}
-        isReFungible={isFractional}
+        isFractional={isFractional}
         balance={balance?.amount}
         pieces={pieces?.amount}
         achievement={
@@ -172,7 +171,7 @@ export const NftDetailsPage = () => {
         }
         onCurrentModal={setCurrentModal}
       />
-      <NFTModals
+      <NFTModals<TokenByIdResponse & { collectionName: string; name: string }>
         modalType={currentModal}
         token={token}
         onComplete={onComplete}

@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Alert, Loader, useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useDebounce } from 'use-debounce';
 import { useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { Address } from '@unique-nft/utils';
 
 import { Modal, BaseActionBtn } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
@@ -17,6 +19,7 @@ import { FeeInformationTransaction } from '@app/components/FeeInformationTransac
 import { CreateBundleStagesModal } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleStagesModal';
 import { CreateBundleForm } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleForm';
 import { queryKeys } from '@app/api/restApi/keysConfig';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 export type TCreateBundleForm = {
   collection: CollectionNestingOption | null;
@@ -26,8 +29,12 @@ export type TCreateBundleForm = {
 export const CreateBundleModal = <T extends TBaseToken>({
   token,
   onClose,
+  onComplete,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
+  const navigate = useNavigate();
+  const getTokenPath = useGetTokenPath();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
   const form = useForm<TCreateBundleForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -72,33 +79,48 @@ export const CreateBundleModal = <T extends TBaseToken>({
         : undefined,
   });
 
-  const onSubmit = (form: TCreateBundleForm) => {
+  const onSubmit = async (form: TCreateBundleForm) => {
     if (!token || !selectedAccount || !form.token || !form.collection) {
       return;
     }
-    submitWaitResult({
-      payload: {
-        parent: {
-          collectionId: form.collection.collection_id,
-          tokenId: form.token.token_id,
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: {
+          parent: {
+            collectionId: form.collection.collection_id,
+            tokenId: form.token.token_id,
+          },
+          address: selectedAccount.address,
+          nested: {
+            collectionId: token.collectionId,
+            tokenId: token.tokenId,
+          },
         },
-        address: selectedAccount.address,
-        nested: {
-          collectionId: token.collectionId,
-          tokenId: token.tokenId,
-        },
-      },
-    })
-      .then(() => {
-        onClose();
-
-        info(`${form.token?.token_name} nested into ${token.name}`);
-
-        queryClient.invalidateQueries(queryKeys.token._def);
-      })
-      .catch(() => {
-        onClose();
       });
+
+      await onComplete();
+
+      navigate(
+        getTokenPath(
+          Address.nesting.idsToAddress(
+            form.collection.collection_id,
+            form.token.token_id,
+          ),
+          token.collectionId,
+          token.tokenId,
+        ),
+      );
+      info(`${form.token?.token_name} nested into ${token.name}`);
+
+      setIsWaitingComplete(false);
+
+      queryClient.invalidateQueries(queryKeys.token._def);
+    } catch {
+      onClose();
+
+      setIsWaitingComplete(false);
+    }
   };
 
   useEffect(() => {
@@ -159,7 +181,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
     );
   };
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <CreateBundleStagesModal />;
   }
 
