@@ -11,7 +11,7 @@ import { useTokenGetBalance, useTokenGetById, useTokenGetTotalPieces } from '@ap
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { Achievement, ErrorPage, TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
@@ -19,7 +19,7 @@ export const NftDetailsPage = () => {
   const { collectionId = '', tokenId = '', address = '' } = useParams();
   const size = useDeviceSize();
   const { currentChain } = useApi();
-  const { selectedAccount } = useAccounts();
+  const [isRefetching, setIsRefetching] = useState(false);
 
   const [currentModal, setCurrentModal] = useState<TTokenModalType>('none');
 
@@ -64,19 +64,21 @@ export const NftDetailsPage = () => {
   } = useTokenGetBalance({
     tokenId: parseInt(tokenId),
     collectionId: parseInt(collectionId),
-    address: selectedAccount?.address,
+    address,
     isFractional,
   });
 
   const onModalClose = () => setCurrentModal('none');
 
   const onComplete = async () => {
-    await refetchToken();
-    if (isFractional) {
+    setIsRefetching(true);
+    const { data } = await refetchToken();
+    if (data?.collection.mode === 'ReFungible') {
       await refetchTotalPieces();
       await refetchTokenBalance();
     }
 
+    setIsRefetching(false);
     setCurrentModal('none');
   };
 
@@ -98,11 +100,9 @@ export const NftDetailsPage = () => {
   if (
     !isLoadingToken &&
     !isFetchingBalance &&
+    !isRefetching &&
     token?.owner &&
-    !Address.compare.ethereumAddresses(
-      address,
-      Address.mirror.substrateToEthereum(token.owner),
-    )
+    address !== token.owner
   ) {
     return <ErrorPage />;
   }

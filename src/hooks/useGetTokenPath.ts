@@ -9,11 +9,7 @@ export const useGetTokenPath = () => {
     if (!address || !collectionId || !tokenId) {
       return '';
     }
-    const ownerAddress =
-      Address.is.nestingAddress(address) || Address.is.ethereumAddress(address)
-        ? address
-        : Address.mirror.substrateToEthereum(address);
 
-    return `/${currentChain?.network}/token/${ownerAddress}/${collectionId}/${tokenId}`;
+    return `/${currentChain?.network}/token/${address}/${collectionId}/${tokenId}`;
   };
 };
