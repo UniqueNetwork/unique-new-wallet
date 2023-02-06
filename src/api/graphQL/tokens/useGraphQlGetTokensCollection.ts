@@ -49,7 +49,7 @@ export const useGraphQlGetTokensCollection = ({
         limit: 10000,
         where: {
           burned: { _eq: 'false' },
-          type: { _eq: 'NFT' },
+          type: { _in: ['NFT', 'NESTED'] },
           ...(excludeCurrentTokenId !== undefined && {
             token_id: { _neq: excludeCurrentTokenId },
           }),
