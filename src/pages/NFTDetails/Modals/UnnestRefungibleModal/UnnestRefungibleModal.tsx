@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
@@ -33,6 +33,7 @@ export const UnnestRefungibleModal = ({
   const queryClient = useQueryClient();
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const parentBundleAddress = useMemo(() => {
     if (!token || !token.nestingParentToken) {
@@ -82,28 +83,30 @@ export const UnnestRefungibleModal = ({
     error(submitWaitResultError);
   }, [submitWaitResultError]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!unnestData) {
       return;
     }
-    submitWaitResult({
-      payload: unnestData,
-    })
-      .then(() => {
-        info(`${token?.name} belongs to you now`);
-
-        navigate(
-          getTokenPath(unnestData.to, unnestData.collectionId, unnestData.tokenId),
-        );
-
-        queryClient.invalidateQueries(queryKeys.token._def);
-      })
-      .catch(() => {
-        onClose();
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: unnestData,
       });
+
+      await onComplete();
+      info(`${token?.name} belongs to you now`);
+
+      navigate(getTokenPath(unnestData.to, unnestData.collectionId, unnestData.tokenId));
+
+      queryClient.invalidateQueries(queryKeys.token._def);
+      setIsWaitingComplete(false);
+    } catch {
+      onClose();
+      setIsWaitingComplete(false);
+    }
   };
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <UnnestStagesModal />;
   }
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
@@ -13,7 +13,11 @@ import { FeeInformationTransaction } from '@app/components/FeeInformationTransac
 import { queryKeys } from '@app/api/restApi/keysConfig';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
-export const UnnestModal = ({ onClose, token }: TokenModalsProps<TNestingToken>) => {
+export const UnnestModal = ({
+  onClose,
+  onComplete,
+  token,
+}: TokenModalsProps<TNestingToken>) => {
   const {
     getFee,
     feeFormatted,
@@ -28,6 +32,7 @@ export const UnnestModal = ({ onClose, token }: TokenModalsProps<TNestingToken>)
   const navigate = useNavigate();
   const { error, info } = useNotifications();
   const queryClient = useQueryClient();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const unnestData = useMemo(() => {
     if (!token || !token.nestingParentToken || !selectedAccount) {
@@ -61,32 +66,37 @@ export const UnnestModal = ({ onClose, token }: TokenModalsProps<TNestingToken>)
     error(submitWaitResultError);
   }, [submitWaitResultError]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!unnestData) {
       return;
     }
-    submitWaitResult({
-      payload: unnestData,
-    })
-      .then(() => {
-        info(`${token?.name} belongs to you now`);
-
-        queryClient.invalidateQueries(queryKeys.token._def);
-
-        navigate(
-          getTokenPath(
-            selectedAccount?.address,
-            unnestData.nested.collectionId,
-            unnestData.nested.tokenId,
-          ),
-        );
-      })
-      .catch(() => {
-        onClose();
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: unnestData,
       });
+
+      info(`${token?.name} belongs to you now`);
+
+      queryClient.invalidateQueries(queryKeys.token._def);
+
+      await onComplete();
+
+      navigate(
+        getTokenPath(
+          selectedAccount?.address,
+          unnestData.nested.collectionId,
+          unnestData.nested.tokenId,
+        ),
+      );
+      setIsWaitingComplete(false);
+    } catch {
+      onClose();
+      setIsWaitingComplete(false);
+    }
   };
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <UnnestStagesModal />;
   }
 
