@@ -111,7 +111,7 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
       },
     }).then(() => {
       info('RFT burned successfully');
-      if (amount === fractionsBalance?.amount) {
+      if (Number(amount) === fractionsBalance?.amount) {
         navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
       }
       onComplete();
