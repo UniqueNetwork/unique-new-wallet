@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
@@ -35,6 +35,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
   const { info, error } = useNotifications();
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const {
     getFee,
@@ -122,7 +123,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     });
   }, [debouncedFormValues, token, selectedAccount?.address]);
 
-  const nestHandler = ({
+  const nestHandler = async ({
     amount,
     collection,
     token: parentToken,
@@ -142,22 +143,26 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     const to = Address.nesting.idsToAddress(parentCollectionId, parentTokenId);
     const { collectionId, tokenId } = token;
 
-    submitWaitResult({
-      payload: {
-        collectionId,
-        tokenId,
-        address: selectedAccount.address,
-        to,
-        amount,
-      },
-    }).then(() => {
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: {
+          collectionId,
+          tokenId,
+          address: selectedAccount.address,
+          to,
+          amount,
+        },
+      });
+      await onComplete();
       info('RFT transferred successfully');
-      if (fractionsBalance?.amount === amount) {
+      setIsWaitingComplete(false);
+      if (fractionsBalance?.amount === Number(amount)) {
         navigate(getTokenPath(to, collectionId, tokenId));
-        return;
       }
-      onComplete();
-    });
+    } catch {
+      setIsWaitingComplete(false);
+    }
   };
 
   const isNotExistTokens = tokensData.tokens.length === 0;
@@ -166,7 +171,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <NestRefungibleStagesModal />;
   }
 

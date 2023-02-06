@@ -1,4 +1,4 @@
-import { VFC } from 'react';
+import { useEffect, VFC } from 'react';
 import { useParams } from 'react-router-dom';
 import { Loader } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils';
@@ -17,10 +17,14 @@ interface NFTDetailsProps {
 const NFTDetailsComponent: VFC<NFTDetailsProps> = ({ className }) => {
   const { collectionId = '', tokenId = '', address = '' } = useParams();
 
-  const { data, isLoading } = useTokenIsBundle({
+  const { data, isLoading, refetch } = useTokenIsBundle({
     tokenId: parseInt(tokenId),
     collectionId: parseInt(collectionId),
   });
+
+  useEffect(() => {
+    refetch();
+  }, [address]);
 
   if (!Address.is.validAddressInAnyForm(address)) {
     return <ErrorPage />;

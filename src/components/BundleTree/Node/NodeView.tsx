@@ -120,8 +120,8 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   }, []);
 
   const isCurrent =
-    tokenId === data.tokenId.toString() &&
-    collectionId === data.collectionId.toString() &&
+    tokenId === data.tokenId?.toString() &&
+    collectionId === data.collectionId?.toString() &&
     parentBundle?.collectionId === data.nestingParentToken?.collectionId &&
     parentBundle?.tokenId === data.nestingParentToken?.tokenId;
 

@@ -55,7 +55,12 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
     reValidateMode: 'onChange',
     defaultValues: {
       to: '',
-      from: token?.nestingParentToken ? '' : token?.owner,
+      from: token?.nestingParentToken
+        ? Address.nesting.idsToAddress(
+            token.nestingParentToken.collectionId,
+            token.nestingParentToken.tokenId,
+          )
+        : selectedAccount?.address,
       address: selectedAccount?.address,
       tokenId: token?.tokenId,
       collectionId: token?.collectionId,
@@ -94,13 +99,18 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
           amount: Number(data.amount),
         },
       });
-      await onComplete();
-      setIsWaitingComplete(false);
       info('Transfer completed successfully');
+
+      if (token?.nestingParentToken && fractionsBalance?.amount === Number(data.amount)) {
+        navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+        return;
+      }
+      await onComplete();
       if (fractionsBalance?.amount === Number(data.amount)) {
         navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
         return;
       }
+      setIsWaitingComplete(false);
     } catch {
       setIsWaitingComplete(false);
       onClose();
