@@ -121,12 +121,19 @@ export const useGraphQlOwnerTokens = (
         ...getConditionByStatusFilter(statusFilter),
         ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
-        _or: [{ tokens_owner: { _eq: owner } }],
+        tokens_owner: { _eq: owner },
+
+        _or: [
+          { type: { _eq: 'RFT' } },
+          {
+            type: { _in: ['NFT', 'NESTED'] },
+            parent_id: {
+              _is_null: true,
+            },
+          },
+        ],
         tokens_amount: { _neq: '0' },
         burned: { _eq: 'false' },
-        parent_id: {
-          _is_null: true,
-        },
       },
     },
   });
