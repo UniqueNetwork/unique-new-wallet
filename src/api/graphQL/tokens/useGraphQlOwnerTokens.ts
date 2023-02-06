@@ -126,7 +126,7 @@ export const useGraphQlOwnerTokens = (
         _or: [
           { type: { _eq: 'RFT' } },
           {
-            type: { _in: ['NFT', 'NESTED'] },
+            type: { _eq: 'NFT' },
             parent_id: {
               _is_null: true,
             },
