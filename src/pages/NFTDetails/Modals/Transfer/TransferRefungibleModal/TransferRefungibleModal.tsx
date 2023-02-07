@@ -181,10 +181,12 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
           <TransferRow>
             <Controller
               name="to"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputTransfer
                     value={value}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                     onClear={() => onChange('')}
                   />
@@ -193,7 +195,9 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
               rules={{
                 required: true,
                 validate: (val: string) =>
-                  Address.is.ethereumAddress(val) || Address.is.substrateAddress(val),
+                  Address.is.ethereumAddress(val) ||
+                  Address.is.substrateAddress(val) ||
+                  'Invalid address',
               }}
             />
           </TransferRow>

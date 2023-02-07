@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Loader, useNotifications } from '@unique-nft/ui-kit';
+import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
@@ -19,6 +19,7 @@ import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collecti
 import { Token } from '@app/api/graphQL/types';
 import { useGraphQlGetTokensCollection } from '@app/api/graphQL/tokens/useGraphQlGetTokensCollection';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { formatBlockNumber } from '@app/utils';
 
 import { SuggestOptionNesting } from '../CreateBundleModal/components';
 import { FormWrapper, InputAmount } from '../Transfer';
@@ -201,6 +202,14 @@ export const NestRefungibleModal = <T extends TBaseToken>({
               render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputAmount
+                    label={
+                      <LabelWrapper>
+                        Number of fractions to be nested
+                        <Text size="s" color="grey-500">{`You own: ${formatBlockNumber(
+                          fractionsBalance?.amount || 0,
+                        )}`}</Text>
+                      </LabelWrapper>
+                    }
                     value={value}
                     maxValue={fractionsBalance?.amount || 0}
                     error={!!fieldState.error}
@@ -260,16 +269,16 @@ export const NestRefungibleModal = <T extends TBaseToken>({
                     resetField('token');
                     onChange(val);
                   }}
+                  onSuggestionsFetchRequested={(value) =>
+                    collections.filter(
+                      ({ collection_id, name }) =>
+                        name.toLowerCase().includes(value.toLowerCase()) ||
+                        collection_id === Number(value),
+                    )
+                  }
                 />
               )}
             />
-            {isNotExistTokens && debouncedFormValues?.collection && !isTokensLoading && (
-              <AlertWrapper>
-                <Alert type="error">
-                  You don’t have any tokens with bundling capabilities in this collection
-                </Alert>
-              </AlertWrapper>
-            )}
           </FormRow>
           <FormRow>
             <div>
@@ -319,6 +328,12 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     </Modal>
   );
 };
+
+const LabelWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--prop-gap) / 4);
+`;
 
 const FormRow = styled.div`
   margin-bottom: calc(var(--gap) * 1.5);

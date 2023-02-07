@@ -72,6 +72,13 @@ export const CreateBundleForm = ({
                 resetField('token');
                 onChange(val);
               }}
+              onSuggestionsFetchRequested={(value) =>
+                collections.filter(
+                  ({ collection_id, name }) =>
+                    name.toLowerCase().includes(value.toLowerCase()) ||
+                    collection_id === Number(value),
+                )
+              }
             />
           )}
         />
