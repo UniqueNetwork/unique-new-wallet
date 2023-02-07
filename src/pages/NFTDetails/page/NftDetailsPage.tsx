@@ -11,7 +11,7 @@ import { useTokenGetBalance, useTokenGetById, useTokenGetTotalPieces } from '@ap
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { Achievement, ErrorPage, TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
@@ -20,6 +20,7 @@ export const NftDetailsPage = () => {
   const size = useDeviceSize();
   const { currentChain } = useApi();
   const [isRefetching, setIsRefetching] = useState(false);
+  const { selectedAccount } = useAccounts();
 
   const [currentModal, setCurrentModal] = useState<TTokenModalType>('none');
 
@@ -50,7 +51,8 @@ export const NftDetailsPage = () => {
 
   const isFractional = token?.collection.mode === 'ReFungible';
 
-  const isOwner = useIsOwner(token);
+  const isTokenOwner = useIsOwner(token);
+  const isOwner = isFractional ? address === selectedAccount?.address : isTokenOwner;
 
   const { data: pieces, refetch: refetchTotalPieces } = useTokenGetTotalPieces({
     tokenId: parseInt(tokenId),
@@ -135,7 +137,7 @@ export const NftDetailsPage = () => {
             <>
               Owned by
               <AccountCard
-                accountAddress={token?.owner || ''}
+                accountAddress={isFractional ? address : token?.owner || ''}
                 canCopy={false}
                 scanLink={`${currentChain.uniquescanAddress}/account/${token?.owner}`}
               />

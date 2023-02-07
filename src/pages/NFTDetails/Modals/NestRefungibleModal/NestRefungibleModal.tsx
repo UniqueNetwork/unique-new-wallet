@@ -198,11 +198,13 @@ export const NestRefungibleModal = <T extends TBaseToken>({
           <FormRow>
             <Controller
               name="amount"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputAmount
                     value={value}
                     maxValue={fractionsBalance?.amount || 0}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                     onClear={() => onChange('')}
                   />
@@ -210,7 +212,14 @@ export const NestRefungibleModal = <T extends TBaseToken>({
               }}
               rules={{
                 required: true,
-                validate: (val: string) => Number(val) > 0,
+                validate: (val: string) => {
+                  return (
+                    (Number(val) > 0 &&
+                      Number(val) <= (fractionsBalance?.amount || 0) &&
+                      /^\d+$/.test(val)) ||
+                    'Invalid number of fractions'
+                  );
+                },
               }}
             />
           </FormRow>
