@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Heading, Text } from '@unique-nft/ui-kit';
 
 import { ProgressBar } from '@app/components';
-import { formatBlockNumber } from '@app/utils';
+import { formatBlockNumber, formatLongNumber } from '@app/utils';
 
 import { TBaseToken } from '../type';
 
@@ -29,7 +29,7 @@ const FractionalInformationComponent = <T extends TBaseToken>({
         <Text size="m" weight="light" color="grey-500">
           Total minted fractions:
         </Text>
-        <Text>{formatBlockNumber(pieces || 0)}</Text>
+        <Text>{formatLongNumber(pieces || 0)}</Text>
       </Row>
       <Row>
         <Text size="m" weight="light" color="grey-500">
