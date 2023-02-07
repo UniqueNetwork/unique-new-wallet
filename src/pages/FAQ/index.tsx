@@ -48,6 +48,7 @@ const WrapperContentStyled = styled(WrapperContent)`
       color: inherit;
       font-weight: 700;
       font-size: 1.25rem;
+      font-family: Raleway;
       @media screen and (max-width: 567px) {
         margin-right: 40px;
       }

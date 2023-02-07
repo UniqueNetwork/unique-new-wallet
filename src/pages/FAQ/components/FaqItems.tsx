@@ -26,7 +26,7 @@ export const faqItems = <T extends Record<string, unknown>>(
             Note that this option is&nbsp;not available to&nbsp;Ledger or&nbsp;Trust
             Wallet users. Support for these wallets will be&nbsp;added
             at&nbsp;a&nbsp;later date. If, by&nbsp;chance, you happened to&nbsp;transfer
-            any tokens to&nbsp;one of&nbsp;the unsupported wallets,rest assured that your
+            any tokens to&nbsp;one of&nbsp;the unsupported wallets, rest assured that your
             funds are safe in&nbsp;the wallet, but they are currently inaccessible until
             support for the wallet is&nbsp;added.
           </p>
@@ -34,11 +34,7 @@ export const faqItems = <T extends Record<string, unknown>>(
       ),
     },
     {
-      title: (
-        <>
-          What should I do to mint my first NFT? <span className="tooltip">NEW</span>
-        </>
-      ),
+      title: <>What should I do to mint my first NFT?</>,
       content: (
         <>
           <p>
@@ -58,7 +54,11 @@ export const faqItems = <T extends Record<string, unknown>>(
       ),
     },
     {
-      title: 'What is a fractional token?',
+      title: (
+        <>
+          What is a fractional token? <span className="tooltip">NEW</span>
+        </>
+      ),
       content: (
         <>
           <p>
@@ -88,21 +88,22 @@ export const faqItems = <T extends Record<string, unknown>>(
       content: (
         <>
           <p>
-            Nesting is the creation of an on-chain connection between tokens. The elements
-            are grouped into a nested tree-like structure within a single NFT. This NFT is
-            called a bundle root. Tokens nested in a bundle are called a tree branches. Of
-            the two connected tokens, a token with a connection that is closer to the root
-            is considered a parent and all its other attachments children. In an ordered
-            tree, each branch can have only one parent but a parent may have many
-            children.
+            Nesting is&nbsp;the&nbsp;creation of&nbsp;an on-chain connection between
+            tokens. The elements are grouped into a&nbsp;nested tree-like structure within
+            a&nbsp;single NFT. This NFT is&nbsp;called a&nbsp;bundle root. Tokens nested
+            in&nbsp;a&nbsp;bundle are called a&nbsp;tree branches. Of&nbsp;the&nbsp;two
+            connected tokens, a&nbsp;token with a&nbsp;connection that is&nbsp;closer
+            to&nbsp;the&nbsp;root is&nbsp;considered a&nbsp;parent and all its other
+            attachments children. In&nbsp;an&nbsp;ordered tree, each branch can have only
+            one parent but a&nbsp;parent may have many children.
           </p>
           <p>
-            Only an NFT can be a parent; however, a child can be any of the following: an
-            NFT, a Fraction or a Coin. <br />
-            The owner of the bundle is the user (wallet), but the owner of the nested
-            token is another token. <br />
-            The number of attachments is unlimited, but there can be no more than 5 levels
-            of nesting.
+            Only an&nbsp;NFT can be&nbsp;a&nbsp;parent; however, a&nbsp;child can be any
+            of&nbsp;the&nbsp;following: an&nbsp;NFT, a&nbsp;Fraction or&nbsp;a&nbsp;Coin.
+            The owner of&nbsp;the&nbsp;bundle is&nbsp;the&nbsp;user (wallet), but the
+            owner of&nbsp;the&nbsp;nested token is&nbsp;another token. The number
+            of&nbsp;attachments is&nbsp;unlimited, but there can be&nbsp;no&nbsp;more than
+            5&nbsp;levels of&nbsp;nesting.
           </p>
         </>
       ),
