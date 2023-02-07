@@ -153,11 +153,13 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
           <TransferRow>
             <Controller
               name="amount"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputAmount
                     value={value}
                     maxValue={fractionsBalance?.amount || 0}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                     onClear={() => onChange('')}
                   />
@@ -165,10 +167,14 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
               }}
               rules={{
                 required: true,
-                validate: (val: string) =>
-                  Number(val) > 0 &&
-                  Number(val) <= (fractionsBalance?.amount || 0) &&
-                  /^\d+$/.test(val),
+                validate: (val: string) => {
+                  return (
+                    (Number(val) > 0 &&
+                      Number(val) <= (fractionsBalance?.amount || 0) &&
+                      /^\d+$/.test(val)) ||
+                    'Invalid number of fractions'
+                  );
+                },
               }}
             />
           </TransferRow>

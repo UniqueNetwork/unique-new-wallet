@@ -36,6 +36,10 @@ const InputAmountWrapper = styled.div`
   position: relative;
   .unique-input-text label {
     height: 48px;
+    margin-bottom: var(--prop-gap);
+  }
+  .unique-input-text div.input-wrapper input {
+    padding-right: 56px;
   }
 `;
 
@@ -50,8 +54,8 @@ const MaxIcon = styled.div`
   cursor: pointer;
   font-weight: 500;
   font-size: 16px;
-  line-height: 24px;
+  line-height: 42px;
   color: var(--color-primary-500);
   right: var(--gap);
-  top: 62px;
+  top: calc(48px + var(--prop-gap));
 `;
