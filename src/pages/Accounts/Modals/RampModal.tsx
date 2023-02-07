@@ -2,9 +2,10 @@ import React, { memo, useEffect, VFC } from 'react';
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
 
 import { Modal } from '@app/components/Modal';
+import { config } from '@app/config';
 
-// these sizes are required for embedded rendering method, because RampSdk cheks them, when we initialize ramp object
-// but required sizes are not convenient for users and it causes of using other sizes after initialization
+// these sizes are required for embedded rendering method, because RampSdk checks them, when we initialize ramp object
+// but required sizes are not convenient for users, and it causes of using other sizes after initialization
 const requiredWidth = '100%';
 const requiredHeight = '667px';
 const rampContainerId = 'ramp-container';
@@ -28,6 +29,7 @@ const RampModalComponent: VFC<RampModalProps> = ({ isVisible, swapAsset, onClose
           hostLogoUrl: logoUrl,
           containerNode: rampContainer,
           swapAsset,
+          hostApiKey: config.rampApiKey,
         });
 
         // Ramp SDK has a few events, but the lib doesn't support them, just asterisk * (it means all events)

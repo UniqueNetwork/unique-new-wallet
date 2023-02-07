@@ -19,6 +19,7 @@ declare type Config = {
   zenDeskToken: string | undefined;
   zendeskApi: string | undefined;
   oldCollectionMessage: string | undefined;
+  rampApiKey: string | undefined;
   socialLinks: {
     telegram: string;
     twitter: string;
@@ -62,4 +63,5 @@ export const config: Config = {
     homepage: window.ENV?.HOMEPAGE_LINK || process.env.REACT_APP_HOMEPAGE_LINK || '',
   },
   version: window.ENV?.VERSION || process.env.REACT_APP_VERSION || '',
+  rampApiKey: window.ENV?.RAMP_API_KEY || process.env.REACT_APP_RAMP_API_KEY || '',
 };
