@@ -152,7 +152,7 @@ export const TransferNestedTokenModal = ({
           <TransferRow>
             <Controller
               name="to"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputTransfer
                     additionalText={
@@ -161,6 +161,8 @@ export const TransferNestedTokenModal = ({
                         : 'When sending a bundle, you also send all nested tokens'
                     }
                     value={value}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                   />
                 );
@@ -168,7 +170,9 @@ export const TransferNestedTokenModal = ({
               rules={{
                 required: true,
                 validate: (val: string) =>
-                  Address.is.ethereumAddress(val) || Address.is.substrateAddress(val),
+                  Address.is.ethereumAddress(val) ||
+                  Address.is.substrateAddress(val) ||
+                  'Invalid address',
               }}
             />
           </TransferRow>

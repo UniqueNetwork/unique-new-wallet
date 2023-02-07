@@ -34,11 +34,11 @@ $clear-size: 24px;
     width: 100%;
   }
 
-  .status-text {
+  div.status-text {
     color: var(--color-grey-500);
     font-size: 14px;
     line-height: 22px;
-    margin-top: 8px;
+    margin-top: calc(var(--prop-gap) / 4);
     min-height: 22px;
     width: 100%;
   }
