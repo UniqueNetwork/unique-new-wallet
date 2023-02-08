@@ -39,6 +39,7 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
     submitWaitResult,
     isLoadingSubmitResult,
     feeError,
+    feeLoading,
     submitWaitResultError,
   } = useTokenRefungibleBurn();
 
@@ -85,7 +86,7 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
   }, [submitWaitResultError]);
 
   useEffect(() => {
-    if (!token || !selectedAccount?.address || !burnDebounceValue) {
+    if (!isValid || !token || !selectedAccount?.address || !burnDebounceValue) {
       return;
     }
 
@@ -141,7 +142,7 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
       onClose={onClose}
     >
       <FormWrapper
-        fee={feeFormatted}
+        fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
         feeWarning="A fee will be calculated after entering the amount"
       >
         <FormProvider {...form}>
