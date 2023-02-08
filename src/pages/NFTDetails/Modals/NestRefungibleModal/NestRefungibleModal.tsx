@@ -44,6 +44,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     submitWaitResult,
     isLoadingSubmitResult,
     feeError,
+    feeLoading,
     submitWaitResultError,
   } = useTokenRefungibleTransfer();
 
@@ -106,6 +107,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     const parentTokenId = parentToken?.token_id;
 
     if (
+      !isValid ||
       !token ||
       !selectedAccount?.address ||
       !parentCollectionId ||
@@ -192,7 +194,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     >
       {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
-        fee={feeFormatted}
+        fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
         feeWarning="A fee will be calculated after entering the amount"
       >
         <FormProvider {...form}>
