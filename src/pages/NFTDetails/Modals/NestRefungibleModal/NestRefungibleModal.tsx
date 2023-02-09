@@ -13,13 +13,15 @@ import {
   useTokenRefungibleTransfer,
 } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { Alert, Button, Modal } from '@app/components';
+import { Button, Modal } from '@app/components';
 import { Suggest } from '@app/components/Suggest';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
-import { Token } from '@app/api/graphQL/types';
-import { useGraphQlGetTokensCollection } from '@app/api/graphQL/tokens/useGraphQlGetTokensCollection';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 import { formatBlockNumber } from '@app/utils';
+import {
+  TokenInfo,
+  useAllOwnedTokensByCollection,
+} from '@app/pages/NFTDetails/hooks/useAllOwnedTokensByCollection';
 
 import { SuggestOptionNesting } from '../CreateBundleModal/components';
 import { FormWrapper, InputAmount } from '../Transfer';
@@ -76,16 +78,17 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     accountAddress: selectedAccount?.address,
   });
 
-  const tokensData = useGraphQlGetTokensCollection({
-    collectionId: collectionFormData?.collection?.collection_id,
-    excludeCurrentTokenId:
-      collectionFormData?.collection?.collection_id === token?.collectionId
-        ? token?.tokenId
-        : undefined,
-  });
-
   const { isCollectionsLoading, collections } = collectionsData;
-  const { isTokensLoading, tokens } = tokensData;
+
+  const { tokens, isFetchingTokens } = useAllOwnedTokensByCollection(
+    collectionFormData?.collection?.collection_id,
+    {
+      excludeTokenId:
+        collectionFormData?.collection?.collection_id === token?.collectionId
+          ? token?.tokenId
+          : undefined,
+    },
+  );
 
   useEffect(() => {
     if (!feeError) {
@@ -168,7 +171,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     }
   };
 
-  const isNotExistTokens = tokensData.tokens.length === 0;
+  const isNotExistTokens = tokens.length === 0;
 
   if (!selectedAccount || !token) {
     return null;
@@ -294,13 +297,13 @@ export const NestRefungibleModal = <T extends TBaseToken>({
               name="token"
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
-                <Suggest<Token>
+                <Suggest<TokenInfo>
                   components={{
                     SuggestItem: ({
                       suggestion,
                       isActive,
                     }: {
-                      suggestion: Token;
+                      suggestion: TokenInfo;
                       isActive?: boolean;
                     }) => (
                       <SuggestOptionNesting
@@ -312,7 +315,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
                     ),
                   }}
                   suggestions={tokens}
-                  isLoading={isTokensLoading}
+                  isLoading={isFetchingTokens}
                   value={value}
                   getActiveSuggestOption={(option) => option.token_id === value.token_id}
                   inputProps={{

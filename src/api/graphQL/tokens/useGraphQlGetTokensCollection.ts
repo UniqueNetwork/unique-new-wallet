@@ -25,6 +25,7 @@ const GET_TOKENS_COLLECTION = gql`
         collection_id
         collection_name
         image
+        nested
       }
     }
   }

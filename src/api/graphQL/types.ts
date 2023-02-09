@@ -54,7 +54,7 @@ export enum TokenTypeEnum {
 export interface Token {
   token_id: number;
   token_name: string;
-  token_prefix: number;
+  token_prefix: string;
   owner: string;
   owner_normalized: string;
   attributes: Record<string, Attribute>;

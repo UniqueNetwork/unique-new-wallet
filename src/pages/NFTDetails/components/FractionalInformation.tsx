@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { Heading, Text } from '@unique-nft/ui-kit';
 
@@ -18,7 +18,19 @@ const FractionalInformationComponent = <T extends TBaseToken>({
   pieces,
   className,
 }: FractionalInformationProps<T>) => {
-  const percent = ((balance || 0) / (pieces || 1)) * 100;
+  const percent = useMemo(() => {
+    return ((balance || 0) / (pieces || 1)) * 100;
+  }, [balance, pieces]);
+
+  const percentText = useMemo(() => {
+    if (percent < 0.01) {
+      return '<0.01 %';
+    }
+    if (percent > 99.99) {
+      return '>99.99 %';
+    }
+    return `${percent.toFixed(2)} %`;
+  }, [percent]);
 
   return (
     <div className={className}>
@@ -35,13 +47,13 @@ const FractionalInformationComponent = <T extends TBaseToken>({
         <Text size="m" weight="light" color="grey-500">
           Owned fractions:
         </Text>
-        <Text>{formatBlockNumber(balance || 0)}</Text>
+        <Text>{formatLongNumber(balance || 0)}</Text>
       </Row>
       <Row>
         <Text size="m" weight="light" color="grey-500">
           Ownership percentage:
         </Text>
-        <Text>{`${percent.toFixed(2)}%`}</Text>
+        <Text>{percentText}</Text>
       </Row>
       <Row>
         <ProgressBar filledPercent={percent} height={14} />

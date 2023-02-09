@@ -20,6 +20,7 @@ import { CreateBundleStagesModal } from '@app/pages/NFTDetails/Modals/CreateBund
 import { CreateBundleForm } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleForm';
 import { queryKeys } from '@app/api/restApi/keysConfig';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { useAllOwnedTokensByCollection } from '@app/pages/NFTDetails/hooks/useAllOwnedTokensByCollection';
 
 export type TCreateBundleForm = {
   collection: CollectionNestingOption | null;
@@ -71,13 +72,15 @@ export const CreateBundleModal = <T extends TBaseToken>({
     accountAddress: selectedAccount?.address,
   });
 
-  const tokensData = useGraphQlGetTokensCollection({
-    collectionId: collectionFormData?.collection?.collection_id,
-    excludeCurrentTokenId:
-      collectionFormData?.collection?.collection_id === token?.collectionId
-        ? token?.tokenId
-        : undefined,
-  });
+  const tokensData = useAllOwnedTokensByCollection(
+    collectionFormData?.collection?.collection_id,
+    {
+      excludeTokenId:
+        collectionFormData?.collection?.collection_id === token?.collectionId
+          ? token?.tokenId
+          : undefined,
+    },
+  );
 
   const onSubmit = async (form: TCreateBundleForm) => {
     if (!token || !selectedAccount || !form.token || !form.collection) {
