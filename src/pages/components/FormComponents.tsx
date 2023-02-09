@@ -123,6 +123,7 @@ export const SuggestOption = styled.div`
     & > img {
       flex: 0 0 auto;
       margin-right: calc(var(--prop-gap) / 2);
+      object-fit: cover;
     }
 
     .suggestion-item {
