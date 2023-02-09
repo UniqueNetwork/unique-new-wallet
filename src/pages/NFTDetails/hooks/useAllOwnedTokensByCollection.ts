@@ -75,9 +75,15 @@ export const useAllOwnedTokensByCollection = (
           bundleData.data.bundleTree.nestingChildren?.map(getTokensFromBundle);
 
         setTokens((tokens) =>
-          [...tokens, ...(nestedTokens?.flat() || [])].sort((tokenA, tokenB) =>
-            tokenA.token_id > tokenB.token_id ? 1 : -1,
-          ),
+          [...tokens, ...(nestedTokens?.flat() || [])]
+            .reduce<TokenInfo[]>(
+              (acc, _token) =>
+                acc.find(({ token_id }) => token_id === _token.token_id)
+                  ? acc
+                  : [...acc, _token],
+              [],
+            )
+            .sort((tokenA, tokenB) => (tokenA.token_id > tokenB.token_id ? 1 : -1)),
         );
       }
     });
