@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Achievement, TokenLink } from '@app/components';
 import { Token, TokenTypeEnum } from '@app/api/graphQL/types';
-import { formatBlockNumber, formatLongNumber } from '@app/utils';
+import { formatLongNumber } from '@app/utils';
 
 export const TokenNftLink = ({
   token,
@@ -67,7 +67,7 @@ export const TokenNftLink = ({
               <Text appearance="block" weight="light" size="s" color="grey-500">
                 Owned fractions:{' '}
                 <span className="count">
-                  {formatBlockNumber(token.tokens_amount)}/
+                  {formatLongNumber(Number(token.tokens_amount))}/
                   {formatLongNumber(Number(token.total_pieces))}
                 </span>
               </Text>
