@@ -52,6 +52,9 @@ export const useAllOwnedTokensByCollection = (
           image,
           nestingChildren,
         }: NestingToken): TokenInfo[] => {
+          if (collection_id !== collectionId) {
+            return [];
+          }
           const tokenData: TokenInfo = {
             token_id,
             token_name,
