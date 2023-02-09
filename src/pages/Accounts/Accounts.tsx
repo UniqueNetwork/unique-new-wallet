@@ -7,13 +7,7 @@ import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import {
-  Confirm,
-  PagePaper,
-  Table,
-  TooltipWrapper,
-  TransferBtn,
-} from '@app/components';
+import { Confirm, PagePaper, Table, TooltipWrapper, TransferBtn } from '@app/components';
 import { Search } from '@app/pages/components/Search';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
