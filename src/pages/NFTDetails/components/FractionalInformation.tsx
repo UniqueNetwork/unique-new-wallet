@@ -26,7 +26,7 @@ const FractionalInformationComponent = <T extends TBaseToken>({
     if (percent < 0.01) {
       return '<0.01 %';
     }
-    if (percent > 99.99) {
+    if (percent > 99.99 && percent < 100) {
       return '>99.99 %';
     }
     return `${percent.toFixed(2)} %`;
