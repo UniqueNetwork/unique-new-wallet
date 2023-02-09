@@ -1,9 +1,10 @@
 import { ReactNode, useEffect, useRef, useState, VFC } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { Heading, Icon, Link, Text } from '@unique-nft/ui-kit';
+import { Heading, Link, Text } from '@unique-nft/ui-kit';
 
 import { ButtonGroup } from '@app/pages/components/FormComponents';
+import { Icon } from '@app/components';
 
 export interface BottomBarProps {
   buttons: ReactNode[];

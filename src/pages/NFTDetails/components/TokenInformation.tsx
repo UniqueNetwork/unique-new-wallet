@@ -1,9 +1,8 @@
 import { memo, useMemo } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
-import { Heading, Icon, Text } from '@unique-nft/ui-kit';
+import { Heading, Text } from '@unique-nft/ui-kit';
 
-import { Tag, Tags, TooltipWrapper } from '@app/components';
+import { Icon, Tag, Tags, TooltipWrapper } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 

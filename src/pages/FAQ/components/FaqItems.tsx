@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Icon, Link as UiLink } from '@unique-nft/ui-kit';
+import { Link as UiLink } from '@unique-nft/ui-kit';
 
 import { config } from '@app/config';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import { Icon } from '@app/components';
 
 export const faqItems = <T extends Record<string, unknown>>(
   activeNetwork: string,

@@ -1,9 +1,10 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Button, InputText, Text } from '@unique-nft/ui-kit';
+import { InputText, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { PriceRange } from './types';
 import Accordion from '../Accordion/Accordion';
+import { Button } from '../Button';
 
 interface PricesFilterProps {
   onChange(value: PriceRange | undefined): void;

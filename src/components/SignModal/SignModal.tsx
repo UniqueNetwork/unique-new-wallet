@@ -1,10 +1,10 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
 
 import { AccountSigner } from '@app/account';
 import { useAccounts } from '@app/hooks';
-import { IdentityIcon, PasswordInput } from '@app/components';
+import { Button, IdentityIcon, PasswordInput } from '@app/components';
 import { Modal } from '@app/components/Modal';
 
 export type TSignModalProps = {

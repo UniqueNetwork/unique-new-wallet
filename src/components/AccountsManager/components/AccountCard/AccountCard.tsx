@@ -1,12 +1,13 @@
-import { Avatar, Icon, Text } from '@unique-nft/ui-kit';
+import { Avatar, Text } from '@unique-nft/ui-kit';
 import React, { ReactNode } from 'react';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
+import { Icon } from '@app/components';
 
 import defaultAvatarSrc from '../../../../static/icons/avatar.jpg';
 import { IAccount } from '../../AccountsManager';
-import './AccountCard.scss';
 
+import './AccountCard.scss';
 interface AccountCardProps extends IAccount {
   avatarRender?(address: string): ReactNode;
 }

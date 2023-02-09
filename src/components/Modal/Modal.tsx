@@ -1,12 +1,13 @@
 import { ReactNode, useEffect } from 'react';
 import DrawerPopup, { DrawerPopupProps } from 'rc-drawer/lib/DrawerPopup';
 import classNames from 'classnames';
-import { Button, Heading } from '@unique-nft/ui-kit';
+import { Heading } from '@unique-nft/ui-kit';
 
 import './Modal.scss';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
+import { Button } from '@app/components';
 
 export interface ModalProps {
   align?: 'top' | 'middle' | 'bottom';

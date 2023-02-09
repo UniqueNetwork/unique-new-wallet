@@ -4,7 +4,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
-import { Button, Text, useNotifications } from '@unique-nft/ui-kit';
+import { Text, useNotifications } from '@unique-nft/ui-kit';
 
 import {
   DeviceSize,
@@ -16,6 +16,7 @@ import {
 import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
+  Button,
   CollectionSidebar,
   CollectionStepper,
   Confirm,
