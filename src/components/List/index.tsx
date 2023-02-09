@@ -2,10 +2,10 @@ import { ReactNode, useState } from 'react';
 import { OperationVariables } from '@apollo/client/core/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
+import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, SizeMap, useDeviceSize } from '@app/hooks';
-import { NoItems, PagePaper } from '@app/components';
+import { Button, NoItems, PagePaper } from '@app/components';
 
 import Item from './Item';
 

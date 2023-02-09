@@ -1,10 +1,11 @@
 import { ComponentType, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { Icon, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
+import { Icon } from '@app/components';
 
 type TitleConfig = {
   header?: string;

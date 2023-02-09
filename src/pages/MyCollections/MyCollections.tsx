@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState, VFC } from 'react';
 import { Outlet, useNavigate, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
-import { Button, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
 
-import { PagePaper, TokenLink } from '@app/components';
+import { Button, PagePaper, TokenLink } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';

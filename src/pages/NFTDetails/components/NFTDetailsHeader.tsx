@@ -1,9 +1,9 @@
 import { memo, ReactNode, VFC } from 'react';
 import styled from 'styled-components';
-import { Button, Heading, SelectOptionProps } from '@unique-nft/ui-kit';
+import { Heading, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
-import { BurnBtn, Dropdown, ExternalLink } from '@app/components';
+import { BurnBtn, Dropdown, ExternalLink, Button } from '@app/components';
 import { TTokenModalType } from '@app/pages/NFTDetails/Modals/types';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 

@@ -1,10 +1,10 @@
-import { Button, Icon, INetwork, useNotifications } from '@unique-nft/ui-kit';
+import { INetwork, useNotifications } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 
-import { IdentityIcon } from '@app/components';
+import { Button, Icon, IdentityIcon } from '@app/components';
 import { config } from '@app/config';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';

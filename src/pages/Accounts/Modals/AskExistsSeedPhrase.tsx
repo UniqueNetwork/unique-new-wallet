@@ -1,6 +1,5 @@
 import { ChangeEvent, FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button } from '@unique-nft/ui-kit';
 
 import { addressFromSeed } from '@app/utils';
 import { StepsTextStyled } from '@app/pages/Accounts/Modals/commonComponents';
@@ -11,6 +10,7 @@ import {
 } from '@app/pages/components/ModalComponents';
 import { ButtonGroup, LabelText } from '@app/pages/components/FormComponents';
 import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
+import { Button } from '@app/components';
 
 import { TCreateAccountBodyModalProps } from './types';
 import { defaultPairType, derivePath } from './CreateAccount';

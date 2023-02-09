@@ -1,6 +1,7 @@
 import React, { VFC } from 'react';
 import styled from 'styled-components';
-import { Icon } from '@unique-nft/ui-kit';
+
+import { Icon } from '@app/components';
 
 interface Props {
   deleteItem: (idx: number) => void;

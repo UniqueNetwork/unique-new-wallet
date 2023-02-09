@@ -35,6 +35,6 @@ export const Icon = ({
       data-testid={`icon-${name}`}
       {...props}
     >
-      <use xlinkHref={`${Icons}#icon-${name}`} />
+      <use xlinkHref={`${Icons}#icon-${name}`} href={`${Icons}#icon-${name}`} />
     </svg>
   );
