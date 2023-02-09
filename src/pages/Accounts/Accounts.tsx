@@ -1,14 +1,13 @@
 import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Dropdown, Icon, TableColumnProps, Text } from '@unique-nft/ui-kit';
+import { Dropdown, Icon, TableColumnProps, Text, Button } from '@unique-nft/ui-kit';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
 import {
-  Button,
   Confirm,
   PagePaper,
   Table,
