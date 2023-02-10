@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Button, InputText } from '@unique-nft/ui-kit';
+import { InputText } from '@unique-nft/ui-kit';
 
-import { PasswordInput } from '@app/components';
+import { Button, PasswordInput } from '@app/components';
 import {
   AdditionalText,
   LabelText,

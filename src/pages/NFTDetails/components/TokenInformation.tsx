@@ -1,8 +1,8 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-import { Heading, Icon, Text } from '@unique-nft/ui-kit';
+import { Heading, Text } from '@unique-nft/ui-kit';
 
-import { Tag, Tags, TooltipWrapper } from '@app/components';
+import { Icon, Tag, Tags, TooltipWrapper } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
@@ -46,7 +46,7 @@ const TokenInformationComponent = <T extends TBaseToken>({
             </>
           }
         >
-          <Icon name="question" size={20} color="var(--color-primary-500)" />
+          <Icon name="question" size={24} color="var(--color-primary-500)" />
         </TooltipWrapper>
       </Heading>
       {attributes?.map(({ title, tags }, index) => (
@@ -67,6 +67,22 @@ const TokenInformationComponent = <T extends TBaseToken>({
           </Tags>
         </div>
       ))}
+      {token?.file && (
+        <>
+          <Heading className="attributes-header" size="4">
+            Attached file
+          </Heading>
+          <a
+            className="unique-button primary size-small"
+            target="_blank"
+            rel="noreferrer"
+            href={token.file.fullUrl}
+          >
+            Download file&nbsp;
+            <Icon size={16} name="logout" color="lightgrey" />
+          </a>
+        </>
+      )}
     </div>
   );
 };

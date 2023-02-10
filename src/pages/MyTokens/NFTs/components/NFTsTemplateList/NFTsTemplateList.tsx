@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
-import { useApi, useItemsLimit } from '@app/hooks';
+import { useItemsLimit } from '@app/hooks';
 import { PagePaper } from '@app/components';
 import List from '@app/components/List';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 import { TokenNftLink } from '@app/pages/components/TokenNftLink';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 type PaginationSettingsProps = Pick<
   IPaginationProps,
@@ -47,8 +48,8 @@ export const NFTsTemplateList = ({
   cacheTokens,
 }: NFTsListComponentProps) => {
   const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
-  const { currentChain } = useApi();
 
   return (
     <PagePaper.Processing>
@@ -85,7 +86,11 @@ export const NFTsTemplateList = ({
             token={token}
             navigate={() => {
               navigate(
-                `/${currentChain?.network}/token/${token.collection_id}/${token.token_id}`,
+                getTokenPath(
+                  token.tokens_owner || '',
+                  token.collection_id,
+                  token.token_id,
+                ),
               );
             }}
           />

@@ -9,6 +9,7 @@ import { ROUTE } from '@app/routes';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { TokenTypeEnum } from '@app/api/graphQL/types';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
@@ -47,12 +48,14 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
     }
   }, [baseUrl, location.pathname, navigate]);
 
+  const TokenTabTitle = collection?.mode === TokenTypeEnum.RFT ? 'Fractional' : 'NFTs';
+
   return (
     <CollectionsNftFilterWrapper>
       <TabsHeader>
         <Tabs
           activeIndex={currentTabIndex}
-          labels={['NFTs', 'Settings']}
+          labels={[TokenTabTitle, 'Settings']}
           type="slim"
           onClick={handleClick}
         />

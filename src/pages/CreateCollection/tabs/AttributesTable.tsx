@@ -1,9 +1,9 @@
 import { ReactNode, useCallback, VFC } from 'react';
 import styled from 'styled-components';
 import { Controller, useFieldArray, useWatch } from 'react-hook-form';
-import { Button, Icon, InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
+import { InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
 
-import { Table, TooltipWrapper } from '@app/components';
+import { Button, Icon, Table, TooltipWrapper } from '@app/components';
 
 import { EnumsInputController } from '../components/EnumsInput/EnumsInputController';
 import trash from '../../../static/icons/trash.svg';

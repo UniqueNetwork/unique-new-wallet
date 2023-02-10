@@ -1,6 +1,8 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
+
+import { Button } from '../Button';
 
 interface AccordionProps {
   title: string;

@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
-import { Button, IconProps } from '@unique-nft/ui-kit';
+import { IconProps } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { Modal } from '@app/components/Modal';
 import getSocialLink from '@app/pages/NFTDetails/Modals/utils/getSocialLink';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
+import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
+import { Button, Modal } from '@app/components';
 
-// TODO: need to move these icons to ui-kit
 import RedditLogo from '../../../../static/icons/reddit.svg';
 import FacebookLogo from '../../../../static/icons/facebook.svg';
 
@@ -20,7 +19,7 @@ interface SocialItem {
 export const ShareModal = <T extends TBaseToken>({
   token,
   onClose,
-}: Omit<NFTModalsProps<T> & { token: T }, 'onComplete'>) => {
+}: Omit<TokenModalsProps<T> & { token: T }, 'onComplete'>) => {
   const openLink = (url: string) => () => {
     window.open(url);
   };

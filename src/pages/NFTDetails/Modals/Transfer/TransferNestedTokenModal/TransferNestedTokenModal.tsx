@@ -1,28 +1,30 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller, FormProvider, useWatch } from 'react-hook-form';
 import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { TransferTokenBody } from '@unique-nft/sdk';
 import { useQueryClient } from 'react-query';
 import { useDebounce } from 'use-debounce';
+import { useNavigate } from 'react-router-dom';
 
 import { Modal, TransferBtn } from '@app/components';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { useTokenParentGetById, useTokenTransfer } from '@app/api';
-import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
+import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { TNestingToken } from '@app/pages/NFTDetails/type';
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
+import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
 import { TransferNestedStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferNestedTokenModal/TransferNestedStagesModal';
 import { useAccounts } from '@app/hooks';
 import { queryKeys } from '@app/api/restApi/keysConfig';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 export const TransferNestedTokenModal = ({
   token,
   onClose,
   onComplete,
-}: NFTModalsProps<TNestingToken>) => {
+}: TokenModalsProps<TNestingToken>) => {
   const {
     getFee,
     feeFormatted,
@@ -36,6 +38,9 @@ export const TransferNestedTokenModal = ({
   const queryClient = useQueryClient();
   const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const form = useForm<TransferFormDataType>({
     mode: 'onChange',
@@ -103,22 +108,25 @@ export const TransferNestedTokenModal = ({
       getFee(transferDebounceValue as TransferTokenBody);
   }, [transferDebounceValue, getFee]);
 
-  const onSubmit = (data: TransferFormDataType) => {
-    submitWaitResult({
-      payload: data,
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-
-        queryClient.invalidateQueries(queryKeys.token._def);
-        onComplete();
-      })
-      .catch(() => {
-        onClose();
+  const onSubmit = async (data: TransferFormDataType) => {
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: data,
       });
+      await onComplete();
+      setIsWaitingComplete(false);
+
+      queryClient.invalidateQueries(queryKeys.token._def);
+      info('Transfer completed successfully');
+      navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+    } catch {
+      setIsWaitingComplete(false);
+      onClose();
+    }
   };
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <TransferNestedStagesModal />;
   }
 
@@ -129,7 +137,7 @@ export const TransferNestedTokenModal = ({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
+          disabled={!isValid}
           role="primary"
           onClick={form.handleSubmit(onSubmit)}
         />
@@ -144,7 +152,7 @@ export const TransferNestedTokenModal = ({
           <TransferRow>
             <Controller
               name="to"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputTransfer
                     additionalText={
@@ -153,6 +161,8 @@ export const TransferNestedTokenModal = ({
                         : 'When sending a bundle, you also send all nested tokens'
                     }
                     value={value}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                   />
                 );
@@ -160,7 +170,9 @@ export const TransferNestedTokenModal = ({
               rules={{
                 required: true,
                 validate: (val: string) =>
-                  Address.is.ethereumAddress(val) || Address.is.substrateAddress(val),
+                  Address.is.ethereumAddress(val) ||
+                  Address.is.substrateAddress(val) ||
+                  'Invalid address',
               }}
             />
           </TransferRow>

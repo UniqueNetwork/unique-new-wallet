@@ -1,8 +1,10 @@
 import React, { VFC } from 'react';
 import styled from 'styled-components';
-import { Icon, Loader, Text } from '@unique-nft/ui-kit';
+import { Loader, Text } from '@unique-nft/ui-kit';
 
 import { Stage, StageStatus } from '@app/types';
+
+import { Icon } from '../Icon';
 
 interface StagesProps {
   stages: Stage[];

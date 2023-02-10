@@ -46,12 +46,15 @@ export interface Attribute {
   };
 }
 
-export type TokenTypeEnum = 'FRACTIONAL' | 'NESTED' | 'NFT';
+export enum TokenTypeEnum {
+  NFT = 'NFT',
+  RFT = 'RFT',
+}
 
 export interface Token {
   token_id: number;
   token_name: string;
-  token_prefix: number;
+  token_prefix: string;
   owner: string;
   owner_normalized: string;
   attributes: Record<string, Attribute>;
@@ -67,6 +70,10 @@ export interface Token {
   type: TokenTypeEnum;
   children_count: number;
   parent_id: Nullable<string>;
+  nested: boolean;
+  total_pieces: string;
+  tokens_owner: string;
+  tokens_amount: string;
 }
 
 export interface Collection {
@@ -82,4 +89,12 @@ export interface Collection {
   token_limit: number;
   name: string;
   sponsorship: string;
+  mode: TokenTypeEnum;
+}
+
+export interface RftFraction {
+  owner: string;
+  amount: string;
+  token_id: number;
+  collection_id: number;
 }

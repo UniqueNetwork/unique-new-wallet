@@ -1,28 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { TransferTokenBody } from '@unique-nft/sdk';
 import { useDebounce } from 'use-debounce';
+import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
 import { TransferStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferModal';
 import { useTokenTransfer } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
+import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { Modal, TransferBtn } from '@app/components';
 import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
-import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/style';
+import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 export const TransferModal = <T extends TBaseToken>({
   token,
-  onComplete,
   onClose,
-}: NFTModalsProps<T>) => {
+  onComplete,
+}: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
   const { error, info } = useNotifications();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
   const {
     submitWaitResult,
     getFee,
@@ -67,17 +72,20 @@ export const TransferModal = <T extends TBaseToken>({
     error(submitWaitResultError);
   }, [submitWaitResultError]);
 
-  const onSubmit = (data: TransferFormDataType) => {
-    submitWaitResult({
-      payload: data,
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-        onComplete();
-      })
-      .catch(() => {
-        onClose();
+  const onSubmit = async (data: TransferFormDataType) => {
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: data,
       });
+      await onComplete();
+      setIsWaitingComplete(false);
+      info('Transfer completed successfully');
+      navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+    } catch {
+      setIsWaitingComplete(false);
+      onClose();
+    }
   };
 
   useEffect(() => {
@@ -90,7 +98,7 @@ export const TransferModal = <T extends TBaseToken>({
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <TransferStagesModal />;
   }
 
@@ -101,7 +109,7 @@ export const TransferModal = <T extends TBaseToken>({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
+          disabled={!isValid}
           role="primary"
           onClick={form.handleSubmit(onSubmit)}
         />
@@ -115,10 +123,12 @@ export const TransferModal = <T extends TBaseToken>({
           <TransferRow>
             <Controller
               name="to"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputTransfer
                     value={value}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                     onClear={() => onChange('')}
                   />
@@ -127,7 +137,9 @@ export const TransferModal = <T extends TBaseToken>({
               rules={{
                 required: true,
                 validate: (val: string) =>
-                  Address.is.ethereumAddress(val) || Address.is.substrateAddress(val),
+                  Address.is.ethereumAddress(val) ||
+                  Address.is.substrateAddress(val) ||
+                  'Invalid address',
               }}
             />
           </TransferRow>

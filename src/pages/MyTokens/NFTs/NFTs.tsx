@@ -17,6 +17,8 @@ import {
   StatusFilter,
   TypeFilter,
 } from '@app/pages';
+import { useGraphQlGetRftFractionsByOwner } from '@app/api/graphQL/tokens/useGraphQlGetRftFractionsByOwner';
+import { TokenTypeEnum } from '@app/api/graphQL/types';
 
 import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useNFTsContext } from '../context';

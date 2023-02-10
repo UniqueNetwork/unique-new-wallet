@@ -1,8 +1,9 @@
-import { Button, Text, Loader } from '@unique-nft/ui-kit';
+import { Text, Loader } from '@unique-nft/ui-kit';
 
 import { Modal, ModalProps } from '@app/components/Modal';
 import { ContentRow } from '@app/pages/components/ModalComponents';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { Button } from '@app/components';
 
 type BurnCollectionModalProps = Omit<
   ModalProps,

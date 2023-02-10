@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { Icon, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
+
+import { Icon } from '@app/components';
 
 interface AccountContextMenuProps {
   onForgetWalletClick(): void;

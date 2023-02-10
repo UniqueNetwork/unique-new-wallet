@@ -34,18 +34,18 @@ $clear-size: 24px;
     width: 100%;
   }
 
-  .status-text {
+  div.status-text {
     color: var(--color-grey-500);
     font-size: 14px;
     line-height: 22px;
-    margin-top: 8px;
+    margin-top: calc(var(--prop-gap) / 4);
     min-height: 22px;
     width: 100%;
   }
 
   &.error,
   &.error:focus-within {
-    .input-wrapper {
+    div.input-wrapper {
       border: 1px solid var(--color-coral-500);
     }
 
@@ -54,7 +54,7 @@ $clear-size: 24px;
     }
   }
 
-  .input-wrapper {
+  div.input-wrapper {
     position: relative;
     border: 1px solid var(--color-grey-300);
     border-radius: var(--prop-border-radius);

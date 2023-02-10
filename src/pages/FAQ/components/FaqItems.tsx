@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Icon, Link as UiLink } from '@unique-nft/ui-kit';
+import { Link as UiLink } from '@unique-nft/ui-kit';
 
 import { config } from '@app/config';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import { Icon } from '@app/components';
 
 export const faqItems = <T extends Record<string, unknown>>(
   activeNetwork: string,
@@ -10,61 +11,31 @@ export const faqItems = <T extends Record<string, unknown>>(
 ) => {
   return [
     {
-      title: 'How can I create an account?',
+      title: 'How can I create or connect my account?',
       content: (
         <>
           <p>
-            Use either the{' '}
-            <UiLink
-              href="https://polkadot.js.org/extension/"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {`Polkadot{.js} extension`}
-              <Icon color="currentColor" name="arrow-up-right" size={16} />
-            </UiLink>{' '}
-            or <Link to={`/${activeNetwork}/${ROUTE.ACCOUNTS}`}>Manage accounts</Link> in
-            the drop-down list in the upper right corner of the screen page and follow the
-            instructions.
+            Use the “
+            <Link to={`/${activeNetwork}/${ROUTE.ACCOUNTS}`}>Connect wallet</Link>” button
+            in&nbsp;the upper right corner of&nbsp;the screen and follow the instructions.
+            You can choose between Polkadot.js and Metamask or&nbsp;create/connect
+            a&nbsp;wallet directly via the Unique Wallet on-line interface. When using
+            Chrome or&nbsp;Firefox desktop with the Polkadot.js browser extension, set
+            your account to&nbsp;“allow use on any chain”.
           </p>
           <p>
-            Keep your wallet seed phrase safe! Write it down on a paper or export the JSON
-            key with a password you’ll never forget.
+            Note that this option is&nbsp;not available to&nbsp;Ledger or&nbsp;Trust
+            Wallet users. Support for these wallets will be&nbsp;added
+            at&nbsp;a&nbsp;later date. If, by&nbsp;chance, you happened to&nbsp;transfer
+            any tokens to&nbsp;one of&nbsp;the unsupported wallets, rest assured that your
+            funds are safe in&nbsp;the wallet, but they are currently inaccessible until
+            support for the wallet is&nbsp;added.
           </p>
         </>
       ),
     },
     {
-      title: 'How do I connect my crypto wallet?',
-      content: (
-        <>
-          <p>
-            Use the{' '}
-            <UiLink
-              href="https://polkadot.js.org/extension/"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {`Polkadot{.js} extension`}
-              <Icon color="currentColor" name="arrow-up-right" size={16} />
-            </UiLink>{' '}
-            or the <Link to={`/${activeNetwork}/${ROUTE.ACCOUNTS}`}>Manage accounts</Link>{' '}
-            in the drop-down list in the upper right corner of the screen to set up or
-            restore an account. Restore your wallet through the seed phrase, JSON
-            file+password or QR code. When using Chrome or Firefox desktop with the
-            Polkadot.js browser extension, set your account to “allow use on any chain”.
-          </p>
-          <p>
-            Note that this option is not available to Ledger or TrustWallet users. Support
-            for them will be added at a later date. If an NFT or a token was at any point
-            transferred to one of these hardware wallets they are safe but you won’t be
-            able to transfer them out until the support is added.
-          </p>
-        </>
-      ),
-    },
-    {
-      title: 'What should I do to mint my first NFT?',
+      title: <>What should I do to mint my first NFT?</>,
       content: (
         <>
           <p>
@@ -86,6 +57,31 @@ export const faqItems = <T extends Record<string, unknown>>(
     {
       title: (
         <>
+          What is a fractional token? <span className="tooltip">NEW</span>
+        </>
+      ),
+      content: (
+        <>
+          <p>
+            This is a re-fungible format that allows for an&nbsp;NFT
+            to&nbsp;be&nbsp;divided into many parts that can be&nbsp;distributed among any
+            number of&nbsp;wallets. You can learn more aboout this in this article:{' '}
+            <UiLink
+              href="https://unique.network/blog/re-fungible-nfts/"
+              title="@unique2faucet_opal_bot"
+              role="primary"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              https://unique.network/blog/re-fungible-nfts/
+            </UiLink>
+          </p>
+        </>
+      ),
+    },
+    {
+      title: (
+        <>
           What is nesting <span className="tooltip">NEW</span>
         </>
       ),
@@ -93,21 +89,22 @@ export const faqItems = <T extends Record<string, unknown>>(
       content: (
         <>
           <p>
-            Nesting is the creation of an on-chain connection between tokens. The elements
-            are grouped into a nested tree-like structure within a single NFT. This NFT is
-            called a bundle root. Tokens nested in a bundle are called a tree branches. Of
-            the two connected tokens, a token with a connection that is closer to the root
-            is considered a parent and all its other attachments children. In an ordered
-            tree, each branch can have only one parent but a parent may have many
-            children.
+            Nesting is&nbsp;the&nbsp;creation of&nbsp;an on-chain connection between
+            tokens. The elements are grouped into a&nbsp;nested tree-like structure within
+            a&nbsp;single NFT. This NFT is&nbsp;called a&nbsp;bundle root. Tokens nested
+            in&nbsp;a&nbsp;bundle are called a&nbsp;tree branches. Of&nbsp;the&nbsp;two
+            connected tokens, a&nbsp;token with a&nbsp;connection that is&nbsp;closer
+            to&nbsp;the&nbsp;root is&nbsp;considered a&nbsp;parent and all its other
+            attachments children. In&nbsp;an&nbsp;ordered tree, each branch can have only
+            one parent but a&nbsp;parent may have many children.
           </p>
           <p>
-            Only an NFT can be a parent; however, a child can be any of the following: an
-            NFT, a Fraction or a Coin. <br />
-            The owner of the bundle is the user (wallet), but the owner of the nested
-            token is another token. <br />
-            The number of attachments is unlimited, but there can be no more than 5 levels
-            of nesting.
+            Only an&nbsp;NFT can be&nbsp;a&nbsp;parent; however, a&nbsp;child can be any
+            of&nbsp;the&nbsp;following: an&nbsp;NFT, a&nbsp;Fraction or&nbsp;a&nbsp;Coin.
+            The owner of&nbsp;the&nbsp;bundle is&nbsp;the&nbsp;user (wallet), but the
+            owner of&nbsp;the&nbsp;nested token is&nbsp;another token. The number
+            of&nbsp;attachments is&nbsp;unlimited, but there can be&nbsp;no&nbsp;more than
+            5&nbsp;levels of&nbsp;nesting.
           </p>
         </>
       ),
@@ -259,7 +256,7 @@ export const faqItems = <T extends Record<string, unknown>>(
     },
     {
       title:
-        'I want to find my collections and tokens in the blockchain. Where can I see them?',
+        'I want to find my collections and tokens in the blockchain. Where can I search for them?',
       content: (
         <p>
           Use our{' '}

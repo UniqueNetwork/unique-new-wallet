@@ -1,10 +1,10 @@
 import { memo, ReactNode, VFC } from 'react';
 import styled from 'styled-components';
-import { Button, Heading, SelectOptionProps } from '@unique-nft/ui-kit';
+import { Heading, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
-import { BurnBtn, Dropdown, ExternalLink } from '@app/components';
-import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
+import { BurnBtn, Dropdown, ExternalLink, Button } from '@app/components';
+import { TTokenModalType } from '@app/pages/NFTDetails/Modals/types';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 interface NFTDetailsHeaderProps {
@@ -16,13 +16,13 @@ interface NFTDetailsHeaderProps {
   className?: string;
   buttons: ReactNode;
   menuButtons: SelectOptionProps[];
-  onShowModal(modal: TNFTModalType): void;
+  onShowModal(modal: TTokenModalType): void;
   owner: ReactNode;
 }
 
 interface MenuOptionItem extends SelectOptionProps {
   disabled?: boolean;
-  id: TNFTModalType;
+  id: TTokenModalType;
 }
 
 const HeaderContainerInfo = styled.div`

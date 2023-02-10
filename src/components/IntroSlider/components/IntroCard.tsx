@@ -1,10 +1,11 @@
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Button, Heading, Text } from '@unique-nft/ui-kit';
+import { Heading, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { ROUTE } from '@app/routes';
+import { Button } from '@app/components/Button';
 
 type IntroCardProps = {
   imgPath: string;

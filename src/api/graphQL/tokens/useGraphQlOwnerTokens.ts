@@ -7,7 +7,7 @@ import { QueryOptions, QueryResponse, Token } from '../types';
 
 export type StatusFilterNft = 'purchased' | 'createdByMe' | 'allStatus';
 
-export type TypeFilterNft = 'allType' | 'NFT' | 'NESTED' | 'FRACTIONAL';
+export type TypeFilterNft = 'allType' | 'NESTED' | 'NFT' | 'RFT';
 
 type AdditionalFilters = {
   collectionsIds?: number[];
@@ -39,6 +39,11 @@ const OWNER_TOKENS_QUERY = gql`
         type
         children_count
         parent_id
+        nested
+        total_pieces
+        owner
+        tokens_owner
+        tokens_amount
       }
     }
   }
@@ -57,6 +62,13 @@ const getConditionByStatusFilter = (statusFilter: StatusFilterNft = 'allStatus')
 const getConditionByTypeFilter = (statusFilter: TypeFilterNft = 'allType') => {
   if (statusFilter === 'allType') {
     return undefined;
+  }
+  if (statusFilter === 'NESTED') {
+    return {
+      nested: {
+        _eq: 'true',
+      },
+    };
   }
   return {
     type: {
@@ -109,20 +121,19 @@ export const useGraphQlOwnerTokens = (
         ...getConditionByStatusFilter(statusFilter),
         ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
+        tokens_owner: { _eq: owner },
+
         _or: [
-          { owner: { _eq: owner } },
+          { type: { _eq: 'RFT' } },
           {
-            owner_normalized: {
-              _eq: Address.is.ethereumAddress(owner!)
-                ? Address.mirror.ethereumToSubstrate(owner!)
-                : owner,
+            type: { _eq: 'NFT' },
+            parent_id: {
+              _is_null: true,
             },
           },
         ],
+        tokens_amount: { _neq: '0' },
         burned: { _eq: 'false' },
-        parent_id: {
-          _is_null: true,
-        },
       },
     },
   });

@@ -1,6 +1,8 @@
 import React, { FC, memo } from 'react';
 import styled from 'styled-components/macro';
-import { Icon, IconProps, Text } from '@unique-nft/ui-kit';
+import { IconProps, Text } from '@unique-nft/ui-kit';
+
+import { Icon } from '@app/components/Icon';
 
 interface NoItemsProps {
   className?: string;
