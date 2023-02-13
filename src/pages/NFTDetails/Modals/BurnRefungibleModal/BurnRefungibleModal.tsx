@@ -143,7 +143,7 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
     >
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
-        feeWarning="A fee will be calculated after entering the amount"
+        feeWarning="A fee will be calculated after entering the number of fractions"
       >
         <FormProvider {...form}>
           <TransferRow>

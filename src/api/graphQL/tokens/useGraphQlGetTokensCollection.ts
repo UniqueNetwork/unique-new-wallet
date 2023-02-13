@@ -16,6 +16,7 @@ const GET_TOKENS_COLLECTION = gql`
       offset: $offset
       limit: $limit
       order_by: { token_id: $direction }
+      distinct_on: token_id
     ) {
       count
       data {
