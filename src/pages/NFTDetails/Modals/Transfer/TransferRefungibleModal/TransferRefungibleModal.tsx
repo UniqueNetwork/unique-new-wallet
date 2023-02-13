@@ -148,6 +148,7 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
       {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        feeWarning="A fee will be calculated after entering the address and number of fractions"
       >
         <FormProvider {...form}>
           <TransferRow>
