@@ -7,7 +7,7 @@ import { MetamaskDefaultDecimals } from '@app/account/MetamaskWallet';
 
 import { useMetamaskFee } from './useMetamaskFee';
 
-const { request } = (window as any).ethereum;
+const { request } = (window as any).ethereum || {};
 
 export const useMetamaskBalanceTransfer = () => {
   const [submitWaitResultError, setSubmitWaitResultError] = useState<string>();
@@ -15,7 +15,7 @@ export const useMetamaskBalanceTransfer = () => {
 
   const { gas, gasPrice, ...feeResult } = useMetamaskFee<BalanceTransferBody>(
     async ({ address, destination, amount }) => {
-      const estimateGas = await request({
+      const estimateGas = await request?.({
         method: 'eth_estimateGas',
         params: [
           {

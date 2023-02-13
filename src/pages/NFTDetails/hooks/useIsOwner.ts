@@ -40,13 +40,16 @@ export const useIsOwner = (
     if (!token?.owner || !selectedAccount?.address) {
       return false;
     }
-    let address = token.owner;
+    const address = token.owner;
 
     if (
       Address.is.ethereumAddress(token.owner) &&
       !Address.is.ethereumAddress(selectedAccount.address)
     ) {
-      address = Address.extract.substrateOrMirrorIfEthereum(token.owner);
+      return (
+        Address.mirror.substrateToEthereum(selectedAccount.address).toLowerCase() ===
+        token.owner
+      );
     }
     return (
       Address.extract.addressNormalized(address) ===

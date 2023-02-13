@@ -104,7 +104,11 @@ export const NftDetailsPage = () => {
     !isFetchingBalance &&
     !isRefetching &&
     token?.owner &&
-    address !== token.owner
+    !(
+      address === token.owner ||
+      (Address.is.substrateAddress(address) &&
+        Address.mirror.substrateToEthereum(address).toLowerCase().trim() === token.owner)
+    )
   ) {
     return <ErrorPage />;
   }

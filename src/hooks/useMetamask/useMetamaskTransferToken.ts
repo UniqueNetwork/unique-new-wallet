@@ -9,7 +9,8 @@ import { TransferTokenBody } from '@app/types/Api';
 
 import { useMetamaskFee } from './useMetamaskFee';
 
-const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+const provider =
+  (window as any).ethereum && new ethers.providers.Web3Provider((window as any).ethereum);
 
 export function useMetamaskTransferToken() {
   const [submitWaitResultError, setSubmitWaitResultError] = useState<string>();
@@ -20,7 +21,7 @@ export function useMetamaskTransferToken() {
       return Promise.resolve(new BN(0));
     }
 
-    const nftFactory = await UniqueNFTFactory(collectionId, provider.getSigner());
+    const nftFactory = await UniqueNFTFactory(collectionId, provider?.getSigner());
     const destinationAddress = Address.is.ethereumAddress(to)
       ? to
       : Address.mirror.substrateToEthereum(to);

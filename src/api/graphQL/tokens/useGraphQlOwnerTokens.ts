@@ -121,7 +121,10 @@ export const useGraphQlOwnerTokens = (
         ...getConditionByStatusFilter(statusFilter),
         ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
-        tokens_owner: { _eq: owner },
+        tokens_owner:
+          owner && Address.is.substrateAddress(owner)
+            ? { _in: [owner, Address.mirror.substrateToEthereum(owner)] }
+            : { _eq: owner },
 
         _or: [
           { type: { _eq: 'RFT' } },
