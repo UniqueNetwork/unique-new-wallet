@@ -6,7 +6,7 @@ const COLLECTIONS_BY_TOKENS_OWNER_QUERY = gql`
   query collections_by_tokens_owner_query($owner: String) {
     tokens(
       where: {
-        _or: [{ owner: { _eq: $owner } }, { owner_normalized: { _eq: $owner } }]
+        _or: [{ tokens_owner: { _eq: $owner } }, { owner_normalized: { _eq: $owner } }]
         burned: { _eq: "false" }
       }
       distinct_on: collection_id
