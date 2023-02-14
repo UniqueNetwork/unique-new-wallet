@@ -99,9 +99,9 @@ export const UnnestRefungibleModal = ({
       navigate(getTokenPath(unnestData.to, unnestData.collectionId, unnestData.tokenId));
 
       queryClient.invalidateQueries(queryKeys.token._def);
-      setIsWaitingComplete(false);
     } catch {
       onClose();
+    } finally {
       setIsWaitingComplete(false);
     }
   };
