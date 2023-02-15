@@ -10,6 +10,7 @@ import { IntroCard } from '@app/components/IntroSlider/components';
 import { IntroSlider } from '@app/components/IntroSlider';
 import confetti from '@app/components/IntroSlider/components/images/confetti.svg';
 import bundle from '@app/components/IntroSlider/components/images/bundle.svg';
+import puzzle from '@app/components/IntroSlider/components/images/puzzle.svg';
 import { ConnectWallets } from '@app/pages';
 import { CONNECTED_WALLET_TYPE } from '@app/account/useWalletCenter';
 
@@ -50,7 +51,7 @@ export default function App() {
                   imgPath={confetti}
                   setActiveSlide={setActiveSlide}
                 />
-                {/*<IntroCard
+                <IntroCard
                   title="Fractional tokens"
                   description={
                     <>
@@ -61,20 +62,13 @@ export default function App() {
                   }
                   imgPath={puzzle}
                   setActiveSlide={setActiveSlide}
-                />*/}
+                />
                 <IntroCard
                   title="Nesting"
-                  /*description={
-                    <>
-                      A&nbsp;way to&nbsp;group tokens in&nbsp;a&nbsp;nested, tree-like
-                      structure within NFT. Nesting of&nbsp;NFTs, Fractionals and coins
-                      in&nbsp;unlimited quantities is&nbsp;supported.
-                    </>
-                  }*/
                   description={
                     <>
                       A&nbsp;way to&nbsp;group tokens in&nbsp;a&nbsp;nested, tree-like
-                      structure within NFT. Nesting of&nbsp;NFTs and coins
+                      structure within NFT. Nesting of&nbsp;NFTs, Fractionals and coins
                       in&nbsp;unlimited quantities is&nbsp;supported.
                     </>
                   }
