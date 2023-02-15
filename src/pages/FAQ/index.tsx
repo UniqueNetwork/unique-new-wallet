@@ -47,7 +47,7 @@ const WrapperContentStyled = styled(WrapperContent)`
     div[class^='Accordion__AccordionTitle'] {
       margin-bottom: var(--prop-gap);
       column-gap: calc(var(--prop-gap) / 2);
-      & span {
+      & > span {
         color: inherit;
         font-weight: 700;
         font-size: 1.25rem;
