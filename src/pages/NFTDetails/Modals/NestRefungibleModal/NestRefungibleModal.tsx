@@ -199,6 +199,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
         feeWarning="A fee will be calculated after entering the amount"
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <FormRow>

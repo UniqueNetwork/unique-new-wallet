@@ -148,6 +148,7 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
       {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <TransferRow>
