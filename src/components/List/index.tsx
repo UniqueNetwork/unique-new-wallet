@@ -36,6 +36,7 @@ export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
   panelSettings: IPanelSettings;
   renderItem?: (item: T, index: number) => ReactNode;
   visibleItems?: number;
+  noItemsIconName?: string;
 };
 
 const listClassName = 'unique-list';
@@ -118,6 +119,7 @@ function List<T>({
   renderItem,
   visibleItems,
   onPageChange,
+  noItemsIconName = 'box',
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
   const size = SizeMap[deviceSize];
@@ -137,7 +139,7 @@ function List<T>({
       </ItemScope>
     );
   } else if (!isLoading) {
-    childrenContent = <NoItems iconName="box" />;
+    childrenContent = <NoItems iconName={noItemsIconName} />;
   }
 
   const paginationContent = panelSettings.pagination.show ? (
