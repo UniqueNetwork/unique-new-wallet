@@ -118,6 +118,7 @@ export const TransferModal = <T extends TBaseToken>({
     >
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <TransferRow>

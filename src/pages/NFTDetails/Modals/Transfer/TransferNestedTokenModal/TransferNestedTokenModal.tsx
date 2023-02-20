@@ -147,6 +147,7 @@ export const TransferNestedTokenModal = ({
       {isFetchingParentToken && <Loader isFullPage={true} />}
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <TransferRow>
