@@ -60,6 +60,7 @@ export const NFTsTemplateList = ({
         fetchMore={fetchMore}
         isLoading={isLoading}
         itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+        noItemsIconName="not-found"
         panelSettings={{
           pagination: {
             current: paginationSettings.current,
