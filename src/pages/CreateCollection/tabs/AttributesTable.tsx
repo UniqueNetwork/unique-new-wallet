@@ -208,18 +208,45 @@ export const AttributesTable = styled(AttributesTableComponent)`
     .unique-table-data-row {
       padding-top: calc(var(--prop-gap) / 4);
       padding-bottom: calc(var(--prop-gap) / 4);
+
+      & > div > button {
+        height: 32px;
+      }
+    }
+
+    .unique-input-text input,
+    .unique-select .select-value {
+      font-size: var(--prop-font-size);
+      padding: 5px 8px;
+      height: 20px;
+    }
+
+    .unique-select .select-value {
+      padding: 5px 24px 5px 8px;
+    }
+
+    .enum-input .enum-input--input {
+      font-size: var(--prop-font-size);
+      padding: 5px 8px;
+      line-height: 1.5;
+      min-height: 22px;
     }
 
     .unique-input-text,
     .input-wrapper,
     .unique-select,
     .select-wrapper,
-    .unique-button {
+    .unique-button,
+    .enum-input .enum-input--input {
       padding: 0;
     }
 
     .unique-select {
       width: 100%;
+
+      .icon.icon-triangle {
+        margin: 12px;
+      }
     }
   }
 
