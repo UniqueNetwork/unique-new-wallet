@@ -33,6 +33,7 @@ export const faqItems = <T extends Record<string, unknown>>(
           </p>
         </>
       ),
+      isNew: false,
     },
     {
       title: <>What should I do to mint my first NFT?</>,
@@ -53,13 +54,10 @@ export const faqItems = <T extends Record<string, unknown>>(
           </p>
         </>
       ),
+      isNew: false,
     },
     {
-      title: (
-        <>
-          What is a fractional token? <span className="tooltip">NEW</span>
-        </>
-      ),
+      title: <>What is a fractional token?</>,
       content: (
         <>
           <p>
@@ -78,13 +76,10 @@ export const faqItems = <T extends Record<string, unknown>>(
           </p>
         </>
       ),
+      isNew: true,
     },
     {
-      title: (
-        <>
-          What is nesting <span className="tooltip">NEW</span>
-        </>
-      ),
+      title: <>What is nesting</>,
       defaultExpanded: 'isNestedInfo' in state,
       content: (
         <>
@@ -108,14 +103,10 @@ export const faqItems = <T extends Record<string, unknown>>(
           </p>
         </>
       ),
+      isNew: true,
     },
     {
-      title: (
-        <>
-          How do I nest and manipulate a nested token?
-          <span className="tooltip">NEW</span>
-        </>
-      ),
+      title: <>How do I nest and manipulate a nested token?</>,
       defaultExpanded: 'isNestedInfo' in state,
       content: (
         <>
@@ -152,6 +143,7 @@ export const faqItems = <T extends Record<string, unknown>>(
           </div>
         </>
       ),
+      isNew: true,
     },
     {
       title: 'How much does it cost to create a collection or a token?',
@@ -171,6 +163,7 @@ export const faqItems = <T extends Record<string, unknown>>(
           </p>
         </>
       ),
+      isNew: false,
     },
     {
       title: 'Where can I get coins?',
@@ -209,6 +202,7 @@ export const faqItems = <T extends Record<string, unknown>>(
           </UiLink>
         </p>
       ),
+      isNew: false,
     },
     {
       title: 'How many tokens can I create?',
@@ -244,6 +238,7 @@ export const faqItems = <T extends Record<string, unknown>>(
           </ol>
         </>
       ),
+      isNew: false,
     },
     {
       title: 'How can I burn a collection or a token?',
@@ -266,6 +261,7 @@ export const faqItems = <T extends Record<string, unknown>>(
           </UiLink>
         </p>
       ),
+      isNew: false,
     },
     {
       title: 'Is it possible to change an existing collection’s name?',
@@ -275,6 +271,7 @@ export const faqItems = <T extends Record<string, unknown>>(
           changes the collection will need to be burned and re-created.
         </p>
       ),
+      isNew: false,
     },
   ];
 };

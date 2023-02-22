@@ -76,7 +76,7 @@ const AddressRow = styled.span`
 
   a {
     display: inline;
-
+    font-size: 16px;
     &:hover {
       text-decoration: underline;
       text-decoration-thickness: 1px;

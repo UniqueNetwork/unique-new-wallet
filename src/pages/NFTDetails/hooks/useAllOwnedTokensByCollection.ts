@@ -87,7 +87,7 @@ export const useAllOwnedTokensByCollection = (
         );
       }
     });
-  }, [tokensData.tokens, fetchBundle]);
+  }, [tokensData.tokens, tokensData.isTokensLoading, collectionId, fetchBundle]);
 
   return {
     tokens,
