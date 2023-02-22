@@ -26,6 +26,13 @@ const COLLECTION_TOKENS_QUERY = gql`
         collection_id
         collection_name
         image
+        type
+        children_count
+        parent_id
+        owner
+        total_pieces
+        tokens_owner
+        tokens_amount
       }
     }
   }
@@ -52,6 +59,7 @@ export const useGraphQlCollectionTokens = ({
     fetchMore,
     loading,
     error,
+    refetch,
   } = useQuery<QueryResponse<Token>>(COLLECTION_TOKENS_QUERY, {
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'network-only',
@@ -62,18 +70,18 @@ export const useGraphQlCollectionTokens = ({
       direction,
       where: {
         collection_id: { _eq: collectionId },
-        _or: [
-          { collection_owner: { _eq: collectionOwner } },
-          { collection_owner_normalized: { _eq: collectionOwner } },
-        ],
+        _or: [{ tokens_owner: { _eq: collectionOwner } }],
         ...(type !== 'all' && { is_sold: { _eq: `${type === 'disowned'}` } }),
         ...getConditionBySearchText('token_name', search),
+        burned: { _eq: 'false' },
+        tokens_amount: { _neq: '0' },
       },
     },
   });
   const tokensCount = response?.tokens.count ?? 0;
 
   return {
+    refetchCollectionTokens: refetch,
     fetchMore,
     isPagination: tokensCount > limit,
     isLoadingTokens: loading,

@@ -1,10 +1,9 @@
-import React, { FC, useCallback, useRef, useState } from 'react';
-import { Text, Tooltip, Icon, Dropdown, Loader } from '@unique-nft/ui-kit';
+import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components';
+import { Loader, Text } from '@unique-nft/ui-kit';
 
-import MeatBallIcon from 'static/icons/meatball.svg';
+import { Button, Dropdown, Icon, Image, TooltipWrapper } from '@app/components';
 
-import { Picture } from '../../Picture';
 import { INestingToken, ITokenCard } from '../types';
 import { useCollection } from '../useCollection';
 
@@ -16,7 +15,6 @@ function TokenCard({
 }: ITokenCard) {
   const [menuVisible, setMenuVisible] = useState(false);
   const { isCollectionLoading, collection } = useCollection(token.collectionId);
-  const meatballIconMenu = useRef(null);
 
   const onTransfer = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -52,9 +50,10 @@ function TokenCard({
       onMouseLeave={hideMenu}
       onClick={viewTokenDetails}
     >
-      <Picture
+      <Image
         alt={`T-${token.tokenId} C-${token.collectionId}`}
-        src={
+        className="picture"
+        image={
           // @ts-ignore
           (typeof token.image === 'string' ? token.image : token.image?.fullUrl) ||
           undefined
@@ -79,12 +78,6 @@ function TokenCard({
             e.stopPropagation();
           }}
         >
-          <Tooltip
-            align={{ vertical: 'top', horizontal: 'middle', appearance: 'vertical' }}
-            targetRef={meatballIconMenu}
-          >
-            Open additional menu
-          </Tooltip>
           <Dropdown
             placement="left"
             dropdownRender={() => (
@@ -108,12 +101,21 @@ function TokenCard({
               </DropdownMenu>
             )}
           >
-            <Icon
-              size={32}
-              file={MeatBallIcon}
-              color="transparent"
-              ref={meatballIconMenu}
-            />
+            <TooltipWrapper
+              align={{ vertical: 'top', horizontal: 'middle', appearance: 'vertical' }}
+              message="Open additional menu"
+            >
+              <Button
+                className="unique-button-icon"
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'more-horiz',
+                  size: 24,
+                }}
+                role="negative"
+                title=""
+              />
+            </TooltipWrapper>
           </Dropdown>
         </ActionsMenuWrapper>
       )}
@@ -129,22 +131,22 @@ const TokenCardWrapper = styled.div`
   cursor: pointer;
   border-radius: calc(var(--prop-border-radius) * 2);
   background-color: var(--color-additional-light);
+
   .picture {
     width: 128px;
     height: 128px;
-    img {
-      border-radius: var(--prop-border-radius);
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: fill;
+  }
+
+  & > span {
+    &:first-of-type,
+    &:last-of-type {
+      margin-top: calc(var(--gap) / 2);
     }
   }
-  span:first-of-type,
-  span:last-of-type {
-    margin-top: calc(var(--gap) / 2);
-  }
+
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+
     .menu {
       display: flex;
     }
@@ -165,16 +167,20 @@ const ActionsMenuWrapper = styled.div`
       border-radius: var(--prop-border-radius);
       color: var(--color-additional-light);
       height: 32px;
+
       &:hover {
         background-color: var(--color-additional-dark);
       }
     }
+
     & > img {
       display: none;
     }
   }
+
   div[class*='DropdownMenuDropdown'] {
     width: max-content;
+
     & > div {
       padding: calc(var(--gap) / 2) var(--gap);
       display: flex;
@@ -196,6 +202,7 @@ const DropdownMenuItem = styled.div`
   cursor: pointer;
   font-size: 16px;
   line-height: 24px;
+
   &:hover {
     background: var(--color-primary-100);
   }
@@ -204,6 +211,7 @@ const DropdownMenuItem = styled.div`
 const TransferMenuItem = styled(DropdownMenuItem)`
   border-bottom: 1px dashed var(--color-grey-300);
   color: var(--color-primary-500);
+
   &:hover {
     color: var(--color-primary-600);
   }
@@ -211,6 +219,7 @@ const TransferMenuItem = styled(DropdownMenuItem)`
 
 const UnnestMenuItem = styled(DropdownMenuItem)`
   color: var(--color-coral-500);
+
   &:hover {
     background-color: var(--color-coral-100);
   }

@@ -12,3 +12,4 @@ export * from './useItemsLimit';
 export * from './useIsFirstRender';
 export * from './useIntersectionObserver';
 export * from './useFormValidator';
+export * from './useTimer';

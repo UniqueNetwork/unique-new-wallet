@@ -1,13 +1,15 @@
-import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
-import { Chip, IconProps, IPaginationProps, Link, Text } from '@unique-nft/ui-kit';
+import { Chip, IconProps, IPaginationProps, Link } from '@unique-nft/ui-kit';
+import { useNavigate } from 'react-router-dom';
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
-import { useApi, useItemsLimit } from '@app/hooks';
-import { PagePaper, TokenLink } from '@app/components';
+import { useItemsLimit } from '@app/hooks';
+import { PagePaper } from '@app/components';
 import List from '@app/components/List';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
+import { TokenNftLink } from '@app/pages/components/TokenNftLink';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 type PaginationSettingsProps = Pick<
   IPaginationProps,
@@ -32,9 +34,11 @@ type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
   cacheTokens: TTokensCacheVar;
 };
 
+const DEFAULT_TOKENS: Token[] = [];
+
 export const NFTsTemplateList = ({
   className,
-  tokens = [],
+  tokens = DEFAULT_TOKENS,
   isLoading,
   chips,
   paginationSettings,
@@ -43,9 +47,9 @@ export const NFTsTemplateList = ({
   onChipsReset,
   cacheTokens,
 }: NFTsListComponentProps) => {
-  const { currentChain } = useApi();
-  const navigate = useNavigate();
   const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
 
   return (
     <PagePaper.Processing>
@@ -56,6 +60,7 @@ export const NFTsTemplateList = ({
         fetchMore={fetchMore}
         isLoading={isLoading}
         itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+        noItemsIconName="not-found"
         panelSettings={{
           pagination: {
             current: paginationSettings.current,
@@ -76,26 +81,19 @@ export const NFTsTemplateList = ({
           ),
           viewMode: 'both',
         }}
-        renderItem={(item: Token) => (
-          <TokenLink
-            alt={item.token_name}
-            key={`${item.collection_id}-${item.token_id}`}
-            image={item.image?.fullUrl || undefined}
-            title={
-              <>
-                <Text appearance="block" size="l">
-                  {item.token_name}
-                </Text>
-                <Text appearance="block" weight="light" size="s">
-                  {item.collection_name} [id {item.collection_id}]
-                </Text>
-              </>
-            }
-            onTokenClick={() =>
+        renderItem={(token: Token) => (
+          <TokenNftLink
+            key={`${token.collection_id}-${token.token_id}`}
+            token={token}
+            navigate={() => {
               navigate(
-                `/${currentChain?.network}/token/${item.collection_id}/${item.token_id}`,
-              )
-            }
+                getTokenPath(
+                  token.tokens_owner || '',
+                  token.collection_id,
+                  token.token_id,
+                ),
+              );
+            }}
           />
         )}
         visibleItems={getLimit}

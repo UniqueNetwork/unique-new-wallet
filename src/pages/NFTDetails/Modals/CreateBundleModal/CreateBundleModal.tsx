@@ -1,13 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { Alert, Loader, useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useDebounce } from 'use-debounce';
 import { useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { Address } from '@unique-nft/utils';
 
-import { Modal, TransferBtn } from '@app/components';
+import { Modal, BaseActionBtn } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { NFTModalsProps } from '@app/pages/NFTDetails/Modals';
+import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
 import { useAccounts } from '@app/hooks';
 import { CollectionNestingOption, useTokenNest } from '@app/api';
@@ -17,6 +19,8 @@ import { FeeInformationTransaction } from '@app/components/FeeInformationTransac
 import { CreateBundleStagesModal } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleStagesModal';
 import { CreateBundleForm } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleForm';
 import { queryKeys } from '@app/api/restApi/keysConfig';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { useAllOwnedTokensByCollection } from '@app/pages/NFTDetails/hooks/useAllOwnedTokensByCollection';
 
 export type TCreateBundleForm = {
   collection: CollectionNestingOption | null;
@@ -26,8 +30,12 @@ export type TCreateBundleForm = {
 export const CreateBundleModal = <T extends TBaseToken>({
   token,
   onClose,
-}: NFTModalsProps<T>) => {
+  onComplete,
+}: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
+  const navigate = useNavigate();
+  const getTokenPath = useGetTokenPath();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
   const form = useForm<TCreateBundleForm>({
     mode: 'onChange',
     reValidateMode: 'onChange',
@@ -64,41 +72,58 @@ export const CreateBundleModal = <T extends TBaseToken>({
     accountAddress: selectedAccount?.address,
   });
 
-  const tokensData = useGraphQlGetTokensCollection({
-    collectionId: collectionFormData?.collection?.collection_id,
-    excludeCurrentTokenId:
-      collectionFormData?.collection?.collection_id === token?.collectionId
-        ? token?.tokenId
-        : undefined,
-  });
+  const tokensData = useAllOwnedTokensByCollection(
+    collectionFormData?.collection?.collection_id,
+    {
+      excludeTokenId:
+        collectionFormData?.collection?.collection_id === token?.collectionId
+          ? token?.tokenId
+          : undefined,
+    },
+  );
 
-  const onSubmit = (form: TCreateBundleForm) => {
+  const onSubmit = async (form: TCreateBundleForm) => {
     if (!token || !selectedAccount || !form.token || !form.collection) {
       return;
     }
-    submitWaitResult({
-      payload: {
-        parent: {
-          collectionId: form.collection.collection_id,
-          tokenId: form.token.token_id,
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: {
+          parent: {
+            collectionId: form.collection.collection_id,
+            tokenId: form.token.token_id,
+          },
+          address: selectedAccount.address,
+          nested: {
+            collectionId: token.collectionId,
+            tokenId: token.tokenId,
+          },
         },
-        address: selectedAccount.address,
-        nested: {
-          collectionId: token.collectionId,
-          tokenId: token.tokenId,
-        },
-      },
-    })
-      .then(() => {
-        onClose();
-
-        info(`${form.token?.token_name} nested into ${token.name}`);
-
-        queryClient.invalidateQueries(queryKeys.token.isBundle._def);
-      })
-      .then(() => {
-        onClose();
       });
+
+      await onComplete();
+
+      navigate(
+        getTokenPath(
+          Address.nesting.idsToAddress(
+            form.collection.collection_id,
+            form.token.token_id,
+          ),
+          token.collectionId,
+          token.tokenId,
+        ),
+      );
+      info(`${form.token?.token_name} nested into ${token.name}`);
+
+      setIsWaitingComplete(false);
+
+      queryClient.invalidateQueries(queryKeys.token._def);
+    } catch {
+      onClose();
+
+      setIsWaitingComplete(false);
+    }
   };
 
   useEffect(() => {
@@ -159,7 +184,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
     );
   };
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <CreateBundleStagesModal />;
   }
 
@@ -168,10 +193,12 @@ export const CreateBundleModal = <T extends TBaseToken>({
       title="Create bundle"
       isVisible={true}
       footerButtons={
-        <TransferBtn
+        <BaseActionBtn
           title="Confirm"
           disabled={!isValid || feeLoading}
           role="primary"
+          actionEnabled={isValid}
+          actionText="Please, select collection and token"
           onClick={handleSubmit(onSubmit)}
         />
       }

@@ -1,11 +1,11 @@
-import { Key, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { OperationVariables } from '@apollo/client/core/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
+import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, SizeMap, useDeviceSize } from '@app/hooks';
-import { NoItems, PagePaper } from '@app/components';
+import { Button, NoItems, PagePaper } from '@app/components';
 
 import Item from './Item';
 
@@ -36,6 +36,7 @@ export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
   panelSettings: IPanelSettings;
   renderItem?: (item: T, index: number) => ReactNode;
   visibleItems?: number;
+  noItemsIconName?: string;
 };
 
 const listClassName = 'unique-list';
@@ -118,33 +119,15 @@ function List<T>({
   renderItem,
   visibleItems,
   onPageChange,
+  noItemsIconName = 'box',
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
   const size = SizeMap[deviceSize];
-  const listItemsKeys: { [index: number]: Key } = {};
-
-  const renderInnerItem = (item: T, index: number) => {
-    if (!renderItem) {
-      return null;
-    }
-
-    let key = (item as any).key;
-
-    if (!key) {
-      key = `list-item-${index}`;
-    }
-
-    listItemsKeys[index] = key;
-
-    return renderItem(item, index);
-  };
 
   let childrenContent = isLoading && <Loader isFullPage size="middle" />;
 
   if (dataSource.length > 0) {
-    const items = dataSource.map((item: T, index: number) =>
-      renderInnerItem(item, index),
-    );
+    const items = dataSource.map((item: T, index: number) => renderItem?.(item, index));
     childrenContent = (
       <ItemScope
         breakpoint={size}
@@ -156,7 +139,7 @@ function List<T>({
       </ItemScope>
     );
   } else if (!isLoading) {
-    childrenContent = <NoItems iconName="box" />;
+    childrenContent = <NoItems iconName={noItemsIconName} />;
   }
 
   const paginationContent = panelSettings.pagination.show ? (
@@ -199,20 +182,20 @@ function List<T>({
 
   return (
     <Wrapper>
-      {!!dataSource.length &&
-        (panelSettings.viewMode === 'both' || panelSettings.viewMode === 'top') && (
-          <ListPanel as={PagePaper.Panel} stacked="bottom">
-            <ListExtra>
-              {!!dataSource.length && ResultItemText}
-              {panelSettings.extraText && panelSettings.extraText}
-            </ListExtra>
+      {(panelSettings.viewMode === 'both' || panelSettings.viewMode === 'top') && (
+        <ListPanel as={PagePaper.Panel} stacked="bottom">
+          <ListExtra>
+            {!!dataSource.length && ResultItemText}
+            {panelSettings.extraText}
+          </ListExtra>
 
-            {!fetchMore &&
-              (panelSettings.pagination.viewMode === 'both' ||
-                panelSettings.pagination.viewMode === 'top') &&
-              paginationContent}
-          </ListPanel>
-        )}
+          {!!dataSource.length &&
+            !fetchMore &&
+            (panelSettings.pagination.viewMode === 'both' ||
+              panelSettings.pagination.viewMode === 'top') &&
+            paginationContent}
+        </ListPanel>
+      )}
 
       <ListBody className={classNames({ __empty: !dataSource.length })}>
         {childrenContent}

@@ -1,32 +1,20 @@
 import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import {
-  Button,
-  Dropdown,
-  Icon,
-  InputText,
-  TableColumnProps,
-  Text,
-} from '@unique-nft/ui-kit';
+import { Dropdown, Icon, TableColumnProps, Text, Button } from '@unique-nft/ui-kit';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import {
-  AccountsGroupButton,
-  Confirm,
-  PagePaper,
-  Table,
-  TooltipWrapper,
-  TransferBtn,
-} from '@app/components';
+import { Confirm, PagePaper, Table, TooltipWrapper, TransferBtn } from '@app/components';
+import { Search } from '@app/pages/components/Search';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { ConnectWallets } from '@app/pages';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
@@ -95,31 +83,18 @@ const AccountsPageContent = styled.div`
   `;
 */
 
-const SearchInputStyled = styled(InputText)`
+const SearchStyled = styled(Search)`
   flex: 1 1 100%;
   margin-bottom: calc(var(--prop-gap) * 1.5);
+
   @media screen and (min-width: 1024px) {
     flex: 1 1 auto;
     margin-bottom: 0;
   }
-  @media screen and (min-width: 1280px) {
-    max-width: 500px;
-    margin-left: auto;
-  }
-`;
 
-const ButtonGroup = styled.div`
-  flex: 1 1 100%;
-  display: flex;
-  @media screen and (min-width: 1024px) {
-    flex: 0 0 auto;
-    margin-left: calc(var(--prop-gap) * 3);
-  }
   @media screen and (min-width: 1280px) {
-    margin-left: calc(var(--prop-gap) * 2);
-  }
-  .btn-container {
-    flex: 1 1 100%;
+    max-width: 720px;
+    margin-left: auto;
   }
 `;
 
@@ -289,7 +264,7 @@ const getAccountsColumns = ({
         <AccountCard
           canCopy
           accountAddress={`${rowData?.address}`}
-          accountName={`${rowData?.meta.name}`}
+          accountName={`${rowData?.name}`}
           accountType={`${rowData?.signerType.toLowerCase()}`}
         />
       );
@@ -348,26 +323,25 @@ const getAccountsColumns = ({
 ];
 
 const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
-  const { accounts, fetchAccounts, forgetLocalAccount, selectedAccount } = useAccounts();
+  const { accounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
   const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
+  const [isOpenConnectWallet, setOpenConnectWallet] = useState(false);
 
-  const {
-    data: balancesAccounts,
-    isLoading: isLoadingBalances,
-    refetch,
-  } = useAccountsBalanceService(accounts.map(({ address }) => address));
+  const balances = useAccountsBalanceService(
+    [...accounts].map(([_, { address }]) => address),
+  );
 
-  const accountBalances = useMemo<Account[]>(
+  const accountBalances = useMemo(
     () =>
-      accounts.map((account, idx) => ({
+      [...accounts].map(([_, account], idx) => ({
         ...account,
-        balance: balancesAccounts?.[idx],
+        balance: balances?.[idx].data,
       })),
-    [accounts, balancesAccounts],
+    [accounts, balances],
   );
 
   const onSendFundsClick = useCallback(
@@ -392,24 +366,13 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
     return accountBalances?.filter(
       (account) =>
         account.address.toLowerCase().includes(searchString.toLowerCase()) ||
-        account.meta.name?.toLowerCase().includes(searchString.toLowerCase()),
+        account.name?.toLowerCase().includes(searchString.toLowerCase()),
     );
   }, [accountBalances, searchString]);
 
   const onChangeAccountsFinish = useCallback(() => {
     setIsOpenModal(false);
-
-    void fetchAccounts();
-  }, [fetchAccounts]);
-
-  // const totalBalance = useMemo(
-  //   () =>
-  //     accounts.reduce<BN>(
-  //       (acc, account) => (account?.balance ? acc.add(new BN(account?.balance)) : acc),
-  //       new BN(0),
-  //     ),
-  //   [accounts],
-  // );
+  }, []);
 
   return (
     <>
@@ -419,18 +382,15 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
         flexLayout="column"
       >
         <AccountsPageHeader>
+          <Button
+            role="primary"
+            title="Connect or create wallet"
+            onClick={() => setOpenConnectWallet(true)}
+          />
           {/* TODO: uncomment when AccountsTotalBalance will be ready
             <AccountsTotalBalanceStyled balance={totalBalance} />
           */}
-          <SearchInputStyled
-            placeholder="Search"
-            iconLeft={{ name: 'magnify', size: 18 }}
-            value={searchString}
-            onChange={setSearchString}
-          />
-          <ButtonGroup>
-            <AccountsGroupButton />
-          </ButtonGroup>
+          <SearchStyled value={searchString} onChange={setSearchString} />
         </AccountsPageHeader>
         <AccountsPageContent>
           <Table
@@ -440,7 +400,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
               onForgetWalletClick,
             })}
             data={filteredAccounts}
-            loading={isLoadingBalances}
+            loading={balances.some((balance) => balance.isLoading)}
             mobileCaption={
               <Text color="grey-500" weight="light">
                 <CaptionText />
@@ -457,9 +417,14 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
           networkType={selectedAccount?.unitBalance}
           onClose={onChangeAccountsFinish}
           onSendSuccess={() => {
-            refetch();
+            balances.forEach((balance) => {
+              balance.refetch();
+            });
           }}
         />
+      )}
+      {isOpenConnectWallet && (
+        <ConnectWallets onClose={() => setOpenConnectWallet(false)} />
       )}
       <Confirm
         buttons={[

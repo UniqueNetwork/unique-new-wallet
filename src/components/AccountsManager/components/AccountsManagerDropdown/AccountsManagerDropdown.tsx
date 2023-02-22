@@ -1,10 +1,12 @@
-import { Button, Dropdown, Icon, Link, Text, Toggle } from '@unique-nft/ui-kit';
 import React, { useEffect } from 'react';
+import styled from 'styled-components';
+import { Link, Text, Toggle } from '@unique-nft/ui-kit';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
+import { AccountSelect, Button, Icon } from '@app/components';
 
 import { AccountsManagerProps } from '../../AccountsManager';
-import { AccountCard } from '../index';
+
 import './AccountsManagerDropdown.scss';
 
 export const AccountsManagerDropdown = ({
@@ -16,8 +18,6 @@ export const AccountsManagerDropdown = ({
   depositDescription,
   balance,
   symbol,
-  isTouch,
-  avatarRender,
   onAccountChange,
   onNetworkChange,
   onManageBalanceClick,
@@ -28,7 +28,7 @@ export const AccountsManagerDropdown = ({
 
   useEffect(() => {
     copied && onCopyAddressClick?.(copied);
-  }, [copied]);
+  }, [copied, onCopyAddressClick]);
 
   return (
     <div className="accounts-manager-dropdown">
@@ -36,31 +36,14 @@ export const AccountsManagerDropdown = ({
         <Text color="grey-500" size="s">
           Account
         </Text>
-        <Dropdown
-          optionKey="address"
+        <Select
+          defaultValue={selectedAccount}
+          isClearable={false}
+          isSearchable={false}
+          shortenLabel={true}
           options={accounts}
-          optionRender={(option) => (
-            <AccountCard
-              {...option}
-              avatarRender={avatarRender}
-              onCopyAddressClick={copy}
-            />
-          )}
-          iconRight={{
-            name: 'triangle',
-            size: 8,
-          }}
-          isTouch={isTouch}
-          onChange={onAccountChange}
-        >
-          <div className="accounts-select" data-testid="accounts-select">
-            <AccountCard
-              {...selectedAccount}
-              avatarRender={avatarRender}
-              onCopyAddressClick={copy}
-            />
-          </div>
-        </Dropdown>
+          onChange={onAccountChange as any}
+        />
       </div>
       <div className="accounts-manager-wallet">
         <div className="wallet-link" data-testid="wallet-link">
@@ -126,3 +109,13 @@ export const AccountsManagerDropdown = ({
     </div>
   );
 };
+
+const Select = styled(AccountSelect)`
+  .account-select {
+    &__control,
+    &__option {
+      height: calc(var(--prop-gap) * 3.5);
+      cursor: pointer;
+    }
+  }
+`;

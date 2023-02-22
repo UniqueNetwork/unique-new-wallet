@@ -32,7 +32,7 @@ const stages = [
 
 const TransferStagesModal: VFC = () => {
   return (
-    <Modal isVisible isClosable={false}>
+    <Modal isVisible isClosable={false} title="Please wait">
       <Stages stages={stages} />
     </Modal>
   );

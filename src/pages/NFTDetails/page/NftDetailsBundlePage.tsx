@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Button, Heading, Text } from '@unique-nft/ui-kit';
-import classNames from 'classnames';
+import { Heading, Text } from '@unique-nft/ui-kit';
 import { TokenByIdResponse } from '@unique-nft/sdk';
+import { Address } from '@unique-nft/utils';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
 import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard';
-import { NFTModals, TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { useCollectionGetById, useTokenGetBundle, useTokenGetById } from '@app/api';
+import { NFTModals, TTokenModalType } from '@app/pages/NFTDetails/Modals';
+import {
+  useTokenGetBalance,
+  useTokenGetBundle,
+  useTokenGetById,
+  useTokenGetTotalPieces,
+} from '@app/api';
 import BundleTree from '@app/components/BundleTree/BundleTree';
 import NodeView from '@app/components/BundleTree/Node/NodeView';
 import { INestingToken } from '@app/components/BundleTree/types';
@@ -16,55 +21,42 @@ import { NestedSection } from '@app/components/BundleTree/NestedSection/NestedSe
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
-import { TransferBtn } from '@app/components';
+import { Achievement, Button, TransferBtn } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { NftDetailsWrapperButtons } from '@app/pages/NFTDetails/components';
+import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
+import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
+import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
   a.collectionId === b.collectionId && a.tokenId === b.tokenId;
 
 const getKey = (a: INestingToken) => `T${a.tokenId}C${a.collectionId}`;
 
-const addIsCurrentAccountOwnerToBundleAndSort = (
-  bundle: INestingToken,
-  isOwner: boolean,
-) => {
-  bundle.isCurrentAccountOwner = isOwner;
-  if (bundle.nestingChildTokens?.length === 0) {
-    return bundle;
-  }
-  bundle.opened = false;
-  bundle.nestingChildTokens = bundle.nestingChildTokens
-    ?.sort((a, b) => (a.tokenId > b.tokenId ? 1 : -1))
-    .map((bundleToken) => {
-      return addIsCurrentAccountOwnerToBundleAndSort(bundleToken, isOwner);
-    });
-
-  return bundle;
-};
-
 export const NftDetailsBundlePage = () => {
-  const { collectionId = '', tokenId = '' } = useParams();
+  const { collectionId = '', tokenId = '', address = '' } = useParams();
   const navigate = useNavigate();
   const { currentChain } = useApi();
-  const size = useDeviceSize();
+  const deviceSize = useDeviceSize();
+  const getTokenPath = useGetTokenPath();
 
   const [bundle, setBundle] = useState<INestingToken[]>([]);
+  const parentBundle = Address.is.nestingAddress(address)
+    ? Address.nesting.addressToIds(address)
+    : undefined;
 
-  const [currentModal, setCurrentModal] = useState<TNFTModalType>('none');
+  const [currentModal, setCurrentModal] = useState<TTokenModalType>('none');
 
   const [isShowBundleTreeMobile, setShowBundleTreeMobile] = useState(false);
 
   const [selectedTokenBundleTable, setSelectedTokenBundleTable] =
     useState<INestingToken | null>(null);
 
-  const {
-    data: bundleToken,
-    isLoading: isLoadingBundleToken,
-    refetch: refetchBundle,
-  } = useTokenGetBundle({
-    collectionId: parseInt(collectionId),
-    tokenId: parseInt(tokenId),
+  const [selectedToken, setSelectedToken] = useState<INestingToken>();
+
+  const { bundleToken, isLoadingBundleToken, refetchBundle } = useTokenGetBundle({
+    collectionId: parentBundle?.collectionId || parseInt(collectionId),
+    tokenId: parentBundle?.tokenId || parseInt(tokenId),
   });
 
   const {
@@ -76,11 +68,9 @@ export const NftDetailsBundlePage = () => {
     tokenId: parseInt(tokenId),
   });
 
-  const {
-    data: collection,
-    isLoading: isLoadingCollection,
-    refetch: refetchCollection,
-  } = useCollectionGetById(parseInt(collectionId));
+  const { data: parentToken, isLoading: isLoadingParentToken } = useTokenGetById({
+    ...(parentBundle || tokenById?.nestingParentToken),
+  });
 
   const token:
     | (TokenByIdResponse & {
@@ -91,31 +81,54 @@ export const NftDetailsBundlePage = () => {
     if (!tokenById) {
       return undefined;
     }
-    return {
+
+    const tokenWithNames = {
       ...tokenById,
-      name: collection ? `${collection.tokenPrefix} #${tokenById.tokenId}` : '',
-      collectionName: collection?.name || '',
+      name: `${tokenById?.collection.tokenPrefix} #${tokenById.tokenId}`,
+      collectionName: tokenById?.collection.name || '',
     };
-  }, [tokenById, collection]);
 
-  const isOwner = useIsOwner(bundleToken);
-
-  useEffect(() => {
-    if (!bundleToken) {
-      return;
+    if (parentToken) {
+      return {
+        ...tokenWithNames,
+        nestingParentToken: {
+          collectionId: parentToken.collectionId,
+          tokenId: parentToken.tokenId,
+        },
+      };
     }
-    setBundle([addIsCurrentAccountOwnerToBundleAndSort(bundleToken, isOwner)]);
-  }, [bundleToken, isOwner]);
+
+    return tokenWithNames;
+  }, [tokenById, parentToken]);
+
+  const isFractional = token?.collection.mode === 'ReFungible';
+
+  const { data: pieces, refetch: refetchTotalPieces } = useTokenGetTotalPieces({
+    tokenId: parseInt(tokenId),
+    collectionId: parseInt(collectionId),
+  });
+
+  const { data: balance, refetch: refetchTokenBalance } = useTokenGetBalance({
+    tokenId: parseInt(tokenId),
+    collectionId: parseInt(collectionId),
+    address,
+    isFractional,
+  });
+
+  const isOwner = useIsOwner(token, address);
 
   const onModalClose = () => {
     setCurrentModal('none');
     setSelectedTokenBundleTable(null);
   };
 
-  const onComplete = () => {
-    refetchToken();
-    refetchBundle();
-    refetchCollection();
+  const onComplete = async () => {
+    await refetchToken();
+    await refetchBundle();
+    if (isFractional) {
+      await refetchTokenBalance();
+      await refetchTotalPieces();
+    }
     setCurrentModal('none');
   };
 
@@ -123,21 +136,102 @@ export const NftDetailsBundlePage = () => {
     console.log(data);
   };
 
-  const handleViewTokenDetails = (token: INestingToken) => {
-    navigate(`/${currentChain?.network}/token/${token.collectionId}/${token.tokenId}`);
+  const handleViewTokenDetails = ({
+    nestingParentToken,
+    tokenId,
+    collectionId,
+    owner,
+  }: INestingToken) => {
+    if (nestingParentToken) {
+      const parentAddress = Address.nesting.idsToAddress(
+        nestingParentToken.collectionId,
+        nestingParentToken.tokenId,
+      );
+      navigate(getTokenPath(parentAddress, collectionId, tokenId));
+      return;
+    }
+    navigate(getTokenPath(owner, collectionId, tokenId));
   };
 
   const isBundleToken = () => {
     // @ts-ignore
     const nestingParentToken = bundleToken?.nestingChildTokens?.[0]?.nestingParentToken;
+
     if (!nestingParentToken) {
       return false;
     }
+
     return (
       nestingParentToken.collectionId === parseInt(collectionId) &&
       nestingParentToken.tokenId === parseInt(tokenId)
     );
   };
+
+  useEffect(() => {
+    setBundle([]);
+  }, [bundleToken]);
+
+  useEffect(() => {
+    if (bundle.length) {
+      return;
+    }
+
+    const sortTokensInBundleAndSelectOpened = (bundle: INestingToken) => {
+      bundle.isCurrentAccountOwner = isOwner;
+
+      if (
+        bundle.tokenId === token?.tokenId &&
+        bundle.collectionId === token.collectionId &&
+        bundle.nestingParentToken?.collectionId === parentBundle?.collectionId &&
+        bundle.nestingParentToken?.tokenId === parentBundle?.tokenId
+      ) {
+        bundle.selected = true;
+        bundle.opened = true;
+        setSelectedToken(bundle);
+      }
+
+      if (!bundle.nestingChildTokens?.length) {
+        return bundle;
+      }
+
+      bundle.nestingChildTokens = bundle.nestingChildTokens
+        ?.sort((a, b) => (a.tokenId > b.tokenId ? 1 : -1))
+        .map((token) => sortTokensInBundleAndSelectOpened(token));
+      return bundle;
+    };
+
+    const openNodeIfChildsPageOpened = (bundle: INestingToken) => {
+      if (!bundle.nestingChildTokens?.length) {
+        return (
+          bundle.tokenId === token?.tokenId &&
+          bundle.collectionId === token.collectionId &&
+          bundle.nestingParentToken?.collectionId === parentBundle?.collectionId &&
+          bundle.nestingParentToken?.tokenId === parentBundle?.tokenId
+        );
+      }
+
+      bundle.opened = !!bundle.nestingChildTokens.filter((token) =>
+        openNodeIfChildsPageOpened(token),
+      ).length;
+      return bundle;
+    };
+
+    if (bundleToken && !isLoadingBundleToken) {
+      let allowedToEditBundle = JSON.parse(JSON.stringify(bundleToken));
+      allowedToEditBundle = sortTokensInBundleAndSelectOpened(allowedToEditBundle);
+      allowedToEditBundle = openNodeIfChildsPageOpened(allowedToEditBundle);
+      setBundle([allowedToEditBundle]);
+    }
+  }, [
+    bundle,
+    bundleToken,
+    isLoadingBundleToken,
+    token?.tokenId,
+    token?.collectionId,
+    parentBundle?.collectionId,
+    parentBundle?.tokenId,
+    isOwner,
+  ]);
 
   const tokensCount = useMemo(() => {
     if (!bundle || !bundle[0]?.nestingChildTokens) {
@@ -147,96 +241,213 @@ export const NftDetailsBundlePage = () => {
   }, [bundle]);
 
   const handleUnnestToken = (token: INestingToken) => {
-    unnestTokenAction();
+    unnestTokenAction(token);
     setSelectedTokenBundleTable(token);
   };
 
-  const unnestTokenAction = () => {
+  const unnestTokenAction = (_token?: INestingToken) => {
     logUserEvent(UserEvents.UNNEST_TOKEN);
-    setCurrentModal('unnest');
+
+    const isTokenFractional = _token ? _token.isFractional : isFractional;
+
+    setCurrentModal(isTokenFractional ? 'unnest-refungible' : 'unnest');
   };
 
   const handleTransferToken = (token: INestingToken) => {
-    transferTokenAction();
+    transferTokenAction(token);
     setSelectedTokenBundleTable(token);
   };
 
-  const transferTokenAction = () => {
+  const transferTokenAction = (_token?: INestingToken) => {
     logUserEvent(UserEvents.TRANSFER_NFT);
-    setCurrentModal('bundle-transfer');
+
+    const isTokenFractional = _token ? _token.isFractional : isFractional;
+
+    setCurrentModal(isTokenFractional ? 'transfer-refungible' : 'bundle-transfer');
   };
 
+  const menuButtons = useMemo(() => {
+    const items = [...menuButtonsNft];
+
+    if (isOwner && (selectedToken?.nestingChildTokens?.length || 0) === 0) {
+      items.push({
+        icon: 'burn',
+        id: isFractional ? 'burn-refungible' : 'burn',
+        title: 'Burn token',
+        type: 'danger',
+      });
+    }
+
+    return items;
+  }, [isOwner, selectedToken?.nestingChildTokens?.length, isFractional]);
+
+  const BundleTreeRendered = (
+    <BundleTree<INestingToken>
+      dataSource={bundle}
+      selectedToken={selectedToken}
+      nodeView={NodeView}
+      nestedSectionView={NestedSection}
+      className="tree-container"
+      compareNodes={areNodesEqual}
+      childrenProperty="nestingChildTokens"
+      getKey={getKey}
+      onNodeClicked={handleNodeClicked}
+      onViewNodeDetails={handleViewTokenDetails}
+      onUnnestClick={handleUnnestToken}
+      onTransferClick={handleTransferToken}
+    />
+  );
+
+  const owner = () => {
+    const isBundle = isBundleToken();
+
+    if (!isOwner && isBundle) {
+      return (
+        <>
+          Owned by{' '}
+          <AccountCard
+            accountAddress={token?.owner || ''}
+            canCopy={false}
+            scanLink={`${currentChain.uniquescanAddress}/account/${token?.owner}`}
+          />
+        </>
+      );
+    }
+    if (isOwner && isBundle) {
+      return 'You own it';
+    }
+    if (!parentToken) {
+      return null;
+    }
+
+    const parentOwnerEthAddress = Address.is.ethereumAddress(parentToken?.owner || '')
+      ? parentToken?.owner
+      : Address.mirror.substrateToEthereum(parentToken?.owner || '');
+
+    return (
+      <>
+        Nested in bundle
+        <TokenLink
+          to={`/${currentChain?.network}/token/${parentOwnerEthAddress}/${parentToken?.collectionId}/${parentToken?.tokenId}`}
+        >
+          {parentToken?.collection.tokenPrefix} #{parentToken?.tokenId}
+        </TokenLink>
+      </>
+    );
+  };
+
+  const renderAchievements = () => (
+    <AchievementsWrapper>
+      <Achievement
+        achievement={isBundleToken() ? 'Bundle' : 'Nested'}
+        tooltipDescription={
+          <>
+            A&nbsp;group of&nbsp;tokens nested in&nbsp;an&nbsp;NFT and having
+            a&nbsp;nested, ordered, tree-like structure
+          </>
+        }
+      />
+      {isFractional && (
+        <Achievement
+          achievement="Fractional"
+          tooltipDescription={
+            <>
+              A&nbsp;fractional token provides a&nbsp;way for many users to&nbsp;own
+              a&nbsp;part of&nbsp;an&nbsp;NFT
+            </>
+          }
+        />
+      )}
+    </AchievementsWrapper>
+  );
+
   return (
-    <NftDetailsWrapper
-      className={classNames({
-        hidden: isShowBundleTreeMobile && size === DeviceSize.xs,
-      })}
-    >
+    <NftDetailsWrapper>
       <NftDetailsLayout
-        isLoading={isLoadingBundleToken || isLoadingToken || isLoadingCollection}
+        isLoading={isLoadingBundleToken || isLoadingToken || isLoadingParentToken}
         tokenExist={!!bundleToken && !!token}
       >
-        <NftDetailsCard
+        <NftDetailsCard<TokenByIdResponse & { collectionName: string; name: string }>
           className="nft-details-card"
           token={token}
-          isOwner={isOwner}
-          achievement={isBundleToken() ? 'Bundle' : 'Nested'}
+          owner={owner()}
+          menuButtons={menuButtons}
+          achievement={renderAchievements()}
+          isFractional={isFractional}
+          balance={balance?.amount}
+          pieces={pieces?.amount}
           buttons={
             isOwner && (
-              <NftDetailsWrapperButtons>
+              <>
                 <TransferBtn
-                  className="transfer-btn"
-                  wide={size === DeviceSize.xs}
+                  wide={deviceSize === DeviceSize.xs}
                   title="Transfer"
                   role="primary"
-                  onClick={transferTokenAction}
+                  onClick={() => transferTokenAction()}
                 />
                 {!isBundleToken() && (
                   <TransferBtn
-                    wide={size === DeviceSize.xs}
+                    wide={deviceSize === DeviceSize.xs}
                     title="Unnest Token"
                     role="danger"
-                    onClick={unnestTokenAction}
+                    onClick={() => unnestTokenAction()}
                   />
                 )}
-              </NftDetailsWrapperButtons>
+              </>
             )
           }
           onCurrentModal={setCurrentModal}
         />
 
-        <BundleWrapper>
-          <HeaderStyled>
-            <Heading size="2">Bundle tree structure</Heading>
-            <Text color="grey-500" size="m" className="tokens-count">
-              {tokensCount + 1} items total
-            </Text>
-          </HeaderStyled>
-          <BundleTree<INestingToken>
-            dataSource={bundle || []}
-            nodeView={NodeView}
-            nestedSectionView={NestedSection}
-            className="tree-container"
-            compareNodes={areNodesEqual}
-            childrenProperty="nestingChildTokens"
-            getKey={getKey}
-            onNodeClicked={handleNodeClicked}
-            onViewNodeDetails={handleViewTokenDetails}
-            onUnnestClick={handleUnnestToken}
-            onTransferClick={handleTransferToken}
-          />
-        </BundleWrapper>
+        {deviceSize >= DeviceSize.sm && (
+          <BundleWrapper>
+            <HeaderStyled>
+              <Heading size="2">Bundle tree structure</Heading>
+              <Text color="grey-500" size="m" className="tokens-count">
+                {tokensCount + 1} items total
+              </Text>
+            </HeaderStyled>
+            {BundleTreeRendered}
+          </BundleWrapper>
+        )}
 
-        <TreeMobileBtn className="tree-bundle-btn">
-          <Button
-            role="primary"
-            wide={size === DeviceSize.xs}
-            title={isShowBundleTreeMobile ? 'Back' : 'Show bundle tree structure'}
-            onClick={() => setShowBundleTreeMobile((prev) => !prev)}
-          />
-        </TreeMobileBtn>
+        {deviceSize <= DeviceSize.xs && (
+          <BottomBar
+            buttons={[
+              <Button
+                key="show-bundle-tree"
+                role="primary"
+                wide={deviceSize === DeviceSize.xs}
+                iconLeft={
+                  isShowBundleTreeMobile
+                    ? {
+                        color: 'currentColor',
+                        name: 'arrow-left',
+                        size: 16,
+                      }
+                    : undefined
+                }
+                title={isShowBundleTreeMobile ? 'Back' : 'Show bundle tree structure'}
+                onClick={() => setShowBundleTreeMobile((prev) => !prev)}
+              />,
+            ]}
+            header={
+              <BottomBarHeader showBackLink={false} title="Bundle tree structure">
+                <Text color="grey-500" size="m" className="tokens-count">
+                  {tokensCount + 1} items total
+                </Text>
+              </BottomBarHeader>
+            }
+            isOpen={isShowBundleTreeMobile}
+            parent={document.body}
+          >
+            {BundleTreeRendered}
+          </BottomBar>
+        )}
 
-        <NFTModals
+        <NFTModals<
+          INestingToken | (TokenByIdResponse & { collectionName: string; name: string })
+        >
           modalType={currentModal}
           token={selectedTokenBundleTable || token}
           onComplete={onComplete}
@@ -246,6 +457,14 @@ export const NftDetailsBundlePage = () => {
     </NftDetailsWrapper>
   );
 };
+
+const TokenLink = styled(Link)`
+  color: var(--color-primary-500);
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 const BundleWrapper = styled.div`
   margin-top: calc(var(--prop-gap) * 1.5);
@@ -269,63 +488,16 @@ const HeaderStyled = styled.div`
 const NftDetailsWrapper = styled.div`
   display: flex;
   flex: 1;
-
-  @media screen and (max-width: 567px) {
-    .nft-details-card,
-    ${BundleWrapper} {
-      padding-bottom: 75px;
-    }
-  }
-  &.hidden {
-    .nft-details-card,
-    .unique-breadcrumbs-wrapper {
-      display: none;
-    }
-
-    .tree-container {
-      height: auto;
-      overflow: inherit;
-    }
-
-    ${BundleWrapper} {
-      display: block;
-      margin-top: -70px;
-      background: var(--color-additional-light);
-    }
-
-    ${HeaderStyled} {
-      flex-direction: column;
-      gap: inherit;
-      margin-bottom: 24px;
-
-      h2 {
-        margin-bottom: 0;
-        font-size: 24px;
-      }
-
-      .tokens-count {
-        margin-top: 0;
-      }
-    }
-  }
 `;
 
-const TreeMobileBtn = styled.div`
-  display: none;
-
-  @media screen and (max-width: 567px) {
-    &.tree-bundle-btn {
-      background: var(--color-additional-light);
-      z-index: 49;
-      display: block;
-      height: auto;
-      line-height: inherit;
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      padding: 10px;
-      box-sizing: border-box;
-    }
+const AchievementsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--prop-gap) / 2);
+  align-items: flex-end;
+  position: absolute;
+  width: 100%;
+  span {
+    position: relative;
   }
 `;

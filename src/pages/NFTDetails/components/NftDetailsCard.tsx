@@ -1,48 +1,64 @@
 import { ReactNode } from 'react';
-import { Avatar } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
+import { SelectOptionProps } from '@unique-nft/ui-kit';
 
+import { Image } from '@app/components';
+import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTDetailsHeader } from '@app/pages/NFTDetails/components/NFTDetailsHeader';
 import { Divider } from '@app/pages/NFTDetails/components/Divider';
 import { TokenInformation } from '@app/pages/NFTDetails/components/TokenInformation';
-import { TNFTModalType } from '@app/pages/NFTDetails/Modals';
-import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { TooltipWrapper } from '@app/components';
+import { TTokenModalType } from '@app/pages/NFTDetails/Modals';
+import { FractionalInformation } from '@app/pages/NFTDetails/components/FractionalInformation';
 
 type Props<T extends TBaseToken> = {
   token?: T;
-  achievement?: string;
-  onCurrentModal: (type: TNFTModalType) => void;
-  isOwner: boolean;
+  achievement?: ReactNode;
+  onCurrentModal: (type: TTokenModalType) => void;
   buttons: ReactNode;
   className?: string;
+  menuButtons: SelectOptionProps[];
+  owner: ReactNode;
+  isFractional?: boolean;
+  pieces?: number;
+  balance?: number;
 };
 
 export const NftDetailsCard = <T extends TBaseToken>({
   token,
   onCurrentModal,
-  achievement,
-  isOwner,
+  achievement = null,
   buttons,
   className,
+  menuButtons,
+  owner,
+  isFractional,
+  pieces,
+  balance,
 }: Props<T>) => (
   <NftDetailsInfo className={className}>
     <div className="avatar">
-      {achievement && (
-        <span className="achievement">
-          <TooltipWrapper
-            message={
-              <>
-                A&nbsp;group of&nbsp;tokens nested in&nbsp;an&nbsp;NFT and having
-                a&nbsp;nested, ordered, tree-like structure
-              </>
-            }
-          >
-            {achievement}
-          </TooltipWrapper>
-        </span>
+      {achievement}
+      <Image alt={token?.name || ''} image={token?.image?.fullUrl || undefined} />
+      {token?.video && (
+        <VideoStyled
+          playsInline
+          src={token.video.fullUrl || undefined}
+          poster={token.image.fullUrl || undefined}
+          controls={true}
+          autoPlay={false}
+          loop={true}
+          muted={false}
+        />
       )}
-      <Avatar fit="contain" src={token?.image?.fullUrl || undefined} />
+      {token?.audio && (
+        <AudioStyled
+          src={token.audio.fullUrl || undefined}
+          controls={true}
+          autoPlay={false}
+          loop={false}
+          muted={false}
+        />
+      )}
     </div>
     <div className="info-container">
       <NFTDetailsHeader
@@ -50,11 +66,17 @@ export const NftDetailsCard = <T extends TBaseToken>({
         tokenId={token?.tokenId}
         collectionId={token?.collectionId}
         collectionName={token?.collectionName}
-        ownerAddress={token?.owner}
-        isCurrentAccountOwner={isOwner}
         buttons={buttons}
+        owner={owner}
+        menuButtons={menuButtons}
         onShowModal={onCurrentModal}
       />
+      {isFractional && (
+        <>
+          <Divider />
+          <FractionalInformation balance={balance} pieces={pieces} />
+        </>
+      )}
       <Divider />
       <TokenInformation token={token} />
     </div>
@@ -69,23 +91,6 @@ const NftDetailsInfo = styled.div`
   flex: 1 1 auto;
   gap: var(--page-gap);
   max-width: 100%;
-
-  .achievement {
-    background: var(--color-additional-light);
-    border: 1px solid var(--color-blue-grey-200);
-    border-radius: var(--prop-border-radius);
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    font-size: 16px;
-    font-weight: 500;
-    z-index: 2;
-    cursor: default;
-
-    & > span {
-      padding: 4px 8px;
-    }
-  }
 
   @media screen and (min-width: 768px) {
     flex-direction: row;
@@ -103,13 +108,9 @@ const NftDetailsInfo = styled.div`
   }
 
   .avatar {
-    overflow: hidden;
-    border-radius: calc(var(--prop-border-radius) * 2);
     position: relative;
     flex: 0 0 auto;
     width: 100%;
-    background-color: var(--color-blue-grey-100);
-    transform: translateZ(0);
 
     @media screen and (min-width: 768px) {
       flex: 0 0 30%;
@@ -123,27 +124,10 @@ const NftDetailsInfo = styled.div`
     @media screen and (min-width: 1280px) {
       flex: 3 0 0;
     }
-
-    &::before {
-      display: block;
-      padding-bottom: 100%;
-      content: '';
-    }
-
-    & > img {
-      border-radius: 0;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: auto;
-      height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      transform: translate3d(-50%, -50%, 0);
-    }
   }
 
   .info-container {
+    overflow: hidden;
     flex: 1 1 auto;
     max-width: 100%;
 
@@ -164,5 +148,18 @@ const NftDetailsInfo = styled.div`
       flex: 4.5 0 0;
       max-width: none;
     }
+  }
+`;
+
+const VideoStyled = styled.video`
+  width: 100%;
+  margin-top: 1rem;
+`;
+
+const AudioStyled = styled.audio`
+  width: 100%;
+  margin-top: 1rem;
+  @media (max-width: 767px) {
+    height: 100%;
   }
 `;

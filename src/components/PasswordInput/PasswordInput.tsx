@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Icon } from '@unique-nft/ui-kit';
+
+import { Icon } from '../Icon';
 
 interface PasswordInputProps {
   placeholder?: string;

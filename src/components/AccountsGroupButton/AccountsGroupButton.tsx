@@ -1,6 +1,6 @@
 import { useCallback, useState, VFC } from 'react';
 import classNames from 'classnames';
-import { Button, Dropdown } from '@unique-nft/ui-kit';
+import { Dropdown } from '@unique-nft/ui-kit';
 
 import {
   CreateAccountModal,
@@ -10,6 +10,8 @@ import {
 } from '@app/pages';
 import './AccountsGroupButton.scss';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+
+import { Button } from '../Button';
 
 enum AccountModal {
   CREATE = 'create',

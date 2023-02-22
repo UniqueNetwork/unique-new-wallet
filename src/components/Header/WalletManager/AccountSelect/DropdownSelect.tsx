@@ -1,6 +1,7 @@
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Icon } from '@unique-nft/ui-kit';
+
+import { Icon } from '@app/components/Icon';
 
 export interface DropdownSelectProps<T> {
   className?: string;

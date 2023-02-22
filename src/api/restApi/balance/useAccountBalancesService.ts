@@ -12,7 +12,7 @@ export const useAccountBalancesService = (
   return useQueries<AllBalancesResponse[]>(
     chainsUrl.map((baseUrl) => {
       return {
-        queryKey: queryKeys.account.chain(baseUrl),
+        queryKey: queryKeys.account.chain(`${baseUrl}-${address}`),
         queryFn: async () => {
           try {
             const api = new Sdk({ baseUrl, signer: null });
@@ -22,7 +22,7 @@ export const useAccountBalancesService = (
             return Promise.reject(e);
           }
         },
-        enabled: chainsUrl.length !== 0 || !address,
+        enabled: chainsUrl.length !== 0 && !!address,
         refetchOnMount: 'always',
       };
     }),

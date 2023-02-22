@@ -2,6 +2,7 @@ import { useQuery, UseQueryResult } from 'react-query';
 import { GetBundleResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
+import { INestingToken } from '@app/components/BundleTree/types';
 
 import { queryKeys } from '../keysConfig';
 
@@ -11,23 +12,49 @@ export const useTokenGetBundle = ({
 }: {
   collectionId?: number;
   tokenId?: number;
-}): UseQueryResult<GetBundleResponse & { collectionName: string; name: string }> => {
+}) => {
   const { api } = useApi();
 
   const getBundle = async () => {
-    const [token, collection] = await Promise.all([
+    const [bundle, collection] = await Promise.all([
       api.tokens.getBundle({ collectionId: collectionId!, tokenId: tokenId! }),
       api.collections.get({ collectionId: collectionId! }),
     ]);
-    return {
-      ...token,
-      name: `${collection.tokenPrefix} #${token.tokenId}`,
-      collectionName: collection.name,
+
+    const enhance = (node: INestingToken): INestingToken => {
+      return {
+        ...node,
+        nestingChildTokens: node.nestingChildTokens?.map((child) => ({
+          ...enhance(child),
+          nestingParentToken: {
+            collectionId: node.collectionId,
+            tokenId: node.tokenId,
+          },
+        })),
+      };
     };
+
+    return enhance({
+      ...bundle,
+      name: `${collection.tokenPrefix} #${bundle.tokenId}`,
+      collectionName: collection.name,
+    });
   };
 
-  return useQuery(queryKeys.token.bundle(collectionId, tokenId), () => getBundle(), {
+  const {
+    data,
+    isLoading: isLoadingBundleToken,
+    refetch: refetchBundle,
+  }: UseQueryResult<
+    GetBundleResponse & { collectionName: string; name: string }
+  > = useQuery(queryKeys.token.bundle(collectionId, tokenId), getBundle, {
     enabled: !!collectionId || !!tokenId,
     refetchOnMount: true,
   });
+
+  return {
+    bundleToken: data,
+    isLoadingBundleToken,
+    refetchBundle,
+  };
 };

@@ -1,14 +1,17 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, InputText, Select } from '@unique-nft/ui-kit';
+import { Select } from '@unique-nft/ui-kit';
 
 import { Direction } from '@app/api/graphQL/types';
-import { CollectionsFilter, TypeFilter } from '@app/pages';
-import { defaultTypesFilters } from '@app/pages/MyTokens/constants';
+import { CollectionsFilter, StatusFilter, TypeFilter } from '@app/pages';
+import { defaultStatusFilter, defaultTypeFilter } from '@app/pages/MyTokens/constants';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
-import { Option as CollectionOption } from '@app/types';
+import { OptionChips as CollectionOption } from '@app/types';
 import { iconDown, iconUp, Option } from '@app/utils';
+import { Search } from '@app/pages/components/Search';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
+
+import { Button } from '../Button';
 
 export const MobileFilters = ({
   collections,
@@ -87,15 +90,9 @@ export const MobileFilters = ({
         parent={document.body}
       >
         <FiltersWrapper>
-          <InputText
-            iconLeft={{
-              color: 'var(--color-blue-grey-500)',
-              name: 'magnify',
-              size: 18,
-            }}
+          <Search
             className="filter-input"
             value={search}
-            placeholder="Search"
             onChange={setSearch}
             onKeyDown={searchHandler}
           />
@@ -116,7 +113,8 @@ export const MobileFilters = ({
             value={sortByTokenId}
             onChange={sortByTokenIdHandler}
           />
-          <TypeFilter defaultTypes={defaultTypesFilters} />
+          <StatusFilter status={defaultStatusFilter} />
+          <TypeFilter type={defaultTypeFilter} />
           <CollectionsFilter collections={collections} />
         </FiltersWrapper>
       </BottomBar>
@@ -129,10 +127,12 @@ const FiltersWrapper = styled.div`
   flex-direction: column;
   gap: calc(var(--prop-gap) * 2);
   max-width: 756px;
+
   .filter-input {
     width: auto;
     max-width: 100%;
   }
+
   .collections-filter {
     margin: 0;
   }

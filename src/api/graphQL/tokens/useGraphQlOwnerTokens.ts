@@ -1,15 +1,19 @@
+import { Address } from '@unique-nft/utils';
 import { gql, OperationVariables, useQuery } from '@apollo/client';
 
 import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
 import { QueryOptions, QueryResponse, Token } from '../types';
 
-export type TypeFilter = 'purchased' | 'createdByMe';
+export type StatusFilterNft = 'purchased' | 'createdByMe' | 'allStatus';
+
+export type TypeFilterNft = 'allType' | 'NESTED' | 'NFT' | 'RFT';
 
 type AdditionalFilters = {
   collectionsIds?: number[];
-  typesFilters?: TypeFilter[];
+  statusFilter: StatusFilterNft;
   searchText?: string;
+  typeFilter: TypeFilterNft;
 };
 
 const OWNER_TOKENS_QUERY = gql`
@@ -32,33 +36,45 @@ const OWNER_TOKENS_QUERY = gql`
         collection_name
         collection_id
         image
+        type
+        children_count
+        parent_id
+        nested
+        total_pieces
+        owner
+        tokens_owner
+        tokens_amount
       }
     }
   }
 `;
 
-const getConditionByTypesFilters = (
-  owner: string | undefined,
-  filtersTypes: TypeFilter[] | undefined,
-) => {
-  const baseFilter = {
-    _or: [{ owner: { _eq: owner } }, { owner_normalized: { _eq: owner } }],
+const getConditionByStatusFilter = (statusFilter: StatusFilterNft = 'allStatus') => {
+  const filters: Record<StatusFilterNft, OperationVariables> = {
+    purchased: { is_sold: { _eq: 'true' } },
+    createdByMe: { is_sold: { _eq: 'false' } },
+    allStatus: {},
   };
 
-  const filters: Record<TypeFilter, OperationVariables> = {
-    purchased: {
-      _and: [baseFilter, { is_sold: { _eq: 'true' } }],
-    },
-    createdByMe: {
-      _and: [baseFilter, { is_sold: { _eq: 'false' } }],
-    },
-  };
+  return filters[statusFilter];
+};
 
-  if (!Number(filtersTypes?.length)) {
-    return baseFilter;
+const getConditionByTypeFilter = (statusFilter: TypeFilterNft = 'allType') => {
+  if (statusFilter === 'allType') {
+    return undefined;
   }
-
-  return { _or: filtersTypes?.map((ft) => filters[ft]) };
+  if (statusFilter === 'NESTED') {
+    return {
+      nested: {
+        _eq: 'true',
+      },
+    };
+  }
+  return {
+    type: {
+      _eq: statusFilter,
+    },
+  };
 };
 
 const getConditionByCollectionsIds = (collectionsIds: number[] | undefined) => {
@@ -78,7 +94,7 @@ export const useGraphQlOwnerTokens = (
   filters: AdditionalFilters,
   options: QueryOptions,
 ) => {
-  const { collectionsIds, typesFilters, searchText } = filters;
+  const { collectionsIds, statusFilter, searchText, typeFilter } = filters;
   const { direction, pagination, skip } = options ?? {
     direction: 'desc',
     skip: !owner,
@@ -90,6 +106,7 @@ export const useGraphQlOwnerTokens = (
     loading: tokensLoading,
     error,
     fetchMore,
+    refetch,
   } = useQuery<QueryResponse<Token>>(OWNER_TOKENS_QUERY, {
     skip: skip || !owner,
     fetchPolicy: 'network-only',
@@ -101,8 +118,22 @@ export const useGraphQlOwnerTokens = (
       direction,
       where: {
         ...getConditionBySearchText('token_name', searchText),
-        ...getConditionByTypesFilters(owner, typesFilters),
+        ...getConditionByStatusFilter(statusFilter),
+        ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
+        tokens_owner: { _eq: owner },
+
+        _or: [
+          { type: { _eq: 'RFT' } },
+          {
+            type: { _eq: 'NFT' },
+            parent_id: {
+              _is_null: true,
+            },
+          },
+        ],
+        tokens_amount: { _neq: '0' },
+        burned: { _eq: 'false' },
       },
     },
   });
@@ -116,5 +147,6 @@ export const useGraphQlOwnerTokens = (
     fetchMore,
     tokensLoading,
     error,
+    refetchOwnerTokens: refetch,
   };
 };

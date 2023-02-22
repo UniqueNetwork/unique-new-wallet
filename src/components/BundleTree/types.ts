@@ -7,6 +7,8 @@ export interface INestingToken extends GetBundleResponse {
   selected?: boolean;
   isCurrentAccountOwner?: boolean;
   name?: string;
+  collectionName?: string;
+  isFractional?: boolean;
 }
 
 export interface ITokenCard {
@@ -30,7 +32,6 @@ export interface INodeView<T> {
   isParentSelected: boolean;
   data: T;
   textClicked: (event: MouseEvent) => void;
-  isFirst?: boolean;
   level: number;
   onViewNodeDetails?: (node: T) => void;
   onUnnestClick?: (node: T) => void;
@@ -52,7 +53,6 @@ export interface INodeContainer<T> {
   onNodeClicked: TTreeNodeClickHandler<T>;
   getKey: (a: T) => string;
   childrenProperty: keyof T;
-  isFirst?: boolean;
   level: number;
   children?: ReactNode;
   onViewNodeDetails?: (node: T) => void;
@@ -71,6 +71,7 @@ export interface ITree<T> {
   onViewNodeDetails?: (node: T) => void;
   onUnnestClick?: (node: T) => void;
   onTransferClick?: (node: T) => void;
+  selectedToken?: T;
 }
 
 export interface IBundleTree<T> extends ITree<T> {

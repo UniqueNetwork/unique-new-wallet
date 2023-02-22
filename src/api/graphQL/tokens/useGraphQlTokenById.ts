@@ -5,7 +5,11 @@ import { QueryResponse, Token } from '../types';
 const TOKEN_BY_ID_QUERY = gql`
   query token_by_id_query($tokenId: Float, $collectionId: Float) {
     tokens(
-      where: { token_id: { _eq: $tokenId }, collection_id: { _eq: $collectionId } }
+      where: {
+        token_id: { _eq: $tokenId }
+        collection_id: { _eq: $collectionId }
+        burned: { _eq: "false" }
+      }
     ) {
       count
       data {

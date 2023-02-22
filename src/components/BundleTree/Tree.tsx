@@ -26,11 +26,7 @@ export function Tree<T extends INode>({
   const nodeClickHandler = useCallback(
     (data: T) => {
       const selectNode = (node: T) => {
-        if (compareNodes(node, data)) {
-          node.selected = !node.selected;
-        } else {
-          node.selected = false;
-        }
+        node.selected = compareNodes(node, data);
         (node[childrenProperty] as unknown as T[])?.forEach((child: T) => {
           return selectNode(child);
         });
@@ -64,12 +60,11 @@ export function Tree<T extends INode>({
 
   return (
     <TreeStyled className={className}>
-      {dataSourceState.map((data: T, index) => (
+      {dataSourceState.map((data: T) => (
         <Node<T>
           key={getKey(data)}
           data={data}
           nodeView={nodeView}
-          isFirst={index === 0}
           level={level}
           getKey={getKey}
           childrenProperty={childrenProperty}
@@ -98,11 +93,12 @@ export function Tree<T extends INode>({
 }
 
 const TreeStyled = styled.div`
-  width: 100%;
-  height: 373px;
   overflow: auto;
+  flex: 1 1 auto;
+  width: 100%;
 
   @media (min-width: 1024px) {
+    flex: 0 0 auto;
     width: 536px;
   }
 `;

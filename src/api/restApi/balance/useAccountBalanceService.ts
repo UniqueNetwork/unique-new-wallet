@@ -21,7 +21,11 @@ export const useAccountBalanceService = (
       .catch(Promise.reject);
   };
 
-  return useQuery(queryKeys.account.balance(address), () => getBalance(address!), {
-    enabled: !!address,
-  });
+  return useQuery(
+    queryKeys.account.balance(networkURL ? `${networkURL}-${address}` : address),
+    () => getBalance(address!),
+    {
+      enabled: !!address,
+    },
+  );
 };

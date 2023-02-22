@@ -1,11 +1,11 @@
-import { memo, ReactNode, useMemo, VFC } from 'react';
+import { memo, ReactNode, VFC } from 'react';
 import styled from 'styled-components';
-import { Button, Heading, SelectOptionProps } from '@unique-nft/ui-kit';
+import { Heading, SelectOptionProps } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
-import { BurnBtn, Dropdown, ExternalLink } from '@app/components';
-import { TNFTModalType } from '@app/pages/NFTDetails/Modals/types';
-import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import { BurnBtn, Dropdown, ExternalLink, Button } from '@app/components';
+import { TTokenModalType } from '@app/pages/NFTDetails/Modals/types';
+import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 interface NFTDetailsHeaderProps {
   title?: string;
@@ -13,16 +13,16 @@ interface NFTDetailsHeaderProps {
   collectionId?: number;
   collectionName?: string;
   ownerAddress?: string;
-  isCurrentAccountOwner?: boolean;
   className?: string;
   buttons: ReactNode;
-
-  onShowModal(modal: TNFTModalType): void;
+  menuButtons: SelectOptionProps[];
+  onShowModal(modal: TTokenModalType): void;
+  owner: ReactNode;
 }
 
 interface MenuOptionItem extends SelectOptionProps {
   disabled?: boolean;
-  id: TNFTModalType;
+  id: TTokenModalType;
 }
 
 const HeaderContainerInfo = styled.div`
@@ -104,10 +104,17 @@ const TextOwner = styled.div`
   display: flex;
   align-items: center;
   gap: calc(var(--prop-gap) / 2);
-  margin-bottom: calc(var(--prop-gap) * 1.5);
   color: var(--color-grey-500);
   font-size: 1rem;
   white-space: nowrap;
+
+  &:not(:last-child) {
+    margin-bottom: calc(var(--prop-gap) * 1.5);
+  }
+`;
+
+const ButtonGroupStyled = styled(ButtonGroup)`
+  margin-top: calc(var(--prop-gap) * 1.5);
 `;
 
 const MenuOption = (
@@ -135,41 +142,13 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
   tokenId,
   collectionName = '',
   collectionId,
-  ownerAddress,
-  isCurrentAccountOwner,
   className,
   onShowModal,
   buttons,
+  menuButtons,
+  owner,
 }) => {
   const { currentChain } = useApi();
-
-  const options = useMemo(() => {
-    const items: SelectOptionProps[] = [
-      {
-        icon: 'shared',
-        id: 'share',
-        title: 'Share',
-        type: 'primary',
-      },
-      {
-        icon: 'arrow-up-right',
-        id: 'scan',
-        title: 'View NFT on UniqueScan',
-        type: 'primary',
-      },
-    ];
-
-    if (isCurrentAccountOwner) {
-      items.push({
-        icon: 'burn',
-        id: 'burn',
-        title: 'Burn token',
-        type: 'danger',
-      });
-    }
-
-    return items;
-  }, [isCurrentAccountOwner]);
 
   const openInNewTab = (url: string) => {
     const newWindow = window.open(url, '_blank', 'noopener, noreferrer');
@@ -190,24 +169,11 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
             </ExternalLink>
           </div>
           <Heading className="collection-heading">{title}</Heading>
-          <TextOwner>
-            {isCurrentAccountOwner ? (
-              'You own it'
-            ) : (
-              <>
-                Owned by
-                <AccountCard
-                  accountAddress={ownerAddress || ''}
-                  canCopy={false}
-                  scanLink={`${currentChain.uniquescanAddress}/account/${ownerAddress}`}
-                />
-              </>
-            )}
-          </TextOwner>
+          <TextOwner>{owner}</TextOwner>
         </HeaderContent>
         <Dropdown
           placement="right"
-          options={options}
+          options={menuButtons}
           optionRender={(opt) => (
             <MenuOption
               {...(opt as MenuOptionItem)}
@@ -237,7 +203,12 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
           />
         </Dropdown>
       </HeaderContainerInfo>
-      {buttons && <div className="nft-details-buttons">{buttons}</div>}
+
+      {buttons && (
+        <ButtonGroupStyled stack gap={8}>
+          {buttons}
+        </ButtonGroupStyled>
+      )}
     </div>
   );
 };

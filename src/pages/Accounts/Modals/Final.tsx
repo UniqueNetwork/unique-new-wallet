@@ -1,7 +1,7 @@
 import { FC, useCallback, useMemo } from 'react';
-import { Button, Icon, InputText } from '@unique-nft/ui-kit';
+import { InputText } from '@unique-nft/ui-kit';
 
-import { Alert, TooltipWrapper } from '@app/components';
+import { Alert, Button, Icon, TooltipWrapper } from '@app/components';
 import { LabelText, StepsTextStyled } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,

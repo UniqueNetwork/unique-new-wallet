@@ -3,17 +3,19 @@ import styled from 'styled-components';
 
 import { CollectionNestingOption } from '@app/api';
 import { SuggestOptionNesting } from '@app/pages/NFTDetails/Modals/CreateBundleModal/components';
-import { Token } from '@app/api/graphQL/types';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
-import { useGraphQlGetTokensCollection } from '@app/api/graphQL/tokens/useGraphQlGetTokensCollection';
 import { Suggest } from '@app/components/Suggest';
 import { Alert } from '@app/components';
+import {
+  TokenInfo,
+  useAllOwnedTokensByCollection,
+} from '@app/pages/NFTDetails/hooks/useAllOwnedTokensByCollection';
 
 import { TCreateBundleForm } from './CreateBundleModal';
 
 type Props = {
   collectionsData: ReturnType<typeof useGraphQlCollectionsByNestingAccount>;
-  tokensData: ReturnType<typeof useGraphQlGetTokensCollection>;
+  tokensData: ReturnType<typeof useAllOwnedTokensByCollection>;
   disabledNftField: boolean;
 };
 
@@ -31,7 +33,7 @@ export const CreateBundleForm = ({
   const isNotExistTokens = tokensData.tokens.length === 0;
 
   const { isCollectionsLoading, collections } = collectionsData;
-  const { isTokensLoading, tokens } = tokensData;
+  const { isFetchingTokens, tokens } = tokensData;
 
   return (
     <FormWrapper>
@@ -72,10 +74,17 @@ export const CreateBundleForm = ({
                 resetField('token');
                 onChange(val);
               }}
+              onSuggestionsFetchRequested={(value) =>
+                collections.filter(
+                  ({ collection_id, name }) =>
+                    name.toLowerCase().includes(value.toLowerCase()) ||
+                    collection_id === Number(value),
+                )
+              }
             />
           )}
         />
-        {isNotExistTokens && form?.collection && !isTokensLoading && (
+        {isNotExistTokens && form?.collection && !isFetchingTokens && (
           <AlertWrapper>
             <Alert type="error">
               You don’t have any tokens with bundling capabilities in this collection
@@ -95,13 +104,13 @@ export const CreateBundleForm = ({
           name="token"
           rules={{ required: true }}
           render={({ field: { value, onChange } }) => (
-            <Suggest<Token>
+            <Suggest<TokenInfo>
               components={{
                 SuggestItem: ({
                   suggestion,
                   isActive,
                 }: {
-                  suggestion: Token;
+                  suggestion: TokenInfo;
                   isActive?: boolean;
                 }) => (
                   <SuggestOptionNesting
@@ -113,7 +122,7 @@ export const CreateBundleForm = ({
                 ),
               }}
               suggestions={tokens}
-              isLoading={isTokensLoading}
+              isLoading={isFetchingTokens}
               value={value}
               getActiveSuggestOption={(option) => option.token_id === value.token_id}
               inputProps={{

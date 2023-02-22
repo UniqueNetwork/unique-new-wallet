@@ -1,19 +1,26 @@
-import { useContext, useMemo, VFC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, VFC } from 'react';
 
+import ApiContext from '@app/api/ApiContext';
 import AccountContext from '@app/account/AccountContext';
 import {
   useGraphQlCollectionsByTokensOwner,
   useGraphQlOwnerTokens,
 } from '@app/api/graphQL/tokens';
-import { Dictionary, getTokenIpfsUriByImagePath } from '@app/utils';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { DeviceSize, useDeviceSize, useItemsLimit } from '@app/hooks';
 import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 import { PagePaper } from '@app/components';
 import { MobileFilters } from '@app/components/Filters/MobileFilter';
-import { CollectionsFilter, TypeFilter } from '@app/pages';
-import { NFTsTemplateList } from '@app/pages/components/Nfts/NFTsTemplateList';
+import {
+  CollectionsFilter,
+  NFTsTemplateList,
+  StatusFilter,
+  TypeFilter,
+} from '@app/pages';
+import { useGraphQlGetRftFractionsByOwner } from '@app/api/graphQL/tokens/useGraphQlGetRftFractionsByOwner';
+import { TokenTypeEnum } from '@app/api/graphQL/types';
 
-import { defaultTypesFilters } from '../constants';
+import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useNFTsContext } from '../context';
 
 export interface NFTsComponentProps {
@@ -25,18 +32,20 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 6, xl: 8 });
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
+  const { currentChain } = useContext(ApiContext);
   const {
     tokensPage,
-    typesFilters,
+    statusFilter,
     sortByTokenId,
     collectionsIds,
     searchText,
     changeSearchText,
-    setTypesFilters,
-    changeTypesFilters,
+    changeStatusFilter,
     changeCollectionsIds,
     setCollectionsIds,
     changeTokensPage,
+    typeFilter,
+    changeTypeFilter,
   } = useNFTsContext();
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
@@ -44,27 +53,37 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     !selectedAccount?.address,
   );
 
-  const { tokens, tokensCount, tokensLoading, isPagination, fetchMore } =
-    useGraphQlOwnerTokens(
-      selectedAccount?.address,
-      {
-        typesFilters,
-        collectionsIds,
-        searchText,
-      },
-      {
-        skip: !selectedAccount?.address,
-        direction: sortByTokenId,
-        pagination: { page: tokensPage, limit: getLimit },
-      },
-    );
+  const {
+    tokens,
+    tokensCount,
+    tokensLoading,
+    isPagination,
+    fetchMore,
+    refetchOwnerTokens,
+  } = useGraphQlOwnerTokens(
+    selectedAccount?.address,
+    {
+      statusFilter,
+      collectionsIds,
+      searchText,
+      typeFilter,
+    },
+    {
+      skip: !selectedAccount?.address,
+      direction: sortByTokenId,
+      pagination: { page: tokensPage, limit: getLimit },
+    },
+  );
 
-  const { cacheTokens } = useCheckExistTokensByAccount({ tokens });
+  const { cacheTokens } = useCheckExistTokensByAccount({
+    tokens,
+    refetchTokens: refetchOwnerTokens,
+  });
 
   const defaultCollections = useMemo(
     () =>
       collections?.map((c) => ({
-        id: c.collection_id,
+        value: c.collection_id,
         label: c.collection_name,
         icon: c.collection_cover,
       })),
@@ -78,15 +97,25 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         label: searchText,
         onClose: () => changeSearchText(''),
       });
-    typesFilters?.forEach((filter) =>
+
+    if (statusFilter !== 'allStatus') {
       chips.push({
-        label: Dictionary[`filter_type_${filter}`],
-        onClose: () => changeTypesFilters(filter),
-      }),
-    );
+        label:
+          defaultStatusFilter.find(({ value }) => value === statusFilter)?.label || '',
+        onClose: () => changeStatusFilter('allStatus'),
+      });
+    }
+
+    if (typeFilter !== 'allType') {
+      chips.push({
+        label: defaultTypeFilter.find(({ value }) => value === typeFilter)?.label || '',
+        onClose: () => changeTypeFilter('allType'),
+      });
+    }
+
     collectionsIds?.forEach((id) => {
       const { label, icon = null } =
-        defaultCollections?.find((c) => c.id === id && c) || {};
+        defaultCollections?.find((c) => c.value === id && c) || {};
       chips.push({
         label,
         iconLeft: { size: 22, file: getTokenIpfsUriByImagePath(icon) },
@@ -94,13 +123,18 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       });
     });
     return chips;
-  }, [searchText, typesFilters, collectionsIds, defaultCollections]);
+  }, [searchText, statusFilter, typeFilter, collectionsIds, defaultCollections]);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     changeSearchText('');
-    setTypesFilters([]);
+    changeStatusFilter('allStatus');
+    changeTypeFilter('allType');
     setCollectionsIds([]);
-  };
+  }, [changeSearchText, changeStatusFilter, changeTypeFilter, setCollectionsIds]);
+
+  useEffect(() => {
+    resetFilters();
+  }, [currentChain.network, resetFilters, selectedAccount]);
 
   return (
     <>
@@ -109,7 +143,8 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
         sidebar={
           !collectionsLoading && (
             <>
-              <TypeFilter defaultTypes={defaultTypesFilters} />
+              <StatusFilter status={defaultStatusFilter} />
+              <TypeFilter type={defaultTypeFilter} />
               <CollectionsFilter collections={defaultCollections} />
             </>
           )

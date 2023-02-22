@@ -7,13 +7,14 @@ import {
   InputText,
   Loader,
   Text,
+  useNotifications,
 } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { PagePaper, StatusTransactionModal, TooltipWrapper } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
 import {
   ButtonGroup,
   Form,
@@ -25,17 +26,37 @@ import {
 } from '@app/pages/components/FormComponents';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
+import { useCollectionBurn } from '@app/api';
 
 const CollectionSettings = () => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
   const { collection, collectionLoading } = useCollectionContext() || {};
   const { selectedAccount } = useAccounts();
-  const [isLoadingBurnCollection, setLoadingBurnCollection] = useState(false);
+  const { currentChain } = useApi();
+  const {
+    feeFormatted,
+    getFee,
+    feeError,
+    feeLoading,
+    submitWaitResult,
+    submitWaitResultError,
+    isLoadingSubmitResult,
+  } = useCollectionBurn();
   const navigate = useNavigate();
+  const { error } = useNotifications();
 
   useEffect(() => {
     logUserEvent(UserEvents.SETTINGS_OF_COLLECTION);
   }, []);
+
+  useEffect(() => {
+    if (feeError) {
+      error(feeError);
+    }
+    if (submitWaitResultError) {
+      error(submitWaitResultError);
+    }
+  }, [feeError, submitWaitResultError]);
 
   const {
     token_limit,
@@ -45,31 +66,33 @@ const CollectionSettings = () => {
   } = collection || {};
   const ownerCanDestroy = Boolean(owner_can_destroy) !== false;
 
-  const handleBurnCollection = () => {
+  useEffect(() => {
+    if (!isVisibleConfirmModal || !collection_id || !selectedAccount?.address) {
+      return;
+    }
+    getFee({
+      collectionId: collection_id,
+      address: selectedAccount?.address,
+    });
+  }, [collection_id, getFee, isVisibleConfirmModal, selectedAccount?.address]);
+
+  const handleBurnCollection = async () => {
     if (!collection_id || !selectedAccount) {
       return;
     }
 
     setVisibleConfirmModal(false);
-    setLoadingBurnCollection(true);
 
     try {
-      /* const { data } = await deleteCollection(api!, {
-        collectionId: collection_id,
-        address: selectedAccount.address,
+      await submitWaitResult({
+        payload: {
+          collectionId: collection_id,
+          address: selectedAccount.address,
+        },
       });
-
-      const signature = await signMessage(data.signerPayloadJSON, selectedAccount);
-
-      await extrinsicSubmit(api!, {
-        signerPayloadJSON: { ...data.signerPayloadJSON },
-        signature,
-      }); */
-      navigate('/my-collections');
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoadingBurnCollection(false);
+      navigate(`/${currentChain.network}/my-collections`);
+    } catch (e: any) {
+      error(e.message);
     }
   };
 
@@ -206,19 +229,23 @@ const CollectionSettings = () => {
                     }}
                   />
                 </SettingsRow>
-                <ButtonGroup>
+                <ButtonGroup align="space-between">
                   <TooltipWrapper message={<>The form in&nbsp;development progress</>}>
                     <Button title="Save changes" disabled={true} type="submit" />
                   </TooltipWrapper>
-                  {/* TODO: WAL-343
                   {ownerCanDestroy && (
                     <Button
                       title="Burn collection"
-                      iconLeft={{ size: 15, name: 'burn', color: 'var(--color-coral-500)' }}
-                      role="ghost"
+                      disabled={(collection?.tokens_count || 0) > 0}
+                      iconLeft={{
+                        size: 15,
+                        name: 'burn',
+                        color: 'var(--color-coral-500)',
+                      }}
+                      role="danger"
                       onClick={() => setVisibleConfirmModal(true)}
                     />
-                  )} */}
+                  )}
                 </ButtonGroup>
               </Form>
             </FormBody>
@@ -226,12 +253,14 @@ const CollectionSettings = () => {
         )}
       </FormWrapper>
       <StatusTransactionModal
-        isVisible={isLoadingBurnCollection}
+        isVisible={isLoadingSubmitResult}
         description="Burning collection"
       />
 
       <BurnCollectionModal
         isVisible={isVisibleConfirmModal}
+        isLoading={feeLoading}
+        fee={feeFormatted}
         onConfirm={handleBurnCollection}
         onClose={() => setVisibleConfirmModal(false)}
       />

@@ -123,6 +123,7 @@ export const SuggestOption = styled.div`
     & > img {
       flex: 0 0 auto;
       margin-right: calc(var(--prop-gap) / 2);
+      object-fit: cover;
     }
 
     .suggestion-item {
@@ -144,21 +145,23 @@ export const AdditionalText = styled(Text).attrs({
 `;
 
 export const ButtonGroup = styled.div<{
-  align?: 'flex-start' | 'center' | 'flex-end';
+  align?: 'flex-start' | 'center' | 'flex-end' | 'space-between';
+  $fill?: boolean;
+  gap?: number;
   stack?: boolean;
 }>`
   flex: 1 1 auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: ${(p) => p.align};
-  gap: calc(var(--prop-gap) / 2) var(--prop-gap);
+  gap: ${(p) => (p.gap ? p.gap + 'px' : 'calc(var(--prop-gap) / 2) var(--prop-gap)')};
 
   @media screen and (min-width: 568px) {
     flex: 0 0 auto;
   }
 
   & > * {
-    flex: ${(p) => (p.stack ? '1 1 100%' : '0 0 auto')};
+    flex: ${(p) => (p.stack ? '1 1 100%' : p.$fill ? '1 1 auto' : '0 0 auto')};
 
     @media screen and (min-width: 568px) {
       flex: 0 0 auto;

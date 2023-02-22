@@ -13,7 +13,10 @@ export const existValue = <T>(value: Nullable<T>): value is T => {
   Нам на вход приходит строка вида 123087.38808524234
   Необходимо после точки показывать только первые 4 цифры
 */
-export const truncateDecimalsBalanceSheet = (balance: string) => {
+export const truncateDecimalsBalanceSheet = (balance: string | undefined) => {
+  if (!balance) {
+    return '0';
+  }
   const arrBalance = balance.split('.');
 
   if (arrBalance.length === 1) {

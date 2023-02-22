@@ -1,15 +1,16 @@
-import { Button, Heading, Text } from '@unique-nft/ui-kit';
-import styled from 'styled-components';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { Heading, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { ROUTE } from '@app/routes';
+import { Button } from '@app/components/Button';
 
 type IntroCardProps = {
   imgPath: string;
-  title: string;
-  description: string;
+  title: ReactNode;
+  description: ReactNode;
   setActiveSlide: Dispatch<SetStateAction<number>>;
   isLast?: boolean;
   onCloseModal?(): void;
@@ -48,7 +49,11 @@ export const IntroCard = ({
               title="Visit FAQ"
               onClick={() => {
                 onCloseModal?.();
-                navigation(`/${currentChain.network}/${ROUTE.FAQ}`);
+                navigation(`/${currentChain.network}/${ROUTE.FAQ}`, {
+                  state: {
+                    isNestedInfo: true,
+                  },
+                });
               }}
             />
           </div>

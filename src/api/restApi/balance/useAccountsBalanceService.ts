@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { QueriesResults, useQueries } from 'react-query';
 import { AllBalancesResponse } from '@unique-nft/sdk';
 
 import { useApi } from '@app/hooks';
@@ -8,25 +8,24 @@ import { queryKeys } from '../keysConfig';
 
 export const useAccountsBalanceService = (
   addresses: string[],
-): UseQueryResult<AllBalancesResponse[]> => {
+): QueriesResults<AllBalancesResponse[]> => {
   const { api } = useApi();
-  const getAccountsBalance = (addresses: string[]) => {
-    return Promise.all(addresses.map((address) => api.balance.get({ address })))
-      .then((res) => {
-        res.forEach((balance) => {
-          calculateSliceBalance(balance);
-        });
-        return Promise.resolve(res);
-      })
-      .catch(Promise.reject);
-  };
 
-  return useQuery(
-    queryKeys.account.balances(addresses),
-    () => getAccountsBalance(addresses),
-    {
-      enabled: addresses.length !== 0,
-      refetchOnMount: 'always',
-    },
+  return useQueries<AllBalancesResponse[]>(
+    addresses.map((address) => {
+      return {
+        queryKey: queryKeys.account.balance(address),
+        queryFn: async () => {
+          try {
+            const balance = await api.balance.get({ address });
+            return Promise.resolve(calculateSliceBalance(balance));
+          } catch (e) {
+            return Promise.reject(e);
+          }
+        },
+        enabled: addresses.length !== 0,
+        refetchOnMount: 'always',
+      };
+    }),
   );
 };

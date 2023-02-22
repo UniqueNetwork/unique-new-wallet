@@ -1,10 +1,11 @@
 import { ComponentType, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { Icon, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
+import { Icon } from '@app/components';
 
 type TitleConfig = {
   header?: string;
@@ -23,17 +24,20 @@ export const withPageTitle =
   (props: P) => {
     const { currentChain } = useApi();
     const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
+    const state = useLocation().state as null | { backLink: string };
+
+    const LINK = state?.backLink || backLink;
 
     useEffect(() => {
       const link = (
-        <BackLink to={`/${currentChain?.network}/${backLink}`}>
+        <BackLink to={`/${currentChain?.network}/${LINK}`}>
           <Icon color="var(--color-blue-grey-500)" name="arrow-left" size={16} />
           <Text color="blue-grey-500" weight="light">
             back
           </Text>
         </BackLink>
       );
-      const options = backLink ? [link] : [];
+      const options = LINK ? [link] : [];
 
       setPageBreadcrumbs({
         options,

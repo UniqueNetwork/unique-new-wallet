@@ -1,7 +1,9 @@
 import { ReactNode, VFC } from 'react';
-import { Button, ButtonProps } from '@unique-nft/ui-kit';
+import { ButtonProps } from '@unique-nft/ui-kit';
 
 import { Modal } from '@app/components/Modal';
+
+import { Button } from '../Button';
 
 interface IConfirmProps {
   children?: ReactNode;
@@ -27,7 +29,7 @@ export const Confirm: VFC<IConfirmProps> = ({
   return (
     <Modal
       footerButtons={buttons?.map((btn, i) => (
-        <Button role={btn.role} title={btn.title} key={i} onClick={btn.onClick} />
+        <Button key={i} {...btn} />
       ))}
       isClosable={isClosable}
       isVisible={isVisible}

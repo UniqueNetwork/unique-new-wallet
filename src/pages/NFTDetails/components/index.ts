@@ -4,4 +4,4 @@ export * from './CollectionInformation';
 export * from './TokenInformation';
 export * from './NftDetailsCard';
 export * from './NftDetailsLayout';
-export * from './NftDetailsWrapperButtons';
+export * from './FractionalInformation';

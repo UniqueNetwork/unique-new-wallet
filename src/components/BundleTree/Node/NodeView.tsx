@@ -1,16 +1,16 @@
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { Dropdown, Icon, Loader } from '@unique-nft/ui-kit';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import classNames from 'classnames';
+import { Dropdown, Loader } from '@unique-nft/ui-kit';
+import { Address } from '@unique-nft/utils';
 
 import Pin from 'static/icons/pin.svg';
-import MeatBallIcon from 'static/icons/meatball.svg';
-import SquareIcon from 'static/icons/square.svg';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { TooltipWrapper } from '@app/components';
+import { Icon, Image, TooltipWrapper } from '@app/components';
+import { Button as UIButton } from '@app/components/Button';
 
-import { Picture } from '../../Picture';
 import { INestingToken, INodeView } from '../types';
 import MobileModalActions from './MobileModalActions';
 import { useCollection } from '../useCollection';
@@ -20,7 +20,6 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   isOpened,
   data,
   textClicked,
-  isFirst,
   level,
   isSelected,
   isParentSelected,
@@ -29,38 +28,54 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   onTransferClick,
   onUnnestClick,
 }) => {
-  const { tokenId, collectionId } = useParams<{
+  const { tokenId, collectionId, address } = useParams<{
     tokenId: string;
     collectionId: string;
+    address: string;
   }>();
   const [menuVisible, setMenuVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const deviceSize = useDeviceSize();
   const { isCollectionLoading, collection } = useCollection(data.collectionId);
+  const parentBundle =
+    address && Address.is.nestingAddress(address)
+      ? Address.nesting.addressToIds(address)
+      : undefined;
 
   const isMobileView = [DeviceSize.sm, DeviceSize.md, DeviceSize.xs].includes(deviceSize);
 
   const onClick = useCallback(
     (event: React.MouseEvent) => {
-      isMobileView ? setModalVisible(true) : textClicked(event);
+      if (isMobileView) {
+        return;
+      }
+
+      textClicked(event);
     },
     [isMobileView, textClicked],
   );
 
   const onTransfer = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onTransferClick?.(data);
+      onTransferClick?.({
+        ...data,
+        isFractional: collection?.mode === 'ReFungible',
+      });
       event.stopPropagation();
     },
-    [onTransferClick, data],
+    [onTransferClick, data, collection],
   );
 
   const onUnnest = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onUnnestClick?.({ ...data, name: `${collection?.tokenPrefix} #${data.tokenId}` });
+      onUnnestClick?.({
+        ...data,
+        name: `${collection?.tokenPrefix} #${data.tokenId}`,
+        isFractional: collection?.mode === 'ReFungible',
+      });
       event.stopPropagation();
     },
-    [onUnnestClick, data, collection?.tokenPrefix],
+    [onUnnestClick, data, collection],
   );
 
   const showMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
@@ -72,26 +87,28 @@ const NodeView: FC<INodeView<INestingToken>> = ({
     setMenuVisible(false);
   }, []);
 
-  const tokenMenuActions = useMemo(() => {
-    return (
-      <>
-        <TransferMenuItem onClick={onTransfer}>
-          Transfer
-          <IconWrapper>
-            <Icon name="sorting-initial" size={16} color="var(--color-primary-500)" />
-          </IconWrapper>
-        </TransferMenuItem>
-        {level !== 1 && (
-          <UnnestMenuItem onClick={onUnnest}>
-            Unnest token
+  const tokenMenuActions = useMemo(
+    () =>
+      data.isCurrentAccountOwner ? (
+        <>
+          <TransferMenuItem onClick={onTransfer}>
+            Transfer
             <IconWrapper>
-              <Icon name="logout" size={16} color="var(--color-coral-500)" />
+              <Icon name="sorting-initial" size={16} color="var(--color-primary-500)" />
             </IconWrapper>
-          </UnnestMenuItem>
-        )}
-      </>
-    );
-  }, [onTransfer, onUnnest]);
+          </TransferMenuItem>
+          {level !== 1 && (
+            <UnnestMenuItem onClick={onUnnest}>
+              Unnest token
+              <IconWrapper>
+                <Icon name="logout" size={16} color="var(--color-coral-500)" />
+              </IconWrapper>
+            </UnnestMenuItem>
+          )}
+        </>
+      ) : null,
+    [onTransfer, onUnnest],
+  );
 
   const viewTokenDetails = useCallback(() => {
     onViewNodeDetails?.(data);
@@ -103,78 +120,86 @@ const NodeView: FC<INodeView<INestingToken>> = ({
   }, []);
 
   const isCurrent =
-    tokenId === data.tokenId.toString() && collectionId === data.collectionId.toString();
+    tokenId === data.tokenId?.toString() &&
+    collectionId === data.collectionId?.toString() &&
+    parentBundle?.collectionId === data.nestingParentToken?.collectionId &&
+    parentBundle?.tokenId === data.nestingParentToken?.tokenId;
 
   return (
     <>
-      <ViewContainer
-        isFirst={isFirst}
-        isSelected={isSelected}
-        isParentSelected={isParentSelected}
-        onClick={onClick}
-        onMouseEnter={showMenu}
-        onMouseLeave={hideMenu}
-      >
-        <NftInfo>
-          <Arrow
-            isFirst={isFirst}
-            level={level}
-            isOpened={isOpened}
-            onClick={arrowClicked}
-          >
-            {!!children && (
-              <Icon size={16} name="triangle" color="var(--color-primary-500)" />
+      <ViewContainer onClick={onClick} onMouseEnter={showMenu} onMouseLeave={hideMenu}>
+        <ViewContainerInner isParentSelected={isParentSelected} isSelected={isSelected}>
+          <span className="tree-node-indent">
+            {[...Array(level - 1)].fill(0).map((x, i) => {
+              return (
+                <span className="tree-node-indent-item" key={`${data.tokenId}-${i}`} />
+              );
+            })}
+            {children ? (
+              <span
+                className={classNames(
+                  'tree-node-indent-item',
+                  'tree-node-indent-trigger',
+                  { _opened: isOpened },
+                )}
+                role="button"
+                onClick={arrowClicked}
+              >
+                <Icon size={12} name="triangle" color="currentColor" />
+              </span>
+            ) : (
+              <span className="tree-node-indent-item" />
             )}
-          </Arrow>
-          <Picture
-            alt={`T-${data.tokenId} C-${data.collectionId}`}
-            src={
-              // @ts-ignore
-              (typeof data.image === 'string' ? data.image : data.image?.fullUrl) ||
-              undefined
-            }
-          />
-          <TokenTitle
-            token={data}
-            isCollectionLoading={isCollectionLoading}
-            prefix={collection?.tokenPrefix || ''}
-          />
-        </NftInfo>
-        <Actions>
-          {deviceSize !== DeviceSize.sm && (
-            <ActionButtons
-              className="action-buttons"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              {menuVisible && data.isCurrentAccountOwner && !isMobileView && (
-                <ActionsMenuWrapper>
-                  <TooltipWrapper
-                    align={{
-                      vertical: 'top',
-                      horizontal: 'middle',
-                      appearance: 'vertical',
-                    }}
-                    message="Open additional menu"
-                  >
+          </span>
+          <NftInfo>
+            <Image
+              alt={`T-${data.tokenId} C-${data.collectionId}`}
+              className="picture"
+              image={
+                // @ts-ignore
+                (typeof data.image === 'string' ? data.image : data.image?.fullUrl) ||
+                undefined
+              }
+            />
+            <TokenTitle
+              token={data}
+              isCollectionLoading={isCollectionLoading}
+              prefix={collection?.tokenPrefix || ''}
+            />
+          </NftInfo>
+          <Actions onClick={(e) => e.stopPropagation()}>
+            {deviceSize !== DeviceSize.sm && (
+              <>
+                {menuVisible && data.isCurrentAccountOwner && !isMobileView && (
+                  <ActionsMenuWrapper>
                     <Dropdown
                       placement="right"
                       dropdownRender={() => (
                         <DropdownMenu>{tokenMenuActions}</DropdownMenu>
                       )}
                     >
-                      <Icon
-                        size={32}
-                        file={MeatBallIcon}
-                        color="var(--color-secondary-400)"
-                      />
+                      <TooltipWrapper
+                        align={{
+                          vertical: 'top',
+                          horizontal: 'middle',
+                          appearance: 'vertical',
+                        }}
+                        message="Open additional menu"
+                      >
+                        <ActionButton
+                          iconRight={{
+                            color: 'currentColor',
+                            name: 'more-horiz',
+                            size: 24,
+                          }}
+                          role="ghost"
+                          title=""
+                        />
+                      </TooltipWrapper>
                     </Dropdown>
-                  </TooltipWrapper>
-                </ActionsMenuWrapper>
-              )}
-              {!isCurrent && !isMobileView && (
-                <div onClick={viewTokenDetails}>
+                  </ActionsMenuWrapper>
+                )}
+                {menuVisible && !isCurrent && !isMobileView && (
                   <TooltipWrapper
                     align={{
                       vertical: 'top',
@@ -183,30 +208,50 @@ const NodeView: FC<INodeView<INestingToken>> = ({
                     }}
                     message="Go to the token page"
                   >
-                    <Icon
-                      size={32}
-                      file={SquareIcon}
-                      color="var(--color-secondary-400)"
+                    <ActionButton
+                      iconRight={{
+                        color: 'currentColor',
+                        name: 'arrow-out-outlined',
+                        size: 32,
+                      }}
+                      role="ghost"
+                      title=""
+                      onClick={viewTokenDetails}
                     />
                   </TooltipWrapper>
-                </div>
-              )}
-            </ActionButtons>
-          )}
-          {isCurrent && (
-            <PinIcon className="pin-icon">
+                )}
+              </>
+            )}
+            {isCurrent && (
               <TooltipWrapper
-                align={{ vertical: 'top', horizontal: 'middle', appearance: 'vertical' }}
+                align={{
+                  vertical: 'top',
+                  horizontal: 'middle',
+                  appearance: 'vertical',
+                }}
                 message="Current token page"
               >
                 <Icon size={32} file={Pin} />
               </TooltipWrapper>
-            </PinIcon>
-          )}
-          {isMobileView && <Icon size={32} file={MeatBallIcon} />}
-        </Actions>
-        <hr />
+            )}
+            {isMobileView && (
+              <ActionButton
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'more-horiz',
+                  size: 24,
+                }}
+                role="ghost"
+                title=""
+                onClick={() => setModalVisible(true)}
+              />
+            )}
+          </Actions>
+        </ViewContainerInner>
       </ViewContainer>
+
+      {isOpened ? children : null}
+
       <MobileModalActions isVisible={modalVisible} onClose={closeModal}>
         <ViewTokenAction onClick={viewTokenDetails}>
           Go to the token page
@@ -216,100 +261,129 @@ const NodeView: FC<INodeView<INestingToken>> = ({
         </ViewTokenAction>
         {tokenMenuActions}
       </MobileModalActions>
-      {isOpened ? children : null}
     </>
   );
 };
 
-const ViewContainer = styled.div<{
-  isFirst: boolean | undefined;
+const ViewContainerInner = styled.div<{
   isSelected: boolean | undefined;
   isParentSelected: boolean | undefined;
 }>`
-  height: 60px;
+  box-sizing: border-box;
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  border: 1px solid
-    ${({ isSelected }) => (isSelected ? 'var(--color-primary-200)' : 'transparent')};
-  hr {
-    position: absolute;
-    border-top: 1px dashed var(--color-grey-300);
-    border-left: none;
-    bottom: -3px;
-    width: 100%;
-    z-index: 1;
-  }
-  .picture {
-    display: inline-block;
-    width: 40px;
-    height: 40px;
-    margin-left: var(--gap);
-    margin-right: calc(var(--gap) / 2);
-    img {
-      border-radius: 4px;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: fill;
-    }
-  }
-  &:hover {
-    border: 1px solid var(--color-primary-400);
-    z-index: 2;
-    hr {
-      display: none;
-    }
-    .action-buttons {
-      display: flex;
-    }
-  }
+  width: 100%;
+  height: 58px;
+  padding: calc(var(--prop-gap) / 2) var(--prop-gap);
   background-color: ${({ isSelected, isParentSelected }) =>
     isSelected
       ? 'var(--color-primary-200)'
       : isParentSelected
       ? 'var(--color-primary-100)'
       : 'none'} !important;
+  user-select: none;
+`;
+
+const ViewContainer = styled.div`
+  border-bottom: 1px dashed var(--color-grey-300);
+  position: relative;
+
+  &:hover {
+    &::before {
+      border: 1px solid var(--color-primary-400);
+      position: absolute;
+      z-index: 1;
+      top: -1px;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      content: '';
+      pointer-events: none;
+    }
+  }
+
+  .tree-node-indent {
+    flex: 0 0 auto;
+    white-space: nowrap;
+
+    &-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      width: 40px;
+      height: 40px;
+      margin-right: 8px;
+
+      &:empty {
+        width: 48px;
+        margin-right: 0;
+        user-select: none;
+      }
+    }
+
+    &-trigger {
+      color: var(--color-blue-grey-400);
+      cursor: pointer;
+      transition: transform 0.15s linear;
+
+      &:hover {
+        color: var(--color-primary-400);
+      }
+
+      &._opened {
+        transform: rotate(-180deg);
+      }
+    }
+  }
+
+  .picture {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+  }
 `;
 
 const NftInfo = styled.div`
+  flex: 1 0 auto;
   display: flex;
   align-items: center;
+`;
+
+export const ActionButton = styled(UIButton)`
+  flex: 0 0 auto;
+
+  &.unique-button {
+    &.size-middle {
+      appearance: none;
+      width: 32px;
+      height: 32px;
+      line-height: normal;
+      padding: 0;
+    }
+
+    &.ghost {
+      color: var(--color-secondary-400);
+
+      &:hover {
+        color: var(--color-secondary-200);
+      }
+    }
+
+    &.with-icon.to-right {
+      .icon {
+        margin-left: 0;
+      }
+    }
+  }
 `;
 
 const Actions = styled.div`
   display: flex;
-  gap: 4px;
-  margin-right: 24px;
-`;
-
-const ActionButtons = styled.div`
-  gap: 4px;
-  display: none;
   align-items: center;
-  svg:hover {
-    fill: var(--color-primary-500);
-  }
-`;
-
-const PinIcon = styled.div``;
-
-const Arrow = styled.div<{
-  isOpened: boolean | undefined;
-  isFirst: boolean | undefined;
-  level: number;
-}>`
-  cursor: pointer;
-  display: inline-block;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  transition: 0.2s;
-  transform: ${({ isOpened }) => !isOpened && 'rotate(180deg)'};
-  margin-left: ${({ isFirst, level }) => (isFirst ? 24 : 24 + 16 * level)}px;
-  width: 16px;
+  gap: calc(var(--prop-gap) / 2);
+  padding-left: var(--prop-gap);
 `;
 
 const ActionsMenuWrapper = styled.div`
@@ -324,14 +398,17 @@ const ActionsMenuWrapper = styled.div`
       border-radius: 4px;
       color: var(--color-additional-light);
       height: 32px;
+
       &:hover {
         background-color: var(--color-additional-dark);
       }
     }
   }
+
   div[class*='DropdownMenuDropdown'] {
     position: absolute;
     width: max-content;
+
     & > div {
       padding: calc(var(--gap) / 2) var(--gap);
       display: flex;
@@ -353,6 +430,7 @@ const DropdownMenuItem = styled.div`
   cursor: pointer;
   font-size: 16px;
   line-height: 24px;
+
   &:hover {
     background: var(--color-primary-100);
   }
@@ -361,6 +439,7 @@ const DropdownMenuItem = styled.div`
 const TransferMenuItem = styled(DropdownMenuItem)`
   border-bottom: 1px dashed var(--color-grey-300);
   color: var(--color-primary-500);
+
   &:hover {
     color: var(--color-primary-600);
   }
@@ -368,6 +447,7 @@ const TransferMenuItem = styled(DropdownMenuItem)`
 
 const UnnestMenuItem = styled(DropdownMenuItem)`
   color: var(--color-coral-500);
+
   &:hover {
     background-color: var(--color-coral-100);
   }
@@ -391,8 +471,6 @@ const IconWrapper = styled.div`
     }
   }
 `;
-
-export default NodeView;
 
 const TokenTitle: FC<{
   isCollectionLoading: boolean;
@@ -418,8 +496,8 @@ const TokenTitle: FC<{
 };
 
 const TitleContainer = styled.div`
-  cursor: pointer;
   display: inline-block;
+  padding-left: calc(var(--prop-gap) / 2);
 `;
 
 const Name = styled.p`
@@ -434,3 +512,5 @@ const NestedCount = styled.p`
   line-height: 18px;
   color: var(--color-blue-grey-500);
 `;
+
+export default NodeView;

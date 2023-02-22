@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, VFC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
-import { InputText, Select } from '@unique-nft/ui-kit';
+import { Select } from '@unique-nft/ui-kit';
 
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
@@ -10,6 +10,7 @@ import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { Direction } from '@app/api/graphQL/types';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
+import { Search } from '@app/pages/components/Search';
 
 interface NFTFiltersComponentProps {
   className?: string;
@@ -71,10 +72,9 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
       }
       controls={
         <>
-          <InputText
+          <Search
+            className="filter-search-wrapper"
             value={search}
-            placeholder="Search"
-            iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
             onChange={setSearch}
             onKeyDown={searchHandler}
           />

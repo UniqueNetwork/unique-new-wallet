@@ -7,6 +7,7 @@ const COLLECTION_BY_ID_QUERY = gql`
     collections(
       where: {
         collection_id: { _eq: $collectionId }
+        burned: { _eq: "false" }
         _or: [{ owner: { _eq: $address } }, { owner_normalized: { _eq: $address } }]
       }
     ) {
@@ -20,6 +21,7 @@ const COLLECTION_BY_ID_QUERY = gql`
         description
         date_of_creation
         owner_can_destroy
+        mode
       }
     }
   }

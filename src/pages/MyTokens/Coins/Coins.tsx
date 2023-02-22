@@ -1,10 +1,12 @@
+import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
 import { Heading } from '@unique-nft/ui-kit';
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { Address } from '@unique-nft/utils/address';
+import React, { useCallback, useEffect, useState } from 'react';
 import { UseQueryResult } from 'react-query';
-import { AllBalancesResponse } from '@unique-nft/sdk';
+import styled from 'styled-components';
 
 import { ApiWrapper, useAccountBalancesService } from '@app/api';
+import { useChainProperties } from '@app/api/restApi/properties/useChainProperties';
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
 import { RampModal } from '@app/pages';
@@ -38,7 +40,7 @@ const CoinsHeading = styled(Heading)`
   }
 `;
 
-export const Coins: FC = () => {
+export const Coins = () => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
   const [rampModalToken, setRampModalToken] = useState('KSM');
@@ -51,6 +53,13 @@ export const Coins: FC = () => {
     Object.values(config.allChains).map((chain) => chain.apiEndpoint),
     selectedAccount?.address,
   ) as UseQueryResult<AllBalancesResponse>[];
+
+  const chainProperty = useChainProperties(
+    Object.values(config.allChains).map((chain) => ({
+      network: chain.network,
+      api: chain.apiEndpoint,
+    })),
+  );
 
   useEffect(() => {
     logUserEvent(UserEvents.COINS);
@@ -114,18 +123,33 @@ export const Coins: FC = () => {
       <CoinsHeading size="4">Network</CoinsHeading>
       <CoinsList>
         {Object.values(config.allChains).map((chain, idx) => {
-          if (!coinConfig[chain.network]) {
+          if (!coinConfig[chain.network] && selectedAccount) {
             return null;
           }
 
           const { getDisabled, onGet } = coinConfig[chain.network];
+          const data = chainProperty[chain.network].data as ChainPropertiesResponse;
+          const formattedAddress =
+            selectedAccount &&
+            (Address.is.ethereumAddress(selectedAccount.address)
+              ? Address.mirror.ethereumToSubstrate(
+                  selectedAccount.address,
+                  data?.SS58Prefix,
+                )
+              : Address.normalize.substrateAddress(
+                  selectedAccount.address,
+                  data?.SS58Prefix,
+                ));
+
           return (
             <CoinsRow
               getDisabled={getDisabled}
               key={chain.network}
-              loading={accountBalances[idx].isLoading}
+              loading={
+                chainProperty[chain.network].isLoading || accountBalances[idx].isLoading
+              }
               sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
-              address={selectedAccount?.address}
+              address={formattedAddress}
               balanceFull={accountBalances[idx].data?.freeBalance.amount}
               balanceLocked={accountBalances[idx].data?.lockedBalance.amount}
               balanceTransferable={accountBalances[idx].data?.availableBalance.amount}

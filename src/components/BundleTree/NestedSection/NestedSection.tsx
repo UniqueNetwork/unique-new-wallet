@@ -1,12 +1,16 @@
-import React, { FC } from 'react';
-import { Text, Loader, Icon } from '@unique-nft/ui-kit';
+import { FC } from 'react';
 import styled from 'styled-components';
+import classNames from 'classnames';
+import { Loader, Text } from '@unique-nft/ui-kit';
 
 import NoTrades from 'static/icons/no-trades.svg';
 
+import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { NoItems } from '@app/components';
+
 import { INestedSectionView, INestingToken } from '../types';
-import TokenCard from './TokenCard';
 import { useCollection } from '../useCollection';
+import TokenCard from './TokenCard';
 
 export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
   selectedToken,
@@ -14,9 +18,13 @@ export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
   onUnnestClick,
   onTransferClick,
 }) => {
+  const deviceSize = useDeviceSize();
   const { isCollectionLoading, collection } = useCollection(selectedToken?.collectionId);
-  return (
-    <NestedDetails>
+
+  return deviceSize >= DeviceSize.lg ? (
+    <NestedDetails
+      className={classNames({ _empty: !selectedToken?.nestingChildTokens?.length })}
+    >
       {selectedToken?.nestingChildTokens?.length ? (
         <TitleWrapper>
           <Title
@@ -26,14 +34,11 @@ export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
           />
         </TitleWrapper>
       ) : null}
+
       {!selectedToken?.nestingChildTokens?.length && (
-        <NoNestedWrapper>
-          <Icon file={NoTrades} size={80} />
-          <Text color="grey-500" size="m">
-            No nested tokens
-          </Text>
-        </NoNestedWrapper>
+        <NoItems file={NoTrades} title="No nested tokens" />
       )}
+
       {!!selectedToken?.nestingChildTokens?.length && (
         <NestedTokens>
           {selectedToken.nestingChildTokens.map((token) => (
@@ -48,7 +53,7 @@ export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
         </NestedTokens>
       )}
     </NestedDetails>
-  );
+  ) : null;
 };
 
 const Title = ({
@@ -71,37 +76,26 @@ const Title = ({
 };
 
 const NestedDetails = styled.div`
-  @media (min-width: 1024px) {
-    display: block;
-    padding: var(--prop-gap) calc(var(--prop-gap) * 2);
-    background-color: #ededee50;
-    width: calc(100% - 536px);
-    height: 373px;
-    overflow: auto;
-    box-sizing: border-box;
-  }
+  overflow: auto;
+  flex: 1 1 auto;
+  padding: var(--prop-gap) calc(var(--prop-gap) * 2);
+  background: rgba(237, 237, 238, 0.5);
 
-  display: none;
+  &._empty {
+    @media (min-width: 1024px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 `;
 
 const NestedTokens = styled.div`
-  margin-top: var(--gap);
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap);
 `;
 
 const TitleWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const NoNestedWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  row-gap: var(--gap);
-  width: 100%;
-  height: 100%;
+  padding-bottom: var(--gap);
 `;

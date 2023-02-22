@@ -1,8 +1,7 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { Button } from '@unique-nft/ui-kit';
 import { KeyringPair } from '@polkadot/keyring/types';
 
-import { Alert, PasswordInput, Upload } from '@app/components';
+import { Alert, Button, PasswordInput, Upload } from '@app/components';
 import { Modal } from '@app/components/Modal';
 import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
 import { ContentRow } from '@app/pages/components/ModalComponents';

@@ -1,6 +1,6 @@
 import { FC, useCallback, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
-import { Button, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
 import { Modal } from '@app/components/Modal';
@@ -9,6 +9,7 @@ import { QRReader, ScannedResult } from '@app/components/QRReader/QRReader';
 import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
 import { ContentRow } from '@app/pages/components/ModalComponents';
 import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
+import { Button } from '@app/components';
 
 import { TCreateAccountModalProps } from './types';
 

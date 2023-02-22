@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import styled from 'styled-components';
 import { Accordion } from '@unique-nft/ui-kit';
 
-import { Option } from '@app/types';
+import { OptionChips } from '@app/types';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 
@@ -11,7 +11,7 @@ import { CollectionFilterItem } from './CollectionFilterItem';
 
 export interface CollectionsFilterComponentProps {
   className?: string;
-  collections?: Option<number>[];
+  collections?: OptionChips<number>[];
 }
 
 const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
@@ -25,11 +25,11 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
       <Accordion expanded title="Collections">
         {collections?.map((c) => (
           <CollectionFilterItem
-            key={c.id}
-            id={c.id}
+            key={c.value}
+            id={c.value}
             icon={getTokenIpfsUriByImagePath(c.icon)}
             label={c.label}
-            checked={collectionsIds.includes(c.id)}
+            checked={collectionsIds.includes(c.value)}
             onChange={changeCollectionsIds}
           />
         ))}

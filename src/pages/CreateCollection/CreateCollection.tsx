@@ -4,6 +4,8 @@ import { useFormContext } from 'react-hook-form';
 import { Button, useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import { useDebounce } from 'use-debounce';
+import { Text, useNotifications } from '@unique-nft/ui-kit';
 
 import { ROUTE } from '@app/routes';
 import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
@@ -14,7 +16,16 @@ import {
   useDeviceSize,
   useFormValidator,
 } from '@app/hooks';
-import { StatusTransactionModal } from '@app/components';
+import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
+import { ROUTE } from '@app/routes';
+import {
+  Button,
+  CollectionSidebar,
+  CollectionStepper,
+  Confirm,
+  MintingBtn,
+  StatusTransactionModal,
+} from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { BottomBar } from '@app/pages/components/BottomBar';
 
@@ -59,10 +70,26 @@ export const CreateCollectionComponent = ({ className }: CreateCollectionProps) 
 
   const { fee } = useFeeContext();
 
-  const { isValid, errorMessage } = useFormValidator({
-    balanceValidationEnabled: step === 2,
-    watchedFields: step === 1 ? firstPage : undefined,
-    cost: [fee],
+  const collectionForm = useForm<CollectionForm>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      name: '',
+      symbol: '',
+      description: '',
+      address: selectedAccount?.address,
+      nesting: {
+        tokenOwner: true,
+      },
+    },
+  });
+  const {
+    control,
+    formState: { isValid },
+    handleSubmit,
+  } = collectionForm;
+  const collectionFormValues = useWatch<CollectionForm>({
+    control,
   });
 
   useEffect(() => {
@@ -90,12 +117,23 @@ export const CreateCollectionComponent = ({ className }: CreateCollectionProps) 
       return;
     }
 
-    setStep(step);
-  }, []);
+    goToNextStep(currentStep + 1);
+  };
+
+  const onCreateCollectionHandle = (form: CollectionForm) => {
+    if (!form.attributes?.length) {
+      setWarning(warnings.attributesAreNotDefine);
+
+      return;
+    }
+
+    onSubmit(form);
+  };
 
   const onSubmit = useCallback((form: CollectionForm) => {
     if (!selectedAccount) {
       error('Account is not found');
+
       return;
     }
 
@@ -133,16 +171,64 @@ export const CreateCollectionComponent = ({ className }: CreateCollectionProps) 
       />
       <WrapperContentStyled>
         <FormWrapper>
-          <CollectionTabs
-            step={step}
-            creationDisabled={!isValid}
-            nextStepDisabled={!isValid}
-            nextStepTooltip={errorMessage}
-            creationTooltip={errorMessage}
-            onClickStep={setStep}
-            onClickNextStep={onNextStep}
-            onClickPreviousStep={goToPreviousStep}
-            onCreateCollection={onCreateCollectionHandler}
+          <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
+          {isolatedCollectionForm}
+          <FeeInformationTransaction fee={feeFormatted} />
+          <ButtonGroup>
+            {!isLastStep && (
+              <MintingBtn
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'arrow-right',
+                  size: 12,
+                }}
+                title="Next step"
+                disabled={!isValid}
+                onClick={handleSubmit(onNextStep)}
+              />
+            )}
+            {!isFirstStep && (
+              <Button
+                iconLeft={{
+                  color: 'var(--color-primary-400)',
+                  name: 'arrow-left',
+                  size: 12,
+                }}
+                title="Previous step"
+                onClick={() => goToPreviousStep(currentStep - 1)}
+              />
+            )}
+            {isLastStep && (
+              <MintingBtn
+                role="primary"
+                title="Create collection"
+                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
+                disabled={!isValid || isBalanceInsufficient}
+                onClick={handleSubmit(onCreateCollectionHandle)}
+              />
+            )}
+          </ButtonGroup>
+          <Confirm
+            buttons={[
+              { title: 'No, return', onClick: () => setWarning(null) },
+              {
+                title: 'Yes, I am sure',
+                role: 'primary',
+                type: 'submit',
+                onClick: handleSubmit((form: CollectionForm) => {
+                  if (isLastStep) {
+                    onSubmit(form);
+                  } else {
+                    goToNextStep(2);
+                  }
+
+                  setWarning(null);
+                }),
+              },
+            ]}
+            isVisible={!!warning}
+            title={warning?.title}
+            onClose={() => setWarning(null)}
           >
             <Outlet />
             <FeeInformationTransaction />

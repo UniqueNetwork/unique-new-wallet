@@ -7,33 +7,41 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { KeyringPair } from '@polkadot/keyring/types';
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import amplitude from 'amplitude-js';
 
-import { sleep } from '@app/utils';
 import { NetworkType } from '@app/types';
 import { useAccountBalanceService } from '@app/api';
 import { useGraphQlAccountCommonInfo } from '@app/api/graphQL/account';
 import { ChainPropertiesContext } from '@app/context';
-import { AccountUtils } from '@app/account/AccountUtils';
+import { BaseWalletType } from '@app/account/type';
+import {
+  CONNECTED_WALLET_TYPE,
+  ConnectedWalletsName,
+  useWalletCenter,
+} from '@app/account/useWalletCenter';
 
 import { DefaultAccountKey } from './constants';
 import { SignModal } from '../components/SignModal/SignModal';
-import { Account, AccountProvider, AccountSigner } from './AccountContext';
+import { Account, AccountProvider, WalletsType } from './AccountContext';
 
 export const AccountWrapper: FC = ({ children }) => {
   const { chainProperties } = useContext(ChainPropertiesContext);
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [accounts, setAccounts] = useState<Map<string, BaseWalletType<WalletsType>>>(
+    new Map(),
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
   const [signer, setSigner] = useState<Account>();
-  const { data: balanceAccount } = useAccountBalanceService(selectedAccount?.address);
+  const { data: balanceAccount, refetch: refetchAccount } = useAccountBalanceService(
+    selectedAccount?.address,
+  );
   const { collectionsTotal, tokensTotal } = useGraphQlAccountCommonInfo(
     selectedAccount?.address,
   );
+
+  const walletsCenter = useWalletCenter(chainProperties);
 
   useEffect(() => {
     if (selectedAccount) {
@@ -41,24 +49,36 @@ export const AccountWrapper: FC = ({ children }) => {
     }
   }, [selectedAccount]);
 
-  const changeAccount = useCallback((account: Account) => {
-    localStorage.setItem(DefaultAccountKey, account.normalizedAddress);
+  useEffect(() => {
+    if (selectedAccount?.address) {
+      refetchAccount();
+    }
+  }, [chainProperties, refetchAccount, selectedAccount?.address]);
 
-    setSelectedAccount(account);
-  }, []);
+  const changeAccount = useCallback(
+    (account: Account) => {
+      if (selectedAccount?.address === account.address) {
+        return;
+      }
+      localStorage.setItem(DefaultAccountKey, account.normalizedAddress);
+
+      setSelectedAccount(account);
+    },
+    [selectedAccount?.address],
+  );
 
   const [isSignModalVisible, setIsSignModalVisible] = useState<boolean>(false);
 
-  const onSignCallback = useRef<(signature?: KeyringPair) => void | undefined>();
+  const onSignCallback = useRef<(password?: string) => void | undefined>();
 
   const showSignDialog = useCallback((signer: Account) => {
     setSigner(signer);
     setIsSignModalVisible(true);
 
-    return new Promise<KeyringPair>((resolve, reject) => {
-      onSignCallback.current = (signature?: KeyringPair) => {
-        if (signature) {
-          resolve(signature);
+    return new Promise<string>((resolve, reject) => {
+      onSignCallback.current = (password?: string) => {
+        if (password) {
+          resolve(password);
         } else {
           reject(new Error('Signing failed'));
         }
@@ -71,143 +91,107 @@ export const AccountWrapper: FC = ({ children }) => {
     onSignCallback.current && onSignCallback.current(undefined);
   }, []);
 
-  const onSignFinish = useCallback((signature: KeyringPair) => {
+  const onSignFinish = useCallback((password: string) => {
     setIsSignModalVisible(false);
-    onSignCallback.current && onSignCallback.current(signature);
+    onSignCallback.current && onSignCallback.current(password);
   }, []);
-
-  const initializeExtension = useCallback(async () => {
-    let extensions = await web3Enable('unique-minter-wallet');
-
-    if (extensions.length === 0) {
-      await sleep(1000);
-
-      extensions = await web3Enable('unique-minter-wallet');
-
-      if (extensions.length === 0) {
-        setFetchAccountsError(
-          'No extension installed, or the user did not accept the authorization',
-        );
-
-        setIsLoading(false);
-      }
-    }
-
-    return extensions;
-  }, []);
-
-  const getExtensionAccounts = useCallback(async () => {
-    await initializeExtension();
-
-    return (await web3Accounts()).map((account) => ({
-      ...account,
-      signerType: AccountSigner.extension,
-    })) as Account[];
-  }, [initializeExtension]);
-
-  const getLocalAccounts = useCallback(() => {
-    const keyringAccounts = keyring.getAccounts();
-
-    return keyringAccounts.map(
-      (account) =>
-        ({
-          address: account.address,
-          meta: account.meta,
-          signerType: AccountSigner.local,
-        } as Account),
-    );
-  }, []);
-
-  const getAccounts = useCallback(async () => {
-    // this call fires up the authorization popup
-    const extensionAccounts = await getExtensionAccounts();
-    const localAccounts = getLocalAccounts();
-
-    return [...extensionAccounts, ...localAccounts].map((account) => ({
-      ...account,
-      normalizedAddress: AccountUtils.normalizedAddressAccount(account.address),
-      address: AccountUtils.encodeAddress(account.address, chainProperties.SS58Prefix),
-    }));
-  }, [chainProperties?.SS58Prefix, getExtensionAccounts, getLocalAccounts]);
-
-  const fetchAccounts = useCallback(async () => {
-    const allAccounts = await getAccounts();
-
-    if (allAccounts?.length) {
-      setAccounts(allAccounts);
-    } else {
-      setFetchAccountsError('No accounts in extension');
-    }
-    setIsLoading(false);
-  }, [getAccounts, setAccounts, setFetchAccountsError, setIsLoading]);
 
   const forgetLocalAccount = useCallback(
     async (forgetAddress: string) => {
       keyring.forgetAccount(forgetAddress);
-      const accounts = await getAccounts();
-      setAccounts(accounts);
+      setIsLoading(true);
+      await walletsCenter.connectWallet('keyring');
+      setIsLoading(false);
     },
-    [getAccounts],
+    [walletsCenter],
   );
 
   useEffect(() => {
-    if (!accounts?.length) {
+    if (!accounts?.size || isLoading) {
       return;
     }
 
-    const defaultAccountAddress = localStorage.getItem(DefaultAccountKey);
+    const defaultAccountAddress = localStorage.getItem(DefaultAccountKey) || '';
 
-    const defaultAccount = accounts.find(
-      (item) => item.normalizedAddress === defaultAccountAddress,
+    const defaultAccount = accounts.get(defaultAccountAddress);
+
+    const [firstAccount] = accounts.keys();
+    const account = accounts.get(firstAccount);
+    const selectedAccount = defaultAccount ?? account;
+    if (selectedAccount) {
+      changeAccount(selectedAccount);
+    }
+  }, [accounts, changeAccount, isLoading]);
+
+  useEffect(() => {
+    const map = new Map();
+
+    for (const value of walletsCenter.connectedWallets.values()) {
+      value.forEach((w) => {
+        map.set(w.normalizedAddress, w);
+      });
+    }
+
+    setAccounts(map);
+  }, [walletsCenter.connectedWallets]);
+
+  useEffect(() => {
+    const getConnectedWallets = localStorage.getItem(CONNECTED_WALLET_TYPE);
+    if (!getConnectedWallets) {
+      return;
+    }
+    setIsLoading(true);
+    const wallets = getConnectedWallets.split(';') as ConnectedWalletsName[];
+    const connectedWallets = wallets.map((typeWallet) =>
+      walletsCenter.connectWallet(typeWallet),
     );
 
-    changeAccount(defaultAccount ?? accounts[0]);
-  }, [accounts, changeAccount]);
+    Promise.allSettled(connectedWallets).finally(() => {
+      setIsLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (selectedAccount) {
+      setSelectedAccount(() => ({
+        ...selectedAccount,
+        tokensTotal: tokensTotal ?? 0,
+        collectionsTotal: collectionsTotal ?? 0,
+        balance: balanceAccount,
+        unitBalance: (balanceAccount?.availableBalance.unit as NetworkType) ?? '',
+      }));
+    }
+  }, [tokensTotal, collectionsTotal, balanceAccount]);
 
   const value = useMemo(
     () => ({
       isLoading,
       signer,
       accounts,
-      selectedAccount: selectedAccount
-        ? {
-            ...selectedAccount,
-            tokensTotal,
-            collectionsTotal,
-            balance: balanceAccount,
-            unitBalance: (balanceAccount?.availableBalance.unit as NetworkType) ?? '',
-          }
-        : undefined,
+      selectedAccount,
       forgetLocalAccount,
-      fetchAccounts,
       fetchAccountsError,
       changeAccount,
       setFetchAccountsError,
-      setAccounts,
       setIsLoading,
       showSignDialog,
+      walletsCenter,
     }),
     [
       isLoading,
       signer,
       accounts,
       selectedAccount,
-      collectionsTotal,
-      tokensTotal,
-      balanceAccount,
       forgetLocalAccount,
-      fetchAccounts,
       fetchAccountsError,
       changeAccount,
       showSignDialog,
+      walletsCenter,
     ],
   );
 
-  useEffect(() => {
-    void fetchAccounts();
-  }, [fetchAccounts]);
-
   return (
+    // @ts-ignore
     <AccountProvider value={value}>
       {children}
       <SignModal
