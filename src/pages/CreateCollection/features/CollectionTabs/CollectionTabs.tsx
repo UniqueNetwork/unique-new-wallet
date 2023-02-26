@@ -45,11 +45,11 @@ const CollectionTabsComponent: FC<CollectionTabsProps> = ({
   }, [step]);
 
   const onClickPreviousStepHandler = () => {
-    onClickPreviousStep?.(--step);
+    onClickPreviousStep?.(step - 1);
   };
 
   const onClickNextStepHandler = () => {
-    onClickNextStep?.(++step);
+    onClickNextStep?.(step + 1);
   };
 
   const onClickStepHandler = (selectedStep: number) => {

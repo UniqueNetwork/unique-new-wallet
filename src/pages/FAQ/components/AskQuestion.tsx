@@ -22,7 +22,7 @@ import {
 import { Modal } from '@app/components/Modal';
 import { DeviceSize, useDeviceSize, useFormValidator } from '@app/hooks';
 import { config } from '@app/config';
-import { TooltipWrapper } from '@app/components';
+import { ConfirmBtn, TooltipWrapper } from '@app/components';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -147,31 +147,15 @@ export const AskQuestionComponent = () => {
               },
             }}
           />
-
-          {isValid ? (
-            <Button
-              title="Send"
-              role="primary"
-              type="submit"
-              disabled={!isValid}
-              wide={size === DeviceSize.xs}
-              onClick={handleSubmit(onSubmit)}
-            />
-          ) : (
-            <TooltipWrapper
-              message={errorMessage}
-              align={{ horizontal: 'right', vertical: 'bottom', appearance: 'vertical' }}
-            >
-              <Button
-                title="Send"
-                role="primary"
-                type="submit"
-                disabled={!isValid}
-                wide={size === DeviceSize.xs}
-                onClick={handleSubmit(onSubmit)}
-              />
-            </TooltipWrapper>
-          )}
+          <ConfirmBtn
+            title="Send"
+            role="primary"
+            type="submit"
+            disabled={!isValid}
+            wide={size === DeviceSize.xs}
+            tooltip={!isValid ? errorMessage : null}
+            onClick={handleSubmit(onSubmit)}
+          />
         </ModalContent>
       </Modal>
     </Wrapper>

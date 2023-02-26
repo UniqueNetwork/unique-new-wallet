@@ -31,7 +31,7 @@ export const useFormValidator = (
     trigger,
     setError,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useFormContext();
   const formValues = useWatch({ name: watchedFields } as any);
 
@@ -62,5 +62,5 @@ export const useFormValidator = (
     .sort()
     .join(joinSeparator);
 
-  return { errorMessage, isValid: !Object.keys(errors).length };
+  return { errorMessage, isValid };
 };

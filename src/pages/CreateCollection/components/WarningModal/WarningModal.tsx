@@ -2,7 +2,13 @@ import { Text } from '@unique-nft/ui-kit';
 
 import { Confirm } from '@app/components';
 
-export const WarningModal = ({ warning, onCancel, onConfirm }: any) => {
+type WarningModalProps = {
+  warning?: { title: string; description: string };
+  onCancel(): void;
+  onConfirm(): void;
+};
+
+export const WarningModal = ({ warning, onCancel, onConfirm }: WarningModalProps) => {
   return (
     <Confirm
       buttons={[
