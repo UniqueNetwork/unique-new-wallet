@@ -3,9 +3,11 @@ import { UniqueNFTFactory } from '@unique-nft/solidity-interfaces';
 import { ethers } from 'ethers';
 import { BN } from 'bn.js';
 import { Address } from '@unique-nft/utils';
+import { UseMutateAsyncFunction } from 'react-query';
+import { ExtrinsicResultResponse } from '@unique-nft/sdk';
 
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
-import { TransferTokenBody } from '@app/types/Api';
+import { TransferTokenBody, TransferTokenParsed } from '@app/types/Api';
 
 import { useMetamaskFee } from './useMetamaskFee';
 
@@ -37,7 +39,19 @@ export function useMetamaskTransferToken() {
   const { gas, gasPrice, ...feeResult } =
     useMetamaskFee<TransferTokenBody>(getEstimateGas);
 
-  const submitWaitResult = async ({ payload }: { payload: TransferFormDataType }) => {
+  const submitWaitResult: UseMutateAsyncFunction<
+    ExtrinsicResultResponse<TransferTokenParsed> | undefined,
+    | Error
+    | {
+        extrinsicError: ExtrinsicResultResponse<any>;
+      },
+    { payload: TransferTokenBody; senderAddress?: string | undefined }
+  > = async ({
+    payload,
+  }: {
+    payload: TransferTokenBody;
+    senderAddress?: string | undefined;
+  }) => {
     setIsLoadingSubmitResult(true);
     try {
       const nftFactory = await UniqueNFTFactory(
@@ -61,6 +75,7 @@ export function useMetamaskTransferToken() {
     } finally {
       setIsLoadingSubmitResult(false);
     }
+    return undefined;
   };
 
   return {

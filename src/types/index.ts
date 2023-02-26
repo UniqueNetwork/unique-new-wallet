@@ -7,3 +7,4 @@ export * from './nftToken';
 export * from './nftTypes';
 export * from './restApiTypes';
 export * from './stagesTypes';
+export * from './form';

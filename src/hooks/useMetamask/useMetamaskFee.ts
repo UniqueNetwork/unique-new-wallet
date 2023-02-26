@@ -1,5 +1,7 @@
 import { BN, hexToBigInt } from '@polkadot/util';
 import { useCallback, useState } from 'react';
+import { FeeResponse } from '@unique-nft/sdk';
+import { UseMutateAsyncFunction } from 'react-query';
 
 import { formatKusamaBalance } from '@app/utils';
 import { MetamaskDefaultDecimals } from '@app/account/MetamaskWallet';
@@ -8,11 +10,18 @@ export const useMetamaskFee = <P>(estimateGasMethod: (params: P) => Promise<BN>)
   const [fee, setFee] = useState<string>();
   const [gas, setGas] = useState<BN>();
   const [gasPrice, setGasPrice] = useState<BN>();
-  const [feeError, setFeeError] = useState();
-  const [feeStatus, setFeeStatus] = useState<'success' | 'error'>();
+  const [feeError, setFeeError] = useState<string | null>(null);
+  const [feeStatus, setFeeStatus] = useState<'success' | 'error' | 'loading' | 'idle'>(
+    'idle',
+  );
   const [feeLoading, setFeeLoading] = useState(false);
 
-  const getFee = useCallback(
+  const getFee: UseMutateAsyncFunction<
+    { fee: FeeResponse | undefined } | undefined,
+    Error,
+    P,
+    unknown
+  > = useCallback(
     async (params: P) => {
       setFeeLoading(true);
       const { request } = (window as any).ethereum;
@@ -27,13 +36,22 @@ export const useMetamaskFee = <P>(estimateGasMethod: (params: P) => Promise<BN>)
 
         setGas(estimateGas);
 
-        setFee(
-          formatKusamaBalance(
-            estimateGas.mul(new BN(hexToBigInt(gasPrice).toString())).toString(),
-            MetamaskDefaultDecimals,
-          ),
+        const amount = formatKusamaBalance(
+          estimateGas.mul(new BN(hexToBigInt(gasPrice).toString())).toString(),
+          MetamaskDefaultDecimals,
         );
+
+        const fee: FeeResponse = {
+          raw: estimateGas.toString(),
+          amount,
+          formatted: amount,
+          unit: '',
+          decimals: MetamaskDefaultDecimals,
+        };
+
+        setFee(fee.amount);
         setFeeStatus('success');
+        return { fee };
       } catch (error: any) {
         setFeeError(error);
         setFeeStatus('error');

@@ -6,7 +6,7 @@ import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { CollectionForm } from '@app/pages/CreateCollection/types';
 
-const CollectionSidebarComponent: VFC<{
+export const CollectionSidebarComponent: VFC<{
   collectionForm: CollectionForm;
   className?: string;
 }> = ({ collectionForm, className }) => {

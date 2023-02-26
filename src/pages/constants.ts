@@ -1,3 +1,5 @@
+import { FormError } from '@app/types/form';
+
 export const _10MB = 10000000;
 export const MAX_NAME_SIZE = 64;
 export const MAX_DESCRIPTION_SIZE = 256;
@@ -10,3 +12,9 @@ export const DEFAULT_POSITION_TOOLTIP = {
   horizontal: 'right',
   vertical: 'top',
 } as const;
+
+export const FORM_ERRORS: FormError = {
+  INVALID_ADDRESS: 'Please enter a valid address',
+  REQUIRED_FIELDS: 'You did not fill in the required fields',
+  INSUFFICIENT_BALANCE: "You don't have enough currency",
+};

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { useEffect, useMemo, useState } from 'react';
+import { FormProvider } from 'react-hook-form';
 import { Alert, Loader, useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
-import { useDebounce } from 'use-debounce';
 import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Address } from '@unique-nft/utils';
+import { NestTokenBody, TokenId } from '@unique-nft/sdk';
 
 import { Modal, BaseActionBtn } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
@@ -13,7 +13,6 @@ import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
 import { useAccounts } from '@app/hooks';
 import { CollectionNestingOption, useTokenNest } from '@app/api';
-import { useGraphQlGetTokensCollection } from '@app/api/graphQL/tokens/useGraphQlGetTokensCollection';
 import { Token } from '@app/api/graphQL/types';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { CreateBundleStagesModal } from '@app/pages/NFTDetails/Modals/CreateBundleModal/CreateBundleStagesModal';
@@ -21,6 +20,9 @@ import { CreateBundleForm } from '@app/pages/NFTDetails/Modals/CreateBundleModal
 import { queryKeys } from '@app/api/restApi/keysConfig';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 import { useAllOwnedTokensByCollection } from '@app/pages/NFTDetails/hooks/useAllOwnedTokensByCollection';
+import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
+
+import { NOT_ENOUGH_BALANCE_MESSAGE } from '../constants';
 
 export type TCreateBundleForm = {
   collection: CollectionNestingOption | null;
@@ -36,35 +38,28 @@ export const CreateBundleModal = <T extends TBaseToken>({
   const navigate = useNavigate();
   const getTokenPath = useGetTokenPath();
   const [isWaitingComplete, setIsWaitingComplete] = useState(false);
-  const form = useForm<TCreateBundleForm>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+
+  const {
+    form,
+    formData,
+    submitWaitResult,
+    getFee,
+    feeFormatted,
+    feeLoading,
+    debouncedFormValues,
+    isSufficientBalance,
+  } = useTransactionFormService<TokenId, NestTokenBody, TCreateBundleForm>({
+    MutateAsyncFunction: useTokenNest,
+    account: selectedAccount,
     defaultValues: {
       collection: null,
       token: null,
     },
   });
 
-  const {
-    formState: { isValid },
-    handleSubmit,
-    control,
-  } = form;
+  const { formState, handleSubmit } = form;
 
-  const collectionFormData = useWatch({ control });
-
-  const [debouncedFormValues] = useDebounce(collectionFormData, 300);
-
-  const { error, info } = useNotifications();
-  const {
-    submitWaitResult,
-    getFee,
-    feeLoading,
-    isLoadingSubmitResult,
-    feeFormatted,
-    feeError,
-    submitWaitResultError,
-  } = useTokenNest();
+  const { info } = useNotifications();
 
   const queryClient = useQueryClient();
 
@@ -72,15 +67,12 @@ export const CreateBundleModal = <T extends TBaseToken>({
     accountAddress: selectedAccount?.address,
   });
 
-  const tokensData = useAllOwnedTokensByCollection(
-    collectionFormData?.collection?.collection_id,
-    {
-      excludeTokenId:
-        collectionFormData?.collection?.collection_id === token?.collectionId
-          ? token?.tokenId
-          : undefined,
-    },
-  );
+  const tokensData = useAllOwnedTokensByCollection(formData?.collection?.collection_id, {
+    excludeTokenId:
+      formData?.collection?.collection_id === token?.collectionId
+        ? token?.tokenId
+        : undefined,
+  });
 
   const onSubmit = async (form: TCreateBundleForm) => {
     if (!token || !selectedAccount || !form.token || !form.collection) {
@@ -135,7 +127,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
     ) {
       return;
     }
-    isValid &&
+    formState.isValid &&
       getFee({
         parent: {
           collectionId: debouncedFormValues.collection.collection_id!,
@@ -147,21 +139,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
           tokenId: token.tokenId,
         },
       });
-  }, [debouncedFormValues, getFee, isValid, selectedAccount, token]);
-
-  useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
+  }, [debouncedFormValues, getFee, formState.isValid, selectedAccount, token]);
 
   const feeResults = () => {
     if (feeLoading) {
@@ -173,7 +151,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
     }
     return (
       <FeeContainer>
-        {feeFormatted && isValid ? (
+        {feeFormatted && formState.isValid ? (
           <FeeInformationTransaction fee={feeFormatted} />
         ) : (
           <Alert type="warning">
@@ -184,7 +162,17 @@ export const CreateBundleModal = <T extends TBaseToken>({
     );
   };
 
-  if (isLoadingSubmitResult || isWaitingComplete) {
+  const validationMessage = useMemo(() => {
+    if (!form.formState.isValid) {
+      return 'Please, select collection and token';
+    }
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [form.formState, isSufficientBalance, selectedAccount]);
+
+  if (isWaitingComplete) {
     return <CreateBundleStagesModal />;
   }
 
@@ -195,10 +183,10 @@ export const CreateBundleModal = <T extends TBaseToken>({
       footerButtons={
         <BaseActionBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
+          disabled={!formState.isValid || !isSufficientBalance}
           role="primary"
-          actionEnabled={isValid}
-          actionText="Please, select collection and token"
+          actionEnabled={formState.isValid}
+          actionText={validationMessage || ''}
           onClick={handleSubmit(onSubmit)}
         />
       }
@@ -208,7 +196,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
         <CreateBundleForm
           collectionsData={collectionsData}
           tokensData={tokensData}
-          disabledNftField={!collectionFormData?.collection}
+          disabledNftField={!formData?.collection}
         />
       </FormProvider>
       {feeResults()}

@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Loader, useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
-import { TransferTokenBody } from '@unique-nft/sdk';
-import { useDebounce } from 'use-debounce';
+import { Controller, FormProvider } from 'react-hook-form';
+import {
+  TransferRefungibleTokenParsed,
+  TransferRefungibleTokenRequest,
+  TransferTokenBody,
+} from '@unique-nft/sdk';
 import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
@@ -11,12 +14,14 @@ import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenRefungibleTransfer } from '@app/api';
 import { Modal, TransferBtn } from '@app/components';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
 
 import { TNestingToken } from '../../../type';
 import { TokenModalsProps } from '../../NFTModals';
 import { TransferRefungibleStagesModal } from './TransferRefungibleStagesModal';
 import { FormWrapper, TransferRow, InputTransfer, InputAmount } from '../components';
 import { TransferRefungibleFormDataType } from '../type';
+import { NOT_ENOUGH_BALANCE_MESSAGE } from '../../constants';
 
 export const TransferRefungibleModal = <T extends TNestingToken>({
   token,
@@ -24,35 +29,26 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
   onClose,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
-  const { error, info } = useNotifications();
+  const { info } = useNotifications();
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
   const [isWaitingComplete, setIsWaitingComplete] = useState(false);
+
   const {
+    form,
     submitWaitResult,
     getFee,
-    isLoadingSubmitResult,
     feeFormatted,
-    submitWaitResultError,
     feeLoading,
-    feeError,
-  } = useTokenRefungibleTransfer();
-
-  const { data: fractionsBalance, isFetching: isFetchingBalance } = useTokenGetBalance({
-    collectionId: token?.collectionId,
-    tokenId: token?.tokenId,
-    address: token?.nestingParentToken
-      ? Address.nesting.idsToAddress(
-          token.nestingParentToken.collectionId,
-          token.nestingParentToken.tokenId,
-        )
-      : selectedAccount?.address,
-    isFractional: true,
-  });
-
-  const form = useForm<TransferRefungibleFormDataType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    debouncedFormValues,
+    isSufficientBalance,
+  } = useTransactionFormService<
+    TransferRefungibleTokenParsed,
+    TransferRefungibleTokenRequest,
+    TransferRefungibleFormDataType
+  >({
+    MutateAsyncFunction: useTokenRefungibleTransfer,
+    account: selectedAccount,
     defaultValues: {
       to: '',
       from: token?.nestingParentToken
@@ -68,27 +64,19 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
     },
   });
 
-  const {
-    formState: { isValid },
-    control,
-  } = form;
+  const { formState, handleSubmit } = form;
 
-  const formValues = useWatch({ control });
-  const [transferDebounceValue] = useDebounce(formValues, 300);
-
-  useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
+  const { data: fractionsBalance, isFetching: isFetchingBalance } = useTokenGetBalance({
+    collectionId: token?.collectionId,
+    tokenId: token?.tokenId,
+    address: token?.nestingParentToken
+      ? Address.nesting.idsToAddress(
+          token.nestingParentToken.collectionId,
+          token.nestingParentToken.tokenId,
+        )
+      : selectedAccount?.address,
+    isFractional: true,
+  });
 
   const onSubmit = async (data: TransferRefungibleFormDataType) => {
     try {
@@ -118,16 +106,26 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
   };
 
   useEffect(() => {
-    isValid &&
-      transferDebounceValue &&
-      getFee(transferDebounceValue as TransferTokenBody);
-  }, [transferDebounceValue, getFee]);
+    formState.isValid &&
+      debouncedFormValues &&
+      getFee(debouncedFormValues as TransferTokenBody);
+  }, [debouncedFormValues, getFee]);
+
+  const validationMessage = useMemo(() => {
+    if (!form.formState.isValid) {
+      return 'Please enter a valid number of fractions and address';
+    }
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [form.formState, isSufficientBalance, selectedAccount]);
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isLoadingSubmitResult || isWaitingComplete) {
+  if (isWaitingComplete) {
     return <TransferRefungibleStagesModal />;
   }
 
@@ -138,16 +136,17 @@ export const TransferRefungibleModal = <T extends TNestingToken>({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid}
+          disabled={!formState.isValid || !isSufficientBalance}
           role="primary"
-          onClick={form.handleSubmit(onSubmit)}
+          tooltip={validationMessage}
+          onClick={handleSubmit(onSubmit)}
         />
       }
       onClose={onClose}
     >
       {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
-        fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        fee={formState.isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
         feeWarning="A fee will be calculated after entering the address and number of fractions"
         feeLoading={feeLoading}
       >

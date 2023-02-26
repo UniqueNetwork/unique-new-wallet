@@ -1,1 +1,1 @@
-export * from './CollectionSidebar';
+export { CollectionSidebar } from './CollectionSidebar';
