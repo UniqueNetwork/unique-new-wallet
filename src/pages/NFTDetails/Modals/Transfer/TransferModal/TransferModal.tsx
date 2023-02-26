@@ -1,18 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
-import { TransferTokenBody } from '@unique-nft/sdk';
-import { useDebounce } from 'use-debounce';
+import { Controller, FormProvider } from 'react-hook-form';
+import { TransferTokenBody, TransferTokenParsed } from '@unique-nft/sdk';
 import { useNavigate } from 'react-router-dom';
 
-import { useAccounts, useFormValidator } from '@app/hooks';
+import { useAccounts } from '@app/hooks';
 import { TransferStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferModal';
 import { useTokenTransfer } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
@@ -23,47 +16,46 @@ import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/Tr
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
-import { FORM_ERRORS } from '@app/pages/constants';
+import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
 
-export const TransferModalComponent = <T extends TBaseToken>({
+import { INVALID_ADDRESS_MESSAGE, NOT_ENOUGH_BALANCE_MESSAGE } from '../../constants';
+
+export const TransferModal = <T extends TBaseToken>({
   token,
   onClose,
   onComplete,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
-  const { error, info } = useNotifications();
+  const { info } = useNotifications();
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
   const [isWaitingComplete, setIsWaitingComplete] = useState(false);
+
   const {
+    form,
     submitWaitResult,
     getFee,
-    isLoadingSubmitResult,
     feeFormatted,
-    submitWaitResultError,
     feeLoading,
-    feeError,
-  } = useTokenTransfer();
-  const { errorMessage, isValid } = useFormValidator();
+    debouncedFormValues,
+    isSufficientBalance,
+  } = useTransactionFormService<
+    TransferTokenParsed,
+    TransferTokenBody,
+    TransferFormDataType
+  >({
+    MutateAsyncFunction: useTokenTransfer,
+    account: selectedAccount,
+    defaultValues: {
+      to: '',
+      from: selectedAccount?.address,
+      address: selectedAccount?.address,
+      tokenId: token?.tokenId,
+      collectionId: token?.collectionId,
+    },
+  });
 
-  const { control, handleSubmit } = useFormContext<TransferFormDataType>();
-
-  const formValues = useWatch({ control });
-  const [transferDebounceValue] = useDebounce(formValues, 300);
-
-  useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
+  const { formState, handleSubmit } = form;
 
   const onSubmit = async (data: TransferFormDataType) => {
     try {
@@ -82,16 +74,26 @@ export const TransferModalComponent = <T extends TBaseToken>({
   };
 
   useEffect(() => {
-    isValid &&
-      transferDebounceValue &&
-      getFee(transferDebounceValue as TransferTokenBody);
-  }, [transferDebounceValue, getFee]);
+    formState.isValid &&
+      debouncedFormValues &&
+      getFee(debouncedFormValues as TransferTokenBody);
+  }, [debouncedFormValues, getFee]);
+
+  const validationMessage = useMemo(() => {
+    if (!form.formState.isValid) {
+      return INVALID_ADDRESS_MESSAGE;
+    }
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [form.formState, isSufficientBalance, selectedAccount]);
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isLoadingSubmitResult || isWaitingComplete) {
+  if (isWaitingComplete) {
     return <TransferStagesModal />;
   }
 
@@ -102,16 +104,16 @@ export const TransferModalComponent = <T extends TBaseToken>({
       footerButtons={
         <TransferBtn
           title="Confirm"
+          disabled={!formState.isValid || !isSufficientBalance}
           role="primary"
-          disabled={!isValid}
-          tooltip={errorMessage}
+          tooltip={validationMessage}
           onClick={handleSubmit(onSubmit)}
         />
       }
       onClose={onClose}
     >
       <FormWrapper
-        fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        fee={formState.isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
         feeLoading={feeLoading}
       >
         <FormProvider {...form}>
@@ -141,28 +143,5 @@ export const TransferModalComponent = <T extends TBaseToken>({
         </FormProvider>
       </FormWrapper>
     </Modal>
-  );
-};
-
-export const TransferModal = <T extends TBaseToken>(props: NFTModalsProps<T>) => {
-  const { token } = props;
-  const { selectedAccount } = useAccounts();
-
-  const form = useForm<TransferFormDataType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      to: '',
-      from: selectedAccount?.address,
-      address: selectedAccount?.address,
-      tokenId: token?.tokenId,
-      collectionId: token?.collectionId,
-    },
-  });
-
-  return (
-    <FormProvider {...form}>
-      <TransferModalComponent {...props} />
-    </FormProvider>
   );
 };

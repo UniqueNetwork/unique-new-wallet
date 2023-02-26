@@ -20,7 +20,6 @@ export const useFormValidator = (
   },
 ) => {
   const { watchedFields, balanceValidationEnabled, cost, address } = config;
-  console.log(cost);
 
   const { selectedAccount } = useAccounts();
   const isSufficientBalance = useIsSufficientBalance(
@@ -46,8 +45,6 @@ export const useFormValidator = (
     if (!balanceValidationEnabled || isSufficientBalance === null) {
       return;
     }
-
-    console.log(isSufficientBalance);
 
     isSufficientBalance
       ? clearErrors('balance')

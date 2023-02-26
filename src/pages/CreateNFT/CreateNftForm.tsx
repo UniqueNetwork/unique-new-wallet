@@ -1,13 +1,6 @@
 import { FC, useCallback, useMemo, VFC } from 'react';
 import classNames from 'classnames';
-import {
-  Avatar,
-  Heading,
-  Loader,
-  Text,
-  Upload,
-  useNotifications,
-} from '@unique-nft/ui-kit';
+import { Avatar, Heading, Loader, Text, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import { CollectionInfoWithSchemaResponse } from '@unique-nft/sdk';
@@ -26,6 +19,7 @@ import {
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { useFileUpload } from '@app/api';
 import { Suggest } from '@app/components/Suggest';
+import { Upload } from '@app/components';
 
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';

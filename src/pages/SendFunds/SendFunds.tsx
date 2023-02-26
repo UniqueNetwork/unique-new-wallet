@@ -60,6 +60,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
   } = useFormContext<FundsForm>();
   const sendFundsValues = useWatch<FundsForm>({ control });
   const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
+
   const { errorMessage, isValid } = useFormValidator({
     balanceValidationEnabled: true,
     address: sendFundsValues.from?.address,
@@ -89,10 +90,15 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
   }, [chain, setCurrentChain]);
 
   useEffect(() => {
-    if (isValidForm) {
+    if (
+      sendFundsDebounceValues?.from?.address &&
+      sendFundsDebounceValues?.to?.address &&
+      sendFundsDebounceValues?.amount &&
+      isValidForm
+    ) {
       getFee({
-        address: sendFundsDebounceValues.from?.address,
-        destination: sendFundsDebounceValues.to?.address,
+        address: sendFundsDebounceValues.from.address,
+        destination: sendFundsDebounceValues.to.address,
         amount: sendFundsDebounceValues.amount,
       });
     }
@@ -114,7 +120,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
   };
 
   const total = useMemo(() => {
-    const parsedFee = Number(fee);
+    const parsedFee = Number(feeFormatted);
     const parsedAmount = Number(sendFundsValues?.amount);
 
     if (parsedFee && parsedAmount) {
@@ -122,7 +128,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     }
 
     return 0;
-  }, [sendFundsValues?.amount, fee]);
+  }, [sendFundsValues?.amount, feeFormatted]);
 
   const isolatedSendFundsForm = useMemo(
     () => <SendFundsForm apiEndpoint={chain.apiEndpoint} />,

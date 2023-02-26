@@ -12,7 +12,7 @@ import {
   useTokenCreate,
 } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { MintingBtn, StatusTransactionModal } from '@app/components';
+import { ConfirmBtn, StatusTransactionModal } from '@app/components';
 import {
   DeviceSize,
   useAccounts,
@@ -90,9 +90,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { data: collection } = useCollectionGetById(formValues.collectionId ?? 0);
 
   const isOldCollection = collection?.schema?.schemaName === '_old_';
-
-  console.log(isOldCollection);
-  console.log(isValid);
 
   const tokenAttributes: AttributeView[] | undefined = useMemo(() => {
     const attrsSchema = collection?.schema?.attributesSchema;
@@ -225,14 +222,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               </Alert>
             )}
             <ButtonGroup>
-              <MintingBtn
+              <ConfirmBtn
                 role="primary"
                 title="Confirm and create more"
                 disabled={!isValid || isOldCollection}
                 tooltip={isOldCollection ? config.oldCollectionMessage : errorMessage}
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
-              <MintingBtn
+              <ConfirmBtn
                 title="Confirm and close"
                 disabled={!isValid || isOldCollection}
                 tooltip={isOldCollection ? config.oldCollectionMessage : errorMessage}

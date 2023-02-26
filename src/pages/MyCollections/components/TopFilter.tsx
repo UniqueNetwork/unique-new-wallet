@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
 import { useApi } from '@app/hooks';
-import { IconProps, MintingBtn } from '@app/components';
+import { IconProps, ConfirmBtn } from '@app/components';
 import { Direction } from '@app/api/graphQL/types';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
@@ -103,7 +103,7 @@ export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
       )}
       {view === 'row' && (
         <ButtonGroup stack as={ControlsContainer}>
-          <MintingBtn
+          <ConfirmBtn
             iconLeft={{
               name: 'plus',
               size: 12,

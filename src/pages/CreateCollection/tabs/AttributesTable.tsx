@@ -1,14 +1,13 @@
 import { ReactNode, useCallback, VFC } from 'react';
 import styled from 'styled-components';
 import { Controller, useFieldArray, useWatch } from 'react-hook-form';
-import { Button, Icon, InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
+import { InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
 
-import { FORM_ERRORS } from '@app/pages';
-import { Table, TooltipWrapper } from '@app/components';
+import { Button, Icon, Table, TooltipWrapper } from '@app/components';
 
-import { rules, types } from '../../constants';
-import trash from '../../../../static/icons/trash.svg';
-import { EnumsInputController } from '../../components/EnumsInput/EnumsInputController';
+import { EnumsInputController } from '../components/EnumsInput/EnumsInputController';
+import trash from '../../../static/icons/trash.svg';
+import { rules, types } from '../constants';
 
 interface AttributesTableProps {
   className?: string;
@@ -29,10 +28,7 @@ const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
   return (
     <EnumsInputController
       rules={{
-        required: {
-          value: type.id !== 'string',
-          message: FORM_ERRORS.REQUIRED_FIELDS,
-        },
+        required: type.id !== 'string',
       }}
       defaultValue={null}
       isDisabled={type.id === 'string'}
@@ -60,10 +56,7 @@ const attributesColumns: TableColumnProps[] = [
         <Controller
           name={`attributes.${rowIndex}.name`}
           rules={{
-            required: {
-              value: true,
-              message: FORM_ERRORS.REQUIRED_FIELDS,
-            },
+            required: true,
           }}
           render={({ field: { value, onChange } }) => (
             <InputText
@@ -215,18 +208,45 @@ export const AttributesTable = styled(AttributesTableComponent)`
     .unique-table-data-row {
       padding-top: calc(var(--prop-gap) / 4);
       padding-bottom: calc(var(--prop-gap) / 4);
+
+      & > div > button {
+        height: 32px;
+      }
+    }
+
+    .unique-input-text input,
+    .unique-select .select-value {
+      font-size: var(--prop-font-size);
+      padding: 5px 8px;
+      height: 20px;
+    }
+
+    .unique-select .select-value {
+      padding: 5px 24px 5px 8px;
+    }
+
+    .enum-input .enum-input--input {
+      font-size: var(--prop-font-size);
+      padding: 5px 8px;
+      line-height: 1.5;
+      min-height: 22px;
     }
 
     .unique-input-text,
     .input-wrapper,
     .unique-select,
     .select-wrapper,
-    .unique-button {
+    .unique-button,
+    .enum-input .enum-input--input {
       padding: 0;
     }
 
     .unique-select {
       width: 100%;
+
+      .icon.icon-triangle {
+        margin: 12px;
+      }
     }
   }
 

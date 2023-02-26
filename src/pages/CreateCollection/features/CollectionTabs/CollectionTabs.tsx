@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Button, Stepper } from '@unique-nft/ui-kit';
 import { StepperProps } from '@unique-nft/ui-kit/dist/cjs/components/Stepper/Stepper';
 
-import { MintingBtn } from '@app/components';
+import { ConfirmBtn } from '@app/components';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 const CollectionStepperWrapper = styled.div`
@@ -77,7 +77,7 @@ const CollectionTabsComponent: FC<CollectionTabsProps> = ({
           />
         )}
         {lastStep.current ? (
-          <MintingBtn
+          <ConfirmBtn
             role="primary"
             title="Create collection"
             tooltip={creationTooltip}
@@ -85,7 +85,7 @@ const CollectionTabsComponent: FC<CollectionTabsProps> = ({
             onClick={onCreateCollection}
           />
         ) : (
-          <MintingBtn
+          <ConfirmBtn
             iconRight={{
               color: 'currentColor',
               name: 'arrow-right',

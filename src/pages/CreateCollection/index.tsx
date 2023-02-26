@@ -6,9 +6,7 @@ import { ROUTE } from '@app/routes';
 
 import { CollectionForm } from './types';
 import { FeeProvider } from './context';
-import { CreateCollectionComponent } from './CreateCollection';
-
-export * from './CreateCollection';
+import { CreateCollection } from './CreateCollection';
 
 export const CreateCollectionForm = () => {
   const { selectedAccount } = useAccounts();
@@ -29,13 +27,13 @@ export const CreateCollectionForm = () => {
   return (
     <FormProvider {...collectionForm}>
       <FeeProvider>
-        <CreateCollectionComponent />
+        <CreateCollection />
       </FeeProvider>
     </FormProvider>
   );
 };
 
-export const CreateCollection = withPageTitle({
+export const CreateCollectionPage = withPageTitle({
   header: 'Create a collection',
   backLink: ROUTE.MY_COLLECTIONS,
 })(CreateCollectionForm);

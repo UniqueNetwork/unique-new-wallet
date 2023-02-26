@@ -38,8 +38,6 @@ export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> 
     }
     const res = await Ethereum.getAccounts();
 
-    console.log('res', res);
-
     if (res.error) {
       throw new Error(res.error.message);
     }
