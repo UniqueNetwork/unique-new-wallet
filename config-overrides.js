@@ -18,6 +18,7 @@ module.exports = function override(config) {
     config.resolve.alias = {
         ...config.resolve.alias,
         process: 'process/',
+        '@unique-nft/utils/index': '@unique-nft/utils/index.js',
         '@app': path.resolve(__dirname, './src/'),
     };
     config.ignoreWarnings = [/Failed to parse source map/];

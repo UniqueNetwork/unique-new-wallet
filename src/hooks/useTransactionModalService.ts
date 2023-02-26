@@ -11,12 +11,13 @@ import { useIsSufficientBalance } from './useBalanceInsufficient';
 
 type UseTransactionModalServiceProps<R, D, F extends FieldValues> = {
   MutateAsyncFunction: () => {
-    fee: string;
-    feeFormatted: string;
+    fee: string | undefined;
+    feeFormatted: string | undefined;
     getFee: UseMutateAsyncFunction<
-      {
-        fee: FeeResponse;
-      },
+      | {
+          fee: FeeResponse | undefined;
+        }
+      | undefined,
       Error,
       D,
       unknown
@@ -33,7 +34,7 @@ type UseTransactionModalServiceProps<R, D, F extends FieldValues> = {
       { payload: D; senderAddress?: string | undefined }
     >;
     isLoadingSubmitResult: boolean;
-    submitWaitResultError: any;
+    submitWaitResultError: string | undefined;
   };
   account: Account<WalletsType> | undefined;
   defaultValues: DeepPartial<F>;

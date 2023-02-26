@@ -5,6 +5,9 @@ import { ethers } from 'ethers';
 import { BaseWalletEntity, BaseWalletType } from '@app/account/type';
 import { Account, AccountSigner } from '@app/account/AccountContext';
 
+export const MetamaskAccountName = 'Metamask Account';
+export const MetamaskDefaultDecimals = 18;
+
 export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> {
   private _accounts = new Map<string, BaseWalletType<IEthereumAccountResult>>();
   isMintingEnabled = false;
@@ -48,7 +51,7 @@ export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> 
       [
         res.address,
         {
-          name: 'Metamask Account',
+          name: MetamaskAccountName,
           normalizedAddress: res.address,
           address: res.address,
           walletMetaInformation: res,
@@ -62,7 +65,7 @@ export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> 
     return this._accounts;
   }
 
-  getSignature(unsignedTxPayload: UnsignedTxPayloadResponse, selectedAccount: Account) {
+  getSignature(unsignedTxPayload?: UnsignedTxPayloadResponse, selectedAccount?: Account) {
     // @ts-ignore
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     return provider.getSigner();

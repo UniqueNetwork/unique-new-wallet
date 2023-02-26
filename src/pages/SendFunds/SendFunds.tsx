@@ -39,7 +39,15 @@ const TransferStagesModal: VFC = () => {
 };
 
 export const SendFundsComponent: FC<SendFundsProps> = (props) => {
-  const { onClose, onSendSuccess, chain } = props;
+  const { onClose, senderAccount, onSendSuccess, chain } = props;
+
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid: isValidForm },
+  } = useFormContext<FundsForm>();
+  const sendFundsValues = useWatch<FundsForm>({ control });
+  const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
 
   const {
     fee,
@@ -51,15 +59,9 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     getFee,
     submitWaitResult,
     submitWaitResultError,
-  } = useAccountBalanceTransfer();
-
-  const {
-    control,
-    handleSubmit,
-    formState: { isValid: isValidForm },
-  } = useFormContext<FundsForm>();
-  const sendFundsValues = useWatch<FundsForm>({ control });
-  const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
+  } = useAccountBalanceTransfer({
+    senderAccount: sendFundsDebounceValues.from,
+  });
 
   const { errorMessage, isValid } = useFormValidator({
     balanceValidationEnabled: true,

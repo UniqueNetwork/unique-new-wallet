@@ -48,7 +48,10 @@ export const TransferModal = <T extends TBaseToken>({
     account: selectedAccount,
     defaultValues: {
       to: '',
-      from: selectedAccount?.address,
+      from:
+        token?.owner && Address.is.ethereumAddress(token.owner)
+          ? token?.owner
+          : selectedAccount?.address,
       address: selectedAccount?.address,
       tokenId: token?.tokenId,
       collectionId: token?.collectionId,

@@ -2,12 +2,12 @@ import { useCallback, useContext, useMemo, VFC } from 'react';
 import { GroupBase, Options, OptionsOrGroups } from 'react-select';
 import { Controller, useWatch } from 'react-hook-form';
 import { Text } from '@unique-nft/ui-kit';
+import { Address } from '@unique-nft/utils';
 
 import { Account } from '@app/account';
 import { useAccounts } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
 import { ChainPropertiesContext } from '@app/context';
-import { AccountUtils } from '@app/account/AccountUtils';
 import { AccountSelect, InputText } from '@app/components';
 
 import { Group, InputAmount, InputAmountButton, StyledAdditionalText } from './styles';
@@ -76,13 +76,10 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
         return false;
       }
 
-      try {
-        AccountUtils.encodeAddress(inputValue, chainProperties.SS58Prefix);
-
+      if (Address.is.validAddressInAnyForm(inputValue)) {
         return true;
-      } catch {
-        return false;
       }
+      return false;
     },
     [chainProperties, from],
   );
