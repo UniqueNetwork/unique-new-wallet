@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
@@ -32,6 +32,7 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
   const { info, error } = useNotifications();
   const { currentChain } = useApi();
   const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const {
     getFee,
@@ -96,34 +97,40 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
       tokenId: token.tokenId,
       amount: burnDebounceValue.amount || 1,
     });
-  }, [burnDebounceValue, token, selectedAccount?.address]);
+  }, [burnDebounceValue, token, selectedAccount?.address, isValid]);
 
-  const burnHandler = ({ amount }: BurnRefungibleFormDataType) => {
+  const burnHandler = async ({ amount }: BurnRefungibleFormDataType) => {
     if (!token || !selectedAccount?.address || !isValid) {
       return;
     }
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: {
+          address: selectedAccount.address,
+          collectionId: token.collectionId,
+          tokenId: token.tokenId,
+          amount,
+        },
+      });
 
-    submitWaitResult({
-      payload: {
-        address: selectedAccount.address,
-        collectionId: token.collectionId,
-        tokenId: token.tokenId,
-        amount,
-      },
-    }).then(() => {
       info('RFT burned successfully');
       if (Number(amount) === fractionsBalance?.amount) {
         navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
       }
-      onComplete();
-    });
+      await onComplete();
+    } catch {
+      onClose();
+    } finally {
+      setIsWaitingComplete(false);
+    }
   };
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isLoadingSubmitResult || isWaitingComplete) {
     return <BurnRefungibleStagesModal />;
   }
 
@@ -143,7 +150,8 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
     >
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
-        feeWarning="A fee will be calculated after entering the amount"
+        feeWarning="A fee will be calculated after entering the number of fractions"
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <TransferRow>

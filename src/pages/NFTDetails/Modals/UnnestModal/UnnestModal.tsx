@@ -49,8 +49,8 @@ export const UnnestModal = ({
   }, [selectedAccount, token]);
 
   useEffect(() => {
-    unnestData && getFee(unnestData);
-  }, [getFee, unnestData]);
+    !isWaitingComplete && unnestData && getFee(unnestData);
+  }, [getFee, unnestData, isWaitingComplete]);
 
   useEffect(() => {
     if (!feeError) {

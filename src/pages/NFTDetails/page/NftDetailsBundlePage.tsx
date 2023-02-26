@@ -495,6 +495,8 @@ const AchievementsWrapper = styled.div`
   flex-direction: column;
   gap: calc(var(--prop-gap) / 2);
   align-items: flex-end;
+  position: absolute;
+  width: 100%;
   span {
     position: relative;
   }

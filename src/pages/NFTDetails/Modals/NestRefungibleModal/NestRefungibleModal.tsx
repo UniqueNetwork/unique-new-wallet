@@ -198,7 +198,8 @@ export const NestRefungibleModal = <T extends TBaseToken>({
       {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
         fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
-        feeWarning="A fee will be calculated after entering the amount"
+        feeWarning="A fee will be calculated after entering the number of fractions and choosing parent NFT"
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <FormRow>
