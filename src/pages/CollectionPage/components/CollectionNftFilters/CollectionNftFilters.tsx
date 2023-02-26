@@ -20,7 +20,7 @@ import {
   ListNftsFilterType,
   useNftFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { MintingBtn } from '@app/components';
+import { ConfirmBtn } from '@app/components';
 import { Search } from '@app/pages/components/Search';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
@@ -123,7 +123,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
     <>
       <TabsFilter
         buttons={
-          <MintingBtn
+          <ConfirmBtn
             iconLeft={{
               name: 'plus',
               size: 12,

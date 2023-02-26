@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useMemo, VFC } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 
-import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize, useFormValidator } from '@app/hooks';
 import { Account } from '@app/account';
 import { Alert, Stages, TransferBtn, Modal } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
@@ -38,8 +38,8 @@ const TransferStagesModal: VFC = () => {
   );
 };
 
-export const SendFunds: FC<SendFundsProps> = (props) => {
-  const { onClose, senderAccount, onSendSuccess, chain } = props;
+export const SendFundsComponent: FC<SendFundsProps> = (props) => {
+  const { onClose, onSendSuccess, chain } = props;
 
   const {
     fee,
@@ -53,20 +53,19 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     submitWaitResultError,
   } = useAccountBalanceTransfer();
 
-  const sendFundsForm = useForm<FundsForm>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      from: senderAccount,
-    },
-  });
   const {
     control,
     handleSubmit,
-    formState: { isValid },
-  } = sendFundsForm;
+    formState: { isValid: isValidForm },
+  } = useFormContext<FundsForm>();
   const sendFundsValues = useWatch<FundsForm>({ control });
   const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
+
+  const { errorMessage, isValid } = useFormValidator({
+    balanceValidationEnabled: true,
+    address: sendFundsValues.from?.address,
+    cost: [fee, sendFundsValues.amount?.toString()],
+  });
 
   const size = useDeviceSize();
   const { setCurrentChain } = useApi();
@@ -91,10 +90,15 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   }, [chain, setCurrentChain]);
 
   useEffect(() => {
-    if (isValid) {
+    if (
+      sendFundsDebounceValues?.from?.address &&
+      sendFundsDebounceValues?.to?.address &&
+      sendFundsDebounceValues?.amount &&
+      isValidForm
+    ) {
       getFee({
-        address: sendFundsDebounceValues.from?.address,
-        destination: sendFundsDebounceValues.to?.address,
+        address: sendFundsDebounceValues.from.address,
+        destination: sendFundsDebounceValues.to.address,
         amount: sendFundsDebounceValues.amount,
       });
     }
@@ -116,7 +120,7 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
   };
 
   const total = useMemo(() => {
-    const parsedFee = Number(fee);
+    const parsedFee = Number(feeFormatted);
     const parsedAmount = Number(sendFundsValues?.amount);
 
     if (parsedFee && parsedAmount) {
@@ -124,15 +128,11 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
     }
 
     return 0;
-  }, [sendFundsValues?.amount, fee]);
+  }, [sendFundsValues?.amount, feeFormatted]);
 
   const isolatedSendFundsForm = useMemo(
-    () => (
-      <FormProvider {...sendFundsForm}>
-        <SendFundsForm apiEndpoint={chain.apiEndpoint} />
-      </FormProvider>
-    ),
-    [sendFundsForm],
+    () => <SendFundsForm apiEndpoint={chain.apiEndpoint} />,
+    [],
   );
 
   return (
@@ -150,12 +150,12 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
                     <Loader size="small" label="Calculating fee" placement="left" />
                   </FeeLoader>
                 )}
-                {!isValid && (
+                {!isValidForm && (
                   <Text color="inherit" size="s">
                     A fee will be calculated after entering the recipient and amount
                   </Text>
                 )}
-                {isValid && feeStatus === 'success' && (
+                {isValidForm && feeStatus === 'success' && (
                   <Text color="inherit" size="s">
                     {`A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
               is sponsored`}
@@ -165,7 +165,9 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
             </ContentRow>
             {((sendFundsValues.amount && fee) || feeLoading) && (
               <ContentRow>
-                {!feeLoading && isValid && <Text weight="light">Total ~ {total}</Text>}
+                {!feeLoading && isValidForm && (
+                  <Text weight="light">Total ~ {total}</Text>
+                )}
                 {feeLoading && (
                   <TotalLoader>
                     <Loader label="Calculating total" placement="left" />
@@ -179,12 +181,31 @@ export const SendFunds: FC<SendFundsProps> = (props) => {
               role="primary"
               title="Confirm"
               wide={size === DeviceSize.xs}
-              disabled={!isValid || feeLoading}
+              disabled={!isValid}
+              tooltip={errorMessage}
               onClick={handleSubmit(submitHandler)}
             />
           </ModalFooter>
         </Modal>
       )}
     </>
+  );
+};
+
+export const SendFunds: FC<SendFundsProps> = (props) => {
+  const { senderAccount } = props;
+
+  const sendFundsForm = useForm<FundsForm>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      from: senderAccount,
+    },
+  });
+
+  return (
+    <FormProvider {...sendFundsForm}>
+      <SendFundsComponent {...props} />
+    </FormProvider>
   );
 };

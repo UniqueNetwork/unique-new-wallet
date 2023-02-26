@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useForm, Controller, FormProvider, useWatch } from 'react-hook-form';
+import { useEffect, useMemo, useState } from 'react';
+import { Controller, FormProvider } from 'react-hook-form';
 import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
-import { TransferTokenBody } from '@unique-nft/sdk';
+import { TransferTokenBody, TransferTokenParsed } from '@unique-nft/sdk';
 import { useQueryClient } from 'react-query';
-import { useDebounce } from 'use-debounce';
 import { useNavigate } from 'react-router-dom';
 
 import { Modal, TransferBtn } from '@app/components';
@@ -19,22 +18,15 @@ import { useAccounts } from '@app/hooks';
 import { queryKeys } from '@app/api/restApi/keysConfig';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
+
+import { INVALID_ADDRESS_MESSAGE, NOT_ENOUGH_BALANCE_MESSAGE } from '../../constants';
 
 export const TransferNestedTokenModal = ({
   token,
   onClose,
   onComplete,
 }: TokenModalsProps<TNestingToken>) => {
-  const {
-    getFee,
-    feeFormatted,
-    submitWaitResult,
-    feeError,
-    submitWaitResultError,
-    isLoadingSubmitResult,
-    feeLoading,
-  } = useTokenTransfer();
-
   const queryClient = useQueryClient();
   const { error, info } = useNotifications();
   const { selectedAccount } = useAccounts();
@@ -42,23 +34,31 @@ export const TransferNestedTokenModal = ({
   const navigate = useNavigate();
   const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
-  const form = useForm<TransferFormDataType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+  const {
+    form,
+    submitWaitResult,
+    getFee,
+    feeFormatted,
+    feeLoading,
+    debouncedFormValues,
+    isSufficientBalance,
+  } = useTransactionFormService<
+    TransferTokenParsed,
+    TransferTokenBody,
+    TransferFormDataType
+  >({
+    MutateAsyncFunction: useTokenTransfer,
+    account: selectedAccount,
     defaultValues: {
       to: '',
-      from: token?.nestingParentToken ? '' : token?.owner,
+      from: selectedAccount?.address,
       address: selectedAccount?.address,
       tokenId: token?.tokenId,
       collectionId: token?.collectionId,
     },
   });
 
-  const {
-    formState: { isValid },
-    setValue,
-    control,
-  } = form;
+  const { formState, setValue, handleSubmit } = form;
 
   const {
     data: parentToken,
@@ -85,28 +85,11 @@ export const TransferNestedTokenModal = ({
     setValue('from', parentToken.address);
   }, [parentToken?.address, setValue]);
 
-  const formValues = useWatch({ control });
-  const [transferDebounceValue] = useDebounce(formValues, 300);
-
   useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
-
-  useEffect(() => {
-    isValid &&
-      transferDebounceValue &&
-      getFee(transferDebounceValue as TransferTokenBody);
-  }, [transferDebounceValue, getFee]);
+    formState.isValid &&
+      debouncedFormValues &&
+      getFee(debouncedFormValues as TransferTokenBody);
+  }, [debouncedFormValues, getFee]);
 
   const onSubmit = async (data: TransferFormDataType) => {
     try {
@@ -126,7 +109,17 @@ export const TransferNestedTokenModal = ({
     }
   };
 
-  if (isLoadingSubmitResult || isWaitingComplete) {
+  const validationMessage = useMemo(() => {
+    if (!form.formState.isValid) {
+      return INVALID_ADDRESS_MESSAGE;
+    }
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [form.formState, isSufficientBalance, selectedAccount]);
+
+  if (isWaitingComplete) {
     return <TransferNestedStagesModal />;
   }
 
@@ -137,16 +130,17 @@ export const TransferNestedTokenModal = ({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid}
+          disabled={!formState.isValid || !isSufficientBalance}
           role="primary"
-          onClick={form.handleSubmit(onSubmit)}
+          tooltip={validationMessage}
+          onClick={handleSubmit(onSubmit)}
         />
       }
       onClose={onClose}
     >
       {isFetchingParentToken && <Loader isFullPage={true} />}
       <FormWrapper
-        fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        fee={formState.isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
         feeLoading={feeLoading}
       >
         <FormProvider {...form}>

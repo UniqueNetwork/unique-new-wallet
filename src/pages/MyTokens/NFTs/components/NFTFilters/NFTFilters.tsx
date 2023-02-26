@@ -5,7 +5,7 @@ import { Select } from '@unique-nft/ui-kit';
 
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
-import { MintingBtn } from '@app/components';
+import { ConfirmBtn } from '@app/components';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { Direction } from '@app/api/graphQL/types';
@@ -53,7 +53,7 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
   return (
     <TabsFilter
       buttons={
-        <MintingBtn
+        <ConfirmBtn
           iconLeft={{
             name: 'plus',
             size: 12,

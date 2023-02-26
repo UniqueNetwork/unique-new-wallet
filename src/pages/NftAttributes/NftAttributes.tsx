@@ -1,6 +1,6 @@
 import { Heading, Table, Text } from '@unique-nft/ui-kit';
 
-import { CollectionStepper } from '../../components/CollectionStepper';
+import { CollectionStepper } from '../CreateCollection/components/CollectionStepper';
 
 const NftAttributes = () => {
   return (

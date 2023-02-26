@@ -20,7 +20,7 @@ import {
   CollectionSidebar,
   CollectionStepper,
   Confirm,
-  MintingBtn,
+  ConfirmBtn,
   StatusTransactionModal,
 } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
@@ -188,7 +188,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           <FeeInformationTransaction fee={feeFormatted} />
           <ButtonGroup>
             {!isLastStep && (
-              <MintingBtn
+              <ConfirmBtn
                 iconRight={{
                   color: 'currentColor',
                   name: 'arrow-right',
@@ -211,7 +211,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
               />
             )}
             {isLastStep && (
-              <MintingBtn
+              <ConfirmBtn
                 role="primary"
                 title="Create collection"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
