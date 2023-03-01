@@ -1,4 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, VFC } from 'react';
+import { Address } from '@unique-nft/utils';
 
 import ApiContext from '@app/api/ApiContext';
 import AccountContext from '@app/account/AccountContext';
@@ -19,6 +20,7 @@ import {
 } from '@app/pages';
 import { useGraphQlGetRftFractionsByOwner } from '@app/api/graphQL/tokens/useGraphQlGetRftFractionsByOwner';
 import { TokenTypeEnum } from '@app/api/graphQL/types';
+import { ChainPropertiesContext } from '@app/context';
 
 import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useNFTsContext } from '../context';
@@ -33,6 +35,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
   const { currentChain } = useContext(ApiContext);
+  const { chainProperties } = useContext(ChainPropertiesContext);
   const {
     tokensPage,
     statusFilter,
@@ -61,7 +64,12 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     fetchMore,
     refetchOwnerTokens,
   } = useGraphQlOwnerTokens(
-    selectedAccount?.address,
+    selectedAccount?.address && Address.is.substrateAddress(selectedAccount.address)
+      ? Address.normalize.substrateAddress(
+          selectedAccount.address,
+          chainProperties.SS58Prefix,
+        )
+      : selectedAccount?.address,
     {
       statusFilter,
       collectionsIds,
