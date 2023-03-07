@@ -185,7 +185,7 @@ const NFTDetailsHeaderComponent: VFC<NFTDetailsHeaderProps> = ({
               return;
             } else if (opt.id === 'scan') {
               openInNewTab(
-                `${currentChain.uniquescanAddress}/nfts/${collectionId}/${tokenId}`,
+                `${currentChain.uniquescanAddress}/tokens/${collectionId}/${tokenId}`,
               );
             }
 
