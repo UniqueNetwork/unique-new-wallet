@@ -1,7 +1,7 @@
 import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Button, Dropdown, Icon, TableColumnProps, Text } from '@unique-nft/ui-kit';
+import { Dropdown, Icon, TableColumnProps, Text, Button } from '@unique-nft/ui-kit';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';

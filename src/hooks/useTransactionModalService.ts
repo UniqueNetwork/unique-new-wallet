@@ -1,0 +1,99 @@
+import { DeepPartial, FieldValues, useForm, useWatch } from 'react-hook-form';
+import { useDebounce } from 'use-debounce';
+import { useEffect } from 'react';
+import { useNotifications } from '@unique-nft/ui-kit';
+import { ExtrinsicResultResponse, FeeResponse } from '@unique-nft/sdk';
+import { UseMutateAsyncFunction } from 'react-query';
+
+import { Account, WalletsType } from '@app/account';
+
+import { useIsSufficientBalance } from './useBalanceInsufficient';
+
+type UseTransactionModalServiceProps<R, D, F extends FieldValues> = {
+  MutateAsyncFunction: () => {
+    fee: string | undefined;
+    feeFormatted: string | undefined;
+    getFee: UseMutateAsyncFunction<
+      | {
+          fee: FeeResponse | undefined;
+        }
+      | undefined,
+      Error,
+      D,
+      unknown
+    >;
+    feeStatus: 'error' | 'loading' | 'idle' | 'success';
+    feeLoading: boolean;
+    feeError: string | null;
+    submitWaitResult: UseMutateAsyncFunction<
+      ExtrinsicResultResponse<R> | undefined,
+      | Error
+      | {
+          extrinsicError: ExtrinsicResultResponse<any>;
+        },
+      { payload: D; senderAddress?: string | undefined }
+    >;
+    isLoadingSubmitResult: boolean;
+    submitWaitResultError: string | undefined;
+  };
+  account: Account<WalletsType> | undefined;
+  defaultValues: DeepPartial<F>;
+};
+
+export const useTransactionFormService = <R, D, F extends FieldValues>({
+  MutateAsyncFunction,
+  account,
+  defaultValues,
+}: UseTransactionModalServiceProps<R, D, F>) => {
+  const { error } = useNotifications();
+  const {
+    getFee,
+    feeFormatted,
+    submitWaitResult,
+    isLoadingSubmitResult,
+    feeError,
+    feeLoading,
+    submitWaitResultError,
+  } = MutateAsyncFunction();
+
+  const isSufficientBalance = useIsSufficientBalance(account?.address, feeFormatted);
+
+  const form = useForm<F>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues,
+  });
+
+  const { control } = form;
+
+  const formData = useWatch({ control });
+  const [debouncedFormValues] = useDebounce(formData, 300);
+
+  useEffect(() => {
+    if (!feeError) {
+      return;
+    }
+    error(feeError);
+  }, [feeError]);
+
+  useEffect(() => {
+    if (!submitWaitResultError) {
+      return;
+    }
+    error(submitWaitResultError);
+  }, [submitWaitResultError]);
+
+  return {
+    form,
+    formData,
+    feeFormatted,
+    isLoadingSubmitResult,
+    feeError,
+    feeLoading,
+    submitWaitResultError,
+    debouncedFormValues,
+    isSufficientBalance,
+    getFee,
+    submitWaitResult,
+  };
+};

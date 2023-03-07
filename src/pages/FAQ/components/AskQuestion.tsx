@@ -5,10 +5,11 @@ import {
   Text,
   useNotifications,
   Loader,
+  TooltipAlign,
 } from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider, useWatch, useFormContext } from 'react-hook-form';
 
 import {
   InputController,
@@ -19,8 +20,9 @@ import {
   useAskQuestionRequest,
 } from '@app/api/restApi/ask-question/useAskQuestionRequest';
 import { Modal } from '@app/components/Modal';
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useDeviceSize, useFormValidator } from '@app/hooks';
 import { config } from '@app/config';
+import { ConfirmBtn, TooltipWrapper } from '@app/components';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -37,27 +39,15 @@ const Wrapper = styled.div`
   }
 `;
 
-export const AskQuestion = () => {
+export const AskQuestionComponent = () => {
   const [visibleModal, setVisibleModal] = useState(false);
 
   const size = useDeviceSize();
-  const form = useForm<AskQuestionRequestType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      name: '',
-      email: '',
-      question: '',
-    },
-  });
+  const { isValid, errorMessage } = useFormValidator();
+  const { handleSubmit, reset } = useFormContext<AskQuestionRequestType>();
 
+  const { info, error } = useNotifications();
   const { createAskQuestionRequest, isLoadingRequestQuestion } = useAskQuestionRequest();
-
-  const {
-    formState: { isValid },
-    handleSubmit,
-    reset,
-  } = form;
 
   const onSubmit = (data: AskQuestionRequestType) => {
     createAskQuestionRequest(data)
@@ -74,7 +64,6 @@ export const AskQuestion = () => {
     reset();
   }, [reset, visibleModal]);
 
-  const { info, error } = useNotifications();
   return (
     <Wrapper>
       <Heading size="3">Didn&apos;t find the answer? Write to us.</Heading>
@@ -117,52 +106,77 @@ export const AskQuestion = () => {
       >
         {isLoadingRequestQuestion && <Loader isFullPage={true} />}
         <ModalContent>
-          <FormProvider {...form}>
-            <InputController
-              name="name"
-              label="Name *"
-              className="input"
-              id="name"
-              rules={{
-                required: true,
-              }}
-            />
-            <InputController
-              name="email"
-              label="Email *"
-              className="input"
-              id="email"
-              rules={{
-                required: true,
-                pattern: {
-                  value: /\S+@\S+\.\S+/,
-                  message: 'Entered value does not match email format',
-                },
-              }}
-            />
-            <TextareaController
-              name="question"
-              label="Question *"
-              className="textarea"
-              id="question"
-              rows={6}
-              rules={{
-                required: true,
-              }}
-            />
-
-            <Button
-              title="Send"
-              role="primary"
-              type="submit"
-              disabled={!isValid}
-              wide={size === DeviceSize.xs}
-              onClick={handleSubmit(onSubmit)}
-            />
-          </FormProvider>
+          <InputController
+            name="name"
+            label="Name *"
+            className="input"
+            id="name"
+            rules={{
+              required: {
+                value: true,
+                message: 'You did not fill in the required fields',
+              },
+            }}
+          />
+          <InputController
+            name="email"
+            label="Email *"
+            className="input"
+            id="email"
+            rules={{
+              required: {
+                value: true,
+                message: 'You did not fill in the required fields',
+              },
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: 'Email is not correct',
+              },
+            }}
+          />
+          <TextareaController
+            name="question"
+            label="Question *"
+            className="textarea"
+            id="question"
+            rows={6}
+            rules={{
+              required: {
+                value: true,
+                message: 'You did not fill in the required fields',
+              },
+            }}
+          />
+          <ConfirmBtn
+            title="Send"
+            role="primary"
+            type="submit"
+            disabled={!isValid}
+            wide={size === DeviceSize.xs}
+            tooltip={!isValid ? errorMessage : null}
+            onClick={handleSubmit(onSubmit)}
+          />
         </ModalContent>
       </Modal>
     </Wrapper>
+  );
+};
+
+export const AskQuestion = () => {
+  const form = useForm<AskQuestionRequestType>({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    defaultValues: {
+      name: '',
+      email: '',
+      question: '',
+    },
+  });
+
+  return (
+    <FormProvider {...form}>
+      <AskQuestionComponent />
+    </FormProvider>
   );
 };
 

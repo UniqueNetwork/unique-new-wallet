@@ -1,12 +1,16 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Text } from '@unique-nft/ui-kit';
+import { Text } from '@unique-nft/ui-kit';
+
+import { Button } from '../Button';
 
 interface AccordionProps {
-  title: string;
+  title: ReactNode;
   isOpen?: boolean;
   isClearShow?: boolean;
   onClear?(): void;
+  className?: string;
+  onToggle?(isOpen: boolean): void;
 }
 
 const AccordionChevronIcon = () => {
@@ -33,12 +37,15 @@ const Accordion: FC<AccordionProps> = ({
   isOpen: isOpenProps,
   children,
   onClear,
+  className,
   isClearShow,
+  onToggle,
 }) => {
   const [isOpen, setIsOpen] = useState(isOpenProps);
 
-  const onToggle = useCallback(() => {
+  const onTitleClick = useCallback(() => {
     setIsOpen(!isOpen);
+    onToggle?.(!isOpen);
   }, [isOpen]);
 
   const onClearClick = useCallback(() => {
@@ -46,9 +53,9 @@ const Accordion: FC<AccordionProps> = ({
   }, [onClear]);
 
   return (
-    <AccordionWrapper>
+    <AccordionWrapper className={className}>
       <AccordionHeaderWrapper>
-        <AccordionTitle isOpen={isOpen} onClick={onToggle}>
+        <AccordionTitle isOpen={isOpen} onClick={onTitleClick}>
           <Text>{title}</Text>
           <AccordionChevronIcon />
         </AccordionTitle>

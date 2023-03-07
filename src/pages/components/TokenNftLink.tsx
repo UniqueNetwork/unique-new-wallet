@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import { Achievement, TokenLink } from '@app/components';
 import { Token, TokenTypeEnum } from '@app/api/graphQL/types';
+import { formatLongNumber } from '@app/utils';
 
 export const TokenNftLink = ({
   token,
@@ -55,11 +56,22 @@ export const TokenNftLink = ({
             {token.collection_name} [id {token.collection_id}]
           </Text>
           {!token.parent_id && token.nested && (
-            <NestedWrapper>
+            <AdditionalWrapper>
               <Text appearance="block" weight="light" size="s" color="grey-500">
                 Nested items: <span className="count">{token.children_count}</span>
               </Text>
-            </NestedWrapper>
+            </AdditionalWrapper>
+          )}
+          {token.type === TokenTypeEnum.RFT && (
+            <AdditionalWrapper>
+              <Text appearance="block" weight="light" size="s" color="grey-500">
+                Owned fractions:{' '}
+                <span className="count">
+                  {formatLongNumber(Number(token.tokens_amount))}/
+                  {formatLongNumber(Number(token.total_pieces))}
+                </span>
+              </Text>
+            </AdditionalWrapper>
           )}
         </>
       }
@@ -68,7 +80,7 @@ export const TokenNftLink = ({
   );
 };
 
-const NestedWrapper = styled.div`
+const AdditionalWrapper = styled.div`
   margin-top: calc(var(--prop-gap) / 2);
 
   .count {

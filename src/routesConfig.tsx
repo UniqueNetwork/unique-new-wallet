@@ -5,7 +5,7 @@ import {
   Coins,
   CollectionNft,
   CollectionPage,
-  CreateCollection,
+  CreateCollectionPage,
   CreateNFT,
   Faq,
   MyCollections,
@@ -84,7 +84,7 @@ export const routes: RouteConfig = {
       ],
     },
     {
-      element: <CreateCollection />,
+      element: <CreateCollectionPage />,
       name: 'Create collection',
       path: ROUTE.CREATE_COLLECTION,
       children: [

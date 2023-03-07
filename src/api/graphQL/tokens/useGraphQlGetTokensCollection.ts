@@ -16,6 +16,7 @@ const GET_TOKENS_COLLECTION = gql`
       offset: $offset
       limit: $limit
       order_by: { token_id: $direction }
+      distinct_on: token_id
     ) {
       count
       data {
@@ -25,6 +26,7 @@ const GET_TOKENS_COLLECTION = gql`
         collection_id
         collection_name
         image
+        nested
       }
     }
   }
@@ -49,6 +51,7 @@ export const useGraphQlGetTokensCollection = ({
         limit: 10000,
         where: {
           burned: { _eq: 'false' },
+          type: { _eq: 'NFT' },
           ...(excludeCurrentTokenId !== undefined && {
             token_id: { _neq: excludeCurrentTokenId },
           }),
@@ -62,7 +65,7 @@ export const useGraphQlGetTokensCollection = ({
             },
             {
               _or: [
-                { owner: { _eq: selectedAccount?.address } },
+                { tokens_owner: { _eq: selectedAccount?.address } },
                 { owner_normalized: { _eq: selectedAccount?.address } },
               ],
             },

@@ -21,6 +21,7 @@ const COLLECTION_BY_ID_QUERY = gql`
         description
         date_of_creation
         owner_can_destroy
+        mode
       }
     }
   }

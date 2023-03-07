@@ -1,37 +1,36 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { Heading, Text } from '@unique-nft/ui-kit';
 
-import { useTokenGetTotalPieces } from '@app/api/restApi/token/useTokenGetTotalPieces';
-import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
-import { useAccounts } from '@app/hooks';
 import { ProgressBar } from '@app/components';
+import { formatBlockNumber, formatLongNumber } from '@app/utils';
 
 import { TBaseToken } from '../type';
 
 interface FractionalInformationProps<T extends TBaseToken> {
-  token?: T;
+  balance?: number;
+  pieces?: number;
   className?: string;
 }
 
 const FractionalInformationComponent = <T extends TBaseToken>({
-  token,
+  balance,
+  pieces,
   className,
 }: FractionalInformationProps<T>) => {
-  const { selectedAccount } = useAccounts();
+  const percent = useMemo(() => {
+    return ((balance || 0) / (pieces || 1)) * 100;
+  }, [balance, pieces]);
 
-  const { data: pieces } = useTokenGetTotalPieces({
-    tokenId: token?.tokenId,
-    collectionId: token?.collectionId,
-  });
-
-  const { data: balance } = useTokenGetBalance({
-    tokenId: token?.tokenId,
-    collectionId: token?.collectionId,
-    address: selectedAccount?.address,
-  });
-
-  const percent = ((balance?.amount || 0) / (pieces?.amount || 1)) * 100;
+  const percentText = useMemo(() => {
+    if (percent < 0.01) {
+      return '<0.01 %';
+    }
+    if (percent > 99.99 && percent < 100) {
+      return '>99.99 %';
+    }
+    return `${percent.toFixed(2)} %`;
+  }, [percent]);
 
   return (
     <div className={className}>
@@ -42,19 +41,19 @@ const FractionalInformationComponent = <T extends TBaseToken>({
         <Text size="m" weight="light" color="grey-500">
           Total minted fractions:
         </Text>
-        <Text>{pieces?.amount || 0}</Text>
+        <Text>{formatLongNumber(pieces || 0)}</Text>
       </Row>
       <Row>
         <Text size="m" weight="light" color="grey-500">
           Owned fractions:
         </Text>
-        <Text>{balance?.amount || 0}</Text>
+        <Text>{formatLongNumber(balance || 0)}</Text>
       </Row>
       <Row>
         <Text size="m" weight="light" color="grey-500">
           Ownership percentage:
         </Text>
-        <Text>{`${percent.toFixed(0)}%`}</Text>
+        <Text>{percentText}</Text>
       </Row>
       <Row>
         <ProgressBar filledPercent={percent} height={14} />

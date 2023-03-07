@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Button, Select } from '@unique-nft/ui-kit';
+import { Select } from '@unique-nft/ui-kit';
 
 import { Direction } from '@app/api/graphQL/types';
 import { CollectionsFilter, StatusFilter, TypeFilter } from '@app/pages';
@@ -10,6 +10,8 @@ import { OptionChips as CollectionOption } from '@app/types';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { Search } from '@app/pages/components/Search';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
+
+import { Button } from '../Button';
 
 export const MobileFilters = ({
   collections,

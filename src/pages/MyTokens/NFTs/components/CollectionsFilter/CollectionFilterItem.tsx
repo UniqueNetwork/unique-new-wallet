@@ -36,6 +36,9 @@ const CollectionFilterItemStyled = styled(CollectionFilterItemComponent)`
   &.collection-filter-item {
     margin-top: 16px;
   }
+  .unique-checkbox-wrapper .checkbox-label img {
+    object-fit: cover;
+  }
 `;
 
 export const CollectionFilterItem = memo(CollectionFilterItemStyled);

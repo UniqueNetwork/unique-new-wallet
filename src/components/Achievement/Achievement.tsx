@@ -6,10 +6,11 @@ import { TooltipWrapper } from '@app/components';
 type Props = {
   achievement: string;
   tooltipDescription: ReactNode;
+  className?: string;
 };
 
-export const Achievement = ({ achievement, tooltipDescription }: Props) => (
-  <AchievementWrapper>
+export const Achievement = ({ achievement, tooltipDescription, className }: Props) => (
+  <AchievementWrapper className={className}>
     <TooltipWrapper message={tooltipDescription}>{achievement}</TooltipWrapper>
   </AchievementWrapper>
 );

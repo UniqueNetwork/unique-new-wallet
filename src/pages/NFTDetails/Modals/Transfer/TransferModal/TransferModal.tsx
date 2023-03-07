@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
-import { TransferTokenBody } from '@unique-nft/sdk';
-import { useDebounce } from 'use-debounce';
+import { Controller, FormProvider } from 'react-hook-form';
+import { TransferTokenBody, TransferTokenParsed } from '@unique-nft/sdk';
+import { useNavigate } from 'react-router-dom';
 
 import { useAccounts } from '@app/hooks';
 import { TransferStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/TransferModal';
@@ -15,82 +15,88 @@ import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/Fo
 import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { TransferFormDataType } from '@app/pages/NFTDetails/Modals/Transfer/type';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
+
+import { INVALID_ADDRESS_MESSAGE, NOT_ENOUGH_BALANCE_MESSAGE } from '../../constants';
 
 export const TransferModal = <T extends TBaseToken>({
   token,
-  onComplete,
   onClose,
+  onComplete,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
-  const { error, info } = useNotifications();
+  const { info } = useNotifications();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
+
   const {
+    form,
     submitWaitResult,
     getFee,
-    isLoadingSubmitResult,
     feeFormatted,
-    submitWaitResultError,
     feeLoading,
-    feeError,
-  } = useTokenTransfer();
-
-  const form = useForm<TransferFormDataType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    debouncedFormValues,
+    isSufficientBalance,
+  } = useTransactionFormService<
+    TransferTokenParsed,
+    TransferTokenBody,
+    TransferFormDataType
+  >({
+    MutateAsyncFunction: useTokenTransfer,
+    account: selectedAccount,
     defaultValues: {
       to: '',
-      from: selectedAccount?.address,
+      from:
+        token?.owner && Address.is.ethereumAddress(token.owner)
+          ? token?.owner
+          : selectedAccount?.address,
       address: selectedAccount?.address,
       tokenId: token?.tokenId,
       collectionId: token?.collectionId,
     },
   });
 
-  const {
-    formState: { isValid },
-    control,
-  } = form;
+  const { formState, handleSubmit } = form;
 
-  const formValues = useWatch({ control });
-  const [transferDebounceValue] = useDebounce(formValues, 300);
-
-  useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
-
-  const onSubmit = (data: TransferFormDataType) => {
-    submitWaitResult({
-      payload: data,
-    })
-      .then(() => {
-        info('Transfer completed successfully');
-        onComplete();
-      })
-      .catch(() => {
-        onClose();
+  const onSubmit = async (data: TransferFormDataType) => {
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: data,
       });
+      await onComplete();
+      setIsWaitingComplete(false);
+      info('Transfer completed successfully');
+      navigate(getTokenPath(data.to, data.collectionId, data.tokenId));
+    } catch {
+      setIsWaitingComplete(false);
+      onClose();
+    }
   };
 
   useEffect(() => {
-    isValid &&
-      transferDebounceValue &&
-      getFee(transferDebounceValue as TransferTokenBody);
-  }, [transferDebounceValue, getFee]);
+    formState.isValid &&
+      debouncedFormValues &&
+      getFee(debouncedFormValues as TransferTokenBody);
+  }, [debouncedFormValues, getFee]);
+
+  const validationMessage = useMemo(() => {
+    if (!form.formState.isValid) {
+      return INVALID_ADDRESS_MESSAGE;
+    }
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [form.formState, isSufficientBalance, selectedAccount]);
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isWaitingComplete) {
     return <TransferStagesModal />;
   }
 
@@ -101,24 +107,28 @@ export const TransferModal = <T extends TBaseToken>({
       footerButtons={
         <TransferBtn
           title="Confirm"
-          disabled={!isValid || feeLoading}
+          disabled={!formState.isValid || !isSufficientBalance}
           role="primary"
-          onClick={form.handleSubmit(onSubmit)}
+          tooltip={validationMessage}
+          onClick={handleSubmit(onSubmit)}
         />
       }
       onClose={onClose}
     >
       <FormWrapper
-        fee={isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        fee={formState.isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <TransferRow>
             <Controller
               name="to"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputTransfer
                     value={value}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                     onClear={() => onChange('')}
                   />
@@ -127,7 +137,9 @@ export const TransferModal = <T extends TBaseToken>({
               rules={{
                 required: true,
                 validate: (val: string) =>
-                  Address.is.ethereumAddress(val) || Address.is.substrateAddress(val),
+                  Address.is.ethereumAddress(val) ||
+                  Address.is.substrateAddress(val) ||
+                  'Invalid address',
               }}
             />
           </TransferRow>

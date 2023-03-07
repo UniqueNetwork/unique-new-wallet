@@ -4,7 +4,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
-import { Button, Text, useNotifications } from '@unique-nft/ui-kit';
+import { Text, useNotifications } from '@unique-nft/ui-kit';
 
 import {
   DeviceSize,
@@ -16,10 +16,11 @@ import {
 import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
+  Button,
   CollectionSidebar,
   CollectionStepper,
   Confirm,
-  MintingBtn,
+  ConfirmBtn,
   StatusTransactionModal,
 } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
@@ -187,7 +188,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           <FeeInformationTransaction fee={feeFormatted} />
           <ButtonGroup>
             {!isLastStep && (
-              <MintingBtn
+              <ConfirmBtn
                 iconRight={{
                   color: 'currentColor',
                   name: 'arrow-right',
@@ -210,7 +211,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
               />
             )}
             {isLastStep && (
-              <MintingBtn
+              <ConfirmBtn
                 role="primary"
                 title="Create collection"
                 tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}

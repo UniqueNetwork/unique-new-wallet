@@ -1,9 +1,8 @@
 import { memo, useMemo } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
-import { Heading, Icon, Text } from '@unique-nft/ui-kit';
+import { Heading, Text } from '@unique-nft/ui-kit';
 
-import { Tag, Tags, TooltipWrapper } from '@app/components';
+import { Icon, Tag, Tags, TooltipWrapper } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
@@ -47,9 +46,10 @@ const TokenInformationComponent = <T extends TBaseToken>({
             </>
           }
         >
-          <Icon name="question" size={20} color="var(--color-primary-500)" />
+          <Icon name="question" size={24} color="var(--color-primary-500)" />
         </TooltipWrapper>
       </Heading>
+      {!attributes && <Text color="blue-grey-500">None</Text>}
       {attributes?.map(({ title, tags }, index) => (
         <div className="attribute-row" key={`${title}${index}`}>
           <Text
@@ -105,7 +105,5 @@ const TokenInformationStyled = styled(TokenInformationComponent)`
     margin-bottom: calc(var(--prop-gap) / 2);
   }
 `;
-
-const DownloadFileButton = styled.button``;
 
 export const TokenInformation = memo(TokenInformationStyled);

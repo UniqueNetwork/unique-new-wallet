@@ -1,79 +1,82 @@
-import React, { useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
-import { useDebounce } from 'use-debounce';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Text, useNotifications } from '@unique-nft/ui-kit';
+import { Controller, FormProvider } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { Address } from '@unique-nft/utils/address';
+import { BurnRefungibleBody, BurnRefungibleParsed } from '@unique-nft/sdk';
 
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
 import { useTokenRefungibleBurn } from '@app/api/restApi/token/useTokenRefungibleBurn';
-import { Button, Modal } from '@app/components';
+import { Modal, TransferBtn } from '@app/components';
 import {
   FormWrapper,
   TransferRow,
   InputAmount,
 } from '@app/pages/NFTDetails/Modals/Transfer';
+import { ROUTE } from '@app/routes';
+import { formatBlockNumber } from '@app/utils';
+import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
 
 import { TokenModalsProps } from '../NFTModals';
-import { TBaseToken } from '../../type';
+import { TNestingToken } from '../../type';
 import { BurnRefungibleFormDataType } from './types';
 import { BurnRefungibleStagesModal } from './BurnRefungibleStagesModal';
+import { NOT_ENOUGH_BALANCE_MESSAGE } from '../constants';
 
-export const BurnRefungibleModal = <T extends TBaseToken>({
+export const BurnRefungibleModal = <T extends TNestingToken>({
   token,
   onClose,
   onComplete,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
-  const { info, error } = useNotifications();
+  const { info } = useNotifications();
+  const { currentChain } = useApi();
+  const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const {
+    form,
+    submitWaitResult,
     getFee,
     feeFormatted,
-    submitWaitResult,
-    isLoadingSubmitResult,
-    feeError,
-    submitWaitResultError,
-  } = useTokenRefungibleBurn();
-
-  const { data: fractionsBalance } = useTokenGetBalance({
-    collectionId: token?.collectionId,
-    tokenId: token?.tokenId,
-    address: selectedAccount?.address,
-    isRefungble: true,
-  });
-
-  const form = useForm<BurnRefungibleFormDataType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    feeLoading,
+    debouncedFormValues,
+    isSufficientBalance,
+  } = useTransactionFormService<
+    BurnRefungibleParsed,
+    BurnRefungibleBody,
+    BurnRefungibleFormDataType
+  >({
+    MutateAsyncFunction: useTokenRefungibleBurn,
+    account: selectedAccount,
     defaultValues: {
       amount: 1,
     },
   });
 
-  const {
-    formState: { isValid },
-    control,
-  } = form;
+  const { formState, handleSubmit } = form;
 
-  const formValues = useWatch({ control });
-  const [burnDebounceValue] = useDebounce(formValues, 300);
-
-  useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
+  const { data: fractionsBalance } = useTokenGetBalance({
+    collectionId: token?.collectionId,
+    tokenId: token?.tokenId,
+    address: token?.nestingParentToken
+      ? Address.nesting.idsToAddress(
+          token.nestingParentToken.collectionId,
+          token.nestingParentToken.tokenId,
+        )
+      : selectedAccount?.address,
+    isFractional: true,
+  });
 
   useEffect(() => {
-    if (!token || !selectedAccount?.address || !burnDebounceValue) {
+    if (
+      !formState.isValid ||
+      !token ||
+      !selectedAccount?.address ||
+      !debouncedFormValues
+    ) {
       return;
     }
 
@@ -81,34 +84,52 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
       address: selectedAccount.address,
       collectionId: token.collectionId,
       tokenId: token.tokenId,
-      amount: burnDebounceValue.amount || 1,
+      amount: debouncedFormValues.amount || 1,
     });
-  }, [burnDebounceValue, token, selectedAccount?.address]);
+  }, [debouncedFormValues, token, selectedAccount?.address, formState.isValid]);
 
-  const burnHandler = ({ amount }: BurnRefungibleFormDataType) => {
-    if (!token || !selectedAccount?.address || !isValid) {
+  const burnHandler = async ({ amount }: BurnRefungibleFormDataType) => {
+    if (!token || !selectedAccount?.address || !formState.isValid) {
       return;
     }
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: {
+          address: selectedAccount.address,
+          collectionId: token.collectionId,
+          tokenId: token.tokenId,
+          amount,
+        },
+      });
 
-    submitWaitResult({
-      payload: {
-        address: selectedAccount.address,
-        collectionId: token.collectionId,
-        tokenId: token.tokenId,
-        amount,
-      },
-    }).then(() => {
       info('RFT burned successfully');
-
-      onComplete();
-    });
+      if (Number(amount) === fractionsBalance?.amount) {
+        navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+      }
+      await onComplete();
+    } catch {
+      onClose();
+    } finally {
+      setIsWaitingComplete(false);
+    }
   };
+
+  const validationMessage = useMemo(() => {
+    if (!form.formState.isValid) {
+      return 'Please enter a valid number of fractions';
+    }
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [form.formState, isSufficientBalance, selectedAccount]);
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isWaitingComplete) {
     return <BurnRefungibleStagesModal />;
   }
 
@@ -117,28 +138,40 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
       isVisible={true}
       title="Burn fractional token"
       footerButtons={
-        <Button
+        <TransferBtn
           title="Confirm"
-          disabled={false}
+          disabled={!formState.isValid || !isSufficientBalance}
           role="primary"
-          onClick={form.handleSubmit(burnHandler)}
+          tooltip={validationMessage}
+          onClick={handleSubmit(burnHandler)}
         />
       }
       onClose={onClose}
     >
       <FormWrapper
-        fee={feeFormatted}
-        feeWarning="A fee will be calculated after entering the amount"
+        fee={formState.isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        feeWarning="A fee will be calculated after entering the number of fractions"
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <TransferRow>
             <Controller
               name="amount"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputAmount
+                    label={
+                      <LabelWrapper>
+                        Number of fractions
+                        <Text size="s" color="grey-500">{`You own: ${formatBlockNumber(
+                          fractionsBalance?.amount || 0,
+                        )}`}</Text>
+                      </LabelWrapper>
+                    }
                     value={value}
                     maxValue={fractionsBalance?.amount || 0}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                     onClear={() => onChange('')}
                   />
@@ -146,7 +179,14 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
               }}
               rules={{
                 required: true,
-                validate: (val: string) => Number(val) > 0,
+                validate: (val: string) => {
+                  return (
+                    (Number(val) > 0 &&
+                      Number(val) <= (fractionsBalance?.amount || 0) &&
+                      /^\d+$/.test(val)) ||
+                    'Invalid number of fractions'
+                  );
+                },
               }}
             />
           </TransferRow>
@@ -155,3 +195,9 @@ export const BurnRefungibleModal = <T extends TBaseToken>({
     </Modal>
   );
 };
+
+const LabelWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--prop-gap) / 4);
+`;

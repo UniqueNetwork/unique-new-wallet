@@ -6,6 +6,26 @@ export const shortcutText = (text: string) => {
   return start && end ? `${start}...${end}` : text;
 };
 
+export const formatLongNumber = (number = 0): string => {
+  if (!number) {
+    return '0';
+  }
+
+  if (number < 10000) {
+    return formatBlockNumber(number);
+  }
+
+  if (number < 1000000) {
+    return formatBlockNumber(Math.floor(number / 100) / 10) + 'K';
+  }
+
+  if (number < 1000000000) {
+    return formatBlockNumber(Math.floor(number / 100000) / 10) + 'M';
+  }
+
+  return formatBlockNumber(Math.floor(number / 100000000) / 10) + 'B';
+};
+
 export const formatAmount = (amount: number | string, initialValue = '0') => {
   if (!amount) {
     return initialValue;
@@ -17,7 +37,7 @@ export const formatAmount = (amount: number | string, initialValue = '0') => {
   return parts.join('.');
 };
 
-export const formatBlockNumber = (blockNumber: number | undefined) => {
+export const formatBlockNumber = (blockNumber: number | string | undefined) => {
   if (!blockNumber) {
     return '';
   }

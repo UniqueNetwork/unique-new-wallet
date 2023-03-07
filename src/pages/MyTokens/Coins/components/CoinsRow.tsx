@@ -1,11 +1,11 @@
 import React, { memo, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Button, Loader } from '@unique-nft/ui-kit';
+import { Loader } from '@unique-nft/ui-kit';
 
 import { Chain } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { TransferBtn } from '@app/components';
+import { Button, TransferBtn } from '@app/components';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { DeviceSize, useDeviceSize } from '@app/hooks';

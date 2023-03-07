@@ -1,23 +1,38 @@
-import React, { useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
-import { useDebounce } from 'use-debounce';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
+import { Controller, FormProvider } from 'react-hook-form';
 import styled from 'styled-components';
+import { Address } from '@unique-nft/utils';
+import { useNavigate } from 'react-router-dom';
+import {
+  TransferRefungibleTokenParsed,
+  TransferRefungibleTokenRequest,
+} from '@unique-nft/sdk';
 
 import { useAccounts } from '@app/hooks';
-import { CollectionNestingOption, useTokenGetBalance, useTokenNest } from '@app/api';
+import {
+  CollectionNestingOption,
+  useTokenGetBalance,
+  useTokenRefungibleTransfer,
+} from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { Alert, Button, Modal } from '@app/components';
+import { Modal, TransferBtn } from '@app/components';
 import { Suggest } from '@app/components/Suggest';
 import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
-import { Token } from '@app/api/graphQL/types';
-import { useGraphQlGetTokensCollection } from '@app/api/graphQL/tokens/useGraphQlGetTokensCollection';
+import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { formatBlockNumber } from '@app/utils';
+import {
+  TokenInfo,
+  useAllOwnedTokensByCollection,
+} from '@app/pages/NFTDetails/hooks/useAllOwnedTokensByCollection';
+import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
 
 import { SuggestOptionNesting } from '../CreateBundleModal/components';
 import { FormWrapper, InputAmount } from '../Transfer';
 import { TokenModalsProps } from '../NFTModals';
 import { NestRefungibleFormDataType } from './types';
 import { NestRefungibleStagesModal } from './NestRefungibleStagesModal';
+import { NOT_ENOUGH_BALANCE_MESSAGE } from '../constants';
 
 export const NestRefungibleModal = <T extends TBaseToken>({
   token,
@@ -25,126 +40,141 @@ export const NestRefungibleModal = <T extends TBaseToken>({
   onComplete,
 }: TokenModalsProps<T>) => {
   const { selectedAccount } = useAccounts();
-  const { info, error } = useNotifications();
+  const { info } = useNotifications();
+  const getTokenPath = useGetTokenPath();
+  const navigate = useNavigate();
+  const [isWaitingComplete, setIsWaitingComplete] = useState(false);
 
   const {
+    form,
+    formData,
+    submitWaitResult,
     getFee,
     feeFormatted,
-    submitWaitResult,
-    isLoadingSubmitResult,
-    feeError,
-    submitWaitResultError,
-  } = useTokenNest();
-
-  const { data: fractionsBalance } = useTokenGetBalance({
-    collectionId: token?.collectionId,
-    tokenId: token?.tokenId,
-    address: selectedAccount?.address,
-    isRefungble: true,
-  });
-
-  const form = useForm<NestRefungibleFormDataType>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
+    feeLoading,
+    debouncedFormValues,
+    isSufficientBalance,
+  } = useTransactionFormService<
+    TransferRefungibleTokenParsed,
+    TransferRefungibleTokenRequest,
+    NestRefungibleFormDataType
+  >({
+    MutateAsyncFunction: useTokenRefungibleTransfer,
+    account: selectedAccount,
     defaultValues: {
       amount: 1,
     },
   });
 
-  const {
-    formState: { isValid },
-    control,
-    resetField,
-  } = form;
+  const { formState, handleSubmit, resetField } = form;
 
-  const collectionFormData = useWatch({ control });
-  const [debouncedFormValues] = useDebounce(collectionFormData, 300);
+  const { data: fractionsBalance, isFetching: isFetchingBalance } = useTokenGetBalance({
+    collectionId: token?.collectionId,
+    tokenId: token?.tokenId,
+    address: selectedAccount?.address,
+    isFractional: true,
+  });
 
   const collectionsData = useGraphQlCollectionsByNestingAccount({
     accountAddress: selectedAccount?.address,
   });
 
-  const tokensData = useGraphQlGetTokensCollection({
-    collectionId: collectionFormData?.collection?.collection_id,
-    excludeCurrentTokenId:
-      collectionFormData?.collection?.collection_id === token?.collectionId
-        ? token?.tokenId
-        : undefined,
-  });
-
   const { isCollectionsLoading, collections } = collectionsData;
-  const { isTokensLoading, tokens } = tokensData;
 
-  useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
+  const { tokens, isFetchingTokens } = useAllOwnedTokensByCollection(
+    formData?.collection?.collection_id,
+    {
+      excludeTokenId:
+        formData?.collection?.collection_id === token?.collectionId
+          ? token?.tokenId
+          : undefined,
+    },
+  );
 
   useEffect(() => {
     const { amount, collection, token: parentToken } = debouncedFormValues;
-    const collectionId = collection?.collection_id;
-    const tokenId = parentToken?.token_id;
+    const parentCollectionId = collection?.collection_id;
+    const parentTokenId = parentToken?.token_id;
 
     if (
+      !formState.isValid ||
       !token ||
-      !parentToken ||
       !selectedAccount?.address ||
-      !collectionId ||
-      !tokenId ||
+      !parentCollectionId ||
+      !parentTokenId ||
       !amount
     ) {
       return;
     }
 
     getFee({
+      collectionId: token.collectionId,
+      tokenId: token.tokenId,
       address: selectedAccount.address,
-      parent: { collectionId, tokenId },
-      nested: token,
-      value: amount,
+      to: Address.nesting.idsToAddress(parentCollectionId, parentTokenId),
+      amount,
     });
   }, [debouncedFormValues, token, selectedAccount?.address]);
 
-  const burnHandler = ({
+  const nestHandler = async ({
     amount,
     collection,
     token: parentToken,
   }: NestRefungibleFormDataType) => {
-    const collectionId = collection?.collection_id;
-    const tokenId = parentToken?.token_id;
-    if (!token || !selectedAccount?.address || !isValid || !tokenId || !collectionId) {
+    const parentCollectionId = collection?.collection_id;
+    const parentTokenId = parentToken?.token_id;
+    if (
+      !token ||
+      !selectedAccount?.address ||
+      !parentCollectionId ||
+      !parentTokenId ||
+      !amount
+    ) {
       return;
     }
 
-    submitWaitResult({
-      payload: {
-        address: selectedAccount.address,
-        parent: { collectionId, tokenId },
-        nested: token,
-        value: amount,
-      },
-    }).then(() => {
-      info('RFT transferred successfully');
+    const to = Address.nesting.idsToAddress(parentCollectionId, parentTokenId);
+    const { collectionId, tokenId } = token;
 
-      onComplete();
-    });
+    try {
+      setIsWaitingComplete(true);
+      await submitWaitResult({
+        payload: {
+          collectionId,
+          tokenId,
+          address: selectedAccount.address,
+          to,
+          amount,
+        },
+      });
+      await onComplete();
+      info('RFT transferred successfully');
+      setIsWaitingComplete(false);
+      if (fractionsBalance?.amount === Number(amount)) {
+        navigate(getTokenPath(to, collectionId, tokenId));
+      }
+    } catch {
+      setIsWaitingComplete(false);
+    }
   };
 
-  const isNotExistTokens = tokensData.tokens.length === 0;
+  const validationMessage = useMemo(() => {
+    if (!form.formState.isValid) {
+      return 'Please enter a valid number of fractions and choosing parent NFT';
+    }
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [form.formState, isSufficientBalance, selectedAccount]);
+
+  const isNotExistTokens = tokens.length === 0;
 
   if (!selectedAccount || !token) {
     return null;
   }
 
-  if (isLoadingSubmitResult) {
+  if (isWaitingComplete) {
     return <NestRefungibleStagesModal />;
   }
 
@@ -153,28 +183,41 @@ export const NestRefungibleModal = <T extends TBaseToken>({
       isVisible={true}
       title="Nest fractional token"
       footerButtons={
-        <Button
+        <TransferBtn
           title="Confirm"
-          disabled={false}
+          disabled={!formState.isValid || !isSufficientBalance}
           role="primary"
-          onClick={form.handleSubmit(burnHandler)}
+          tooltip={validationMessage}
+          onClick={handleSubmit(nestHandler)}
         />
       }
       onClose={onClose}
     >
+      {isFetchingBalance && <Loader isFullPage={true} />}
       <FormWrapper
-        fee={feeFormatted}
-        feeWarning="A fee will be calculated after entering the amount"
+        fee={formState.isValid && feeFormatted && !feeLoading ? feeFormatted : undefined}
+        feeWarning="A fee will be calculated after entering the number of fractions and choosing parent NFT"
+        feeLoading={feeLoading}
       >
         <FormProvider {...form}>
           <FormRow>
             <Controller
               name="amount"
-              render={({ field: { value, onChange } }) => {
+              render={({ field: { value, onChange }, fieldState }) => {
                 return (
                   <InputAmount
+                    label={
+                      <LabelWrapper>
+                        Number of fractions to be nested
+                        <Text size="s" color="grey-500">{`You own: ${formatBlockNumber(
+                          fractionsBalance?.amount || 0,
+                        )}`}</Text>
+                      </LabelWrapper>
+                    }
                     value={value}
                     maxValue={fractionsBalance?.amount || 0}
+                    error={!!fieldState.error}
+                    statusText={fieldState.error?.message}
                     onChange={onChange}
                     onClear={() => onChange('')}
                   />
@@ -182,7 +225,14 @@ export const NestRefungibleModal = <T extends TBaseToken>({
               }}
               rules={{
                 required: true,
-                validate: (val: string) => Number(val) > 0,
+                validate: (val: string) => {
+                  return (
+                    (Number(val) > 0 &&
+                      Number(val) <= (fractionsBalance?.amount || 0) &&
+                      /^\d+$/.test(val)) ||
+                    'Invalid number of fractions'
+                  );
+                },
               }}
             />
           </FormRow>
@@ -223,16 +273,16 @@ export const NestRefungibleModal = <T extends TBaseToken>({
                     resetField('token');
                     onChange(val);
                   }}
+                  onSuggestionsFetchRequested={(value) =>
+                    collections.filter(
+                      ({ collection_id, name }) =>
+                        name.toLowerCase().includes(value.toLowerCase()) ||
+                        collection_id === Number(value),
+                    )
+                  }
                 />
               )}
             />
-            {isNotExistTokens && debouncedFormValues?.collection && !isTokensLoading && (
-              <AlertWrapper>
-                <Alert type="error">
-                  You don’t have any tokens with bundling capabilities in this collection
-                </Alert>
-              </AlertWrapper>
-            )}
           </FormRow>
           <FormRow>
             <div>
@@ -246,13 +296,13 @@ export const NestRefungibleModal = <T extends TBaseToken>({
               name="token"
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
-                <Suggest<Token>
+                <Suggest<TokenInfo>
                   components={{
                     SuggestItem: ({
                       suggestion,
                       isActive,
                     }: {
-                      suggestion: Token;
+                      suggestion: TokenInfo;
                       isActive?: boolean;
                     }) => (
                       <SuggestOptionNesting
@@ -264,7 +314,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
                     ),
                   }}
                   suggestions={tokens}
-                  isLoading={isTokensLoading}
+                  isLoading={isFetchingTokens}
                   value={value}
                   getActiveSuggestOption={(option) => option.token_id === value.token_id}
                   inputProps={{
@@ -282,6 +332,12 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     </Modal>
   );
 };
+
+const LabelWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--prop-gap) / 4);
+`;
 
 const FormRow = styled.div`
   margin-bottom: calc(var(--gap) * 1.5);
@@ -302,8 +358,4 @@ const FormRow = styled.div`
     font-size: 14px;
     color: var(--color-grey-500);
   }
-`;
-
-const AlertWrapper = styled.div`
-  margin-top: var(--prop-gap);
 `;

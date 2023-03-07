@@ -22,6 +22,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "@unique-nft/sdk": "0.2.3",
+    "@unique-nft/solidity-interfaces": "0.52.0",
     "@unique-nft/ui-kit": "^0.0.37",
     "@unique-nft/utils": "0.3.1",
     "amplitude-js": "^8.19.0",

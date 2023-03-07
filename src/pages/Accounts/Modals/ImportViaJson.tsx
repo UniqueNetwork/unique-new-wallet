@@ -1,8 +1,7 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
-import { Button } from '@unique-nft/ui-kit';
 import { KeyringPair } from '@polkadot/keyring/types';
 
-import { Alert, PasswordInput, Upload } from '@app/components';
+import { Alert, Button, PasswordInput, UploadJson } from '@app/components';
 import { Modal } from '@app/components/Modal';
 import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
 import { ContentRow } from '@app/pages/components/ModalComponents';
@@ -73,7 +72,7 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
         <AdditionalText size="s" color="grey-500">
           Click to select or drop the file here
         </AdditionalText>
-        <Upload onChange={onUploadChange} />
+        <UploadJson onChange={onUploadChange} />
       </ContentRow>
       <ContentRow>
         <LabelText size="m">Password</LabelText>

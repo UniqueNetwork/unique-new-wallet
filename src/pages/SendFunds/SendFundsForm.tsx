@@ -2,16 +2,17 @@ import { useCallback, useContext, useMemo, VFC } from 'react';
 import { GroupBase, Options, OptionsOrGroups } from 'react-select';
 import { Controller, useWatch } from 'react-hook-form';
 import { Text } from '@unique-nft/ui-kit';
+import { Address } from '@unique-nft/utils';
 
 import { Account } from '@app/account';
 import { useAccounts } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
 import { ChainPropertiesContext } from '@app/context';
-import { AccountUtils } from '@app/account/AccountUtils';
 import { AccountSelect, InputText } from '@app/components';
 
 import { Group, InputAmount, InputAmountButton, StyledAdditionalText } from './styles';
 import { ContentRow } from '../components/ModalComponents';
+import { FORM_ERRORS } from '../constants';
 
 interface SendFundsFormProps {
   apiEndpoint: string;
@@ -75,13 +76,10 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
         return false;
       }
 
-      try {
-        AccountUtils.encodeAddress(inputValue, chainProperties.SS58Prefix);
-
+      if (Address.is.validAddressInAnyForm(inputValue)) {
         return true;
-      } catch {
-        return false;
       }
+      return false;
     },
     [chainProperties, from],
   );
@@ -96,7 +94,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           </StyledAdditionalText>
           <Controller
             name="from"
-            rules={{ required: true }}
+            rules={{ required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS } }}
             render={({ field: { value, onChange } }) => (
               <AccountSelect
                 value={value}
@@ -118,7 +116,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           </StyledAdditionalText>
           <Controller
             name="to"
-            rules={{ required: true }}
+            rules={{ required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS } }}
             render={({ field: { value, onChange } }) => (
               <AccountSelect
                 isSearchable
@@ -140,7 +138,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
       <ContentRow space="calc(var(--prop-gap) * 1.5)">
         <Controller
           name="amount"
-          rules={{ required: true }}
+          rules={{ required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS } }}
           render={({ field: { value, onChange } }) => (
             <InputAmount>
               <InputText

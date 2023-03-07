@@ -8,4 +8,5 @@ export type TTokenModalType =
   | 'create-bundle'
   | 'unnest'
   | 'bundle-transfer'
-  | 'nest-refungible';
+  | 'nest-refungible'
+  | 'unnest-refungible';
