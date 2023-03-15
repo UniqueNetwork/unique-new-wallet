@@ -77,7 +77,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     if (!feeError) {
       return;
     }
-    error(feeError);
+    error(feeError.toString());
   }, [feeError]);
 
   useEffect(() => {
