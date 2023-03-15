@@ -241,6 +241,8 @@ const RightSide = styled.div`
       top: 100%;
       min-width: calc(100% - calc(var(--prop-gap) * 2));
       z-index: 3;
+      overflow-y: auto;
+      height: calc(100vh - 130px);
     }
   }
 `;
