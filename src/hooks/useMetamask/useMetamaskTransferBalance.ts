@@ -6,6 +6,7 @@ import { BalanceTransferBody } from '@app/types/Api';
 import { MetamaskDefaultDecimals } from '@app/account/MetamaskWallet';
 
 import { useMetamaskFee } from './useMetamaskFee';
+import { amountToBnString } from './utils';
 
 const { request } = (window as any).ethereum || {};
 
@@ -25,9 +26,9 @@ export const useMetamaskBalanceTransfer = () => {
               : Address.mirror.substrateToEthereum(destination),
             value:
               '0x' +
-              new BN(amount)
-                .mul(new BN(10).pow(new BN(MetamaskDefaultDecimals)))
-                .toString('hex'),
+              new BN(
+                amountToBnString(amount.toString(), MetamaskDefaultDecimals),
+              ).toString('hex'),
           },
         ],
       });
@@ -48,9 +49,9 @@ export const useMetamaskBalanceTransfer = () => {
             : Address.mirror.substrateToEthereum(payload.destination),
           value:
             '0x' +
-            new BN(payload.amount)
-              .mul(new BN(10).pow(new BN(MetamaskDefaultDecimals)))
-              .toString('hex'),
+            new BN(
+              amountToBnString(payload.amount.toString(), MetamaskDefaultDecimals),
+            ).toString('hex'),
           gas: gas?.toString('hex'),
         },
       ],
