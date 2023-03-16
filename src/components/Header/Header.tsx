@@ -40,15 +40,9 @@ export const Header = () => {
     toggleMobileMenu((prevState) => !prevState);
   }, []);
 
-  const onAccountChange = async (account: Account) => {
+  const onAccountChange = (account: Account) => {
     try {
-      const targetAccount = accounts.get(account.normalizedAddress);
-
-      if (targetAccount) {
-        await targetAccount.changeChain(currentChain.network);
-        changeAccount(targetAccount);
-      }
-
+      changeAccount(account);
       setAccountManagerOpen(false);
     } catch (e: any) {
       error(e.message || `Failed to switch network ${currentChain.network}`);
