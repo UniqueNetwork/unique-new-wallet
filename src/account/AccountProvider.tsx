@@ -1,14 +1,7 @@
-import React, {
-  FC,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
 import amplitude from 'amplitude-js';
+import { Address } from '@unique-nft/utils';
 
 import { NetworkType } from '@app/types';
 import { useAccountBalanceService } from '@app/api';
@@ -50,10 +43,33 @@ export const AccountWrapper: FC = ({ children }) => {
   }, [selectedAccount]);
 
   useEffect(() => {
-    if (selectedAccount?.address) {
+    setAccounts((accounts) => {
+      return Array.from(accounts.values()).reduce((acc, account) => {
+        if (Address.is.ethereumAddressInAnyForm(account.address)) {
+          acc.set(account.address, account);
+          return acc;
+        }
+        const address = Address.normalize.substrateAddress(
+          account.address,
+          chainProperties.SS58Prefix,
+        );
+        acc.set(address, { ...account, address });
+        return acc;
+      }, new Map<string, BaseWalletType<WalletsType>>());
+    });
+
+    setSelectedAccount((account) => {
+      if (!account || Address.is.ethereumAddressInAnyForm(account.address)) {
+        return account;
+      }
+      const address = Address.normalize.substrateAddress(
+        account.address,
+        chainProperties.SS58Prefix,
+      );
       refetchAccount();
-    }
-  }, [chainProperties, refetchAccount, selectedAccount?.address]);
+      return { ...account, address };
+    });
+  }, [chainProperties, refetchAccount]);
 
   const changeAccount = useCallback(
     (account: Account) => {
