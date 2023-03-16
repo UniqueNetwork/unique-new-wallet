@@ -4,8 +4,9 @@ import { ethers } from 'ethers';
 import { BN } from 'bn.js';
 import { UseMutateAsyncFunction } from 'react-query';
 import { ExtrinsicResultResponse } from '@unique-nft/sdk';
+import { Address } from '@unique-nft/utils';
 
-import { TransferTokenBody, TransferTokenParsed } from '@app/types/Api';
+import { NestTokenBody, TokenId } from '@app/types/Api';
 
 import { useMetamaskFee } from './useMetamaskFee';
 import { getCrossStruct2 } from './utils';
@@ -13,52 +14,52 @@ import { getCrossStruct2 } from './utils';
 const provider =
   (window as any).ethereum && new ethers.providers.Web3Provider((window as any).ethereum);
 
-export function useMetamaskTransferToken() {
+export function useMetamaskNestToken() {
   const [submitWaitResultError, setSubmitWaitResultError] = useState<string>();
   const [isLoadingSubmitResult, setIsLoadingSubmitResult] = useState(false);
 
-  const getEstimateGas = useCallback(async ({ from, to, collectionId, tokenId }) => {
-    if (!to) {
-      return Promise.resolve(new BN(0));
-    }
-
+  const getEstimateGas = useCallback(async ({ address, parent, nested }) => {
+    const { collectionId, tokenId } = nested;
+    const to = Address.nesting.idsToAddress(parent.collectionId, parent.tokenId);
     const nftFactory = await UniqueNFTFactory(collectionId, provider?.getSigner());
 
     const estimateGas = await nftFactory.estimateGas.transferFromCross(
-      getCrossStruct2(from),
+      getCrossStruct2(address),
       getCrossStruct2(to),
       tokenId,
     );
     return new BN(estimateGas.toString());
   }, []);
 
-  const { gas, gasPrice, ...feeResult } =
-    useMetamaskFee<TransferTokenBody>(getEstimateGas);
+  const { gas, gasPrice, ...feeResult } = useMetamaskFee<NestTokenBody>(getEstimateGas);
 
   const submitWaitResult: UseMutateAsyncFunction<
-    ExtrinsicResultResponse<TransferTokenParsed> | undefined,
+    ExtrinsicResultResponse<TokenId> | undefined,
     | Error
     | {
         extrinsicError: ExtrinsicResultResponse<any>;
       },
-    { payload: TransferTokenBody; senderAddress?: string | undefined }
+    { payload: NestTokenBody; senderAddress?: string | undefined }
   > = async ({
     payload,
   }: {
-    payload: TransferTokenBody;
+    payload: NestTokenBody;
     senderAddress?: string | undefined;
   }) => {
     setIsLoadingSubmitResult(true);
     try {
-      const nftFactory = await UniqueNFTFactory(
-        payload.collectionId,
-        provider.getSigner(),
+      const { collectionId, tokenId } = payload.nested;
+      const nftFactory = await UniqueNFTFactory(collectionId, provider.getSigner());
+
+      const to = Address.nesting.idsToAddress(
+        payload.parent.collectionId,
+        payload.parent.tokenId,
       );
 
       const tx = await nftFactory.transferFromCross(
-        getCrossStruct2(payload.from),
-        getCrossStruct2(payload.to),
-        payload.tokenId,
+        getCrossStruct2(payload.address),
+        getCrossStruct2(to),
+        tokenId,
         {
           gasLimit: gas?.toString(),
           gasPrice: gasPrice?.toString(),

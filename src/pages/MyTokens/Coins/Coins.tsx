@@ -5,7 +5,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
 
-import { ApiWrapper, useAccountBalancesService } from '@app/api';
+import {
+  ApiWrapper,
+  useAccountBalancesService,
+  useAccountWithdrawableBalancesService,
+} from '@app/api';
 import { useChainProperties } from '@app/api/restApi/properties/useChainProperties';
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
@@ -15,6 +19,7 @@ import { Chain, NetworkType } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CoinsRow } from './components';
+import { WithdrawModal } from './modals/Withdraw';
 
 const CoinsContainer = styled.div`
   box-sizing: border-box;
@@ -43,9 +48,11 @@ const CoinsHeading = styled(Heading)`
 export const Coins = () => {
   const [rampModalVisible, setRampModalVisible] = useState(false);
   const [fundsModalVisible, setFundsModalVisible] = useState(false);
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [rampModalToken, setRampModalToken] = useState('KSM');
   const [selectedNetworkType, setSelectedNetworkType] = useState<NetworkType>();
   const [selectedChain, setSelectedChain] = useState<Chain>(config.defaultChain);
+  const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
   const { selectedAccount } = useAccounts();
 
@@ -53,6 +60,14 @@ export const Coins = () => {
     Object.values(config.allChains).map((chain) => chain.apiEndpoint),
     selectedAccount?.address,
   ) as UseQueryResult<AllBalancesResponse>[];
+
+  const {
+    results: accountWithdrawableBalances,
+    refetchAll: refetchWithdrawableBalances,
+  } = useAccountWithdrawableBalancesService(
+    Object.values(config.allChains).map((chain) => chain.apiEndpoint),
+    selectedAccount?.address,
+  );
 
   const chainProperty = useChainProperties(
     Object.values(config.allChains).map((chain) => ({
@@ -73,8 +88,19 @@ export const Coins = () => {
 
   const getCoinsHandler = useCallback(() => setRampModalVisible(true), []);
   const closeRampModalHandler = useCallback(() => setRampModalVisible(false), []);
-  const closeTransferFundsModalHandler = useCallback(
-    () => setFundsModalVisible(false),
+  const closeTransferFundsModalHandler = useCallback(() => {
+    setFundsModalVisible(false);
+    setWithdrawModalVisible(false);
+    refetchWithdrawableBalances();
+  }, []);
+
+  const onWithdrawHandler = useCallback(
+    (networkType: NetworkType, chain: Chain, amount: string) => {
+      setSelectedNetworkType(networkType);
+      setSelectedChain(chain);
+      setAmountToWithdraw(amount);
+      setWithdrawModalVisible(true);
+    },
     [],
   );
 
@@ -146,17 +172,24 @@ export const Coins = () => {
               getDisabled={getDisabled}
               key={chain.network}
               loading={
-                chainProperty[chain.network].isLoading || accountBalances[idx].isLoading
+                chainProperty[chain.network].isLoading ||
+                accountBalances[idx].isLoading ||
+                accountWithdrawableBalances?.[idx].isLoading
               }
               sendDisabled={!Number(accountBalances[idx].data?.availableBalance.amount)}
               address={formattedAddress}
               balanceFull={accountBalances[idx].data?.freeBalance.amount}
               balanceLocked={accountBalances[idx].data?.lockedBalance.amount}
               balanceTransferable={accountBalances[idx].data?.availableBalance.amount}
+              balanceToWithdraw={
+                (accountWithdrawableBalances?.[idx].data as AllBalancesResponse)
+                  ?.availableBalance
+              }
               iconName={`chain-${chain.network.toLowerCase()}`}
               name={chain.name}
               symbol={accountBalances[idx].data?.availableBalance.unit || ''}
               chain={chain}
+              onWithdraw={onWithdrawHandler}
               onSend={sendFundsHandler}
               onGet={onGet}
             />
@@ -175,7 +208,17 @@ export const Coins = () => {
           />
         </ApiWrapper>
       )}
-
+      {withdrawModalVisible && selectedAccount && (
+        <ApiWrapper>
+          <WithdrawModal
+            isVisible={true}
+            senderAccount={selectedAccount}
+            chain={selectedChain}
+            amount={amountToWithdraw}
+            onClose={closeTransferFundsModalHandler}
+          />
+        </ApiWrapper>
+      )}
       <RampModal
         isVisible={rampModalVisible}
         swapAsset={rampModalToken}
