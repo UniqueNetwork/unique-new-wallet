@@ -12,8 +12,6 @@ export const useAccountBalanceService = (
 ): UseQueryResult<AllBalancesResponse> => {
   const { api, currentChain } = useApi();
 
-  console.log(currentChain.name);
-
   const getBalance = (address: string) => {
     const apiSdk = networkURL ? new Sdk({ baseUrl: networkURL, signer: null }) : api;
 
