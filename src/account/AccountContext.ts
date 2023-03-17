@@ -20,6 +20,7 @@ export type WalletsType =
 
 export type Account<T extends WalletsType = WalletsType> = BaseWalletType<T> & {
   balance?: AllBalancesResponse;
+  withdrawBalance?: AllBalancesResponse;
   unitBalance?: NetworkType;
   collectionsTotal?: number;
   tokensTotal?: number;

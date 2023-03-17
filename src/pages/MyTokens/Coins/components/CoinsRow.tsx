@@ -66,7 +66,7 @@ const Column = styled.div<{ width: string; align?: 'left' | 'right' | 'center' }
 const ButtonGroup = styled.div`
   display: flex;
   gap: calc(var(--prop-gap) / 2);
-
+  flex-wrap: wrap;
   .unique-button {
     flex: 1 1 auto;
 
@@ -74,6 +74,12 @@ const ButtonGroup = styled.div`
       flex-grow: 0;
     }
   }
+`;
+
+const SendGetWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: var(--prop-gap);
 `;
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
@@ -108,7 +114,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           chainLogo={iconName}
         />
       </Column>
-      <Column width="25%">
+      <Column width="20%">
         {loading ? (
           <Loader />
         ) : (
@@ -120,24 +126,26 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           />
         )}
       </Column>
-      <Column align="right" width="25%">
+      <Column align="right" width="30%">
         <ButtonGroup>
-          <TransferBtn
-            disabled={sendDisabled}
-            title="Send"
-            onClick={() => {
-              logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
-              onSend(symbol, chain);
-            }}
-          />
-          <Button
-            disabled={getDisabled}
-            title="Get"
-            onClick={() => {
-              logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
-              onGet?.();
-            }}
-          />
+          <SendGetWrapper>
+            <TransferBtn
+              disabled={sendDisabled}
+              title="Send"
+              onClick={() => {
+                logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
+                onSend(symbol, chain);
+              }}
+            />
+            <Button
+              disabled={getDisabled}
+              title="Get"
+              onClick={() => {
+                logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
+                onGet?.();
+              }}
+            />
+          </SendGetWrapper>
           {!!Number(balanceToWithdraw?.raw) && (
             <TransferBtn
               title={`Withdraw ${balanceToWithdraw?.formatted || ''} ${symbol}`}

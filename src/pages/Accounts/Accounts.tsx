@@ -11,17 +11,20 @@ import { Confirm, PagePaper, Table, TooltipWrapper, TransferBtn } from '@app/com
 import { Search } from '@app/pages/components/Search';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
-import { useAccountsBalanceService } from '@app/api';
+import { account, useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ConnectWallets } from '@app/pages';
+import { useAccountsWithdrawableBalanceService } from '@app/api/restApi/balance/useAccountsWithdrawableBalanceService';
 
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
+import { WithdrawModal } from '../MyTokens/Coins/modals/Withdraw';
 
 type AccountsColumnsProps = {
   onShowSendFundsModal(account: Account): () => void;
   onForgetWalletClick(address: string): () => void;
+  onWithdrawBalance(account: Account, balanceToWithdraw: string): () => void;
 };
 
 const AccountsPageHeader = styled.div`
@@ -126,7 +129,8 @@ const ButtonGet = styled(Button)`
 const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
-  column-gap: var(--prop-gap);
+  gap: var(--prop-gap);
+  flex-wrap: wrap;
   .unique-dropdown {
     .dropdown-wrapper,
     .dropdown-options {
@@ -135,6 +139,12 @@ const ActionsWrapper = styled.div`
       cursor: pointer;
     }
   }
+`;
+
+const SendGetWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: var(--prop-gap);
 `;
 
 const CaptionText: FC = () => {
@@ -250,6 +260,7 @@ const BlockExplorer = ({ account }: { account: Account }) => {
 const getAccountsColumns = ({
   onShowSendFundsModal,
   onForgetWalletClick,
+  onWithdrawBalance,
 }: AccountsColumnsProps): TableColumnProps[] => [
   {
     title: (
@@ -287,23 +298,25 @@ const getAccountsColumns = ({
   },
   {
     title: <TableTitle>Block explorer</TableTitle>,
-    width: '23%',
+    width: '17%',
     field: 'explorer',
     render: (_, account: Account) => <BlockExplorer account={account} />,
   },
   {
     title: <TableTitle>Actions</TableTitle>,
-    width: '22%',
+    width: '28%',
     field: 'actions',
     render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <TransferBtn
-            title="Send"
-            disabled={!Number(rowData.balance?.availableBalance.amount)}
-            onClick={onShowSendFundsModal(rowData)}
-          />
-          {getButtonRender(rowData.balance?.availableBalance.unit)}
+          <SendGetWrapper>
+            <TransferBtn
+              title="Send"
+              disabled={!Number(rowData.balance?.availableBalance.amount)}
+              onClick={onShowSendFundsModal(rowData)}
+            />
+            {getButtonRender(rowData.balance?.availableBalance.unit)}
+          </SendGetWrapper>
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
               placement="right"
@@ -315,6 +328,15 @@ const getAccountsColumns = ({
             >
               <Icon name="more-horiz" size={24} />
             </Dropdown>
+          )}
+          {!!Number(rowData.withdrawBalance?.availableBalance.formatted) && (
+            <TransferBtn
+              title={`Withdraw ${rowData.withdrawBalance?.availableBalance.formatted} ${rowData.withdrawBalance?.availableBalance.unit}`}
+              onClick={onWithdrawBalance(
+                rowData,
+                rowData.withdrawBalance?.availableBalance.raw || '',
+              )}
+            />
           )}
         </ActionsWrapper>
       );
@@ -330,8 +352,14 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
   const [isOpenConnectWallet, setOpenConnectWallet] = useState(false);
+  const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
+  const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
   const balances = useAccountsBalanceService(
+    [...accounts].map(([_, { address }]) => address),
+  );
+
+  const withdrawableBalances = useAccountsWithdrawableBalanceService(
     [...accounts].map(([_, { address }]) => address),
   );
 
@@ -340,8 +368,9 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
       [...accounts].map(([_, account], idx) => ({
         ...account,
         balance: balances?.[idx].data,
+        withdrawBalance: withdrawableBalances?.[idx].data,
       })),
-    [accounts, balances],
+    [accounts, balances, withdrawableBalances],
   );
 
   const onSendFundsClick = useCallback(
@@ -372,7 +401,17 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
 
   const onChangeAccountsFinish = useCallback(() => {
     setIsOpenModal(false);
+    setWithdrawModalVisible(false);
   }, []);
+
+  const onWithdrawBalance = useCallback(
+    (account: Account, balance: string) => () => {
+      setSelectedAddress(account);
+      setAmountToWithdraw(balance);
+      setWithdrawModalVisible(true);
+    },
+    [],
+  );
 
   return (
     <>
@@ -398,6 +437,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
             columns={getAccountsColumns({
               onShowSendFundsModal: onSendFundsClick,
               onForgetWalletClick,
+              onWithdrawBalance,
             })}
             data={filteredAccounts}
             loading={balances.some((balance) => balance.isLoading)}
@@ -421,6 +461,15 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
               balance.refetch();
             });
           }}
+        />
+      )}
+      {withdrawModalVisible && selectedAddress && (
+        <WithdrawModal
+          isVisible={true}
+          senderAccount={selectedAddress}
+          chain={currentChain}
+          amount={amountToWithdraw}
+          onClose={onChangeAccountsFinish}
         />
       )}
       {isOpenConnectWallet && (
