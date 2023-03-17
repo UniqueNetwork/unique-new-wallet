@@ -122,7 +122,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
   };
 
   const total = useMemo(() => {
-    const parsedFee = Number(feeFormatted);
+    const parsedFee = Number(fee);
     const parsedAmount = Number(sendFundsValues?.amount);
 
     if (parsedFee && parsedAmount) {

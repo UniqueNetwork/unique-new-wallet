@@ -70,7 +70,9 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
       // this code hides an additional option
       // with suggestion to create an existing item
       if (
-        options.find((opt) => (opt as Account)?.address.startsWith(inputValue)) ||
+        options.find((opt) =>
+          (opt as Account)?.address.toLowerCase().startsWith(inputValue.toLowerCase()),
+        ) ||
         from?.address.toLowerCase() === inputValue.toLocaleLowerCase()
       ) {
         return false;
@@ -138,7 +140,10 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
       <ContentRow space="calc(var(--prop-gap) * 1.5)">
         <Controller
           name="amount"
-          rules={{ required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS } }}
+          rules={{
+            required: { value: true, message: FORM_ERRORS.REQUIRED_FIELDS },
+            validate: (value) => (value <= 0 ? FORM_ERRORS.INVALID_AMOUNT : true),
+          }}
           render={({ field: { value, onChange } }) => (
             <InputAmount>
               <InputText
