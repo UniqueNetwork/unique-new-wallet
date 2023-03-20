@@ -18,7 +18,10 @@ import {
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { Modal, TransferBtn } from '@app/components';
 import { Suggest } from '@app/components/Suggest';
-import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
+import {
+  useGraphQlCollectionsByNestingAccount,
+  useGraphQlGetCollectionsByIds,
+} from '@app/api/graphQL/collections';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 import { formatBlockNumber } from '@app/utils';
 import {
@@ -75,11 +78,24 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     isFractional: true,
   });
 
-  const collectionsData = useGraphQlCollectionsByNestingAccount({
+  const { collectionsIds, isCollectionsLoading } = useGraphQlCollectionsByNestingAccount({
     accountAddress: selectedAccount?.address,
   });
 
-  const { isCollectionsLoading, collections } = collectionsData;
+  const {
+    synchronizedCollections,
+    isSynchronizedCollectionsLoading,
+    refetchCollectionsByIds,
+  } = useGraphQlGetCollectionsByIds({
+    collections:
+      collectionsIds?.map(({ collection_id }) => ({
+        collectionId: collection_id,
+      })) || [],
+  });
+
+  useEffect(() => {
+    refetchCollectionsByIds();
+  }, [collectionsIds]);
 
   const { tokens, isFetchingTokens } = useAllOwnedTokensByCollection(
     formData?.collection?.collection_id,
@@ -178,6 +194,8 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     return <NestRefungibleStagesModal />;
   }
 
+  console.log(synchronizedCollections);
+
   return (
     <Modal
       isVisible={true}
@@ -262,8 +280,8 @@ export const NestRefungibleModal = <T extends TBaseToken>({
                       />
                     ),
                   }}
-                  suggestions={collections}
-                  isLoading={isCollectionsLoading}
+                  suggestions={synchronizedCollections || []}
+                  isLoading={isCollectionsLoading || isSynchronizedCollectionsLoading}
                   value={value}
                   getActiveSuggestOption={(option) =>
                     option.collection_id === value.collection_id
@@ -274,7 +292,7 @@ export const NestRefungibleModal = <T extends TBaseToken>({
                     onChange(val);
                   }}
                   onSuggestionsFetchRequested={(value) =>
-                    collections.filter(
+                    synchronizedCollections.filter(
                       ({ collection_id, name }) =>
                         name.toLowerCase().includes(value.toLowerCase()) ||
                         collection_id === Number(value),

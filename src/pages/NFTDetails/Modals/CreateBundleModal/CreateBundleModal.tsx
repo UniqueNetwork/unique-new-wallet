@@ -10,7 +10,10 @@ import { NestTokenBody, TokenId } from '@unique-nft/sdk';
 import { Modal, BaseActionBtn } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
-import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
+import {
+  useGraphQlCollectionsByNestingAccount,
+  useGraphQlGetCollectionsByIds,
+} from '@app/api/graphQL/collections';
 import { useAccounts } from '@app/hooks';
 import { CollectionNestingOption, useTokenNest } from '@app/api';
 import { Token } from '@app/api/graphQL/types';
@@ -63,8 +66,14 @@ export const CreateBundleModal = <T extends TBaseToken>({
 
   const queryClient = useQueryClient();
 
-  const collectionsData = useGraphQlCollectionsByNestingAccount({
+  const { collectionsIds } = useGraphQlCollectionsByNestingAccount({
     accountAddress: selectedAccount?.address,
+  });
+
+  const collectionsData = useGraphQlGetCollectionsByIds({
+    collections: collectionsIds?.map(({ collection_id }) => ({
+      collectionId: collection_id,
+    })),
   });
 
   const tokensData = useAllOwnedTokensByCollection(formData?.collection?.collection_id, {
@@ -73,6 +82,10 @@ export const CreateBundleModal = <T extends TBaseToken>({
         ? token?.tokenId
         : undefined,
   });
+
+  useEffect(() => {
+    collectionsData.refetchCollectionsByIds();
+  }, [collectionsIds]);
 
   const onSubmit = async (form: TCreateBundleForm) => {
     if (!token || !selectedAccount || !form.token || !form.collection) {

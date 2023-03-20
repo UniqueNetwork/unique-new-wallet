@@ -56,19 +56,9 @@ export const useGraphQlGetTokensCollection = ({
             token_id: { _neq: excludeCurrentTokenId },
           }),
           collection_id: { _eq: collectionId },
-          _and: [
-            {
-              _or: [
-                { collection_owner: { _eq: selectedAccount?.address } },
-                { collection_owner_normalized: { _eq: selectedAccount?.address } },
-              ],
-            },
-            {
-              _or: [
-                { tokens_owner: { _eq: selectedAccount?.address } },
-                { owner_normalized: { _eq: selectedAccount?.address } },
-              ],
-            },
+          _or: [
+            { tokens_owner: { _eq: selectedAccount?.address } },
+            { owner_normalized: { _eq: selectedAccount?.address } },
           ],
         },
       },
