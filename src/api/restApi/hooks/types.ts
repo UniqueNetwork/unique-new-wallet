@@ -13,7 +13,7 @@ export type TExtrinsicType =
   | 'transfer-token'
   | 'transfer-balance';
 
-export type TCollectionsCacheVar = { collectionId: number; path: string | undefined }[];
+export type TCollectionsCacheVar = { collectionId: number; path?: string | undefined }[];
 export type TTokensCacheVar = {
   tokenId: number;
   collectionId: number;
