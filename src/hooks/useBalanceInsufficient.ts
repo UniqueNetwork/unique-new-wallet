@@ -1,10 +1,16 @@
 import { useAccountBalanceService } from '@app/api';
 
+import { useApi } from './useApi';
+
 export const useIsSufficientBalance = (
   address: string | undefined | null,
   ...cost: Array<string | undefined | null>
 ) => {
-  const { data } = useAccountBalanceService(address ?? undefined);
+  const { currentChain } = useApi();
+  const { data } = useAccountBalanceService(
+    address ?? undefined,
+    currentChain.apiEndpoint,
+  );
 
   if (!cost.length) {
     return null;
@@ -15,6 +21,8 @@ export const useIsSufficientBalance = (
   if (isNaN(parsedCost)) {
     return null;
   }
+
+  console.log(data?.availableBalance.amount, parsedCost);
 
   return +(data?.availableBalance.amount ?? 0) >= parsedCost;
 };
