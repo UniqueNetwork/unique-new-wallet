@@ -54,8 +54,6 @@ export const useFormValidator = (
         });
   }, [isSufficientBalance, balanceValidationEnabled]);
 
-  console.log(errors);
-
   const errorMessage = Object.values(errors)
     .map((err) => err?.message ?? '')
     .filter((err, index, arr) => arr.indexOf(err) === index)
