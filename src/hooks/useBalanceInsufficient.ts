@@ -22,8 +22,6 @@ export const useIsSufficientBalance = (
     return null;
   }
 
-  console.log(data?.availableBalance.amount, parsedCost);
-
   return +(data?.availableBalance.amount ?? 0) >= parsedCost;
 };
 
