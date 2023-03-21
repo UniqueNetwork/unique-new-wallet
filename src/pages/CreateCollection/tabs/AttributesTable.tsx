@@ -4,6 +4,7 @@ import { Controller, useFieldArray, useWatch } from 'react-hook-form';
 import { InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
 
 import { Button, Icon, Table, TooltipWrapper } from '@app/components';
+import { FORM_ERRORS } from '@app/pages/constants';
 
 import { EnumsInputController } from '../components/EnumsInput/EnumsInputController';
 import trash from '../../../static/icons/trash.svg';
@@ -28,7 +29,10 @@ const PossibleValuesCell: VFC<{ index: number }> = ({ index }) => {
   return (
     <EnumsInputController
       rules={{
-        required: type.id !== 'string',
+        required: {
+          value: type.id !== 'string',
+          message: FORM_ERRORS.REQUIRED_FIELDS,
+        },
       }}
       defaultValue={null}
       isDisabled={type.id === 'string'}
@@ -45,7 +49,7 @@ const attributesColumns: TableColumnProps[] = [
     field: 'name',
     title: (
       <ColumnTitle
-        title="Attribute"
+        title="Attribute*"
         tooltip={<>Textual traits that show up&nbsp;on&nbsp;Token</>}
       />
     ),
@@ -56,7 +60,10 @@ const attributesColumns: TableColumnProps[] = [
         <Controller
           name={`attributes.${rowIndex}.name`}
           rules={{
-            required: true,
+            required: {
+              value: true,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
           }}
           render={({ field: { value, onChange } }) => (
             <InputText
@@ -122,7 +129,7 @@ const attributesColumns: TableColumnProps[] = [
     field: 'values',
     title: (
       <ColumnTitle
-        title="Possible values"
+        title="Possible values*"
         tooltip="Write down all the options you have"
       />
     ),

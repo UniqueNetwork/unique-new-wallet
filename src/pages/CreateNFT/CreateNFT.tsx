@@ -76,9 +76,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
-  const { control, reset, handleSubmit } = useFormContext();
+  const { control, reset, handleSubmit, setValue } = useFormContext();
 
-  const { isValid, errorMessage } = useFormValidator();
+  const { isValid, errorMessage } = useFormValidator({
+    balanceValidationEnabled: true,
+    address: selectedAccount?.address,
+    cost: [fee],
+  });
 
   const formValues = useWatch({ control });
   const [debouncedFormValues] = useDebounce(formValues, 500);
@@ -161,6 +165,11 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     }
     error(submitWaitResultError);
   }, [submitWaitResultError]);
+
+  useEffect(() => {
+    setValue('address', selectedAccount?.address);
+    setValue('owner', selectedAccount?.address);
+  }, [selectedAccount]);
 
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
     if (isValid) {

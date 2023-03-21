@@ -5,6 +5,7 @@ import { Controller } from 'react-hook-form';
 import { FormRow, LabelText } from '@app/pages/components/FormComponents';
 
 import { AttributeOption, AttributeType } from './types';
+import { FORM_ERRORS } from '../constants';
 
 interface AttributesRowProps {
   name: string;
@@ -35,7 +36,12 @@ const AttributesRowComponent: VFC<AttributesRowProps> = ({
       {type === 'text' && (
         <Controller
           name={name}
-          rules={{ required }}
+          rules={{
+            required: {
+              value: !!required,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
+          }}
           render={({ field: { onChange, value } }) => (
             <InputText value={value} onChange={onChange} />
           )}
@@ -44,7 +50,12 @@ const AttributesRowComponent: VFC<AttributesRowProps> = ({
       {type === 'select' && (
         <Controller
           name={name}
-          rules={{ required }}
+          rules={{
+            required: {
+              value: !!required,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
+          }}
           render={({ field: { onChange, value } }) => (
             <Select value={value?.id} options={options} onChange={onChange} />
           )}
@@ -53,7 +64,12 @@ const AttributesRowComponent: VFC<AttributesRowProps> = ({
       {type === 'multiselect' && (
         <Controller
           name={name}
-          rules={{ required }}
+          rules={{
+            required: {
+              value: !!required,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
+          }}
           render={({ field: { onChange, value } }) => (
             <Select
               multi

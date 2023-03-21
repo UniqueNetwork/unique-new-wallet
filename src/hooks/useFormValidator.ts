@@ -50,14 +50,16 @@ export const useFormValidator = (
       ? clearErrors('balance')
       : setError('balance', {
           type: 'custom',
-          message: FORM_ERRORS.INSUFFICIENT_BALANCE,
+          message: `${FORM_ERRORS.INSUFFICIENT_BALANCE}${selectedAccount?.balance?.availableBalance.unit}`,
         });
   }, [isSufficientBalance, balanceValidationEnabled]);
 
-  console.log(errors);
-
   const errorMessage = Object.values(errors)
-    .map((err) => err?.message ?? '')
+    .map((err) =>
+      Array.isArray(err)
+        ? err.map(({ message }) => message).join(joinSeparator)
+        : err?.message ?? '',
+    )
     .filter((err, index, arr) => arr.indexOf(err) === index)
     .sort()
     .join(joinSeparator);

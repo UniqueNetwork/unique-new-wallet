@@ -28,7 +28,7 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { BottomBar } from '@app/pages/components/BottomBar';
 
-import { NO_BALANCE_MESSAGE } from '../constants';
+import { FORM_ERRORS, NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
 import { ButtonGroup, FormWrapper } from '../components/FormComponents';
 import { tabsUrls, warnings } from './constants';
@@ -179,6 +179,12 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
+  const errorTooltip = isBalanceInsufficient
+    ? NO_BALANCE_MESSAGE
+    : !isValid
+    ? FORM_ERRORS.REQUIRED_FIELDS
+    : undefined;
+
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
       <WrapperContentStyled>
@@ -214,7 +220,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
               <ConfirmBtn
                 role="primary"
                 title="Create collection"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
+                tooltip={errorTooltip}
                 disabled={!isValid || isBalanceInsufficient}
                 onClick={handleSubmit(onCreateCollectionHandle)}
               />
