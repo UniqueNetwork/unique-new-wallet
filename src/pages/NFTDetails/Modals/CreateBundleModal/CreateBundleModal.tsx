@@ -200,6 +200,7 @@ export const CreateBundleModal = <T extends TBaseToken>({
           role="primary"
           actionEnabled={formState.isValid}
           actionText={validationMessage || ''}
+          tooltip={validationMessage}
           onClick={handleSubmit(onSubmit)}
         />
       }
