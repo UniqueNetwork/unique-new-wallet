@@ -85,7 +85,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   });
   const {
     control,
-    formState: { isValid },
+    formState: { isValid, errors },
     handleSubmit,
   } = collectionForm;
   const collectionFormValues = useWatch<CollectionForm>({
@@ -93,6 +93,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   });
 
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
+
+  useEffect(() => {
+    if (!selectedAccount) {
+      return;
+    }
+    collectionForm.setValue('address', selectedAccount.address);
+  }, [selectedAccount]);
 
   useEffect(() => {
     if (!feeError) {
@@ -113,11 +120,11 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   }, [currentStep, navigate]);
 
   useEffect(() => {
-    if (collectionDebounceValue) {
+    if (collectionDebounceValue && isValid) {
       const collection = formMapper(collectionDebounceValue);
       getFee(collection);
     }
-  }, [collectionDebounceValue, getFee]);
+  }, [collectionDebounceValue, getFee, isValid]);
 
   const goToNextStep = (step: number) => setCurrentStep(step);
   const goToPreviousStep = (step: number) => {
@@ -179,11 +186,23 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
-  const errorTooltip = isBalanceInsufficient
-    ? NO_BALANCE_MESSAGE
-    : !isValid
-    ? FORM_ERRORS.REQUIRED_FIELDS
-    : undefined;
+  const errorTooltip = useMemo(() => {
+    if (isBalanceInsufficient) {
+      return NO_BALANCE_MESSAGE;
+    }
+
+    if (!isValid) {
+      return Object.values(errors)
+        .map((error) => {
+          if (Array.isArray(error)) {
+            return error.map(({ message }) => message).join(' ');
+          }
+          return error.message;
+        })
+        .join(' ');
+    }
+    return null;
+  }, [isBalanceInsufficient, isValid, errors]);
 
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
@@ -202,6 +221,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 }}
                 title="Next step"
                 disabled={!isValid}
+                tooltip={errorTooltip}
                 onClick={handleSubmit(onNextStep)}
               />
             )}

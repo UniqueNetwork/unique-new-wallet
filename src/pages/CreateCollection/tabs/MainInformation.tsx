@@ -86,13 +86,21 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
                   value: true,
                   message: FORM_ERRORS.REQUIRED_FIELDS,
                 },
+                pattern: {
+                  value: /^\S+.*/,
+                  message: 'Name is not correct',
+                },
               }}
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <InputText
                   label="Name*"
                   value={value}
                   maxLength={MAX_NAME_SIZE}
-                  additionalText={`Max ${MAX_NAME_SIZE - value.length} symbols`}
+                  additionalText={`Max ${MAX_NAME_SIZE} symbols (${
+                    MAX_NAME_SIZE - value.length
+                  } left)`}
+                  error={!!error}
+                  statusText={error?.message}
                   onChange={onChange}
                 />
               )}
@@ -121,15 +129,21 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
                   value: true,
                   message: FORM_ERRORS.REQUIRED_FIELDS,
                 },
+                pattern: {
+                  value: /^\S+/,
+                  message: 'Symbol is not correct',
+                },
               }}
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <InputText
                   label="Symbol*"
                   value={value}
                   maxLength={MAX_SYMBOL_SIZE}
-                  additionalText={`Token name as displayed in Wallet (max ${
+                  additionalText={`Token name as displayed in Wallet (max ${MAX_SYMBOL_SIZE} / ${
                     MAX_SYMBOL_SIZE - value.length
-                  } symbols)`}
+                  } left symbols)`}
+                  error={!!error}
+                  statusText={error?.message}
                   onChange={(newVal) => {
                     const size = new Blob([newVal]).size;
 
