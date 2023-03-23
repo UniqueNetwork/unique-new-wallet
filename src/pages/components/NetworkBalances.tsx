@@ -45,8 +45,8 @@ export const NetworkBalances = ({
         {balanceFull || '0'} {symbol}
       </Text>
       <BalanceLocked>{calculateBalanceTransferable()}</BalanceLocked>
-      {!Number(balanceLocked) ? (
-        <BalanceLocked>{`${balanceLocked} ${symbol} locked`}</BalanceLocked>
+      {Number(balanceLocked) ? (
+        <BalanceLocked>{`${balanceLocked || 0} ${symbol} locked`}</BalanceLocked>
       ) : null}
     </Wrapper>
   );
