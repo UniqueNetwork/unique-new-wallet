@@ -54,13 +54,13 @@ export const useFormValidator = (
         });
   }, [isSufficientBalance, balanceValidationEnabled]);
 
-  console.log(errors);
-
   const errorMessage = Object.values(errors)
     .map((err) => err?.message ?? '')
     .filter((err, index, arr) => arr.indexOf(err) === index)
     .sort()
     .join(joinSeparator);
 
-  return { errorMessage, isValid };
+  const showFee = Object.keys(errors).filter((item) => item !== 'balance').length === 0;
+
+  return { errorMessage, isValid, showFee };
 };

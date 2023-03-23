@@ -63,7 +63,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     senderAccount: sendFundsDebounceValues.from,
   });
 
-  const { errorMessage, isValid } = useFormValidator({
+  const { errorMessage, isValid, showFee } = useFormValidator({
     balanceValidationEnabled: true,
     address: sendFundsValues.from?.address,
     cost: [fee, sendFundsValues.amount?.toString()],
@@ -152,12 +152,12 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
                     <Loader size="small" label="Calculating fee" placement="left" />
                   </FeeLoader>
                 )}
-                {!isValidForm && (
+                {!showFee && (
                   <Text color="inherit" size="s">
                     A fee will be calculated after entering the recipient and amount
                   </Text>
                 )}
-                {isValidForm && feeStatus === 'success' && (
+                {showFee && feeStatus === 'success' && (
                   <Text color="inherit" size="s">
                     {`A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
               is sponsored`}
@@ -167,9 +167,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
             </ContentRow>
             {((sendFundsValues.amount && fee) || feeLoading) && (
               <ContentRow>
-                {!feeLoading && isValidForm && (
-                  <Text weight="light">Total ~ {total}</Text>
-                )}
+                {!feeLoading && showFee && <Text weight="light">Total ~ {total}</Text>}
                 {feeLoading && (
                   <TotalLoader>
                     <Loader label="Calculating total" placement="left" />
