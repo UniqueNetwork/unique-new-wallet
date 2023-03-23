@@ -9,6 +9,7 @@ import {
   Toggle,
 } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
+import { Address } from '@unique-nft/utils';
 
 import { TooltipWrapper } from '@app/components';
 import {
@@ -60,7 +61,14 @@ export const NFTAttributes = () => {
           <SettingsRow>
             <Controller
               name="sponsorAddress"
-              render={({ field: { onChange, value } }) => (
+              rules={{
+                validate: (value) => {
+                  if (value && !Address.is.substrateAddressInAnyForm(value)) {
+                    return 'Sponsor address is not correct';
+                  }
+                },
+              }}
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <InputText
                   label={
                     <>
@@ -85,6 +93,8 @@ export const NFTAttributes = () => {
                       </TooltipWrapper>
                     </>
                   }
+                  error={!!error}
+                  statusText={error?.message}
                   additionalText="The designated sponsor should approve the request"
                   maxLength={48}
                   value={value}
@@ -185,7 +195,7 @@ export const NFTAttributes = () => {
   );
 };
 
-const AdvancedSettingsAccordion = styled(Accordion)`
+const AdvancedSettingsAccordion = styled(Accordion).attrs({ expanded: true })`
   margin-bottom: calc(var(--prop-gap) * 1.5);
 
   .unique-accordion-title {

@@ -56,6 +56,7 @@ const PreviewCardDescription = styled(Text).attrs({
 
   &.unique-text {
     font-weight: 400;
+    word-break: break-word;
   }
 `;
 
@@ -88,7 +89,7 @@ export const Card: VFC<IPreviewCard> = ({
       <PreviewCardInfo>
         <PreviewCardTitle>{title}</PreviewCardTitle>
         <PreviewCardDescription>{description}</PreviewCardDescription>
-        {(attributes || attributesInline) && (
+        {(attributes || attributesInline?.length) && (
           <PreviewCardAttributes>
             <Text size="m">{attributesInline ? 'Attribute names' : 'Attributes'}</Text>
             {attributesInline && (

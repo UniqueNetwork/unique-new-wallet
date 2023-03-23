@@ -20,6 +20,7 @@ interface UITableProps {
   loading?: boolean;
   mobileCaption?: ReactNode;
   noDataMessage?: string | null;
+  noDataComponent?: ReactNode;
   onSort?(sorting: SortQuery): void;
 }
 
@@ -35,6 +36,7 @@ export const Table: FC<UITableProps> = ({
   loading,
   mobileCaption,
   noDataMessage,
+  noDataComponent,
   onSort,
 }) => {
   const deviceSize = useDeviceSize();
@@ -60,7 +62,12 @@ export const Table: FC<UITableProps> = ({
           {mobileCaption && (
             <TableCaption className="table-caption">{mobileCaption}</TableCaption>
           )}
-          <MobileTable columns={columns} data={!loading ? data : []} loading={loading} />
+          <MobileTable
+            columns={columns}
+            data={!loading ? data : []}
+            loading={loading}
+            noDataComponent={noDataComponent}
+          />
         </>
       )}
     </TableWrapper>

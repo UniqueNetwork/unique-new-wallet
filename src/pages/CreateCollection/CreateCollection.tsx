@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FieldError, FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
@@ -28,7 +28,7 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { BottomBar } from '@app/pages/components/BottomBar';
 
-import { FORM_ERRORS, NO_BALANCE_MESSAGE } from '../constants';
+import { NO_BALANCE_MESSAGE } from '../constants';
 import { CollectionForm, Warning } from './types';
 import { ButtonGroup, FormWrapper } from '../components/FormComponents';
 import { tabsUrls, warnings } from './constants';
@@ -192,17 +192,31 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     }
 
     if (!isValid) {
-      return Object.values(errors)
-        .map((error) => {
-          if (Array.isArray(error)) {
-            return error.map(({ message }) => message).join(' ');
-          }
-          return error.message;
-        })
-        .join(' ');
+      const { attributes, ...fieldErrors } = errors;
+
+      const attributesMessages = attributes
+        ? attributes
+            .map?.((item) => {
+              return item
+                ? Object.values(item)
+                    .map((error) => (error as FieldError)?.message || '')
+                    .join(' ')
+                : '';
+            })
+            .join(' ')
+        : '';
+
+      return (
+        attributesMessages +
+        Object.values(fieldErrors)
+          .map((error) => {
+            return error.message;
+          })
+          .join(' ')
+      );
     }
     return null;
-  }, [isBalanceInsufficient, isValid, errors]);
+  }, [isBalanceInsufficient, isValid, errors, errors.attributes]);
 
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
@@ -211,7 +225,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
           <FeeInformationTransaction fee={feeFormatted} />
-          <ButtonGroup>
+          <ButtonGroup $fill>
             {!isLastStep && (
               <ConfirmBtn
                 iconRight={{
