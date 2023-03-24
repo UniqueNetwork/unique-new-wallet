@@ -42,7 +42,8 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();
 
-  const { order, page, search, onChangePagination } = useMyCollectionsContext();
+  const { order, page, search, onChangePagination, onChangeSearch } =
+    useMyCollectionsContext();
 
   const isChildExist = useOutlet();
 
@@ -99,6 +100,10 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       `/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${id}/${MY_COLLECTIONS_ROUTE.NFT}`,
     );
 
+  const onApplyFilterAndSorting = () => {
+    setFilterOpen(!isFilterOpen);
+  };
+
   const bottomBarButtons: BottomBarProps['buttons'] = [];
 
   if (!isFilterOpen) {
@@ -115,7 +120,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       <Button
         key="Apply-button-filter"
         title="Apply"
-        onClick={() => setFilterOpen(!isFilterOpen)}
+        onClick={onApplyFilterAndSorting}
       />,
 
       // TODO: next filters
@@ -130,13 +135,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       className={classNames('my-collections', className)}
     >
       {!isChildExist ? (
-        <PagePaper.Layout
-          header={
-            <TopFilter
-              showFilter={collections.length > 0 && deviceSize >= DeviceSize.lg}
-            />
-          }
-        >
+        <PagePaper.Layout header={<TopFilter showFilter={deviceSize >= DeviceSize.lg} />}>
           <PagePaper.Processing>
             <ListEntitiesCache entities={cacheCollections} />
             <List
@@ -189,7 +188,11 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
               isOpen={isFilterOpen}
               parent={document.body}
             >
-              <TopFilter showFilter={collections.length > 0} view="column" />
+              <TopFilter
+                showFilter={true}
+                view="column"
+                onCloseFilter={() => setFilterOpen(!isFilterOpen)}
+              />
             </BottomBar>
           )}
         </PagePaper.Layout>

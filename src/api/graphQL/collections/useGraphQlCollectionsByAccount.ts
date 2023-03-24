@@ -1,7 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 
 import { OptionsAccountCollection } from '@app/api';
-import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
 
 import { Collection, QueryResponse } from '../types';
 
@@ -54,11 +53,15 @@ export const useGraphQlCollectionsByAccount = ({
       offset: limit * page,
       order_by: order,
       where: {
-        _or: [
-          { owner: { _eq: accountAddress } },
-          { owner_normalized: { _eq: accountAddress } },
+        _and: [
+          {
+            _or: [
+              { owner: { _eq: accountAddress } },
+              { owner_normalized: { _eq: accountAddress } },
+            ],
+          },
+          ...applySearchFilter(search?.trim() || ''),
         ],
-        ...getConditionBySearchText('name', search),
         burned: { _eq: 'false' },
       },
     },
@@ -75,4 +78,19 @@ export const useGraphQlCollectionsByAccount = ({
     isCollectionsLoading: loading,
     error,
   };
+};
+
+const applySearchFilter = (search: string) => {
+  if (!search) {
+    return [];
+  }
+
+  return [
+    {
+      _or: [
+        { name: { _ilike: `%${search}%` } },
+        ...(Number(search) ? [{ collection_id: { _eq: Number(search) } }] : []),
+      ],
+    },
+  ];
 };
