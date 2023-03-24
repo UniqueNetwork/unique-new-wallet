@@ -26,7 +26,7 @@ const isValidHttpUrl = (checkUrl: string): boolean => {
 export const getTokenIpfsUriByImagePath = (
   imagePath: string | null | undefined,
 ): string | undefined => {
-  if (!imagePath) {
+  if (!imagePath || imagePath === `${IPFSGateway}/`) {
     return undefined;
   }
 
