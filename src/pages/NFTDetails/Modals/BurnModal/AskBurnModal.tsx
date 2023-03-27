@@ -1,13 +1,18 @@
-import React, { VFC } from 'react';
+import React, { useMemo, VFC } from 'react';
 import { Text, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
-import { Confirm } from '@app/components';
+import { Modal } from '@app/components/Modal';
+import { BaseActionBtn } from '@app/components';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
+import { useAccounts } from '@app/hooks';
+
+import { NOT_ENOUGH_BALANCE_MESSAGE } from '../constants';
 
 interface AskBurnModalProps {
   fee: string;
   isVisible: boolean;
+  isSufficientBalance: boolean;
   onBurn(): void;
   onClose(): void;
   isLoading: boolean;
@@ -16,31 +21,43 @@ interface AskBurnModalProps {
 export const AskBurnModal: VFC<AskBurnModalProps> = ({
   fee,
   isVisible,
+  isSufficientBalance,
   onBurn,
   onClose,
   isLoading,
 }) => {
+  const { selectedAccount } = useAccounts();
+
+  const validationMessage = useMemo(() => {
+    if (!isSufficientBalance) {
+      return `${NOT_ENOUGH_BALANCE_MESSAGE} ${selectedAccount?.unitBalance || 'coins'}`;
+    }
+    return null;
+  }, [isSufficientBalance, selectedAccount]);
+
   return (
-    <Confirm
+    <Modal
       isClosable
+      footerButtons={[
+        <BaseActionBtn
+          title="Confirm"
+          disabled={!isSufficientBalance}
+          role="primary"
+          actionEnabled={isSufficientBalance}
+          actionText={validationMessage || ''}
+          tooltip={validationMessage}
+          onClick={onBurn}
+        />,
+      ]}
       isVisible={isVisible}
       title="Burn NFT"
-      buttons={[
-        {
-          title: 'Confirm',
-          role: 'primary',
-          onClick: onBurn,
-          disabled: isLoading,
-        },
-      ]}
       onClose={onClose}
     >
-      {isLoading && <Loader isFullPage={true} />}
       <TextWrapper size="m" appearance="block">
         You will not be able to undo this action.
       </TextWrapper>
-      <FeeInformationTransaction fee={fee} />
-    </Confirm>
+      <FeeInformationTransaction fee={fee} feeLoading={isLoading} />
+    </Modal>
   );
 };
 

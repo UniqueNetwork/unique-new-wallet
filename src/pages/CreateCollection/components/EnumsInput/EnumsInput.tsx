@@ -56,7 +56,7 @@ export const EnumsInput = <T,>({
   const changeCurrentEnum = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
 
-    if (maxSymbols && val?.length > maxSymbols) {
+    if (val === ' ' || (maxSymbols && val?.length > maxSymbols)) {
       return;
     }
 

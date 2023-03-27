@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FieldError, FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
@@ -85,7 +85,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   });
   const {
     control,
-    formState: { isValid },
+    formState: { isValid, errors },
     handleSubmit,
   } = collectionForm;
   const collectionFormValues = useWatch<CollectionForm>({
@@ -93,6 +93,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   });
 
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
+
+  useEffect(() => {
+    if (!selectedAccount) {
+      return;
+    }
+    collectionForm.setValue('address', selectedAccount.address);
+  }, [selectedAccount]);
 
   useEffect(() => {
     if (!feeError) {
@@ -113,11 +120,11 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   }, [currentStep, navigate]);
 
   useEffect(() => {
-    if (collectionDebounceValue) {
+    if (collectionDebounceValue && isValid) {
       const collection = formMapper(collectionDebounceValue);
       getFee(collection);
     }
-  }, [collectionDebounceValue, getFee]);
+  }, [collectionDebounceValue, getFee, isValid]);
 
   const goToNextStep = (step: number) => setCurrentStep(step);
   const goToPreviousStep = (step: number) => {
@@ -179,6 +186,38 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
+  const errorTooltip = useMemo(() => {
+    if (isBalanceInsufficient) {
+      return NO_BALANCE_MESSAGE;
+    }
+
+    if (!isValid) {
+      const { attributes, ...fieldErrors } = errors;
+
+      const attributesMessages = attributes
+        ? attributes
+            .map?.((item) => {
+              return item
+                ? Object.values(item)
+                    .map((error) => (error as FieldError)?.message || '')
+                    .join(' ')
+                : '';
+            })
+            .join(' ')
+        : '';
+
+      return (
+        attributesMessages +
+        Object.values(fieldErrors)
+          .map((error) => {
+            return error.message;
+          })
+          .join(' ')
+      );
+    }
+    return null;
+  }, [isBalanceInsufficient, isValid, errors, errors.attributes]);
+
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
       <WrapperContentStyled>
@@ -186,7 +225,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
           <FeeInformationTransaction fee={feeFormatted} />
-          <ButtonGroup>
+          <ButtonGroup $fill>
             {!isLastStep && (
               <ConfirmBtn
                 iconRight={{
@@ -196,6 +235,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 }}
                 title="Next step"
                 disabled={!isValid}
+                tooltip={errorTooltip}
                 onClick={handleSubmit(onNextStep)}
               />
             )}
@@ -214,7 +254,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
               <ConfirmBtn
                 role="primary"
                 title="Create collection"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
+                tooltip={errorTooltip}
                 disabled={!isValid || isBalanceInsufficient}
                 onClick={handleSubmit(onCreateCollectionHandle)}
               />

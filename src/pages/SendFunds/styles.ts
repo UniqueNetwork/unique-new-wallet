@@ -21,9 +21,11 @@ export const StyledAdditionalText = styled(AdditionalText)`
 export const InputAmount = styled.div`
   position: relative;
 
-  input[type='text'] {
+  .unique-input-text div.input-wrapper input[type='text'],
+  .unique-input-text div.input-wrapper.with-icon.to-right input[type='text'] {
     width: calc(100% - 76px);
     color: var(--color-additional-dark);
+    padding: 8px 16px;
   }
 `;
 

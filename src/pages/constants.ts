@@ -16,6 +16,6 @@ export const DEFAULT_POSITION_TOOLTIP = {
 export const FORM_ERRORS: FormError = {
   INVALID_ADDRESS: 'Please enter a valid address',
   REQUIRED_FIELDS: 'You did not fill in the required fields',
-  INSUFFICIENT_BALANCE: "You don't have enough currency",
+  INSUFFICIENT_BALANCE: "You don't have enough ",
   INVALID_AMOUNT: 'Amount must be a positive number greater than zero',
 };
