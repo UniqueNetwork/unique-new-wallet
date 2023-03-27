@@ -74,6 +74,7 @@ const attributesColumns: TableColumnProps[] = [
               value={value}
               placeholder="Attribute name"
               error={!!error}
+              maxLength={64}
               onChange={(value) => {
                 if (inputRegExp.test(value)) {
                   onChange(value);
