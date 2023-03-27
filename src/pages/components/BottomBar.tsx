@@ -16,7 +16,7 @@ export interface BottomBarProps {
 
 const Drawer = styled.div<{ bottomGap?: number }>`
   position: fixed;
-  z-index: 8;
+  z-index: 9;
   overflow: auto;
   top: 0;
   bottom: 0;
