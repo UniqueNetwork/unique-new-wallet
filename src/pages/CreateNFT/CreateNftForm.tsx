@@ -126,9 +126,15 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                   onChange={(val) => {
                     resetField('attributes');
                     resetField('imageIpfsCid');
-
                     onChange(val?.id);
                   }}
+                  onSuggestionsFetchRequested={(value) =>
+                    collectionsOptions.filter(
+                      ({ id, title }) =>
+                        title.toLowerCase().includes(value.toLowerCase()) ||
+                        id === Number(value),
+                    )
+                  }
                 />
               )}
             />
