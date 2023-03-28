@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
 import { Address } from '@unique-nft/utils/address';
-import { TokenByIdResponse } from '@unique-nft/sdk';
+import { CollectionInfoWithSchemaResponse, TokenByIdResponse } from '@unique-nft/sdk';
 
 import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenTopmostOwner } from '@app/api/restApi/token/useTokenTopmostOwner';
 
 export const useIsOwner = (
-  token: TokenByIdResponse | undefined,
+  token:
+    | (Pick<TokenByIdResponse, 'collectionId' | 'tokenId' | 'owner'> & {
+        collection: Pick<CollectionInfoWithSchemaResponse, 'mode'>;
+      })
+    | undefined,
   parentAddress?: string,
 ) => {
   const { selectedAccount } = useAccounts();
