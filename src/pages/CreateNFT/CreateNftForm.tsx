@@ -166,6 +166,11 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
             </UploadWidget>
           </FormRow>
           <Heading size="3">Attributes</Heading>
+          {selectedCollection && (!attributes || !attributes.length) && (
+            <Text color="grey-500" size="s">
+              There are no attributes for this collection
+            </Text>
+          )}
           {attributes.map((attr, index) => {
             const values = Object.values(attr.enumValues ?? []).map((val) => val._);
 
