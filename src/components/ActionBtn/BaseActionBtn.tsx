@@ -6,7 +6,7 @@ export const BaseActionBtn = ({
   ...props
 }: ButtonProps & {
   actionEnabled: boolean;
-  actionText: string;
+  actionText: string | null;
   tooltip?: string | null;
 }) => {
   const iconRender = (icon?: IconProps) => {

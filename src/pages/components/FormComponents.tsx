@@ -63,6 +63,11 @@ export const FormRow = styled.div`
   &.has_uploader {
     margin-bottom: calc(var(--prop-gap) * 2.5);
   }
+
+  .unique-select .select-wrapper .select-dropdown {
+    max-height: 300px;
+    overflow-y: scroll;
+  }
 `;
 
 export const FormRowEmpty = styled.div`

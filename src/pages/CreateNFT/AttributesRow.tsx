@@ -1,8 +1,9 @@
 import { VFC, useMemo, memo } from 'react';
-import { InputText, Select } from '@unique-nft/ui-kit';
+import { Select } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 
 import { FormRow, LabelText } from '@app/pages/components/FormComponents';
+import { InputText } from '@app/components';
 
 import { AttributeOption, AttributeType } from './types';
 import { FORM_ERRORS } from '../constants';
@@ -41,9 +42,18 @@ const AttributesRowComponent: VFC<AttributesRowProps> = ({
               value: !!required,
               message: FORM_ERRORS.REQUIRED_FIELDS,
             },
+            pattern: {
+              value: /^\S+.*/,
+              message: 'Value is not correct',
+            },
           }}
           render={({ field: { onChange, value } }) => (
-            <InputText value={value} onChange={onChange} />
+            <InputText
+              clearable
+              value={value}
+              onChange={onChange}
+              onClear={() => onChange('')}
+            />
           )}
         />
       )}

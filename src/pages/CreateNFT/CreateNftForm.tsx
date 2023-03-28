@@ -126,9 +126,15 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                   onChange={(val) => {
                     resetField('attributes');
                     resetField('imageIpfsCid');
-
                     onChange(val?.id);
                   }}
+                  onSuggestionsFetchRequested={(value) =>
+                    collectionsOptions.filter(
+                      ({ id, title }) =>
+                        title.toLowerCase().includes(value.toLowerCase()) ||
+                        id === Number(value),
+                    )
+                  }
                 />
               )}
             />
@@ -160,6 +166,11 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
             </UploadWidget>
           </FormRow>
           <Heading size="3">Attributes</Heading>
+          {selectedCollection && (!attributes || !attributes.length) && (
+            <Text color="grey-500" size="s">
+              There are no attributes for this collection
+            </Text>
+          )}
           {attributes.map((attr, index) => {
             const values = Object.values(attr.enumValues ?? []).map((val) => val._);
 
