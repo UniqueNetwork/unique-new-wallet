@@ -18,6 +18,12 @@ const wallets = new Map<
   ['metamask', MetamaskWallet],
 ]);
 
+const extensionSourceLinks = {
+  polkadot: 'https://polkadot.js.org/extension/',
+  metamask:
+    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=ru',
+};
+
 export const CONNECTED_WALLET_TYPE = 'connected-wallet-type';
 
 export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
@@ -53,6 +59,10 @@ export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
             connectedWallets.filter((type) => type !== typeWallet).join(';'),
           );
         }
+        if (typeWallet === 'polkadot' || typeWallet === 'metamask') {
+          window.open(extensionSourceLinks[typeWallet], '_blank');
+        }
+
         error(e.message);
       }
     },
