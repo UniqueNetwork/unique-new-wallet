@@ -101,6 +101,11 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
     }
   };
 
+  const handleSearchClear = () => {
+    onChangeSearch('');
+    setSearch('');
+  };
+
   const handleApplyFilter = () => setFilterOpen(!isFilterOpen);
   const barButtons = [];
 
@@ -147,7 +152,13 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               options={radioOptions}
               onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
             />
-            <Search value={search} onKeyDown={handleSearch} onChange={setSearch} />
+            <Search
+              hideButton
+              value={search}
+              onKeyDown={handleSearch}
+              onChange={setSearch}
+              onClear={handleSearchClear}
+            />
             <Select
               options={sortOptions}
               value={direction}

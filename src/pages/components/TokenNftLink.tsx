@@ -3,14 +3,18 @@ import styled from 'styled-components';
 
 import { Achievement, TokenLink } from '@app/components';
 import { Token, TokenTypeEnum } from '@app/api/graphQL/types';
-import { formatLongNumber } from '@app/utils';
+import { formatLongNumber, shortAddress } from '@app/utils';
+
+import { useIsOwner } from '../NFTDetails/hooks/useIsOwner';
 
 export const TokenNftLink = ({
   token,
   navigate,
+  showOwner,
 }: {
   token: Token;
-  navigate: () => void;
+  navigate: () => void | string;
+  showOwner?: boolean;
 }) => {
   const renderBadge = (type: TokenTypeEnum, nested: boolean) => {
     if (!token.parent_id && nested) {
@@ -41,6 +45,18 @@ export const TokenNftLink = ({
     }
     return null;
   };
+
+  const isOwner = useIsOwner(
+    {
+      collectionId: token.collection_id,
+      tokenId: token.token_id,
+      owner: token.tokens_owner,
+      collection: {
+        mode: token.type === 'NFT' ? 'NFT' : 'ReFungible',
+      },
+    },
+    token.tokens_owner,
+  );
 
   return (
     <TokenLink
@@ -73,6 +89,21 @@ export const TokenNftLink = ({
               </Text>
             </AdditionalWrapper>
           )}
+          {showOwner && (
+            <AdditionalWrapper>
+              {isOwner && (
+                <Text appearance="block" weight="light" size="s" color="grey-500">
+                  You own it
+                </Text>
+              )}
+              {!isOwner && (
+                <Text appearance="block" weight="light" size="s" color="grey-500">
+                  Owned by:{' '}
+                  <span className="count">{shortAddress(token.tokens_owner)}</span>
+                </Text>
+              )}
+            </AdditionalWrapper>
+          )}
         </>
       }
       onTokenClick={() => navigate()}
@@ -84,6 +115,7 @@ const AdditionalWrapper = styled.div`
   margin-top: calc(var(--prop-gap) / 2);
 
   .count {
+    white-space: nowrap;
     color: var(--color-additional-dark);
   }
 `;
