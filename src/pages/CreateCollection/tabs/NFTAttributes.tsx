@@ -138,7 +138,7 @@ export const NFTAttributes = () => {
                       </TooltipWrapper>
                     </>
                   }
-                  additionalText="Value range 0 - 4,294,967,295, unlimited by default."
+                  additionalText="Value range 1 - 4,294,967,295. Unlimited by default."
                   role="number"
                   value={value}
                   onChange={(value) => {
