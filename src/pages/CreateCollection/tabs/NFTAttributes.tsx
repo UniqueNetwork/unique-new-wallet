@@ -63,7 +63,7 @@ export const NFTAttributes = () => {
               name="sponsorAddress"
               rules={{
                 validate: (value) => {
-                  if (value && !Address.is.substrateAddressInAnyForm(value)) {
+                  if (value && !Address.is.validAddressInAnyForm(value)) {
                     return 'Sponsor address is not correct';
                   }
                 },
@@ -96,7 +96,7 @@ export const NFTAttributes = () => {
                   error={!!error}
                   statusText={error?.message}
                   additionalText="The designated sponsor should approve the request"
-                  maxLength={48}
+                  maxLength={64}
                   value={value}
                   onChange={onChange}
                 />
