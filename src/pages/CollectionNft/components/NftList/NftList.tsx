@@ -66,6 +66,12 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     refetchTokens: refetchCollectionTokens,
   });
 
+  const getTotalResults = () => {
+    const elementsTitle = tokenOwnersCount > 1 ? 'unique elements' : 'unique element';
+    const tokensTitle = tokensCount > 1 ? 'tokens' : 'token';
+    return `${tokenOwnersCount} ${elementsTitle}, ${tokensCount} ${tokensTitle}`;
+  };
+
   return (
     <PagePaper.Processing>
       <ListEntitiesCache entities={cacheTokens} />
@@ -75,11 +81,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         fetchMore={fetchMore}
         isLoading={isLoadingTokens}
         itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
-        resultsComponent={
-          <Text>
-            {tokenOwnersCount} unique elements, {tokensCount} tokens
-          </Text>
-        }
+        resultsComponent={<Text>{getTotalResults()}</Text>}
         panelSettings={{
           pagination: {
             current: page,
