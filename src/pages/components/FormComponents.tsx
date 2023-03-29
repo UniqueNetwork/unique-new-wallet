@@ -68,6 +68,9 @@ export const FormRow = styled.div`
     max-height: 300px;
     overflow-y: scroll;
   }
+  textarea {
+    font-size: calc(var(--prop-font-size) + 2px);
+  }
 `;
 
 export const FormRowEmpty = styled.div`
