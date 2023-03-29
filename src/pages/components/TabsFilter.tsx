@@ -23,6 +23,11 @@ const TabsFilterWrapper = styled.div`
       align-items: center;
       justify-content: flex-end;
     }
+    &__buttons {
+      @media screen and (max-width: 568px) {
+        flex: 1;
+      }
+    }
   }
 
   .unique-input-text,
