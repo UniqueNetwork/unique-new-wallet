@@ -47,10 +47,11 @@ const AttributesRowComponent: VFC<AttributesRowProps> = ({
               message: 'Value is not correct',
             },
           }}
-          render={({ field: { onChange, value } }) => (
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
             <InputText
               clearable
               value={value}
+              error={!!error}
               onChange={onChange}
               onClear={() => onChange('')}
             />
