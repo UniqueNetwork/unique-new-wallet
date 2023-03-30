@@ -253,7 +253,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                   size: 12,
                 }}
                 title="Next step"
-                disabled={!isValid}
+                disabled={!isValid || feeLoading || isBalanceInsufficient}
                 tooltip={errorTooltip}
                 onClick={handleSubmit(onNextStep)}
               />
