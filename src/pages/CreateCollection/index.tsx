@@ -5,7 +5,6 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ROUTE } from '@app/routes';
 
 import { CollectionForm } from './types';
-import { FeeProvider } from './context';
 import { CreateCollection } from './CreateCollection';
 
 export const CreateCollectionForm = () => {
@@ -26,9 +25,7 @@ export const CreateCollectionForm = () => {
 
   return (
     <FormProvider {...collectionForm}>
-      <FeeProvider>
-        <CreateCollection />
-      </FeeProvider>
+      <CreateCollection />
     </FormProvider>
   );
 };

@@ -107,6 +107,13 @@ const Wrapper = styled.div`
     padding: 4px 8px;
     min-height: 30px;
 
+    @media screen and (max-width: 1023px) {
+      width: calc(100vw - 48px);
+    }
+    @media screen and (max-width: 567px) {
+      width: calc(100vw - 32px);
+    }
+
     &.disabled {
       background: var(--color-blue-grey-100);
       border: 1px solid var(--color-blue-grey-100);

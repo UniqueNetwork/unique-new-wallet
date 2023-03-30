@@ -16,6 +16,7 @@ import {
 import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
+  Alert,
   Button,
   CollectionSidebar,
   CollectionStepper,
@@ -46,6 +47,12 @@ const WrapperContentStyled = styled(WrapperContent)`
   }
 `;
 
+const ButtonsGroup = styled.div`
+  position: absolute;
+  bottom: 0;
+  padding: calc(var(--prop-gap) / 1.6) calc(var(--prop-gap) / 2);
+`;
+
 const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const deviceSize = useDeviceSize();
   const [currentStep, setCurrentStep] = useState(1);
@@ -67,6 +74,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     feeError,
     submitWaitResultError,
   } = useCollectionCreate();
+
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
@@ -121,6 +129,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   }, [currentStep, navigate]);
 
   useEffect(() => {
+    console.log(isValid);
     if (collectionDebounceValue && isValid) {
       const collection = formMapper(collectionDebounceValue);
       getFee(collection);
@@ -201,7 +210,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
               return item
                 ? Object.values(item)
                     .map((error) => (error as FieldError)?.message || '')
-                    .join(' ')
+                    .join('\n')
                 : '';
             })
             .join(' ')
@@ -213,7 +222,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           .map((error) => {
             return error.message;
           })
-          .join(' ')
+          .join('\n')
       );
     }
     return null;
@@ -225,7 +234,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         <FormWrapper>
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
-          <FeeInformationTransaction fee={feeFormatted} feeLoading={feeLoading} />
+          {isBalanceInsufficient || (!isBalanceInsufficient && isValid) ? (
+            <FeeInformationTransaction fee={feeFormatted} feeLoading={feeLoading} />
+          ) : (
+            <Alert type="warning">
+              A fee will be calculated after corrected filling required fields
+            </Alert>
+          )}
           <ButtonGroup $fill>
             {!isLastStep && (
               <ConfirmBtn
@@ -297,15 +312,22 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         <BottomBar
           buttons={[
             <Button
-              title={isDrawerOpen ? 'Back' : 'Preview'}
+              title="Preview"
               key="toggleDrawer"
-              onClick={() => setDrawerOpen(!isDrawerOpen)}
+              onClick={() => setDrawerOpen(true)}
             />,
           ]}
           isOpen={isDrawerOpen}
           parent={document.body}
         >
           <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+          <ButtonsGroup>
+            <Button
+              title="Back"
+              key="toggleDrawer"
+              onClick={() => setDrawerOpen(false)}
+            />
+          </ButtonsGroup>
         </BottomBar>
       )}
     </MainWrapper>

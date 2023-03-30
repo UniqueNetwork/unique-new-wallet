@@ -1,17 +1,9 @@
 import styled from 'styled-components';
-import {
-  Accordion,
-  Checkbox,
-  Heading,
-  Icon,
-  InputText,
-  Text,
-  Toggle,
-} from '@unique-nft/ui-kit';
+import { Accordion, Checkbox, Heading, Icon, Text, Toggle } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 import { Address } from '@unique-nft/utils';
 
-import { TooltipWrapper } from '@app/components';
+import { InputText, TooltipWrapper } from '@app/components';
 import {
   FormBody,
   FormHeader,

@@ -1,7 +1,6 @@
 import React, { VFC, useCallback } from 'react';
 import {
   Heading,
-  InputText,
   Text,
   Textarea,
   Upload,
@@ -31,6 +30,7 @@ import {
   FILE_SIZE_LIMIT_ERROR,
   FORM_ERRORS,
 } from '@app/pages';
+import { InputText } from '@app/components';
 
 interface MainInformationProps {
   className?: string;
@@ -115,7 +115,9 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
                   value={value}
                   rows={4}
                   maxLength={MAX_DESCRIPTION_SIZE}
-                  additionalText={`Max ${MAX_DESCRIPTION_SIZE - value.length} symbols`}
+                  additionalText={`Max ${MAX_DESCRIPTION_SIZE} symbols (${
+                    MAX_DESCRIPTION_SIZE - value.length
+                  } left)`}
                   onChange={onChange}
                 />
               )}
@@ -135,13 +137,17 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
                 },
               }}
               render={({ field: { onChange, value }, fieldState: { error } }) => (
-                <InputText
+                <SymbolInputText
                   label="Symbol*"
                   value={value}
                   maxLength={MAX_SYMBOL_SIZE}
-                  additionalText={`Token name as displayed in Wallet (max ${MAX_SYMBOL_SIZE} / ${
-                    MAX_SYMBOL_SIZE - value.length
-                  } left symbols)`}
+                  additionalText={
+                    <>
+                      Token name as displayed in Wallet <br />
+                      Max symbols {MAX_SYMBOL_SIZE} ({MAX_SYMBOL_SIZE - value.length}{' '}
+                      left)
+                    </>
+                  }
                   error={!!error}
                   statusText={error?.message}
                   onChange={(newVal) => {
@@ -187,6 +193,12 @@ const DownloadCover = styled.div`
   display: flex;
   align-items: center;
   gap: 30px;
+`;
+
+const SymbolInputText = styled(InputText)`
+  .additional-text {
+    height: auto;
+  }
 `;
 
 export const MainInformation = styled(MainInformationComponent)`
