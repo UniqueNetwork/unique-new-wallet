@@ -196,7 +196,7 @@ const DownloadCover = styled.div`
 `;
 
 const SymbolInputText = styled(InputText)`
-  .additional-text {
+  div.additional-text {
     height: auto;
   }
 `;
