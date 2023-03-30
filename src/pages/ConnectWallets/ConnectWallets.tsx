@@ -40,7 +40,6 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
   const [missingExtension, setMissingExtension] = useState<'Polkadot' | 'Metamask'>();
   const { walletsCenter } = useAccounts();
-  const { error } = useNotifications();
 
   const onCreateAccountClick = useCallback(() => {
     logUserEvent(UserEvents.CREATE_SUBSTRATE);
@@ -52,7 +51,7 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
     setOpen(false);
   }, []);
 
-  const handleOpenModal = (modalType: AccountModal) => {
+  const handleOpenModal = (modalType: AccountModal) => () => {
     logUserEvent(UserEvents.ADD_ACCOUNT_VIA);
     setCurrentModal(modalType);
   };
@@ -94,20 +93,15 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
         <p>Create or import an existing one in any suitable way:</p>
         <Buttons>
           <Button
-            title="New substrate account"
+            title="Seed phrase"
             role="primary"
-            onClick={onCreateAccountClick}
+            onClick={handleOpenModal(AccountModal.VIA_SEED)}
           />
-          {dropdownItems.map((button, idx) => (
-            <Button
-              key={idx}
-              title={button.title}
-              onClick={() => {
-                setOpen(false);
-                handleOpenModal(button.modal);
-              }}
-            />
-          ))}
+          <Button title="New substrate account" onClick={onCreateAccountClick} />
+          <Button
+            title="Backup JSON file"
+            onClick={handleOpenModal(AccountModal.VIA_JSON)}
+          />
         </Buttons>
 
         <p>You can also create or connect wallets via these providers:</p>
@@ -179,5 +173,8 @@ const Buttons = styled.div`
 
   & > button {
     flex: 1 1 calc(50% - 10px);
+    &:first-child {
+      flex: 1 1 100%;
+    }
   }
 `;
