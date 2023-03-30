@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { FieldError, FieldErrorsImpl, useFormContext, useWatch } from 'react-hook-form';
 
 import { useAccounts, useIsSufficientBalance } from '@app/hooks';
 import { FORM_ERRORS } from '@app/pages';
 
-const joinSeparator = '. ';
+const joinSeparator = '\n';
 
 type FormValidatorConfig = {
   watchedFields?: string[];
@@ -54,14 +54,14 @@ export const useFormValidator = (
         });
   }, [isSufficientBalance, balanceValidationEnabled]);
 
-  const errorMessage = Object.values(errors)
-    .map((err) =>
-      Array.isArray(err)
-        ? err.map(({ message }) => message).join(joinSeparator)
-        : err?.message ?? '',
-    )
-    .filter((err, index, arr) => arr.indexOf(err) === index)
-    .sort()
+  const errorMessage = (Object.values(errors).flat(2) as (FieldError | undefined)[])
+    .reduce<FieldError[]>((arr, item) => {
+      if (item && !arr.find(({ type }) => type === item.type)) {
+        arr.push(item);
+      }
+      return arr;
+    }, [])
+    .map(({ message }) => message)
     .join(joinSeparator);
 
   const showFee = Object.keys(errors).filter((item) => item !== 'balance').length === 0;
