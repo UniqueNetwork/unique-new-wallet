@@ -5,6 +5,7 @@ import { Icon, InputBaseProps, InputText } from '@app/components';
 
 type SearchProps = Pick<ComponentProps, 'className' | 'value' | 'onKeyDown'> &
   Pick<InputBaseProps, 'onChange'> & {
+    hideButton?: boolean;
     onClick?: () => void;
     onClear?: () => void;
   };
@@ -31,6 +32,7 @@ const Wrapper = styled.div`
   }
   button.unique-button.primary {
     display: none;
+    width: auto;
     @media screen and (min-width: 1024px) {
       display: flex;
     }
@@ -40,6 +42,7 @@ const Wrapper = styled.div`
 export const Search = ({
   className,
   value,
+  hideButton,
   onChange,
   onKeyDown,
   onClick,
@@ -56,7 +59,9 @@ export const Search = ({
         onKeyDown={onKeyDown}
         onClear={onClear}
       />
-      <Button role="primary" type="button" title="Search" onClick={onClick} />
+      {!hideButton && (
+        <Button role="primary" type="button" title="Search" onClick={onClick} />
+      )}
     </Wrapper>
   );
 };

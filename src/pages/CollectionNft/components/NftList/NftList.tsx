@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Text } from '@unique-nft/ui-kit';
 
 import { useGraphQlCollectionTokens } from '@app/api/graphQL/tokens/useGraphQlCollectionTokens';
 import { useNftFilterContext } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
@@ -11,6 +12,7 @@ import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 import { TokenNftLink } from '@app/pages/components/TokenNftLink';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import { useGraphQlGetCollectionTokensOwners } from '@app/api/graphQL/tokens/useGraphQlGetCollectionTokensOwners';
 
 interface NftListComponentProps {
   className?: string;
@@ -24,14 +26,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
   const navigate = useNavigate();
   const getTokenPath = useGetTokenPath();
 
-  const {
-    tokens,
-    tokensCount,
-    isLoadingTokens,
-    isPagination,
-    fetchMore,
-    refetchCollectionTokens,
-  } = useGraphQlCollectionTokens({
+  const { tokenOwnersCount, isPagination } = useGraphQlGetCollectionTokensOwners({
     collectionId: parseInt(collectionId || ''),
     collectionOwner: selectedAccount?.address,
     filter: {
@@ -40,7 +35,6 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     },
     options: {
       skip: !selectedAccount?.address,
-      direction,
       pagination: {
         page,
         limit: getLimit,
@@ -48,11 +42,35 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
     },
   });
 
+  const { tokens, tokensCount, isLoadingTokens, fetchMore, refetchCollectionTokens } =
+    useGraphQlCollectionTokens({
+      collectionId: parseInt(collectionId || ''),
+      collectionOwner: selectedAccount?.address,
+      filter: {
+        search,
+        type,
+      },
+      options: {
+        skip: !selectedAccount?.address,
+        direction,
+        pagination: {
+          page,
+          limit: getLimit,
+        },
+      },
+    });
+
   const { cacheTokens } = useCheckExistTokensByAccount({
     tokens,
     collectionId: parseInt(collectionId),
     refetchTokens: refetchCollectionTokens,
   });
+
+  const getTotalResults = () => {
+    const elementsTitle = tokenOwnersCount > 1 ? 'unique elements' : 'unique element';
+    const tokensTitle = tokensCount > 1 ? 'tokens' : 'token';
+    return `${tokenOwnersCount} ${elementsTitle}, ${tokensCount} ${tokensTitle}`;
+  };
 
   return (
     <PagePaper.Processing>
@@ -63,19 +81,21 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         fetchMore={fetchMore}
         isLoading={isLoadingTokens}
         itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+        resultsComponent={<Text>{getTotalResults()}</Text>}
         panelSettings={{
           pagination: {
             current: page,
             pageSizes: [getLimit],
             show: isPagination,
-            size: tokensCount,
+            size: tokenOwnersCount,
             viewMode: 'bottom',
           },
           viewMode: 'both',
         }}
         renderItem={(token: Token) => (
           <TokenNftLink
-            key={token.token_id}
+            showOwner
+            key={`${token.tokens_owner}-${token.token_id}`}
             token={token}
             navigate={() => {
               navigate(getTokenPath(token.owner, token.collection_id, token.token_id), {

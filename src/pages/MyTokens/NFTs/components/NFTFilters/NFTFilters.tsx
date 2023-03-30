@@ -60,7 +60,7 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
             color: 'currentColor',
           }}
           role="primary"
-          title="Create an NFT"
+          title="Create a token"
           disabled={!Number(selectedAccount?.collectionsTotal)}
           tooltip={
             !Number(selectedAccount?.collectionsTotal)
