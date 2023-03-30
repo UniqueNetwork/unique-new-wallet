@@ -29,7 +29,7 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { BottomBar } from '@app/pages/components/BottomBar';
 
-import { NO_BALANCE_MESSAGE } from '../constants';
+import { FORM_ERRORS } from '../constants';
 import { CollectionForm, Warning } from './types';
 import { ButtonGroup, FormWrapper } from '../components/FormComponents';
 import { tabsUrls, warnings } from './constants';
@@ -129,7 +129,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   }, [currentStep, navigate]);
 
   useEffect(() => {
-    console.log(isValid);
     if (collectionDebounceValue && isValid) {
       const collection = formMapper(collectionDebounceValue);
       getFee(collection);
@@ -197,11 +196,10 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   );
 
   const errorTooltip = useMemo(() => {
-    if (isBalanceInsufficient) {
-      return NO_BALANCE_MESSAGE;
-    }
-
     if (!isValid) {
+      if (!errors || !Object.values(errors).length) {
+        return FORM_ERRORS.REQUIRED_FIELDS;
+      }
       const { attributes, ...fieldErrors } = errors;
 
       const attributesMessages = attributes
@@ -223,6 +221,11 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
             return error.message;
           })
           .join('\n')
+      );
+    }
+    if (isBalanceInsufficient) {
+      return (
+        FORM_ERRORS.INSUFFICIENT_BALANCE + selectedAccount?.balance?.availableBalance.unit
       );
     }
     return null;

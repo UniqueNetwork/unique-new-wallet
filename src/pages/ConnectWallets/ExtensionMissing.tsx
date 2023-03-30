@@ -56,6 +56,9 @@ const ModalContent = styled.div`
   .unique-text {
     text-align: center;
   }
+  .unique-link.primary {
+    font-size: 16px;
+  }
 `;
 
 const SmileImg = styled.img`
