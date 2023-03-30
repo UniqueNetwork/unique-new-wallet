@@ -61,6 +61,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     getFee,
     fee,
     feeFormatted,
+    feeLoading,
     submitWaitResult,
     isLoadingSubmitResult,
     feeError,
@@ -224,7 +225,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         <FormWrapper>
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
-          <FeeInformationTransaction fee={feeFormatted} />
+          <FeeInformationTransaction fee={feeFormatted} feeLoading={feeLoading} />
           <ButtonGroup $fill>
             {!isLastStep && (
               <ConfirmBtn
@@ -255,7 +256,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                 role="primary"
                 title="Create collection"
                 tooltip={errorTooltip}
-                disabled={!isValid || isBalanceInsufficient}
+                disabled={!isValid || feeLoading || isBalanceInsufficient}
                 onClick={handleSubmit(onCreateCollectionHandle)}
               />
             )}

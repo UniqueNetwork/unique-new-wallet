@@ -5,7 +5,15 @@ import { Alert, Button, useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import { CreateTokenBody, TokenId } from '@unique-nft/sdk';
 
+import {
+  useMintingFormService,
+  DeviceSize,
+  useAccounts,
+  useApi,
+  useDeviceSize,
+} from '@app/hooks';
 import {
   useCollectionGetById,
   useExtrinsicCacheEntities,
@@ -13,13 +21,6 @@ import {
 } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { ConfirmBtn, StatusTransactionModal } from '@app/components';
-import {
-  DeviceSize,
-  useAccounts,
-  useApi,
-  useDeviceSize,
-  useFormValidator,
-} from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -65,27 +66,26 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { warning, info, error } = useNotifications();
 
   const {
-    fee,
-    feeFormatted,
-    getFee,
+    isValid,
+    validationMessage,
     submitWaitResult,
+    getFee,
+    feeFormatted,
+    feeLoading,
+    debouncedFormValues,
+    isSufficientBalance,
     isLoadingSubmitResult,
-    feeError,
-    submitWaitResultError,
-  } = useTokenCreate();
+  } = useMintingFormService<TokenId, CreateTokenBody, TokenForm>({
+    MutateAsyncFunction: useTokenCreate,
+    account: selectedAccount,
+  });
 
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
   const { control, reset, handleSubmit, setValue } = useFormContext();
 
-  const { isValid, errorMessage } = useFormValidator({
-    balanceValidationEnabled: true,
-    address: selectedAccount?.address,
-    cost: [fee],
-  });
-
   const formValues = useWatch({ control });
-  const [debouncedFormValues] = useDebounce(formValues, 500);
+  // const [debouncedFormValues] = useDebounce(formValues, 500);
 
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
@@ -153,20 +153,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [debouncedFormValues]);
 
   useEffect(() => {
-    if (!feeError) {
-      return;
-    }
-    error(feeError);
-  }, [feeError]);
-
-  useEffect(() => {
-    if (!submitWaitResultError) {
-      return;
-    }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
-
-  useEffect(() => {
     setValue('address', selectedAccount?.address);
     setValue('owner', selectedAccount?.address);
   }, [selectedAccount]);
@@ -223,8 +209,8 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
         <WrapperContentStyled>
           <FormWrapper>
             {isolatedTokenForm}
-            {feeFormatted && isValid ? (
-              <FeeInformationTransaction fee={feeFormatted} />
+            {isValid ? (
+              <FeeInformationTransaction fee={feeFormatted} feeLoading={feeLoading} />
             ) : (
               <Alert type="warning">
                 A fee will be calculated after corrected filling required fields
@@ -234,14 +220,22 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               <ConfirmBtn
                 role="primary"
                 title="Confirm and create more"
-                disabled={!isValid || isOldCollection}
-                tooltip={isOldCollection ? config.oldCollectionMessage : errorMessage}
+                disabled={
+                  !isValid || feeLoading || !isSufficientBalance || isOldCollection
+                }
+                tooltip={
+                  isOldCollection ? config.oldCollectionMessage : validationMessage
+                }
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
               <ConfirmBtn
                 title="Confirm and close"
-                disabled={!isValid || isOldCollection}
-                tooltip={isOldCollection ? config.oldCollectionMessage : errorMessage}
+                disabled={
+                  !isValid || feeLoading || !isSufficientBalance || isOldCollection
+                }
+                tooltip={
+                  isOldCollection ? config.oldCollectionMessage : validationMessage
+                }
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
               />
             </ButtonGroup>

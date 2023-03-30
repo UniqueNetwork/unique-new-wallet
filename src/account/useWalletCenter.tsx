@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { ChainPropertiesResponse } from '@unique-nft/sdk';
-import { useNotifications } from '@unique-nft/ui-kit';
 
 import { PolkadotWallet } from '@app/account/PolkadotWallet';
 import { KeyringWallet } from '@app/account/KeyringWallet';
@@ -18,12 +17,6 @@ const wallets = new Map<
   ['metamask', MetamaskWallet],
 ]);
 
-const extensionSourceLinks = {
-  polkadot: 'https://polkadot.js.org/extension/',
-  metamask:
-    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=ru',
-};
-
 export const CONNECTED_WALLET_TYPE = 'connected-wallet-type';
 
 export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
@@ -31,15 +24,11 @@ export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
     new Map<ConnectedWalletsName, Map<string, BaseWalletType<any>>>([]),
   );
 
-  const { error } = useNotifications();
-
   const connectWallet = useCallback(
     async (typeWallet: ConnectedWalletsName) => {
       try {
         const wallet = new (wallets.get(typeWallet)!)(chainProperties);
-        console.log('typeWallet', typeWallet, wallet);
         const currentWallets = await wallet.getAccounts();
-        console.log('currentWallets', currentWallets);
 
         const connectedWallets =
           localStorage.getItem(CONNECTED_WALLET_TYPE)?.split(';') || [];
@@ -59,11 +48,7 @@ export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
             connectedWallets.filter((type) => type !== typeWallet).join(';'),
           );
         }
-        if (typeWallet === 'polkadot' || typeWallet === 'metamask') {
-          window.open(extensionSourceLinks[typeWallet], '_blank');
-        }
-
-        error(e.message);
+        throw e;
       }
     },
     [chainProperties],
