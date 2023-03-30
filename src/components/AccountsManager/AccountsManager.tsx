@@ -1,9 +1,9 @@
 import { ReactNode, useEffect } from 'react';
-import { Dropdown, IconProps, Text, useNotifications } from '@unique-nft/ui-kit';
+import { IconProps, Text, useNotifications } from '@unique-nft/ui-kit';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
 import { Account } from '@app/account';
-import { Icon } from '@app/components';
+import { Dropdown, Icon } from '@app/components';
 
 import { isTouchDevice } from '../../utils';
 import { AccountsManagerDropdown } from './components';
