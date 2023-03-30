@@ -18,8 +18,6 @@ import {
   StatusFilter,
   TypeFilter,
 } from '@app/pages';
-import { useGraphQlGetRftFractionsByOwner } from '@app/api/graphQL/tokens/useGraphQlGetRftFractionsByOwner';
-import { TokenTypeEnum } from '@app/api/graphQL/types';
 import { ChainPropertiesContext } from '@app/context';
 
 import { defaultStatusFilter, defaultTypeFilter } from '../constants';

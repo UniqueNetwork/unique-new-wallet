@@ -18,12 +18,12 @@ interface NFTFiltersComponentProps {
 
 const sortOptions: Option[] = [
   {
-    title: 'NFT ID',
+    title: 'Token ID',
     id: 'asc' as Direction,
     iconRight: iconUp,
   },
   {
-    title: 'NFT ID',
+    title: 'Token ID',
     id: 'desc' as Direction,
     iconRight: iconDown,
   },
@@ -44,9 +44,17 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
 
   useEffect(() => setSearch(searchText), [searchText]);
 
-  const searchHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const searchHandler = () => {
+    changeSearchText(search.trim());
+  };
+  const clearSearchHandler = () => {
+    changeSearchText('');
+    setSearch('');
+  };
+
+  const keyPressHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
-      changeSearchText(search.trim());
+      searchHandler();
     }
   };
 
@@ -76,7 +84,9 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
             className="filter-search-wrapper"
             value={search}
             onChange={setSearch}
-            onKeyDown={searchHandler}
+            onKeyDown={keyPressHandler}
+            onClear={clearSearchHandler}
+            onClick={searchHandler}
           />
           <Select
             options={sortOptions}
