@@ -132,7 +132,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                     collectionsOptions.filter(
                       ({ id, title }) =>
                         title.toLowerCase().includes(value.toLowerCase()) ||
-                        id === Number(value),
+                        id.toString().includes(value),
                     )
                   }
                 />
