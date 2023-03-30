@@ -133,7 +133,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       const collection = formMapper(collectionDebounceValue);
       getFee(collection);
     }
-  }, [collectionDebounceValue, getFee, isValid]);
+  }, [collectionDebounceValue, getFee]);
 
   const goToNextStep = (step: number) => setCurrentStep(step);
   const goToPreviousStep = (step: number) => {
