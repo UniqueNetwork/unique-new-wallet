@@ -194,8 +194,6 @@ export const NestRefungibleModal = <T extends TBaseToken>({
     return <NestRefungibleStagesModal />;
   }
 
-  console.log(synchronizedCollections);
-
   return (
     <Modal
       isVisible={true}

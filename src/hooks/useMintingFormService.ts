@@ -91,8 +91,6 @@ export const useMintingFormService = <R, D, F extends FieldValues>({
   }, [submitWaitResultError]);
 
   const validationMessage = useMemo(() => {
-    console.log(isValid, errors);
-
     if (!isValid) {
       if (!errors || !errors.length) {
         return FILL_REQUIRED_MESSAGE;

@@ -65,17 +65,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { selectedAccount } = useAccounts();
   const { warning, info, error } = useNotifications();
 
-  // const {
-  //   fee,
-  //   feeFormatted,
-  //   feeLoading,
-  //   getFee,
-  //   submitWaitResult,
-  //   isLoadingSubmitResult,
-  //   feeError,
-  //   submitWaitResultError,
-  // } = useTokenCreate();
-
   const {
     isValid,
     validationMessage,
@@ -94,12 +83,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
   const { control, reset, handleSubmit, setValue } = useFormContext();
-
-  // const { isValid, errorMessage, showFee } = useFormValidator({
-  //   balanceValidationEnabled: true,
-  //   address: selectedAccount?.address,
-  //   cost: [fee],
-  // });
 
   const formValues = useWatch({ control });
   // const [debouncedFormValues] = useDebounce(formValues, 500);
@@ -168,20 +151,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       getFee(mapTokenForm(debouncedFormValues as FilledTokenForm));
     }
   }, [debouncedFormValues]);
-
-  // useEffect(() => {
-  //   if (!feeError) {
-  //     return;
-  //   }
-  //   error(feeError);
-  // }, [feeError]);
-
-  // useEffect(() => {
-  //   if (!submitWaitResultError) {
-  //     return;
-  //   }
-  //   error(submitWaitResultError);
-  // }, [submitWaitResultError]);
 
   useEffect(() => {
     setValue('address', selectedAccount?.address);
