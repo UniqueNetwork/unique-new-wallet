@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { ChainPropertiesResponse } from '@unique-nft/sdk';
-import { useNotifications } from '@unique-nft/ui-kit';
 
 import { PolkadotWallet } from '@app/account/PolkadotWallet';
 import { KeyringWallet } from '@app/account/KeyringWallet';
@@ -25,15 +24,11 @@ export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
     new Map<ConnectedWalletsName, Map<string, BaseWalletType<any>>>([]),
   );
 
-  const { error } = useNotifications();
-
   const connectWallet = useCallback(
     async (typeWallet: ConnectedWalletsName) => {
       try {
         const wallet = new (wallets.get(typeWallet)!)(chainProperties);
-        console.log('typeWallet', typeWallet, wallet);
         const currentWallets = await wallet.getAccounts();
-        console.log('currentWallets', currentWallets);
 
         const connectedWallets =
           localStorage.getItem(CONNECTED_WALLET_TYPE)?.split(';') || [];
@@ -53,7 +48,7 @@ export const useWalletCenter = (chainProperties: ChainPropertiesResponse) => {
             connectedWallets.filter((type) => type !== typeWallet).join(';'),
           );
         }
-        error(e.message);
+        throw e;
       }
     },
     [chainProperties],

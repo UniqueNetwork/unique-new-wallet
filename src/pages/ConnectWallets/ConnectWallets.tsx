@@ -7,6 +7,7 @@ import { Icon, Modal } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import {
   CreateAccountModal,
+  ExtensionMissingModal,
   ImportViaJSONAccountModal,
   ImportViaQRCodeAccountModal,
   ImportViaSeedAccountModal,
@@ -23,6 +24,7 @@ enum AccountModal {
   VIA_SEED = 'importViaSeed',
   VIA_JSON = 'importViaJSON',
   VIA_QR = 'importViaQRCode',
+  EXTENSION_MISSING = 'extensionMissing',
 }
 
 const dropdownItems = [
@@ -36,6 +38,7 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
     return isOpen ?? true;
   });
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
+  const [missingExtension, setMissingExtension] = useState<'Polkadot' | 'Metamask'>();
   const { walletsCenter } = useAccounts();
   const { error } = useNotifications();
 
@@ -55,26 +58,26 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
   };
 
   const handleConnectToMetamask = async () => {
-    console.log('connect metamask');
     try {
       await Ethereum.requestAccounts();
       await walletsCenter.connectWallet('metamask');
       setOpen(false);
       onClose?.();
     } catch (e: any) {
-      error(e.message);
+      setMissingExtension('Metamask');
+      setCurrentModal(AccountModal.EXTENSION_MISSING);
     }
   };
 
   const handleConnectToPolkadotExtension = async () => {
-    console.log('connect polkadot');
     try {
       await walletsCenter.connectWallet('polkadot');
       await walletsCenter.connectWallet('keyring');
       setOpen(false);
       onClose?.();
     } catch (e: any) {
-      error(e.message);
+      setMissingExtension('Polkadot');
+      setCurrentModal(AccountModal.EXTENSION_MISSING);
     }
   };
 
@@ -133,6 +136,11 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
       <ImportViaQRCodeAccountModal
         isVisible={currentModal === AccountModal.VIA_QR}
         onFinish={onChangeAccountsFinish}
+      />
+      <ExtensionMissingModal
+        isVisible={currentModal === AccountModal.EXTENSION_MISSING}
+        missingExtension={missingExtension}
+        onFinish={() => setCurrentModal(undefined)}
       />
     </>
   );

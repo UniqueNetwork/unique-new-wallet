@@ -26,6 +26,10 @@ const getConnectedWallets = localStorage.getItem(CONNECTED_WALLET_TYPE);
 
 export default function App() {
   const [isShowIntroSlider] = useState<boolean>(() => {
+    if (!getConnectedWallets || getConnectedWallets.split(';').length === 0) {
+      return false;
+    }
+
     const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
     return status ? JSON.parse(status) : true;
   });
