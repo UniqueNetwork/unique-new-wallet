@@ -31,7 +31,7 @@ export default function App() {
               <>
                 <IntroCard
                   // title={<>Fractional tokens and Bundles finally here!</>}
-                  title="Bundles finally here!"
+                  title="Bundles are finally here!"
                   description={<>Meet the long-awaited update of&nbsp;Unique Wallet</>}
                   imgPath={confetti}
                   setActiveSlide={setActiveSlide}
