@@ -56,6 +56,12 @@ const WrapperContentStyled = styled(WrapperContent)`
   }
 `;
 
+const ButtonsGroup = styled.div`
+  position: absolute;
+  bottom: 0;
+  padding: calc(var(--prop-gap) / 1.6) calc(var(--prop-gap) / 2);
+`;
+
 export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const deviceSize = useDeviceSize();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -248,15 +254,22 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
             <BottomBar
               buttons={[
                 <Button
-                  title={isDrawerOpen ? 'Back' : 'Preview'}
+                  title="Preview"
                   key="toggleDrawer"
-                  onClick={() => setDrawerOpen(!isDrawerOpen)}
+                  onClick={() => setDrawerOpen(true)}
                 />,
               ]}
               isOpen={isDrawerOpen}
               parent={document.body}
             >
               {renderSidebar()}
+              <ButtonsGroup>
+                <Button
+                  title="Back"
+                  key="toggleDrawer"
+                  onClick={() => setDrawerOpen(false)}
+                />
+              </ButtonsGroup>
             </BottomBar>
           ))}
       </MainWrapper>
