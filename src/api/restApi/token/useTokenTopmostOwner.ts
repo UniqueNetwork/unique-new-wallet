@@ -18,7 +18,7 @@ export const useTokenTopmostOwner = ({
     queryKeys.token.owner(collectionId, tokenId),
     () => api.tokens.topmostOwner({ collectionId: collectionId!, tokenId: tokenId! }),
     {
-      enabled: !!collectionId || !!tokenId,
+      enabled: !!collectionId && !!tokenId,
       refetchOnMount: true,
     },
   );

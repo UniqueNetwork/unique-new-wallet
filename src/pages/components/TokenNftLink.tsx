@@ -54,6 +54,7 @@ export const TokenNftLink = ({
       collection: {
         mode: token.type === 'NFT' ? 'NFT' : 'ReFungible',
       },
+      amount: token.tokens_amount,
     },
     token.tokens_owner,
   );
