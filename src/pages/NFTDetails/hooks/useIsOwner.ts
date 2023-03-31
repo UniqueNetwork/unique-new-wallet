@@ -10,6 +10,7 @@ export const useIsOwner = (
   token:
     | (Pick<TokenByIdResponse, 'collectionId' | 'tokenId' | 'owner'> & {
         collection: Pick<CollectionInfoWithSchemaResponse, 'mode'>;
+        amount?: string;
       })
     | undefined,
   parentAddress?: string,
@@ -29,7 +30,7 @@ export const useIsOwner = (
     tokenId: token?.tokenId,
     collectionId: token?.collectionId,
     address: selectedAccount?.address,
-    isFractional: token?.collection.mode === 'ReFungible',
+    isFractional: !token?.amount && token?.collection.mode === 'ReFungible',
   });
 
   return useMemo(() => {
