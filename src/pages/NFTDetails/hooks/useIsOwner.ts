@@ -38,7 +38,7 @@ export const useIsOwner = (
       return topmostAccount.topmostOwner === selectedAccount?.address;
     }
 
-    if (fractionsBalance?.amount) {
+    if (!token?.amount && fractionsBalance?.amount) {
       return true;
     }
 
