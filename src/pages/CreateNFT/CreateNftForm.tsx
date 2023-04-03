@@ -23,7 +23,12 @@ import { Upload } from '@app/components';
 
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
-import { _10MB, FILE_SIZE_LIMIT_ERROR, FORM_ERRORS } from '../constants';
+import {
+  _10MB,
+  FILE_SIZE_LIMIT_ERROR,
+  FORM_ERRORS,
+  FILE_FORMAT_ERROR,
+} from '../constants';
 
 interface CreateNftFormProps {
   collectionsOptions: Option[];
@@ -70,6 +75,12 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   const beforeUploadHandler = useCallback((data: { url: string; file: Blob }) => {
     if (data.file.size > _10MB) {
       error(FILE_SIZE_LIMIT_ERROR);
+
+      return false;
+    }
+
+    if (!/.*\.(jpeg|jpg|gif|png)$/.test((data.file as File).name)) {
+      error(FILE_FORMAT_ERROR);
 
       return false;
     }
