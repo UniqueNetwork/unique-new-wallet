@@ -12,8 +12,7 @@ type Props = {
 
 const extensionSourceLinks = {
   Polkadot: 'https://polkadot.js.org/extension/',
-  Metamask:
-    'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=ru',
+  Metamask: 'https://metamask.io/download/',
 };
 
 export const ExtensionMissingModal = ({
