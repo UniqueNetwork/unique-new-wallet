@@ -28,6 +28,7 @@ import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponent
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { BottomBar } from '@app/pages/components/BottomBar';
+import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { FORM_ERRORS } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -104,7 +105,8 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
   useEffect(() => {
-    if (!selectedAccount) {
+    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
+      navigate('/');
       return;
     }
     collectionForm.setValue('address', selectedAccount.address);

@@ -134,7 +134,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               size: 12,
               color: 'currentColor',
             }}
-            title="Create an NFT"
+            title="Create a token"
             role="primary"
             onClick={() => {
               logUserEvent(UserEvents.CREATE_NFT);

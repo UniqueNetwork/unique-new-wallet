@@ -31,6 +31,7 @@ import { BottomBar } from '@app/pages/components/BottomBar';
 import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
+import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { CreateNftForm } from './CreateNftForm';
 import { mapTokenForm } from './helpers';
@@ -159,6 +160,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [debouncedFormValues]);
 
   useEffect(() => {
+    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
+      navigate('/');
+      return;
+    }
     setValue('address', selectedAccount?.address);
     setValue('owner', selectedAccount?.address);
   }, [selectedAccount]);
