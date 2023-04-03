@@ -161,8 +161,7 @@ export const NftDetailsPage = () => {
                 }}
               />
 
-              {(isFractional ||
-                tokenById?.collection?.permissions?.nesting?.tokenOwner) && (
+              {tokenById?.collection?.permissions?.nesting?.tokenOwner && (
                 <Button
                   title="Nest this token"
                   wide={size <= DeviceSize.sm}
