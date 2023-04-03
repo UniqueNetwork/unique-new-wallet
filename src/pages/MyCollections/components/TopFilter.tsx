@@ -135,7 +135,7 @@ export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
               size: 12,
               color: 'currentColor',
             }}
-            title="Create collection"
+            title="Create a collection"
             role="primary"
             onClick={onCreateCollection}
           />
