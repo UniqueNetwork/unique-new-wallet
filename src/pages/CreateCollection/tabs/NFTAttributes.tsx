@@ -107,7 +107,7 @@ export const NFTAttributes = () => {
           <SettingsRow>
             <Controller
               name="tokenLimit"
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange, value: currentValue } }) => (
                 <InputText
                   label={
                     <>
@@ -132,15 +132,13 @@ export const NFTAttributes = () => {
                   }
                   additionalText="Value range 1 - 4,294,967,295. Unlimited by default."
                   role="number"
-                  value={value}
+                  value={currentValue}
                   onChange={(value) => {
                     const parsed = Number(value);
                     if (!parsed) {
                       !value && onChange(value);
                     } else {
-                      onChange(
-                        parsed > maxTokenLimit ? Number(value.slice(0, -1)) : parsed,
-                      );
+                      onChange(parsed > maxTokenLimit ? currentValue : parsed);
                     }
                   }}
                 />
