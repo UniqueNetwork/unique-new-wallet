@@ -50,7 +50,7 @@ const TokenInformationComponent = <T extends TBaseToken>({
         </TooltipWrapper>
       </Heading>
       {(!attributes || !attributes.length) && (
-        <Text color="blue-grey-500">There are no attributes for this NFT</Text>
+        <Text color="blue-grey-500">There are no attributes for this token</Text>
       )}
       {attributes?.map(({ title, tags }, index) => (
         <div className="attribute-row" key={`${title}${index}`}>

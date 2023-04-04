@@ -136,7 +136,6 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                   getSuggestionValue={({ title }: Option) => title}
                   onChange={(val) => {
                     resetField('attributes');
-                    resetField('imageIpfsCid');
                     onChange(val?.id);
                   }}
                   onSuggestionsFetchRequested={(value) =>

@@ -44,19 +44,14 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
 
   const parseAmount = useCallback(
     (currentAmount: string, prevAmount: string) => {
-      const parsedAmount = Number(currentAmount);
-      const parsedAvailableAmount = Number(senderBalance?.availableBalance.amount);
+      const parsedAmountValue = Number(currentAmount);
 
-      if (isNaN(parsedAmount)) {
+      if (isNaN(parsedAmountValue)) {
         currentAmount = currentAmount.replace(/[^\d.]/g, '');
 
         if (currentAmount.split('.').length > 2) {
           currentAmount = currentAmount.replace(/\.+$/, '');
         }
-      }
-
-      if (parsedAmount > parsedAvailableAmount) {
-        currentAmount = prevAmount;
       }
 
       return currentAmount.trim();
