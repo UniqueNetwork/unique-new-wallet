@@ -3,7 +3,7 @@ import { useNotifications } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { ROUTE } from '@app/routes';
-import { useAccounts, useApi } from '@app/hooks';
+import { useAccounts, useApi, useIsSufficientBalance } from '@app/hooks';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useTokenBurn, useTokenOwner } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
@@ -27,6 +27,11 @@ export const BurnModal = <T extends TBaseToken>({
     submitWaitResultError,
     feeLoading,
   } = useTokenBurn();
+
+  const isSufficientBalance = useIsSufficientBalance(
+    selectedAccount?.address,
+    feeFormatted,
+  );
 
   const { data: tokenOwner, isRefetching: isLoadingTokenOwner } = useTokenOwner({
     tokenId: token?.tokenId,
@@ -92,6 +97,7 @@ export const BurnModal = <T extends TBaseToken>({
       fee={feeFormatted ?? ''}
       isLoading={isLoadingTokenOwner || feeLoading}
       isVisible={true}
+      isSufficientBalance={!!isSufficientBalance}
       onBurn={burnHandler}
       onClose={onClose}
     />

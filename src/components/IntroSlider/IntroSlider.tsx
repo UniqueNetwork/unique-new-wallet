@@ -1,7 +1,9 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Modal } from '@app/components/Modal';
+import { useAccounts } from '@app/hooks';
+import { CONNECTED_WALLET_TYPE } from '@app/account/useWalletCenter';
 
 export type IntroSliderProps = {
   activeSlide?: number;
@@ -18,9 +20,36 @@ export type IntroSliderProps = {
     | (JSX.Element[] | JSX.Element);
 };
 
+const BUNDLE_SHOW_MODAL = 'new-wallet-bundle-show-modal';
+
+const getConnectedWallets = localStorage.getItem(CONNECTED_WALLET_TYPE);
+
 export const IntroSlider = ({ activeSlide = 0, children }: IntroSliderProps) => {
   const [active, setActive] = useState(activeSlide);
-  const [open, setOpen] = useState(true);
+  const { selectedAccount } = useAccounts();
+  const [open, setOpen] = useState(() => {
+    if (!getConnectedWallets || getConnectedWallets.split(';').length === 0) {
+      return false;
+    }
+
+    const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
+    return status ? JSON.parse(status) : true;
+  });
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    localStorage.setItem(BUNDLE_SHOW_MODAL, JSON.stringify(false));
+  }, [open]);
+
+  useEffect(() => {
+    const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
+    if (!selectedAccount || (status !== null && !JSON.parse(status))) {
+      return;
+    }
+    setOpen(true);
+  }, [selectedAccount]);
 
   const renderContent = () => {
     if (typeof children === 'function') {

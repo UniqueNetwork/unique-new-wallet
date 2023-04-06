@@ -16,6 +16,7 @@ export const GlobalStyle = createGlobalStyle`
 
   .unique-tooltip {
     z-index: 1100;
+    white-space: pre-wrap;
   }
 
   .unique-font-heading {

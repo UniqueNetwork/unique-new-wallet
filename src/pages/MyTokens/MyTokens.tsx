@@ -55,7 +55,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
         <TabsHeader>
           <Tabs
             activeIndex={currentTabIndex}
-            labels={['NFTs', 'Coins']}
+            labels={['Tokens', 'Coins']}
             type="slim"
             onClick={handleClick}
           />

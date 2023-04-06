@@ -40,15 +40,9 @@ export const Header = () => {
     toggleMobileMenu((prevState) => !prevState);
   }, []);
 
-  const onAccountChange = async (account: Account) => {
+  const onAccountChange = (account: Account) => {
     try {
-      const targetAccount = accounts.get(account.normalizedAddress);
-
-      if (targetAccount) {
-        await targetAccount.changeChain(currentChain.network);
-        changeAccount(targetAccount);
-      }
-
+      changeAccount(account);
       setAccountManagerOpen(false);
     } catch (e: any) {
       error(e.message || `Failed to switch network ${currentChain.network}`);
@@ -241,6 +235,8 @@ const RightSide = styled.div`
       top: 100%;
       min-width: calc(100% - calc(var(--prop-gap) * 2));
       z-index: 3;
+      overflow-y: auto;
+      height: calc(100vh - 130px);
     }
   }
 `;

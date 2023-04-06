@@ -1,10 +1,12 @@
 import { VFC, useMemo, memo } from 'react';
-import { InputText, Select } from '@unique-nft/ui-kit';
+import { Select } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 
 import { FormRow, LabelText } from '@app/pages/components/FormComponents';
+import { InputText } from '@app/components';
 
 import { AttributeOption, AttributeType } from './types';
+import { FORM_ERRORS } from '../constants';
 
 interface AttributesRowProps {
   name: string;
@@ -35,16 +37,36 @@ const AttributesRowComponent: VFC<AttributesRowProps> = ({
       {type === 'text' && (
         <Controller
           name={name}
-          rules={{ required }}
-          render={({ field: { onChange, value } }) => (
-            <InputText value={value} onChange={onChange} />
+          rules={{
+            required: {
+              value: !!required,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
+            pattern: {
+              value: /^\S+.*/,
+              message: 'Value is not correct',
+            },
+          }}
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <InputText
+              clearable
+              value={value}
+              error={!!error}
+              onChange={onChange}
+              onClear={() => onChange('')}
+            />
           )}
         />
       )}
       {type === 'select' && (
         <Controller
           name={name}
-          rules={{ required }}
+          rules={{
+            required: {
+              value: !!required,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
+          }}
           render={({ field: { onChange, value } }) => (
             <Select value={value?.id} options={options} onChange={onChange} />
           )}
@@ -53,7 +75,12 @@ const AttributesRowComponent: VFC<AttributesRowProps> = ({
       {type === 'multiselect' && (
         <Controller
           name={name}
-          rules={{ required }}
+          rules={{
+            required: {
+              value: !!required,
+              message: FORM_ERRORS.REQUIRED_FIELDS,
+            },
+          }}
           render={({ field: { onChange, value } }) => (
             <Select
               multi

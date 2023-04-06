@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 import { Loader, TableColumnProps, TableRowProps, Text } from '@unique-nft/ui-kit';
 
@@ -10,6 +10,7 @@ interface MobileTableProps {
   columns?: TableColumnProps[];
   data?: TableRowProps[];
   loading?: boolean;
+  noDataComponent?: ReactNode;
 }
 
 const MobileTableWrapper = styled.div``;
@@ -32,11 +33,16 @@ const NoItemsStyled = styled(NoItems)`
   padding-top: 80px;
 `;
 
-const MobileTable: FC<MobileTableProps> = ({ columns, data, loading }) => {
-  let children = <Loader isFullPage={true} size="middle" />;
+const MobileTable: FC<MobileTableProps> = ({
+  columns,
+  data,
+  loading,
+  noDataComponent,
+}) => {
+  let children: ReactNode = <Loader isFullPage={true} size="middle" />;
 
   if (!loading && data?.length === 0) {
-    children = <NoItemsStyled iconName="no-accounts" iconSize={40} />;
+    children = noDataComponent || <NoItemsStyled iconName="no-accounts" iconSize={40} />;
   } else if (!loading) {
     children = (
       <>

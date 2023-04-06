@@ -56,7 +56,7 @@ export const EnumsInput = <T,>({
   const changeCurrentEnum = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
 
-    if (maxSymbols && val?.length > maxSymbols) {
+    if (val === ' ' || (maxSymbols && val?.length > maxSymbols)) {
       return;
     }
 
@@ -106,6 +106,13 @@ const Wrapper = styled.div`
     width: 100%;
     padding: 4px 8px;
     min-height: 30px;
+
+    @media screen and (max-width: 1023px) {
+      width: calc(100vw - 48px);
+    }
+    @media screen and (max-width: 567px) {
+      width: calc(100vw - 32px);
+    }
 
     &.disabled {
       background: var(--color-blue-grey-100);

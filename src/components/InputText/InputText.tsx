@@ -9,7 +9,7 @@ import { Button, IconType, userIcon } from '@app/components';
 import './InputText.scss';
 
 export interface InputBaseProps {
-  additionalText?: string;
+  additionalText?: ReactNode;
   clearable?: boolean;
   error?: boolean;
   label?: ReactNode;

@@ -16,7 +16,7 @@ const EnumInputItem: VFC<Props> = ({ deleteItem, enumItem, idx }) => {
 
   return (
     <Wrapper className="enum-input--item">
-      {enumItem}
+      <span>{enumItem}</span>
       <IconWrapper onClick={onDeleteItem}>
         <Icon color="currentColor" name="close" size={10} />
       </IconWrapper>
@@ -35,6 +35,14 @@ const Wrapper = styled.div`
     font-size: 14px;
     line-height: 22px;
     white-space: nowrap;
+    max-width: calc(100% - 16px);
+    overflow: hidden;
+    span {
+      text-overflow: ellipsis;
+      flex: 1;
+      max-width: calc(100% - 12px);
+      overflow: hidden;
+    }
   }
 `;
 

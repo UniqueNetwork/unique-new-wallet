@@ -2,34 +2,16 @@ import { useCallback, useState } from 'react';
 import { UniqueNFTFactory } from '@unique-nft/solidity-interfaces';
 import { ethers } from 'ethers';
 import { BN } from 'bn.js';
-import { Address } from '@unique-nft/utils';
 import { UseMutateAsyncFunction } from 'react-query';
 import { ExtrinsicResultResponse } from '@unique-nft/sdk';
-import keyring from '@polkadot/ui-keyring';
 
 import { TransferTokenBody, TransferTokenParsed } from '@app/types/Api';
 
 import { useMetamaskFee } from './useMetamaskFee';
+import { getCrossStruct2 } from './utils';
 
 const provider =
   (window as any).ethereum && new ethers.providers.Web3Provider((window as any).ethereum);
-
-const getCrossStruct2 = (address: string | undefined) => {
-  if (!address) {
-    throw new Error('Cant get crossStruct from invalid string');
-  }
-  const isEth = Address.is.ethereumAddress(address);
-  let eth = '';
-  let sub = '' as any;
-  if (isEth) {
-    eth = address;
-    sub = '0';
-  } else {
-    sub = keyring.decodeAddress(address);
-    eth = '0x0000000000000000000000000000000000000000';
-  }
-  return { eth, sub }; // CrossAddressStruct$2
-};
 
 export function useMetamaskTransferToken() {
   const [submitWaitResultError, setSubmitWaitResultError] = useState<string>();

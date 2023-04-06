@@ -3,10 +3,12 @@ import { useCallback, useState } from 'react';
 import { FeeResponse } from '@unique-nft/sdk';
 import { UseMutateAsyncFunction } from 'react-query';
 
-import { formatKusamaBalance } from '@app/utils';
+import { formatKusamaBalance, truncateDecimalsBalanceSheet } from '@app/utils';
 import { MetamaskDefaultDecimals } from '@app/account/MetamaskWallet';
+import { usePropertiesService } from '@app/api';
 
 export const useMetamaskFee = <P>(estimateGasMethod: (params: P) => Promise<BN>) => {
+  const properties = usePropertiesService();
   const [fee, setFee] = useState<string>();
   const [gas, setGas] = useState<BN>();
   const [gasPrice, setGasPrice] = useState<BN>();
@@ -30,15 +32,19 @@ export const useMetamaskFee = <P>(estimateGasMethod: (params: P) => Promise<BN>)
           method: 'eth_gasPrice',
         });
 
+        // TODO: check chain valid - const chainId = await request({ method: 'eth_chainId' });
+
         setGasPrice(new BN(gasPrice.slice(2), 'hex'));
 
         const estimateGas = await estimateGasMethod(params);
 
         setGas(estimateGas);
 
-        const amount = formatKusamaBalance(
-          estimateGas.mul(new BN(hexToBigInt(gasPrice).toString())).toString(),
-          MetamaskDefaultDecimals,
+        const amount = truncateDecimalsBalanceSheet(
+          formatKusamaBalance(
+            estimateGas.mul(new BN(hexToBigInt(gasPrice).toString())).toString(),
+            MetamaskDefaultDecimals,
+          ),
         );
 
         const fee: FeeResponse = {
@@ -53,7 +59,7 @@ export const useMetamaskFee = <P>(estimateGasMethod: (params: P) => Promise<BN>)
         setFeeStatus('success');
         return { fee };
       } catch (error: any) {
-        setFeeError(error);
+        setFeeError(error.message);
         setFeeStatus('error');
       } finally {
         setFeeLoading(false);

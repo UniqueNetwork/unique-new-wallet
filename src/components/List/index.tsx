@@ -37,6 +37,7 @@ export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
   renderItem?: (item: T, index: number) => ReactNode;
   visibleItems?: number;
   noItemsIconName?: string;
+  resultsComponent?: ReactNode;
 };
 
 const listClassName = 'unique-list';
@@ -120,6 +121,7 @@ function List<T>({
   visibleItems,
   onPageChange,
   noItemsIconName = 'box',
+  resultsComponent,
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
   const size = SizeMap[deviceSize];
@@ -153,7 +155,7 @@ function List<T>({
     />
   ) : null;
 
-  const ResultItemText = (
+  const ResultItemText = resultsComponent || (
     <Text>{`${panelSettings.pagination.size} ${
       panelSettings.pagination.size === 1 ? 'result' : 'results'
     }`}</Text>
@@ -219,7 +221,6 @@ function List<T>({
         (panelSettings.viewMode === 'both' || panelSettings.viewMode === 'bottom') && (
           <ListPanel as={PagePaper.Panel} stacked="top">
             {!!dataSource.length && ResultItemText}
-
             {(panelSettings.pagination.viewMode === 'both' ||
               panelSettings.pagination.viewMode === 'bottom') &&
               paginationContent}

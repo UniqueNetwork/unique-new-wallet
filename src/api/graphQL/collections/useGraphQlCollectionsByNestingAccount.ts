@@ -6,15 +6,19 @@ const COLLECTIONS_BY_ACCOUNT_NESTING_QUERY = gql`
   query collections_by_account_nesting_query(
     $limit: Int
     $offset: Int
-    $order_by: CollectionOrderByParams
-    $where: CollectionWhereParams
+    $order_by: TokenOwnersOrderByParams
+    $where: TokenOwnersWhereParams
   ) {
-    collections(limit: $limit, offset: $offset, order_by: $order_by, where: $where) {
+    token_owners(
+      limit: $limit
+      offset: $offset
+      order_by: $order_by
+      where: $where
+      distinct_on: collection_id
+    ) {
       count
       data {
-        name
         collection_id
-        collection_cover
       }
     }
   }
@@ -26,7 +30,7 @@ export const useGraphQlCollectionsByNestingAccount = ({
   accountAddress: string | undefined;
 }) => {
   const { data: response, loading } = useQuery<
-    QueryResponse<Pick<Collection, 'collection_id' | 'name' | 'collection_cover'>>
+    QueryResponse<Pick<Collection, 'collection_id'>>
   >(COLLECTIONS_BY_ACCOUNT_NESTING_QUERY, {
     skip: !accountAddress,
     fetchPolicy: 'network-only',
@@ -35,23 +39,16 @@ export const useGraphQlCollectionsByNestingAccount = ({
     variables: {
       limit: 10000,
       where: {
-        _or: [
-          { owner: { _eq: accountAddress } },
-          { owner_normalized: { _eq: accountAddress } },
-        ],
-        tokens_count: {
-          _neq: 0,
+        owner: { _eq: accountAddress },
+        amount: {
+          _neq: '0',
         },
-        nesting_enabled: {
-          _eq: 'true',
-        },
-        burned: { _eq: 'false' },
       },
     },
   });
 
   return {
-    collections: response?.collections.data ?? [],
+    collectionsIds: response?.token_owners.data ?? [],
     isCollectionsLoading: loading,
   };
 };

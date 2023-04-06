@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FieldError, FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
@@ -16,6 +16,7 @@ import {
 import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
 import { ROUTE } from '@app/routes';
 import {
+  Alert,
   Button,
   CollectionSidebar,
   CollectionStepper,
@@ -27,8 +28,9 @@ import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponent
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { BottomBar } from '@app/pages/components/BottomBar';
+import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
-import { NO_BALANCE_MESSAGE } from '../constants';
+import { FORM_ERRORS } from '../constants';
 import { CollectionForm, Warning } from './types';
 import { ButtonGroup, FormWrapper } from '../components/FormComponents';
 import { tabsUrls, warnings } from './constants';
@@ -46,6 +48,12 @@ const WrapperContentStyled = styled(WrapperContent)`
   }
 `;
 
+const ButtonsGroup = styled.div`
+  position: absolute;
+  bottom: 0;
+  padding: calc(var(--prop-gap) / 1.6) calc(var(--prop-gap) / 2);
+`;
+
 const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const deviceSize = useDeviceSize();
   const [currentStep, setCurrentStep] = useState(1);
@@ -61,11 +69,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     getFee,
     fee,
     feeFormatted,
+    feeLoading,
     submitWaitResult,
     isLoadingSubmitResult,
     feeError,
     submitWaitResultError,
   } = useCollectionCreate();
+
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
   const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
@@ -81,11 +91,12 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       nesting: {
         tokenOwner: true,
       },
+      ownerCanDestroy: false,
     },
   });
   const {
     control,
-    formState: { isValid },
+    formState: { isValid, errors },
     handleSubmit,
   } = collectionForm;
   const collectionFormValues = useWatch<CollectionForm>({
@@ -93,6 +104,14 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   });
 
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
+
+  useEffect(() => {
+    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
+      navigate('/');
+      return;
+    }
+    collectionForm.setValue('address', selectedAccount.address);
+  }, [selectedAccount]);
 
   useEffect(() => {
     if (!feeError) {
@@ -113,7 +132,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   }, [currentStep, navigate]);
 
   useEffect(() => {
-    if (collectionDebounceValue) {
+    if (collectionDebounceValue && isValid) {
       const collection = formMapper(collectionDebounceValue);
       getFee(collection);
     }
@@ -179,14 +198,59 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     [collectionForm],
   );
 
+  const errorTooltip = useMemo(() => {
+    if (!isValid) {
+      if (!errors || !Object.values(errors).length) {
+        return FORM_ERRORS.REQUIRED_FIELDS;
+      }
+      const { attributes, ...fieldErrors } = errors;
+
+      if (attributes?.filter?.((item) => !!item).length) {
+        return FORM_ERRORS.REQUIRED_FIELDS;
+      }
+
+      return Object.values(fieldErrors)
+        .reduce<FieldError[]>((arr, item) => {
+          if (item && !arr.find(({ type }) => type === item.type)) {
+            arr.push(item);
+          }
+          return arr;
+        }, [])
+        .map(({ message }) => message)
+        .join('\n');
+    }
+    if (isBalanceInsufficient) {
+      return (
+        FORM_ERRORS.INSUFFICIENT_BALANCE + selectedAccount?.balance?.availableBalance.unit
+      );
+    }
+    return null;
+  }, [
+    isBalanceInsufficient,
+    isValid,
+    errors,
+    errors.attributes,
+    collectionDebounceValue,
+  ]);
+
+  const isValidFirstStep = useMemo(() => {
+    return !errors.name || !errors.symbol || !errors.coverPictureIpfsCid;
+  }, [errors, isBalanceInsufficient]);
+
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
       <WrapperContentStyled>
         <FormWrapper>
           <CollectionStepper activeStep={currentStep} onClickStep={goToPreviousStep} />
           {isolatedCollectionForm}
-          <FeeInformationTransaction fee={feeFormatted} />
-          <ButtonGroup>
+          {isBalanceInsufficient || (!isBalanceInsufficient && isValid) ? (
+            <FeeInformationTransaction fee={feeFormatted} feeLoading={feeLoading} />
+          ) : (
+            <Alert type="warning">
+              A fee will be calculated after corrected filling required fields
+            </Alert>
+          )}
+          <ButtonGroup $fill>
             {!isLastStep && (
               <ConfirmBtn
                 iconRight={{
@@ -195,7 +259,8 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                   size: 12,
                 }}
                 title="Next step"
-                disabled={!isValid}
+                disabled={!isValidFirstStep}
+                tooltip={errorTooltip}
                 onClick={handleSubmit(onNextStep)}
               />
             )}
@@ -214,8 +279,8 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
               <ConfirmBtn
                 role="primary"
                 title="Create collection"
-                tooltip={isBalanceInsufficient ? NO_BALANCE_MESSAGE : undefined}
-                disabled={!isValid || isBalanceInsufficient}
+                tooltip={errorTooltip}
+                disabled={!isValid || feeLoading || isBalanceInsufficient}
                 onClick={handleSubmit(onCreateCollectionHandle)}
               />
             )}
@@ -256,15 +321,22 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         <BottomBar
           buttons={[
             <Button
-              title={isDrawerOpen ? 'Back' : 'Preview'}
+              title="Preview"
               key="toggleDrawer"
-              onClick={() => setDrawerOpen(!isDrawerOpen)}
+              onClick={() => setDrawerOpen(true)}
             />,
           ]}
           isOpen={isDrawerOpen}
           parent={document.body}
         >
           <CollectionSidebar collectionForm={collectionFormValues as CollectionForm} />
+          <ButtonsGroup>
+            <Button
+              title="Back"
+              key="toggleDrawer"
+              onClick={() => setDrawerOpen(false)}
+            />
+          </ButtonsGroup>
         </BottomBar>
       )}
     </MainWrapper>

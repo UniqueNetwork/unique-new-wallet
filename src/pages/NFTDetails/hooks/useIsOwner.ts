@@ -1,13 +1,18 @@
 import { useMemo } from 'react';
 import { Address } from '@unique-nft/utils/address';
-import { TokenByIdResponse } from '@unique-nft/sdk';
+import { CollectionInfoWithSchemaResponse, TokenByIdResponse } from '@unique-nft/sdk';
 
 import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenTopmostOwner } from '@app/api/restApi/token/useTokenTopmostOwner';
 
 export const useIsOwner = (
-  token: TokenByIdResponse | undefined,
+  token:
+    | (Pick<TokenByIdResponse, 'collectionId' | 'tokenId' | 'owner'> & {
+        collection: Pick<CollectionInfoWithSchemaResponse, 'mode'>;
+        amount?: string;
+      })
+    | undefined,
   parentAddress?: string,
 ) => {
   const { selectedAccount } = useAccounts();
@@ -25,7 +30,7 @@ export const useIsOwner = (
     tokenId: token?.tokenId,
     collectionId: token?.collectionId,
     address: selectedAccount?.address,
-    isFractional: token?.collection.mode === 'ReFungible',
+    isFractional: !token?.amount && token?.collection.mode === 'ReFungible',
   });
 
   return useMemo(() => {
@@ -33,7 +38,7 @@ export const useIsOwner = (
       return topmostAccount.topmostOwner === selectedAccount?.address;
     }
 
-    if (fractionsBalance?.amount) {
+    if (!token?.amount && fractionsBalance?.amount) {
       return true;
     }
 

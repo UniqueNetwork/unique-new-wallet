@@ -7,14 +7,14 @@ import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 export const useAccountBalanceTransfer = ({
   senderAccount,
 }: {
-  senderAccount: Account;
+  senderAccount?: Account;
 }) => {
   const { api } = useApi();
 
   const defaultBalanceTransfer = useExtrinsicMutation(api.balance.transfer);
   const metamaskBalanceTransfer = useMetamaskBalanceTransfer();
 
-  if (senderAccount.name === MetamaskAccountName) {
+  if (senderAccount?.name === MetamaskAccountName) {
     return metamaskBalanceTransfer;
   }
   return defaultBalanceTransfer;

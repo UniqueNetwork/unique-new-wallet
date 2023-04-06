@@ -49,7 +49,9 @@ const TokenInformationComponent = <T extends TBaseToken>({
           <Icon name="question" size={24} color="var(--color-primary-500)" />
         </TooltipWrapper>
       </Heading>
-      {!attributes && <Text color="blue-grey-500">None</Text>}
+      {(!attributes || !attributes.length) && (
+        <Text color="blue-grey-500">There are no attributes for this token</Text>
+      )}
       {attributes?.map(({ title, tags }, index) => (
         <div className="attribute-row" key={`${title}${index}`}>
           <Text

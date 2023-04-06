@@ -73,7 +73,8 @@ export const useTransactionFormService = <R, D, F extends FieldValues>({
     if (!feeError) {
       return;
     }
-    error(feeError);
+
+    error(feeError.toString());
   }, [feeError]);
 
   useEffect(() => {

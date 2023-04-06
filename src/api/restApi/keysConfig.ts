@@ -8,6 +8,7 @@ export const queryKeys = createQueryKeyStore({
     */
     balance: (address?: string) => [address],
     chain: (baseUrl?: string) => ['balance', baseUrl],
+    withdraw: (baseUrl?: string) => ['withdaw', baseUrl],
   },
   token: {
     byId: (collectionId?: number, tokenId?: number) => [collectionId, tokenId],

@@ -22,9 +22,11 @@ export const TooltipWrapper: VFC<TooltipWrapperProps> = ({
 
   return (
     <>
-      <Tooltip targetRef={tooltipRef} align={align}>
-        {message}
-      </Tooltip>
+      {message && (
+        <Tooltip targetRef={tooltipRef} align={align}>
+          {message}
+        </Tooltip>
+      )}
       <TooltipParent ref={tooltipRef}>{children}</TooltipParent>
     </>
   );

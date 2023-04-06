@@ -1,7 +1,6 @@
 import React, { VFC, useCallback } from 'react';
 import {
   Heading,
-  InputText,
   Text,
   Textarea,
   Upload,
@@ -30,7 +29,9 @@ import {
   MAX_SYMBOL_BYTES_SIZE,
   FILE_SIZE_LIMIT_ERROR,
   FORM_ERRORS,
+  FILE_FORMAT_ERROR,
 } from '@app/pages';
+import { InputText } from '@app/components';
 
 interface MainInformationProps {
   className?: string;
@@ -40,9 +41,14 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
   const { error } = useNotifications();
   const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
 
-  const beforeUploadHandler = useCallback((data: { url: string; file: Blob }) => {
+  const beforeUploadHandler = useCallback((data: { url: string; file: Blob | File }) => {
     if (data.file.size > _10MB) {
       error(FILE_SIZE_LIMIT_ERROR);
+
+      return false;
+    }
+    if (!/.*\.(jpeg|jpg|gif|png)$/.test((data.file as File).name)) {
+      error(FILE_FORMAT_ERROR);
 
       return false;
     }
@@ -55,7 +61,7 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
       data: { url: string; file: Blob } | null,
       callbackFn: (cid: string) => void,
     ) => {
-      if (!data?.file) {
+      if (!data?.url) {
         callbackFn('');
         return;
       }
@@ -86,13 +92,21 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
                   value: true,
                   message: FORM_ERRORS.REQUIRED_FIELDS,
                 },
+                pattern: {
+                  value: /^\S+.*/,
+                  message: 'Name is not correct',
+                },
               }}
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <InputText
                   label="Name*"
                   value={value}
                   maxLength={MAX_NAME_SIZE}
-                  additionalText={`Max ${MAX_NAME_SIZE - value.length} symbols`}
+                  additionalText={`Max ${MAX_NAME_SIZE} symbols (${
+                    MAX_NAME_SIZE - value.length
+                  } left)`}
+                  error={!!error}
+                  statusText={error?.message}
                   onChange={onChange}
                 />
               )}
@@ -107,7 +121,9 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
                   value={value}
                   rows={4}
                   maxLength={MAX_DESCRIPTION_SIZE}
-                  additionalText={`Max ${MAX_DESCRIPTION_SIZE - value.length} symbols`}
+                  additionalText={`Max ${MAX_DESCRIPTION_SIZE} symbols (${
+                    MAX_DESCRIPTION_SIZE - value.length
+                  } left)`}
                   onChange={onChange}
                 />
               )}
@@ -121,15 +137,25 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
                   value: true,
                   message: FORM_ERRORS.REQUIRED_FIELDS,
                 },
+                pattern: {
+                  value: /^\S+/,
+                  message: 'Symbol is not correct',
+                },
               }}
-              render={({ field: { onChange, value } }) => (
-                <InputText
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <SymbolInputText
                   label="Symbol*"
                   value={value}
                   maxLength={MAX_SYMBOL_SIZE}
-                  additionalText={`Token name as displayed in Wallet (max ${
-                    MAX_SYMBOL_SIZE - value.length
-                  } symbols)`}
+                  additionalText={
+                    <>
+                      Token name as displayed in Wallet <br />
+                      Max symbols {MAX_SYMBOL_SIZE} ({MAX_SYMBOL_SIZE - value.length}{' '}
+                      left)
+                    </>
+                  }
+                  error={!!error}
+                  statusText={error?.message}
                   onChange={(newVal) => {
                     const size = new Blob([newVal]).size;
 
@@ -173,6 +199,12 @@ const DownloadCover = styled.div`
   display: flex;
   align-items: center;
   gap: 30px;
+`;
+
+const SymbolInputText = styled(InputText)`
+  div.additional-text {
+    height: auto;
+  }
 `;
 
 export const MainInformation = styled(MainInformationComponent)`

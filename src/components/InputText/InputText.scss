@@ -22,15 +22,16 @@ $clear-size: 24px;
     width: 100%;
   }
 
-  .additional-text {
+  div.additional-text {
     color: var(--color-grey-500);
     font-size: 14px;
-    height: 22px;
+    height: auto;
     line-height: 22px;
     margin-bottom: 12px;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: pre-wrap;
+    word-wrap: normal;
     width: 100%;
   }
 

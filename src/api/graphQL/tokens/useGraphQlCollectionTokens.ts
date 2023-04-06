@@ -33,6 +33,7 @@ const COLLECTION_TOKENS_QUERY = gql`
         total_pieces
         tokens_owner
         tokens_amount
+        nested
       }
     }
   }

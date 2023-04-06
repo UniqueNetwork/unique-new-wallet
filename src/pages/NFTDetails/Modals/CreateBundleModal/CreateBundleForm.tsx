@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { CollectionNestingOption } from '@app/api';
 import { SuggestOptionNesting } from '@app/pages/NFTDetails/Modals/CreateBundleModal/components';
-import { useGraphQlCollectionsByNestingAccount } from '@app/api/graphQL/collections';
+import { useGraphQlGetCollectionsByIds } from '@app/api/graphQL/collections';
 import { Suggest } from '@app/components/Suggest';
 import { Alert } from '@app/components';
 import {
@@ -14,7 +14,7 @@ import {
 import { TCreateBundleForm } from './CreateBundleModal';
 
 type Props = {
-  collectionsData: ReturnType<typeof useGraphQlCollectionsByNestingAccount>;
+  collectionsData: ReturnType<typeof useGraphQlGetCollectionsByIds>;
   tokensData: ReturnType<typeof useAllOwnedTokensByCollection>;
   disabledNftField: boolean;
 };
@@ -32,7 +32,7 @@ export const CreateBundleForm = ({
 
   const isNotExistTokens = tokensData.tokens.length === 0;
 
-  const { isCollectionsLoading, collections } = collectionsData;
+  const { isSynchronizedCollectionsLoading, synchronizedCollections } = collectionsData;
   const { isFetchingTokens, tokens } = tokensData;
 
   return (
@@ -63,8 +63,8 @@ export const CreateBundleForm = ({
                   />
                 ),
               }}
-              suggestions={collections}
-              isLoading={isCollectionsLoading}
+              suggestions={synchronizedCollections}
+              isLoading={isSynchronizedCollectionsLoading}
               value={value}
               getActiveSuggestOption={(option) =>
                 option.collection_id === value.collection_id
@@ -75,7 +75,7 @@ export const CreateBundleForm = ({
                 onChange(val);
               }}
               onSuggestionsFetchRequested={(value) =>
-                collections.filter(
+                synchronizedCollections.filter(
                   ({ collection_id, name }) =>
                     name.toLowerCase().includes(value.toLowerCase()) ||
                     collection_id === Number(value),

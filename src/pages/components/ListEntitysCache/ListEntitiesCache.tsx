@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { EntityItem } from '@app/pages/components/ListEntitysCache/EntityItem';
 
 export type TResultEntityCache = {
-  path: string | undefined;
+  path?: string | undefined;
 };
 
 type Props = {

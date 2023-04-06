@@ -2,6 +2,7 @@ import React, { memo, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { Loader } from '@unique-nft/ui-kit';
+import { BalanceResponse } from '@unique-nft/sdk';
 
 import { Chain } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
@@ -9,9 +10,10 @@ import { Button, TransferBtn } from '@app/components';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { shortAddress } from '@app/utils';
+import { formatAmount, formatKusamaBalance, shortAddress } from '@app/utils';
 
 type CoinsRowComponentProps = TNetworkBalances & {
+  balanceToWithdraw?: BalanceResponse;
   address?: string;
   loading?: boolean;
   className?: string;
@@ -20,6 +22,7 @@ type CoinsRowComponentProps = TNetworkBalances & {
   sendDisabled?: boolean;
   getDisabled?: boolean;
   onSend: (network: string, chain: Chain) => void;
+  onWithdraw: (network: string, chain: Chain, amount: string) => void;
   onGet?: () => void;
   chain: Chain;
 };
@@ -63,7 +66,7 @@ const Column = styled.div<{ width: string; align?: 'left' | 'right' | 'center' }
 const ButtonGroup = styled.div`
   display: flex;
   gap: calc(var(--prop-gap) / 2);
-
+  flex-wrap: wrap;
   .unique-button {
     flex: 1 1 auto;
 
@@ -73,12 +76,19 @@ const ButtonGroup = styled.div`
   }
 `;
 
+const SendGetWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: var(--prop-gap);
+`;
+
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
   const {
     address = '',
     balanceFull = '',
     balanceLocked = '',
     balanceTransferable = '',
+    balanceToWithdraw,
     loading,
     className,
     iconName,
@@ -88,6 +98,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
     getDisabled,
     onSend,
     onGet,
+    onWithdraw,
     chain,
   } = props;
 
@@ -103,7 +114,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           chainLogo={iconName}
         />
       </Column>
-      <Column width="25%">
+      <Column width="20%">
         {loading ? (
           <Loader />
         ) : (
@@ -115,24 +126,35 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
           />
         )}
       </Column>
-      <Column align="right" width="25%">
+      <Column align="right" width="30%">
         <ButtonGroup>
-          <TransferBtn
-            disabled={sendDisabled}
-            title="Send"
-            onClick={() => {
-              logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
-              onSend(symbol, chain);
-            }}
-          />
-          <Button
-            disabled={getDisabled}
-            title="Get"
-            onClick={() => {
-              logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
-              onGet?.();
-            }}
-          />
+          <SendGetWrapper>
+            <TransferBtn
+              disabled={sendDisabled}
+              title="Send"
+              onClick={() => {
+                logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
+                onSend(symbol, chain);
+              }}
+            />
+            <Button
+              disabled={getDisabled}
+              title="Get"
+              onClick={() => {
+                logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
+                onGet?.();
+              }}
+            />
+          </SendGetWrapper>
+          {!!Number(balanceToWithdraw?.raw) && (
+            <TransferBtn
+              title={`Withdraw ${balanceToWithdraw?.formatted || ''} ${symbol}`}
+              onClick={() => {
+                logUserEvent(`${UserEvents.WITHDRAW_COINS}_${symbol}`);
+                onWithdraw(symbol, chain, balanceToWithdraw?.raw || '0');
+              }}
+            />
+          )}
         </ButtonGroup>
       </Column>
     </Wrapper>

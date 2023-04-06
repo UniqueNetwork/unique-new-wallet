@@ -1,16 +1,9 @@
 import styled from 'styled-components';
-import {
-  Accordion,
-  Checkbox,
-  Heading,
-  Icon,
-  InputText,
-  Text,
-  Toggle,
-} from '@unique-nft/ui-kit';
+import { Accordion, Checkbox, Heading, Icon, Text, Toggle } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
+import { Address } from '@unique-nft/utils';
 
-import { TooltipWrapper } from '@app/components';
+import { InputText, TooltipWrapper } from '@app/components';
 import {
   FormBody,
   FormHeader,
@@ -60,7 +53,14 @@ export const NFTAttributes = () => {
           <SettingsRow>
             <Controller
               name="sponsorAddress"
-              render={({ field: { onChange, value } }) => (
+              rules={{
+                validate: (value) => {
+                  if (value && !Address.is.validAddressInAnyForm(value)) {
+                    return 'Sponsor address is not correct';
+                  }
+                },
+              }}
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <InputText
                   label={
                     <>
@@ -85,8 +85,10 @@ export const NFTAttributes = () => {
                       </TooltipWrapper>
                     </>
                   }
+                  error={!!error}
+                  statusText={error?.message}
                   additionalText="The designated sponsor should approve the request"
-                  maxLength={48}
+                  maxLength={64}
                   value={value}
                   onChange={onChange}
                 />
@@ -105,7 +107,7 @@ export const NFTAttributes = () => {
           <SettingsRow>
             <Controller
               name="tokenLimit"
-              render={({ field: { onChange, value } }) => (
+              render={({ field: { onChange, value: currentValue } }) => (
                 <InputText
                   label={
                     <>
@@ -128,17 +130,15 @@ export const NFTAttributes = () => {
                       </TooltipWrapper>
                     </>
                   }
-                  additionalText="Unlimited by default"
+                  additionalText="Value range 1 - 4,294,967,295. Unlimited by default."
                   role="number"
-                  value={value}
+                  value={currentValue}
                   onChange={(value) => {
                     const parsed = Number(value);
                     if (!parsed) {
                       !value && onChange(value);
                     } else {
-                      onChange(
-                        parsed > maxTokenLimit ? Number(value.slice(0, -1)) : parsed,
-                      );
+                      onChange(parsed > maxTokenLimit ? currentValue : parsed);
                     }
                   }}
                 />
@@ -185,7 +185,7 @@ export const NFTAttributes = () => {
   );
 };
 
-const AdvancedSettingsAccordion = styled(Accordion)`
+const AdvancedSettingsAccordion = styled(Accordion).attrs({ expanded: true })`
   margin-bottom: calc(var(--prop-gap) * 1.5);
 
   .unique-accordion-title {

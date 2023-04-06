@@ -7,6 +7,7 @@ import { Icon, Modal } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import {
   CreateAccountModal,
+  ExtensionMissingModal,
   ImportViaJSONAccountModal,
   ImportViaQRCodeAccountModal,
   ImportViaSeedAccountModal,
@@ -23,6 +24,7 @@ enum AccountModal {
   VIA_SEED = 'importViaSeed',
   VIA_JSON = 'importViaJSON',
   VIA_QR = 'importViaQRCode',
+  EXTENSION_MISSING = 'extensionMissing',
 }
 
 const dropdownItems = [
@@ -36,8 +38,8 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
     return isOpen ?? true;
   });
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
+  const [missingExtension, setMissingExtension] = useState<'Polkadot' | 'Metamask'>();
   const { walletsCenter } = useAccounts();
-  const { error } = useNotifications();
 
   const onCreateAccountClick = useCallback(() => {
     logUserEvent(UserEvents.CREATE_SUBSTRATE);
@@ -49,32 +51,32 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
     setOpen(false);
   }, []);
 
-  const handleOpenModal = (modalType: AccountModal) => {
+  const handleOpenModal = (modalType: AccountModal) => () => {
     logUserEvent(UserEvents.ADD_ACCOUNT_VIA);
     setCurrentModal(modalType);
   };
 
   const handleConnectToMetamask = async () => {
-    console.log('connect metamask');
     try {
       await Ethereum.requestAccounts();
       await walletsCenter.connectWallet('metamask');
       setOpen(false);
       onClose?.();
     } catch (e: any) {
-      error(e.message);
+      setMissingExtension('Metamask');
+      setCurrentModal(AccountModal.EXTENSION_MISSING);
     }
   };
 
   const handleConnectToPolkadotExtension = async () => {
-    console.log('connect polkadot');
     try {
       await walletsCenter.connectWallet('polkadot');
       await walletsCenter.connectWallet('keyring');
       setOpen(false);
       onClose?.();
     } catch (e: any) {
-      error(e.message);
+      setMissingExtension('Polkadot');
+      setCurrentModal(AccountModal.EXTENSION_MISSING);
     }
   };
 
@@ -91,20 +93,15 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
         <p>Create or import an existing one in any suitable way:</p>
         <Buttons>
           <Button
-            title="New substrate account"
+            title="Seed phrase"
             role="primary"
-            onClick={onCreateAccountClick}
+            onClick={handleOpenModal(AccountModal.VIA_SEED)}
           />
-          {dropdownItems.map((button, idx) => (
-            <Button
-              key={idx}
-              title={button.title}
-              onClick={() => {
-                setOpen(false);
-                handleOpenModal(button.modal);
-              }}
-            />
-          ))}
+          <Button title="New substrate account" onClick={onCreateAccountClick} />
+          <Button
+            title="Backup JSON file"
+            onClick={handleOpenModal(AccountModal.VIA_JSON)}
+          />
         </Buttons>
 
         <p>You can also create or connect wallets via these providers:</p>
@@ -133,6 +130,11 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
       <ImportViaQRCodeAccountModal
         isVisible={currentModal === AccountModal.VIA_QR}
         onFinish={onChangeAccountsFinish}
+      />
+      <ExtensionMissingModal
+        isVisible={currentModal === AccountModal.EXTENSION_MISSING}
+        missingExtension={missingExtension}
+        onFinish={() => setCurrentModal(undefined)}
       />
     </>
   );
@@ -171,5 +173,8 @@ const Buttons = styled.div`
 
   & > button {
     flex: 1 1 calc(50% - 10px);
+    &:first-child {
+      flex: 1 1 100%;
+    }
   }
 `;

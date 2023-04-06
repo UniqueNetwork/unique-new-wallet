@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Notifications } from '@unique-nft/ui-kit';
 import amplitude from 'amplitude-js';
@@ -20,33 +19,19 @@ const ampKey = window.ENV?.AMPLITUDE_KEY || process.env.REACT_APP_AMPLITUDE_KEY 
 
 amplitude.getInstance().init(ampKey);
 
-const BUNDLE_SHOW_MODAL = 'new-wallet-bundle-show-modal';
-
 const getConnectedWallets = localStorage.getItem(CONNECTED_WALLET_TYPE);
 
 export default function App() {
-  const [isShowIntroSlider] = useState<boolean>(() => {
-    const status = localStorage.getItem(BUNDLE_SHOW_MODAL);
-    return status ? JSON.parse(status) : true;
-  });
-
-  useEffect(() => {
-    if (!isShowIntroSlider) {
-      return;
-    }
-    localStorage.setItem(BUNDLE_SHOW_MODAL, JSON.stringify(false));
-  }, [isShowIntroSlider]);
-
   return (
     <Notifications closingDelay={5000}>
-      {isShowIntroSlider && (
+      <AccountWrapper>
         <IntroSlider>
           {({ setActiveSlide, setOpenModal }) => {
             return (
               <>
                 <IntroCard
                   // title={<>Fractional tokens and Bundles finally here!</>}
-                  title="Bundles finally here!"
+                  title="Bundles are finally here!"
                   description={<>Meet the long-awaited update of&nbsp;Unique Wallet</>}
                   imgPath={confetti}
                   setActiveSlide={setActiveSlide}
@@ -81,8 +66,6 @@ export default function App() {
             );
           }}
         </IntroSlider>
-      )}
-      <AccountWrapper>
         <PageSettingsWrapper>
           <ConnectWallets
             isOpen={!getConnectedWallets || getConnectedWallets.split(';').length === 0}
