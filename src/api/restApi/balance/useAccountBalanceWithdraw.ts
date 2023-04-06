@@ -31,7 +31,10 @@ export const useAccountBalanceWithdraw = ({
           args: [Address.mirror.substrateToEthereum(address), amount],
         });
 
-        const signature = await signMessage(unsignedTxPayloadBody);
+        const signature = await signMessage(
+          unsignedTxPayloadBody,
+          senderAccount?.address,
+        );
 
         await api.extrinsics.submit({
           signerPayloadJSON: unsignedTxPayloadBody.signerPayloadJSON,

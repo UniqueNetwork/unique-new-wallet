@@ -29,6 +29,7 @@ import {
   MAX_SYMBOL_BYTES_SIZE,
   FILE_SIZE_LIMIT_ERROR,
   FORM_ERRORS,
+  FILE_FORMAT_ERROR,
 } from '@app/pages';
 import { InputText } from '@app/components';
 
@@ -40,9 +41,14 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
   const { error } = useNotifications();
   const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
 
-  const beforeUploadHandler = useCallback((data: { url: string; file: Blob }) => {
+  const beforeUploadHandler = useCallback((data: { url: string; file: Blob | File }) => {
     if (data.file.size > _10MB) {
       error(FILE_SIZE_LIMIT_ERROR);
+
+      return false;
+    }
+    if (!/.*\.(jpeg|jpg|gif|png)$/.test((data.file as File).name)) {
+      error(FILE_FORMAT_ERROR);
 
       return false;
     }
@@ -55,7 +61,7 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
       data: { url: string; file: Blob } | null,
       callbackFn: (cid: string) => void,
     ) => {
-      if (!data?.file) {
+      if (!data?.url) {
         callbackFn('');
         return;
       }
