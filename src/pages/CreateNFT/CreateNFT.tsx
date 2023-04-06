@@ -31,6 +31,7 @@ import { BottomBar } from '@app/pages/components/BottomBar';
 import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
+import { TokenTypeEnum } from '@app/api/graphQL/types';
 
 import { CreateNftForm } from './CreateNftForm';
 import { mapTokenForm } from './helpers';
@@ -91,7 +92,6 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const { control, reset, handleSubmit, setValue } = useFormContext();
 
   const formValues = useWatch({ control });
-  // const [debouncedFormValues] = useDebounce(formValues, 500);
 
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
     accountAddress: selectedAccount?.address,
@@ -135,12 +135,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const collectionsOptions = useMemo(
     () =>
-      collections?.map<Option>((collection) => ({
-        id: collection.collection_id,
-        title: collection.name,
-        description: collection.description,
-        img: getTokenIpfsUriByImagePath(collection.collection_cover),
-      })) ?? [],
+      collections
+        // filter NFT collections only until RFT minting is implemented
+        ?.filter((collection) => collection.mode === TokenTypeEnum.NFT)
+        .map<Option>((collection) => ({
+          id: collection.collection_id,
+          title: collection.name,
+          description: collection.description,
+          img: getTokenIpfsUriByImagePath(collection.collection_cover),
+        })) ?? [],
     [collections],
   );
 
