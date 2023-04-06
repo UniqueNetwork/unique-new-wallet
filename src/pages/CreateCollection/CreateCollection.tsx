@@ -28,6 +28,7 @@ import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponent
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { BottomBar } from '@app/pages/components/BottomBar';
+import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { FORM_ERRORS } from '../constants';
 import { CollectionForm, Warning } from './types';
@@ -90,6 +91,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       nesting: {
         tokenOwner: true,
       },
+      ownerCanDestroy: false,
     },
   });
   const {
@@ -104,7 +106,8 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
   useEffect(() => {
-    if (!selectedAccount) {
+    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
+      navigate('/');
       return;
     }
     collectionForm.setValue('address', selectedAccount.address);
@@ -202,26 +205,19 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       }
       const { attributes, ...fieldErrors } = errors;
 
-      const attributesMessages = attributes
-        ? attributes
-            .map?.((item) => {
-              return item
-                ? Object.values(item)
-                    .map((error) => (error as FieldError)?.message || '')
-                    .join('\n')
-                : '';
-            })
-            .join(' ')
-        : '';
+      if (attributes?.filter?.((item) => !!item).length) {
+        return FORM_ERRORS.REQUIRED_FIELDS;
+      }
 
-      return (
-        attributesMessages +
-        Object.values(fieldErrors)
-          .map((error) => {
-            return error.message;
-          })
-          .join('\n')
-      );
+      return Object.values(fieldErrors)
+        .reduce<FieldError[]>((arr, item) => {
+          if (item && !arr.find(({ type }) => type === item.type)) {
+            arr.push(item);
+          }
+          return arr;
+        }, [])
+        .map(({ message }) => message)
+        .join('\n');
     }
     if (isBalanceInsufficient) {
       return (
@@ -229,7 +225,17 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       );
     }
     return null;
-  }, [isBalanceInsufficient, isValid, errors, errors.attributes]);
+  }, [
+    isBalanceInsufficient,
+    isValid,
+    errors,
+    errors.attributes,
+    collectionDebounceValue,
+  ]);
+
+  const isValidFirstStep = useMemo(() => {
+    return !errors.name || !errors.symbol || !errors.coverPictureIpfsCid;
+  }, [errors, isBalanceInsufficient]);
 
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
@@ -253,7 +259,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
                   size: 12,
                 }}
                 title="Next step"
-                disabled={!isValid || feeLoading || isBalanceInsufficient}
+                disabled={!isValidFirstStep}
                 tooltip={errorTooltip}
                 onClick={handleSubmit(onNextStep)}
               />

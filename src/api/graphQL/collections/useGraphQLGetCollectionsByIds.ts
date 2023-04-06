@@ -4,8 +4,8 @@ import { Collection, QueryResponse } from '@app/api/graphQL/types';
 import { TCollectionsCacheVar } from '@app/api';
 
 const COLLECTIONS_BY_CACHE_QUERY = gql`
-  query collections_by_ids($where: CollectionWhereParams) {
-    collections(where: $where, order_by: { collection_id: asc }) {
+  query collections_by_ids($where: CollectionWhereParams, $limit: Int) {
+    collections(where: $where, order_by: { collection_id: asc }, limit: $limit) {
       count
       data {
         collection_id

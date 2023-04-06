@@ -19,6 +19,7 @@ const COLLECTIONS_BY_ACCOUNT_QUERY = gql`
         collection_cover
         owner_normalized
         tokens_count
+        mode
       }
     }
   }
@@ -67,7 +68,7 @@ export const useGraphQlCollectionsByAccount = ({
     },
   });
 
-  const collectionsCount = response?.collections.count ?? 0;
+  const collectionsCount = response?.collections?.count ?? 0;
 
   return {
     collections: response?.collections.data ?? [],

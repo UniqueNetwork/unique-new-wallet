@@ -1,20 +1,22 @@
 import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
+import { Address } from '@unique-nft/utils';
 
 import { Achievement, TokenLink } from '@app/components';
 import { Token, TokenTypeEnum } from '@app/api/graphQL/types';
 import { formatLongNumber, shortAddress } from '@app/utils';
-
-import { useIsOwner } from '../NFTDetails/hooks/useIsOwner';
+import { useIsOwner } from '@app/hooks/useIsOwner';
 
 export const TokenNftLink = ({
   token,
   navigate,
   showOwner,
+  checkNesting,
 }: {
   token: Token;
   navigate: () => void | string;
   showOwner?: boolean;
+  checkNesting?: boolean;
 }) => {
   const renderBadge = (type: TokenTypeEnum, nested: boolean) => {
     if (!token.parent_id && nested) {
@@ -54,8 +56,10 @@ export const TokenNftLink = ({
       collection: {
         mode: token.type === 'NFT' ? 'NFT' : 'ReFungible',
       },
+      amount: token.tokens_amount,
     },
     token.tokens_owner,
+    { checkNesting },
   );
 
   return (
@@ -98,7 +102,9 @@ export const TokenNftLink = ({
               )}
               {!isOwner && (
                 <Text appearance="block" weight="light" size="s" color="grey-500">
-                  Owned by:{' '}
+                  {Address.is.nestingAddress(token.tokens_owner)
+                    ? 'Nested in'
+                    : 'Owned by:'}{' '}
                   <span className="count">{shortAddress(token.tokens_owner)}</span>
                 </Text>
               )}

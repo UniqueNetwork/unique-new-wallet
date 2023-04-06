@@ -14,12 +14,15 @@ export const useIsOwner = (
       })
     | undefined,
   parentAddress?: string,
+  options?: { checkNesting?: boolean },
 ) => {
+  const { checkNesting } = options || { checkNesting: true };
   const { selectedAccount } = useAccounts();
 
-  const parent = Address.is.nestingAddress(parentAddress || '')
-    ? Address.nesting.addressToIds(parentAddress || '')
-    : undefined;
+  const parent =
+    checkNesting && Address.is.nestingAddress(parentAddress || '')
+      ? Address.nesting.addressToIds(parentAddress || '')
+      : undefined;
 
   const { data: topmostAccount } = useTokenTopmostOwner({
     collectionId: parent?.collectionId,
