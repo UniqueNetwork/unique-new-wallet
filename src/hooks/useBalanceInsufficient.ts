@@ -11,6 +11,7 @@ export const useIsSufficientBalance = (
     address ?? undefined,
     currentChain.apiEndpoint,
   );
+
   if (!cost.length) {
     return null;
   }
