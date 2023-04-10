@@ -1,9 +1,8 @@
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { Button, useNotifications } from '@unique-nft/ui-kit';
 import { Ethereum } from '@unique-nft/utils/extension';
 
-import { Icon, Modal } from '@app/components';
+import { Icon, Modal, Button } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import {
   CreateAccountModal,

@@ -1,7 +1,7 @@
-import { Loader } from '@unique-nft/ui-kit';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
+import { Loader } from './components/Loader';
 import { useAccounts } from './hooks';
 
 const LoaderContainer = styled.div`

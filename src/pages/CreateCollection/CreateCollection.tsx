@@ -4,7 +4,7 @@ import { FieldError, FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
-import { Text, useNotifications } from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 
 import {
   DeviceSize,
@@ -23,6 +23,7 @@ import {
   Confirm,
   ConfirmBtn,
   StatusTransactionModal,
+  Typography,
 } from '@app/components';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
@@ -307,7 +308,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
             title={warning?.title}
             onClose={() => setWarning(null)}
           >
-            <Text>{warning?.description}</Text>
+            <Typography>{warning?.description}</Typography>
           </Confirm>
           <StatusTransactionModal
             isVisible={isLoadingSubmitResult}

@@ -1,7 +1,8 @@
-import { Icon } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { config } from '@app/config';
+
+import { Icon } from './Icon';
 
 export const Footer = () => {
   return (

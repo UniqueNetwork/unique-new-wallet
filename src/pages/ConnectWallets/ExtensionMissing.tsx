@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { Link, Text } from '@unique-nft/ui-kit';
 
 import smile from '@app/static/hmm.png';
-import { Modal } from '@app/components';
+import { Link, Typography, Modal } from '@app/components';
 
 type Props = {
   isVisible?: boolean;
@@ -32,13 +31,13 @@ export const ExtensionMissingModal = ({
     >
       <ModalContent>
         <SmileImg src={smile} alt="something wrong"></SmileImg>
-        <Text color="grey-500">
+        <Typography color="grey-500">
           {missingExtension} extension is not installed or disabled. Please{' '}
           <Link href={extensionSourceLinks[missingExtension]} target="_blank">
             install
           </Link>{' '}
           it or activate in your browser settings.
-        </Text>
+        </Typography>
       </ModalContent>
     </Modal>
   );

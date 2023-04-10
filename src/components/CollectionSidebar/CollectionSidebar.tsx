@@ -1,10 +1,11 @@
 import { memo, VFC } from 'react';
-import { Heading } from '@unique-nft/ui-kit';
 
 import { Card } from '@app/pages/components/Card';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { CollectionForm } from '@app/pages/CreateCollection/types';
+
+import { Heading } from '../Heading';
 
 export const CollectionSidebarComponent: VFC<{
   collectionForm: CollectionForm;

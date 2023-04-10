@@ -1,6 +1,6 @@
 import { FC, useCallback, useMemo, VFC } from 'react';
 import classNames from 'classnames';
-import { Avatar, Heading, Loader, Text, useNotifications } from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import { CollectionInfoWithSchemaResponse } from '@unique-nft/sdk';
@@ -19,7 +19,7 @@ import {
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { useFileUpload } from '@app/api';
 import { Suggest } from '@app/components/Suggest';
-import { Upload } from '@app/components';
+import { Avatar, Heading, Loader, Typography, Upload } from '@app/components';
 
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
@@ -177,9 +177,9 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
           </FormRow>
           <Heading size="3">Attributes</Heading>
           {selectedCollection && (!attributes || !attributes.length) && (
-            <Text color="grey-500" size="s">
+            <Typography color="grey-500" size="s">
               There are no attributes for this collection
-            </Text>
+            </Typography>
           )}
           {attributes.map((attr, index) => {
             const values = Object.values(attr.enumValues ?? []).map((val) => val._);
@@ -203,9 +203,9 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
           })}
           {!selectedCollection && (
             <FormRowEmpty>
-              <Text color="grey-500" size="s">
+              <Typography color="grey-500" size="s">
                 Will become available after selecting a collection
-              </Text>
+              </Typography>
             </FormRowEmpty>
           )}
         </Form>

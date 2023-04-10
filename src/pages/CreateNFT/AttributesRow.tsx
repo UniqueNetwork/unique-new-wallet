@@ -1,9 +1,8 @@
 import { VFC, useMemo, memo } from 'react';
-import { Select } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 
 import { FormRow, LabelText } from '@app/pages/components/FormComponents';
-import { InputText } from '@app/components';
+import { InputText, Select } from '@app/components';
 
 import { AttributeOption, AttributeType } from './types';
 import { FORM_ERRORS } from '../constants';

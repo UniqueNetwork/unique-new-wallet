@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { Link, Text, Toggle } from '@unique-nft/ui-kit';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
-import { AccountSelect, Button, Icon } from '@app/components';
+import { AccountSelect, Button, Icon, Link, Typography, Toggle } from '@app/components';
 
 import { AccountsManagerProps } from '../../AccountsManager';
 
@@ -33,9 +32,9 @@ export const AccountsManagerDropdown = ({
   return (
     <div className="accounts-manager-dropdown">
       <div className="accounts-manager-accounts">
-        <Text color="grey-500" size="s">
+        <Typography color="grey-500" size="s">
           Account
-        </Text>
+        </Typography>
         <Select
           defaultValue={selectedAccount}
           isClearable={false}
@@ -55,19 +54,19 @@ export const AccountsManagerDropdown = ({
           />
         </div>
         <div className="wallet-content" data-testid="wallet-content">
-          <Text size="s" weight="light" color="grey-500">
+          <Typography size="s" weight="light" color="grey-500">
             Balance
-          </Text>
-          <Text size="l">{`${balance} ${symbol}`}</Text>
-          {deposit && <Text size="s">{`${deposit} ${symbol}`}</Text>}
+          </Typography>
+          <Typography size="l">{`${balance} ${symbol}`}</Typography>
+          {deposit && <Typography size="s">{`${deposit} ${symbol}`}</Typography>}
           {depositDescription}
         </div>
       </div>
       {stake?.visibility && (
         <div className="wallet-accounts-stake">
-          <Text size="xs" color="grey-500" weight="light">
+          <Typography size="xs" color="grey-500" weight="light">
             {stake.description}
-          </Text>
+          </Typography>
           <Button
             disabled={stake.disabled}
             title="Stake"
@@ -77,13 +76,13 @@ export const AccountsManagerDropdown = ({
         </div>
       )}
       <div className="accounts-manager-networks">
-        <Text color="grey-500" size="s" weight="light">
+        <Typography color="grey-500" size="s" weight="light">
           Active network
-        </Text>
+        </Typography>
         {(!networks || networks.length === 0) && activeNetwork && (
           <div className="network">
             <Icon {...activeNetwork.icon} size={16} />
-            <Text>{activeNetwork.name}</Text>
+            <Typography>{activeNetwork.name}</Typography>
           </div>
         )}
         {networks?.length > 0 && (
@@ -95,7 +94,7 @@ export const AccountsManagerDropdown = ({
                 data-testid={`network-${network.id}`}
               >
                 <Icon {...network.icon} size={16} />
-                <Text>{network.name}</Text>
+                <Typography>{network.name}</Typography>
                 <Toggle
                   label=""
                   on={activeNetwork?.id === network.id}

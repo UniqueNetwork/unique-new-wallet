@@ -1,6 +1,5 @@
 import { FC, useCallback, useState } from 'react';
 import keyring from '@polkadot/ui-keyring';
-import { Text } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
 import { Modal } from '@app/components/Modal';
@@ -9,7 +8,7 @@ import { QRReader, ScannedResult } from '@app/components/QRReader/QRReader';
 import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
 import { ContentRow } from '@app/pages/components/ModalComponents';
 import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
-import { Button } from '@app/components';
+import { Button, Typography } from '@app/components';
 
 import { TCreateAccountModalProps } from './types';
 
@@ -64,11 +63,11 @@ export const ImportViaQRCodeAccountModal: FC<TCreateAccountModalProps> = ({
       onClose={onFinish}
     >
       <ContentRow>
-        <Text size="m">
+        <Typography size="m">
           Provide the account QR from the module/external application for scanning. Once
           detected as valid, you will be taken to the next step to add the account to your
           list.
-        </Text>
+        </Typography>
       </ContentRow>
       <ContentRow>
         {address ? <AddressWidget address={address} /> : <QRReader onScan={onScan} />}

@@ -1,11 +1,10 @@
 import { useState, VFC } from 'react';
 import styled from 'styled-components';
 import { addSeconds, format } from 'date-fns';
-import { Avatar, Loader } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
 import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
-import { AccountLinkComponent, ExternalLink } from '@app/components';
+import { AccountLinkComponent, ExternalLink, Avatar, Loader } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
 import { maxTokenLimit } from '@app/pages/constants/token';

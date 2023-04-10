@@ -2,11 +2,11 @@ import { ReactNode, useState } from 'react';
 import { OperationVariables } from '@apollo/client/core/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, SizeMap, useDeviceSize } from '@app/hooks';
 import { Button, NoItems, PagePaper } from '@app/components';
 
+import { IPaginationProps, Loader, Pagination, Typography } from '..';
 import Item from './Item';
 
 List.Item = Item;
@@ -110,7 +110,7 @@ const ButtonMoreWrapper = styled.div`
   padding-top: calc(var(--prop-gap) * 2);
 `;
 
-function List<T>({
+export function List<T>({
   className,
   dataSource,
   fetchMore,
@@ -156,9 +156,9 @@ function List<T>({
   ) : null;
 
   const ResultItemText = resultsComponent || (
-    <Text>{`${panelSettings.pagination.size} ${
+    <Typography>{`${panelSettings.pagination.size} ${
       panelSettings.pagination.size === 1 ? 'result' : 'results'
-    }`}</Text>
+    }`}</Typography>
   );
 
   const [count, setCount] = useState(2);
@@ -229,5 +229,3 @@ function List<T>({
     </Wrapper>
   );
 }
-
-export default List;

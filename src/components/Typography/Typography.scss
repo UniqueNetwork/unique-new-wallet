@@ -1,0 +1,25 @@
+@import '../../styles/index.scss';
+@import '../../styles/utils.scss';
+
+.unique-text {
+    @each $color, $value in $base-colors-map {
+        &[class*='#{$color}'] {
+            color: $value;
+        }
+    }
+    @each $size in xs, s, m, l {
+        &[class*='size-#{$size}'] {
+            @include font-body($size);
+        }
+    }
+    @each $weight in light, regular, bold {
+        &[class*='weight-#{$weight}'] {
+            @include font-weight($weight);
+        }
+    }
+    @each $appearance in inline, block {
+        &[class*='appearance-#{$appearance}'] {
+            display: $appearance;
+        }
+    }
+}

@@ -1,8 +1,8 @@
 import { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Accordion, RadioGroup } from '@unique-nft/ui-kit';
 
+import { Accordion, RadioGroup } from '@app/components';
 import { OptionChips } from '@app/types';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { TypeFilterNft } from '@app/api/graphQL/tokens';
@@ -22,7 +22,7 @@ const TypeFilterComponent: VFC<TypeFilterComponentProps> = ({
 
   return (
     <div className={classNames('type-filter', className)}>
-      <Accordion expanded title="Type">
+      <Accordion isOpen title="Type">
         <RadioGroupWrapper>
           <RadioGroup
             options={type}

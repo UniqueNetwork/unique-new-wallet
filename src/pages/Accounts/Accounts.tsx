@@ -1,17 +1,27 @@
 import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Dropdown, Icon, TableColumnProps, Text, Button } from '@unique-nft/ui-kit';
+import { TableColumnProps } from '@unique-nft/ui-kit';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import { Confirm, PagePaper, Table, TooltipWrapper, TransferBtn } from '@app/components';
+import {
+  Confirm,
+  PagePaper,
+  Table,
+  TooltipWrapper,
+  TransferBtn,
+  Dropdown,
+  Icon,
+  Typography,
+  Button,
+} from '@app/components';
 import { Search } from '@app/pages/components/Search';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
-import { account, useAccountsBalanceService } from '@app/api';
+import { useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ConnectWallets } from '@app/pages';
@@ -239,7 +249,7 @@ const BlockExplorer = ({ account }: { account: Account }) => {
           rel="noreferrer"
           href={`${currentChain.subscanAddress}/account/${account?.address}`}
         >
-          <Text color="primary-500">Subscan</Text>
+          <Typography color="primary-500">Subscan</Typography>
           <Icon size={16} name="arrow-up-right" color="currentColor" />
         </ExternalLink>
       )}
@@ -249,7 +259,7 @@ const BlockExplorer = ({ account }: { account: Account }) => {
           rel="noreferrer"
           href={`${currentChain.uniquescanAddress}/account/${account?.address}`}
         >
-          <Text color="primary-500">UniqueScan</Text>
+          <Typography color="primary-500">UniqueScan</Typography>
           <Icon size={16} name="arrow-up-right" color="currentColor" />
         </ExternalLink>
       )}
@@ -442,9 +452,9 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
             data={filteredAccounts}
             loading={balances.some((balance) => balance.isLoading)}
             mobileCaption={
-              <Text color="grey-500" weight="light">
+              <Typography color="grey-500" weight="light">
                 <CaptionText />
-              </Text>
+              </Typography>
             }
           />
         </AccountsPageContent>
@@ -491,10 +501,10 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
         title="Forget wallet"
         onClose={() => setForgetWalletAddress('')}
       >
-        <Text>
+        <Typography>
           Are you sure you want to perform this action? You can always recover your wallet
           with your seed password using the &rsquo;Add account via&rsquo; button
-        </Text>
+        </Typography>
       </Confirm>
     </>
   );

@@ -1,9 +1,8 @@
 import { ReactNode, VFC } from 'react';
-import { ButtonProps } from '@unique-nft/ui-kit';
 
 import { Modal } from '@app/components/Modal';
 
-import { Button } from '../Button';
+import { Button, ButtonProps } from '../Button';
 
 interface IConfirmProps {
   children?: ReactNode;

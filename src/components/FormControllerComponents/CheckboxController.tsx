@@ -1,7 +1,8 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { Checkbox, CheckboxProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
+
+import { Checkbox, CheckboxProps } from '../Checkbox';
 
 type InputControllerProps = BaseControllerProps<
   Omit<CheckboxProps, 'checked' | 'onChange'> &

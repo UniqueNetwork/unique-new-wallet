@@ -1,6 +1,6 @@
 import React, { VFC, memo } from 'react';
-import { Heading } from '@unique-nft/ui-kit';
 
+import { Heading } from '@app/components';
 import { SidebarRow, WrapperSidebar } from '@app/pages/components/PageComponents';
 import { Card } from '@app/pages/components/Card';
 

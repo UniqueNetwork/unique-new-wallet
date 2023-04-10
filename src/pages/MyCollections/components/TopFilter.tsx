@@ -1,12 +1,11 @@
 import { useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Select } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
 import { useApi } from '@app/hooks';
-import { IconProps, ConfirmBtn } from '@app/components';
+import { IconProps, ConfirmBtn, Select } from '@app/components';
 import { Direction } from '@app/api/graphQL/types';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';

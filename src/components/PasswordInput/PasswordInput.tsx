@@ -9,7 +9,6 @@ interface PasswordInputProps {
   onChange(value: string): void;
 }
 
-// todo - use from ui-kit - can't use until InputText hasn't props type="password" or role="password"
 export const PasswordInput: FC<PasswordInputProps> = ({
   placeholder,
   value,

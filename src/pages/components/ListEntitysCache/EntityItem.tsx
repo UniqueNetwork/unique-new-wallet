@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Avatar } from '@unique-nft/ui-kit';
 
+import { Avatar } from '@app/components';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 import { TResultEntityCache } from './ListEntitiesCache';

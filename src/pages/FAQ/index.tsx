@@ -9,7 +9,7 @@ import {
   WrapperSidebar,
 } from '@app/pages/components/PageComponents';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
-import Accordion from '@app/components/Accordion/Accordion';
+import { Accordion } from '@app/components';
 
 import { AskQuestion, faqItems } from './components';
 

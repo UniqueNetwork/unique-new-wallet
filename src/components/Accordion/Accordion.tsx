@@ -1,10 +1,10 @@
 import React, { FC, ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
 
+import { Typography } from '../Typography';
 import { Button } from '../Button';
 
-interface AccordionProps {
+export interface AccordionProps {
   title: ReactNode;
   isOpen?: boolean;
   isClearShow?: boolean;
@@ -32,7 +32,7 @@ const AccordionChevronIcon = () => {
   );
 };
 
-const Accordion: FC<AccordionProps> = ({
+export const Accordion: FC<AccordionProps> = ({
   title,
   isOpen: isOpenProps,
   children,
@@ -56,7 +56,7 @@ const Accordion: FC<AccordionProps> = ({
     <AccordionWrapper className={className}>
       <AccordionHeaderWrapper>
         <AccordionTitle isOpen={isOpen} onClick={onTitleClick}>
-          <Text>{title}</Text>
+          <Typography>{title}</Typography>
           <AccordionChevronIcon />
         </AccordionTitle>
         {isClearShow && (
@@ -117,5 +117,3 @@ const AccordionBodyWrapper = styled.div<{ isOpen?: boolean }>`
     }
   }
 `;
-
-export default Accordion;

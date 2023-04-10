@@ -1,11 +1,10 @@
 import styled from 'styled-components';
-import { Tabs } from '@unique-nft/ui-kit';
 import React, { useEffect, VFC } from 'react';
 import classNames from 'classnames';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
-import { PagePaper } from '@app/components';
+import { PagePaper, Tabs } from '@app/components';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 
 import { NFTFilters } from './NFTs';

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Alert, Loader, Text } from '@unique-nft/ui-kit';
+
+import { Alert, Loader, Typography } from '../components';
 
 type Props = {
   fee?: string;
@@ -15,11 +16,11 @@ export const FeeInformationTransaction = ({ fee, className, feeLoading }: Props)
           <Loader size="small" label="Calculating fee" placement="left" />
         </FeeLoader>
       ) : (
-        <Text
+        <Typography
           size="s"
           color="inherit"
           weight="regular"
-        >{`A fee of ~${fee} can be applied to the transaction`}</Text>
+        >{`A fee of ~${fee} can be applied to the transaction`}</Typography>
       )}
     </StyledAlert>
   );

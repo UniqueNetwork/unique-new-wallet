@@ -1,11 +1,9 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
 
 import { AccountSigner } from '@app/account';
 import { useAccounts } from '@app/hooks';
-import { Button, IdentityIcon, PasswordInput } from '@app/components';
-import { Modal } from '@app/components/Modal';
+import { Button, IdentityIcon, PasswordInput, Typography, Modal } from '@app/components';
 
 export type TSignModalProps = {
   isVisible: boolean;
@@ -43,11 +41,11 @@ export const SignModal: FC<TSignModalProps> = ({ isVisible, onFinish, onClose })
     <Modal isVisible={isVisible} title="Authorize transaction" onClose={onClose}>
       <AddressWrapper>
         <IdentityIcon address={signer.address || ''} />
-        <Text>{signer.address || ''}</Text>
+        <Typography>{signer.address || ''}</Typography>
       </AddressWrapper>
       <CredentialsWrapper>
         <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
-        {passwordError && <Text color="coral-500">{passwordError}</Text>}
+        {passwordError && <Typography color="coral-500">{passwordError}</Typography>}
       </CredentialsWrapper>
       <ButtonWrapper>
         <Button disabled={!password} role="primary" title="Sign" onClick={onSignClick} />

@@ -1,13 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { Text } from '@unique-nft/ui-kit';
 
 import { useGraphQlCollectionTokens } from '@app/api/graphQL/tokens/useGraphQlCollectionTokens';
 import { useNftFilterContext } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import { useAccounts, useItemsLimit } from '@app/hooks';
 import { useCheckExistTokensByAccount } from '@app/pages/hooks/useCheckExistTokensByAccount';
 import { Token } from '@app/api/graphQL/types';
-import List from '@app/components/List';
-import { PagePaper } from '@app/components';
+import { PagePaper, Typography, List } from '@app/components';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 import { TokenNftLink } from '@app/pages/components/TokenNftLink';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
@@ -81,7 +79,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         fetchMore={fetchMore}
         isLoading={isLoadingTokens}
         itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
-        resultsComponent={<Text>{getTotalResults()}</Text>}
+        resultsComponent={<Typography>{getTotalResults()}</Typography>}
         panelSettings={{
           pagination: {
             current: page,

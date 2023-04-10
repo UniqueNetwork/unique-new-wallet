@@ -1,8 +1,8 @@
 import { memo, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Checkbox } from '@unique-nft/ui-kit';
 
+import { Checkbox } from '@app/components';
 import noImage from '@app/static/icons/no-collections.svg';
 
 export interface CollectionFilterItemComponentProps {
