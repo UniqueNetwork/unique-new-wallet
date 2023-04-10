@@ -1,9 +1,10 @@
 import { isValidElement, Key, ReactNode, useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { ComponentProps } from '@unique-nft/ui-kit';
 
 import { Icon, IconProps } from '@app/components/Icon';
+
 import './Dropdown.scss';
+import { ComponentProps } from '../types';
 
 export interface SelectOptionProps {
   [x: string | number | symbol]: unknown;

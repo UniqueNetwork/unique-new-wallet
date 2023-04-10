@@ -1,7 +1,7 @@
-import { ButtonProps } from '@unique-nft/ui-kit';
-
 import { useAccounts, useApi } from '@app/hooks';
 import { BaseActionBtn } from '@app/components/ActionBtn/BaseActionBtn';
+
+import { ButtonProps } from '../Button';
 
 export const BurnBtn = (props: ButtonProps) => {
   const { currentChain } = useApi();

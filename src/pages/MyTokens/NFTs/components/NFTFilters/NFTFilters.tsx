@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useState, VFC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
-import { Select } from '@unique-nft/ui-kit';
 
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
-import { ConfirmBtn } from '@app/components';
+import { ConfirmBtn, Select } from '@app/components';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { Direction } from '@app/api/graphQL/types';

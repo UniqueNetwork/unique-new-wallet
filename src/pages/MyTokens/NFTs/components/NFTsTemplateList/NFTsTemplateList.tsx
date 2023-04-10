@@ -1,12 +1,17 @@
 import classNames from 'classnames';
-import { Chip, IconProps, IPaginationProps, Link } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
 import { useItemsLimit } from '@app/hooks';
-import { PagePaper } from '@app/components';
-import List from '@app/components/List';
+import {
+  PagePaper,
+  Chip,
+  IconProps,
+  IPaginationProps,
+  Link,
+  List,
+} from '@app/components';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 import { TokenNftLink } from '@app/pages/components/TokenNftLink';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';

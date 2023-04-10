@@ -1,0 +1,49 @@
+@mixin font-body($size) {
+  font-family: var(--prop-font-family);
+  font-weight: 400;
+  @if ($size== 'xs') {
+      font-size: 12px;
+      line-height: 18px;
+  } @else if ($size== 's') {
+      font-size: 14px;
+      line-height: 21px;
+  } @else if ($size== 'm') {
+      font-size: 16px;
+      line-height: 24px;
+  } @else if ($size== 'l') {
+      font-size: 18px;
+      line-height: 26px;
+  }
+}
+
+@mixin font-weight($weight) {
+  @if ($weight== 'bold') {
+      font-weight: 700;
+  } @else if ($weight== 'regular') {
+      font-weight: 500;
+  } @else if ($weight== 'light') {
+      font-weight: 400;
+  }
+}
+
+@mixin font-heading($size) {
+  font-family: var(--prop-font-family-heading);
+  font-weight: 700;
+  @if ($size== 1) {
+      font-size: 36px;
+      line-height: 48px;
+      margin: 0 0 24px;
+  } @else if ($size== 2) {
+      font-size: 28px;
+      line-height: 42px;
+      margin: 0 0 16px;
+  } @else if ($size== 3) {
+      font-size: 24px;
+      line-height: 36px;
+      margin: 0 0 16px;
+  } @else if ($size== 4) {
+      font-size: 20px;
+      line-height: 28px;
+      margin: 0 0 8px;
+  }
+}

@@ -1,12 +1,5 @@
 import React, { VFC, useCallback } from 'react';
-import {
-  Heading,
-  Text,
-  Textarea,
-  Upload,
-  Loader,
-  useNotifications,
-} from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
 
@@ -31,7 +24,14 @@ import {
   FORM_ERRORS,
   FILE_FORMAT_ERROR,
 } from '@app/pages';
-import { InputText } from '@app/components';
+import {
+  InputText,
+  Heading,
+  Typography,
+  Textarea,
+  Upload,
+  Loader,
+} from '@app/components';
 
 interface MainInformationProps {
   className?: string;
@@ -77,10 +77,10 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
     <>
       <FormHeader>
         <Heading size="2">Main information</Heading>
-        <Text>
+        <Typography>
           The core collection information cannot be modified once approved/signed. For any
           changes the collection will need to be burned and re-created
-        </Text>
+        </Typography>
       </FormHeader>
       <FormBody>
         <Form className={className}>

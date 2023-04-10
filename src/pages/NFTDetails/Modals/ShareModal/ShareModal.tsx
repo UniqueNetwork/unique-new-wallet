@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
-import { IconProps } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import getSocialLink from '@app/pages/NFTDetails/Modals/utils/getSocialLink';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
-import { Button, Modal } from '@app/components';
+import { Button, Modal, IconProps } from '@app/components';
 
 import RedditLogo from '../../../../static/icons/reddit.svg';
 import FacebookLogo from '../../../../static/icons/facebook.svg';

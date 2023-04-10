@@ -11,10 +11,10 @@ import {
   useState,
 } from 'react';
 import classNames from 'classnames';
-import { Icon, InputText, InputTextProps } from '@unique-nft/ui-kit';
 
 import { useIntersectionObserver, useIsFirstRender } from '@app/hooks';
 
+import { Icon, InputText, InputTextProps } from '..';
 import {
   SuggestItem,
   SuggestItemProps,

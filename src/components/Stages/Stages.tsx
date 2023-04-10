@@ -1,10 +1,10 @@
 import React, { VFC } from 'react';
 import styled from 'styled-components';
-import { Loader, Text } from '@unique-nft/ui-kit';
 
 import { Stage, StageStatus } from '@app/types';
 
 import { Icon } from '../Icon';
+import { Loader, Typography } from '..';
 
 interface StagesProps {
   stages: Stage[];
@@ -23,11 +23,11 @@ export const Stages: VFC<StagesProps> = ({ stages }) => {
             )}
           </StatusWrapper>
           <TitleWrapper>
-            <Text size="m">{stage.title}</Text>
+            <Typography size="m">{stage.title}</Typography>
             {stages.length > 1 && (
-              <Text size="s" color="grey-500">
+              <Typography size="s" color="grey-500">
                 {`Step ${index + 1}`}
-              </Text>
+              </Typography>
             )}
           </TitleWrapper>
         </React.Fragment>

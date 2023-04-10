@@ -1,7 +1,7 @@
-import { SuggestWrapperProps } from '@unique-nft/ui-kit/dist/cjs/components/Suggest/components';
 import styled from 'styled-components/macro';
 
 import { TestSuggestValues } from '@app/components/SuggestGroup/SuggestGroup';
+import { SuggestWrapperProps } from '@app/components';
 
 export const SuggestWrapper = ({
   suggestions,

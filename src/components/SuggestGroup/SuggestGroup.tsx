@@ -1,8 +1,8 @@
-import { Suggest } from '@unique-nft/ui-kit';
-import { SuggestProps } from '@unique-nft/ui-kit/dist/cjs/components/Suggest/Suggest';
 
 import { SuggestWrapper } from '@app/components/SuggestGroup/components/SuggestWrapper';
 import { SuggestItem } from '@app/components/SuggestGroup/components/SuggestItem';
+
+import { Suggest, SuggestProps } from '..';
 
 // TODO: add suggestion component className prop for styled component
 import './SuggestGroup.scss';

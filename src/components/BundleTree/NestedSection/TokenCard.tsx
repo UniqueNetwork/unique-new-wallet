@@ -1,8 +1,15 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { Loader, Text } from '@unique-nft/ui-kit';
 
-import { Button, Dropdown, Icon, Image, TooltipWrapper } from '@app/components';
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Image,
+  TooltipWrapper,
+  Loader,
+  Typography,
+} from '@app/components';
 
 import { INestingToken, ITokenCard } from '../types';
 import { useCollection } from '../useCollection';
@@ -66,10 +73,10 @@ function TokenCard({
         isCollectionLoading={isCollectionLoading}
       />
       {token.nestingChildTokens && (
-        <Text color="grey-500" size="xs">
+        <Typography color="grey-500" size="xs">
           {token.nestingChildTokens.length} item
           {token.nestingChildTokens.length > 1 && 's'}
-        </Text>
+        </Typography>
       )}
       {menuVisible && token.isCurrentAccountOwner && (
         <ActionsMenuWrapper
@@ -251,12 +258,12 @@ const TokenTitle: FC<{
   }
   return (
     <>
-      <Text color="additional-dark" size="m">
+      <Typography color="additional-dark" size="m">
         {prefix} #{token.tokenId}
-      </Text>
-      <Text color="grey-500" size="s">
+      </Typography>
+      <Typography color="grey-500" size="s">
         {mode}
-      </Text>
+      </Typography>
     </>
   );
 };

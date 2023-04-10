@@ -1,5 +1,4 @@
 import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
-import { Heading } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import React, { useCallback, useEffect, useState } from 'react';
 import { UseQueryResult } from 'react-query';
@@ -14,6 +13,7 @@ import { useChainProperties } from '@app/api/restApi/properties/useChainProperti
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
 import { RampModal } from '@app/pages';
+import { Heading } from '@app/components';
 import { SendFunds } from '@app/pages/SendFunds';
 import { Chain, NetworkType } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';

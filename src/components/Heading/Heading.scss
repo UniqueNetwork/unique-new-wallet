@@ -1,0 +1,17 @@
+@import '../../styles/index.scss';
+@import '../../styles/utils.scss';
+
+.unique-font-heading {
+    color: var(--color-additional-dark);
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: 0;
+    text-decoration: none;
+    margin: 0;
+
+    @each $size in 1, 2, 3, 4 {
+        &.size-#{$size} {
+            @include font-heading($size);
+        }
+    }
+}

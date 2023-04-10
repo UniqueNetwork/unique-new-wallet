@@ -1,4 +1,4 @@
-import { IconProps } from '@unique-nft/ui-kit';
+import { IconProps } from '@app/components';
 
 export type NetworkType = 'QTZ' | 'OPL' | 'KSM' | 'UNQ' | string;
 

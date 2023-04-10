@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Stepper } from '@unique-nft/ui-kit';
-import { StepperProps } from '@unique-nft/ui-kit/dist/cjs/components/Stepper/Stepper';
+
+import { Stepper, StepperProps } from '../Stepper';
 
 const steps: StepperProps['steps'] = ['Main information', 'NFT attributes'];
 

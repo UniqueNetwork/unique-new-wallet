@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
-import { SelectOptionProps } from '@unique-nft/ui-kit';
 
+import { SelectOptionProps } from '@app/components/types';
 import { Image } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { NFTDetailsHeader } from '@app/pages/NFTDetails/components/NFTDetailsHeader';

@@ -1,6 +1,7 @@
 import { ReactNode, useRef, VFC } from 'react';
 import styled from 'styled-components';
-import { Tooltip, TooltipAlign } from '@unique-nft/ui-kit';
+
+import { Tooltip, TooltipAlign } from '@app/components';
 
 interface TooltipWrapperProps {
   align?: TooltipAlign;

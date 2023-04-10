@@ -1,16 +1,15 @@
 import React, { memo, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Loader } from '@unique-nft/ui-kit';
 import { BalanceResponse } from '@unique-nft/sdk';
 
 import { Chain } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
-import { Button, TransferBtn } from '@app/components';
+import { Button, TransferBtn, Loader } from '@app/components';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { formatAmount, formatKusamaBalance, shortAddress } from '@app/utils';
+import { shortAddress } from '@app/utils';
 
 type CoinsRowComponentProps = TNetworkBalances & {
   balanceToWithdraw?: BalanceResponse;

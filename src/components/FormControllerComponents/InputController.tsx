@@ -1,7 +1,8 @@
 import { Controller } from 'react-hook-form';
-import { InputText, InputTextProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
+
+import { InputText, InputTextProps } from '../InputText';
 
 type InputControllerProps<
   TInput extends string,

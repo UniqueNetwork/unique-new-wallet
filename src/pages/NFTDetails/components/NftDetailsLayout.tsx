@@ -1,10 +1,9 @@
 import { ReactNode, VFC } from 'react';
 import classNames from 'classnames';
-import { Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { ErrorPage, PagePaper } from '@app/components';
+import { ErrorPage, PagePaper, Loader } from '@app/components';
 
 interface NFTDetailsProps {
   className?: string;

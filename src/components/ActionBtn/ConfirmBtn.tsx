@@ -1,8 +1,8 @@
-import { ButtonProps } from '@unique-nft/ui-kit';
-
 import { useAccounts, useApi } from '@app/hooks';
 import { BaseActionBtn } from '@app/components/ActionBtn/BaseActionBtn';
 import { MetamaskAccountName } from '@app/account/MetamaskWallet';
+
+import { ButtonProps } from '../Button';
 
 export const ConfirmBtn = (props: ButtonProps & { tooltip?: string | null }) => {
   const { currentChain } = useApi();

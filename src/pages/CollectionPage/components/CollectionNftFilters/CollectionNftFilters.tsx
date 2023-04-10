@@ -2,14 +2,6 @@ import { KeyboardEvent, useState, VFC } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import {
-  Accordion,
-  Button,
-  IconProps,
-  RadioGroup,
-  RadioOptionValueType,
-  Select,
-} from '@unique-nft/ui-kit';
 
 import { iconDown, iconUp } from '@app/utils';
 import { ROUTE } from '@app/routes';
@@ -20,7 +12,15 @@ import {
   ListNftsFilterType,
   useNftFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { ConfirmBtn } from '@app/components';
+import {
+  ConfirmBtn,
+  Accordion,
+  Button,
+  IconProps,
+  RadioGroup,
+  RadioOptionValueType,
+  Select,
+} from '@app/components';
 import { Search } from '@app/pages/components/Search';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
@@ -189,7 +189,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               />
             </FormRow>
             <FormRow>
-              <Accordion expanded title="Status">
+              <Accordion isOpen title="Status">
                 <RadioGroup
                   align="vertical"
                   options={radioOptions}

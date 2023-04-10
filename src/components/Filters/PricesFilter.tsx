@@ -1,9 +1,9 @@
 import React, { FC, useCallback, useState } from 'react';
-import { InputText, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
+import { InputText, Typography } from '../';
 import { PriceRange } from './types';
-import Accordion from '../Accordion/Accordion';
+import { Accordion } from '../Accordion';
 import { Button } from '../Button';
 
 interface PricesFilterProps {
@@ -50,7 +50,7 @@ const PricesFilter: FC<PricesFilterProps> = ({ onChange }) => {
             placeholder="Min"
             onChange={onChangeMinPrice}
           />
-          <Text>to</Text>
+          <Typography>to</Typography>
           <InputText
             value={maxPrice?.toString()}
             placeholder="Max"

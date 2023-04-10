@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react';
-import { BreadcrumbsProps } from '@unique-nft/ui-kit';
 
 import { PageSettingsContext } from '@app/context';
+import { BreadcrumbsProps } from '@app/components';
 
 export const PageSettingsWrapper: FC = ({ children }) => {
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbsProps>();

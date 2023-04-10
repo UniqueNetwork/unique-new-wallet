@@ -1,8 +1,7 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
-import { Text } from '@unique-nft/ui-kit';
 
-import { Image } from '@app/components';
+import { Image, Typography } from '@app/components';
 
 export interface ITokenLinkProps {
   alt?: string;
@@ -31,7 +30,7 @@ const TokenImage = styled(Image)`
   margin-bottom: calc(var(--prop-gap) / 2);
 `;
 
-const TokenLinkTitle = styled(Text).attrs({ appearance: 'block', size: 'l' })`
+const TokenLinkTitle = styled(Typography).attrs({ appearance: 'block', size: 'l' })`
   margin-bottom: calc(var(--prop-gap) / 2);
   word-break: break-all;
 `;

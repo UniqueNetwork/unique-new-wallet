@@ -1,9 +1,17 @@
 import styled from 'styled-components';
-import { Accordion, Checkbox, Heading, Icon, Text, Toggle } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 import { Address } from '@unique-nft/utils';
 
-import { InputText, TooltipWrapper } from '@app/components';
+import {
+  InputText,
+  TooltipWrapper,
+  Accordion,
+  Checkbox,
+  Heading,
+  Icon,
+  Typography,
+  Toggle,
+} from '@app/components';
 import {
   FormBody,
   FormHeader,
@@ -20,20 +28,20 @@ export const NFTAttributes = () => {
     <>
       <FormHeader>
         <Heading size="2">NFT attributes</Heading>
-        <Text>
+        <Typography>
           Customize your token — define your NFTs traits: name, accessory, gender,
           background, face, body, tier, etc.
-        </Text>
+        </Typography>
       </FormHeader>
       <FormBody>
         <AttributesTable />
         <AdvancedSettingsAccordion title="Advanced settings">
           <FormRow>
             <Heading size="4">Nesting</Heading>
-            <Text>
+            <Typography>
               A way to group tokens in a nested, tree-like structure within and NFT.
               Nesting of both NFTs and RFTs in unlimited quantities is supported.
-            </Text>
+            </Typography>
           </FormRow>
           <SettingsRow>
             <Controller
@@ -97,12 +105,12 @@ export const NFTAttributes = () => {
           </SettingsRow>
           <FormRow>
             <Heading size="4">One-time install options</Heading>
-            <Text>
+            <Typography>
               One-time options cannot be changed once set. They are &apos;baked-in&apos;
               at the time of collection creation. They can be left unchanged in this
               settings page, but the final parameters should be set/reviewed in the
               &apos;Settings&apos; tab in the collection detail panel.
-            </Text>
+            </Typography>
           </FormRow>
           <SettingsRow>
             <Controller

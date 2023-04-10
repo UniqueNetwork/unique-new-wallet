@@ -1,15 +1,7 @@
-import {
-  Button,
-  Heading,
-  Icon,
-  Text,
-  useNotifications,
-  Loader,
-  TooltipAlign,
-} from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useForm, FormProvider, useWatch, useFormContext } from 'react-hook-form';
+import { useForm, FormProvider, useFormContext } from 'react-hook-form';
 
 import {
   InputController,
@@ -22,7 +14,7 @@ import {
 import { Modal } from '@app/components/Modal';
 import { DeviceSize, useDeviceSize, useFormValidator } from '@app/hooks';
 import { config } from '@app/config';
-import { ConfirmBtn, TooltipWrapper } from '@app/components';
+import { ConfirmBtn, Button, Heading, Icon, Typography, Loader } from '@app/components';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -74,7 +66,7 @@ export const AskQuestionComponent = () => {
         }}
       />
       <SidePlateFooter>
-        <Text>You can also find information in our community</Text>
+        <Typography>You can also find information in our community</Typography>
         <SocialNav>
           <a href={config.socialLinks.telegram} target="_blank" rel="noreferrer noopener">
             <Icon name="social-telegram" color="currentColor" size={32} />

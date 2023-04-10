@@ -1,7 +1,10 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
+
+import { addressFromSeed } from '@app/utils';
 import {
+  Alert,
   Button,
   Checkbox,
   Heading,
@@ -9,10 +12,8 @@ import {
   Link,
   Select,
   Textarea,
-} from '@unique-nft/ui-kit';
-
-import { addressFromSeed } from '@app/utils';
-import { Alert, Tooltip } from '@app/components';
+  TooltipWrapper,
+} from '@app/components';
 import {
   ButtonGroup,
   StepsTextStyled,
@@ -81,8 +82,8 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
                 onChange={onSeedGeneratorChange}
               />
               <ControlIcon className="align-middle">
-                <Tooltip
-                  title={
+                <TooltipWrapper
+                  message={
                     <span style={{ whiteSpace: 'nowrap' }}>
                       Find out more on{' '}
                       <TooltipLink
@@ -96,7 +97,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
                   }
                 >
                   <Icon size={24} name="question" color="var(--color-primary-500)" />
-                </Tooltip>
+                </TooltipWrapper>
               </ControlIcon>
             </ControlWrapper>
             <ControlWrapper>

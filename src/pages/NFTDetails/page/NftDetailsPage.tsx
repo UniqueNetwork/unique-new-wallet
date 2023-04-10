@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TokenByIdResponse } from '@unique-nft/sdk';
-import { Button } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils';
 
 import { NftDetailsLayout } from '@app/pages/NFTDetails/components/NftDetailsLayout';
@@ -9,7 +8,7 @@ import { NftDetailsCard } from '@app/pages/NFTDetails/components/NftDetailsCard'
 import { NFTModals, TTokenModalType } from '@app/pages/NFTDetails/Modals';
 import { useTokenGetBalance, useTokenGetById, useTokenGetTotalPieces } from '@app/api';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
-import { Achievement, ErrorPage, TransferBtn } from '@app/components';
+import { Achievement, ErrorPage, TransferBtn, Button } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';

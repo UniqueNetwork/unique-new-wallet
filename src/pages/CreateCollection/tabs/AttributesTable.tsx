@@ -169,7 +169,7 @@ const AttributesTableComponent: VFC<AttributesTableProps> = ({ className }) => {
   const addAttributeHandler = useCallback(() => {
     append({
       name: '',
-      type: { id: 'string', title: 'Text' },
+      type: { id: 'string', title: 'Typography' },
       optional: { id: 'optional', title: 'Optional' },
       values: [],
     });

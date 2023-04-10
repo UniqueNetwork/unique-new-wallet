@@ -1,14 +1,12 @@
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
 
-import { Icon } from '../Icon';
+import { Icon, Typography } from '..';
 
 interface UploadProps {
   onChange(file: File): void;
 }
 
-// todo - use from ui-kit
 export const UploadJson: FC<UploadProps> = ({ onChange }) => {
   const [fileName, setFileName] = useState<string>();
   const onInputChange = useCallback(
@@ -25,7 +23,7 @@ export const UploadJson: FC<UploadProps> = ({ onChange }) => {
     <UploadWrapper>
       <input type="file" accept=".json" onChange={onInputChange} />
       <Icon name="upload" size={48} />
-      {fileName && <Text color="primary-500">{fileName}</Text>}
+      {fileName && <Typography color="primary-500">{fileName}</Typography>}
     </UploadWrapper>
   );
 };
