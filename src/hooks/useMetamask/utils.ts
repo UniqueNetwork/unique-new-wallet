@@ -1,4 +1,5 @@
 import keyring from '@polkadot/ui-keyring';
+import { BN } from '@polkadot/util';
 import { Address } from '@unique-nft/utils';
 
 export const getCrossStruct2 = (address: string | undefined) => {
@@ -18,7 +19,7 @@ export const getCrossStruct2 = (address: string | undefined) => {
   return { eth, sub }; // CrossAddressStruct$2
 };
 
-export const amountToBnString = (value: string, decimals: number): string => {
+export const amountToBnHex = (value: string, decimals: number): string => {
   if (!value || !value.length) {
     return '0';
   }
@@ -28,6 +29,9 @@ export const amountToBnString = (value: string, decimals: number): string => {
   const decimalsFromLessZeroString = right?.length || 0;
   const bigValue = [...(left || []), ...(right || [])].join('').replace(/^0+/, '');
   return (
-    Number(bigValue) * Math.pow(10, decimals - decimalsFromLessZeroString)
-  ).toString();
+    '0x' +
+    new BN(bigValue)
+      .mul(new BN(10).pow(new BN(decimals - decimalsFromLessZeroString)))
+      .toString('hex')
+  );
 };
