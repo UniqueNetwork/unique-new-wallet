@@ -13,6 +13,8 @@ interface ChainProviderProps {
   children: React.ReactNode;
 }
 
+const MAX_STATUS_REQUESTS = 25;
+
 export const ApiWrapper = ({ children }: ChainProviderProps) => {
   const [currentChain, setCurrentChain] = useState<Chain>(() => {
     const network = window.location.pathname.split('/')[1];
@@ -24,7 +26,7 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
       new Sdk({
         baseUrl: currentChain.apiEndpoint,
         signer: null,
-        maximumNumberOfStatusRequests: 5,
+        maximumNumberOfStatusRequests: MAX_STATUS_REQUESTS,
       }),
   );
   const [gqlClient, setGqlClient] = useState<GqlClient>(
@@ -45,7 +47,13 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
       return;
     }
     localStorage.setItem(defaultChainKey, currentChain.network);
-    setApiInstance(new Sdk({ baseUrl: currentChain.apiEndpoint, signer: null }));
+    setApiInstance(
+      new Sdk({
+        baseUrl: currentChain.apiEndpoint,
+        signer: null,
+        maximumNumberOfStatusRequests: MAX_STATUS_REQUESTS,
+      }),
+    );
     setGqlClient(new GqlClient(currentChain.gqlEndpoint));
   }, [currentChain]);
 
