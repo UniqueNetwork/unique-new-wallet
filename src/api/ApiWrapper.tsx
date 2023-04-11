@@ -24,7 +24,7 @@ export const ApiWrapper = ({ children }: ChainProviderProps) => {
       new Sdk({
         baseUrl: currentChain.apiEndpoint,
         signer: null,
-        maximumNumberOfStatusRequests: 15,
+        maximumNumberOfStatusRequests: 5,
       }),
   );
   const [gqlClient, setGqlClient] = useState<GqlClient>(
