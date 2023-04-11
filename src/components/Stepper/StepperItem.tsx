@@ -34,7 +34,11 @@ export const StepperItem = ({
           {step}
         </Typography>
         <div className="step-description-wrapper">
-          <Typography weight="regular" color="color-blue-grey-500" className="step-description">
+          <Typography
+            weight="regular"
+            color="color-blue-grey-500"
+            className="step-description"
+          >
             {description}
           </Typography>
         </div>
