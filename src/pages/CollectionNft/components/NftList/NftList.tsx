@@ -51,7 +51,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
       },
       options: {
         skip: !selectedAccount?.address,
-        direction,
+        sort: { token_id: direction },
         pagination: {
           page,
           limit,

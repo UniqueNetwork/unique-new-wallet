@@ -10,15 +10,18 @@ export const NFTsWrapper: FC = ({ children }) => {
   const [collectionsIds, setCollectionsIds] = useState<number[]>([]);
   const [tokensStatusFilter, setTokensStatusFilter] =
     useState<StatusFilterNft>('allStatus');
-  const [sortByTokenId, setSortByTokenId] = useState<Direction>('asc');
+  const [sortBy, setSortBy] = useState<Record<string, Direction>>({ token_id: 'asc' });
   const [tokensPage, setTokensPage] = useState(defaultPage);
   const [searchText, setSearchText] = useState('');
   const [typeFilter, setTypeFilter] = useState<TypeFilterNft>('allType');
 
-  const changeSortByTokenIdHandler = useCallback((sort: Direction) => {
-    setSortByTokenId(sort);
-    setTokensPage(defaultPage);
-  }, []);
+  const changeSortByTokenIdHandler = useCallback(
+    (sort: { [field: string]: Direction }) => {
+      setSortBy(sort);
+      setTokensPage(defaultPage);
+    },
+    [],
+  );
 
   const changeStatusFilterHandler = useCallback((statusFilter: StatusFilterNft) => {
     setTokensStatusFilter(statusFilter);
@@ -56,8 +59,8 @@ export const NFTsWrapper: FC = ({ children }) => {
   return (
     <NTFsContext.Provider
       value={{
-        sortByTokenId,
-        changeSortByTokenId: changeSortByTokenIdHandler,
+        sortBy,
+        changeSort: changeSortByTokenIdHandler,
         tokensPage,
         changeTokensPage: setTokensPage,
         statusFilter: tokensStatusFilter,

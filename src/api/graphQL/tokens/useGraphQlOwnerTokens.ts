@@ -21,14 +21,9 @@ const OWNER_TOKENS_QUERY = gql`
     $where: TokenWhereParams
     $offset: Int
     $limit: Int
-    $direction: GQLOrderByParamsArgs
+    $order_by: TokenOrderByParams
   ) {
-    tokens(
-      where: $where
-      offset: $offset
-      limit: $limit
-      order_by: { token_id: $direction }
-    ) {
+    tokens(where: $where, offset: $offset, limit: $limit, order_by: $order_by) {
       count
       data {
         token_id
@@ -95,8 +90,8 @@ export const useGraphQlOwnerTokens = (
   options: QueryOptions,
 ) => {
   const { collectionsIds, statusFilter, searchText, typeFilter } = filters;
-  const { direction, pagination, skip } = options ?? {
-    direction: 'desc',
+  const { sort, pagination, skip } = options ?? {
+    sort: { token_id: 'desc' },
     skip: !owner,
   };
   const { page, limit } = pagination;
@@ -115,7 +110,7 @@ export const useGraphQlOwnerTokens = (
     variables: {
       limit,
       offset: limit * page,
-      direction,
+      order_by: sort,
       where: {
         ...getConditionBySearchText('token_name', searchText),
         ...getConditionByStatusFilter(statusFilter),

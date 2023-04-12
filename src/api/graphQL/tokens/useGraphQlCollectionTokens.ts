@@ -10,14 +10,9 @@ const COLLECTION_TOKENS_QUERY = gql`
     $offset: Int
     $limit: Int
     $where: TokenWhereParams
-    $direction: GQLOrderByParamsArgs
+    $sort: TokenOrderByParams
   ) {
-    tokens(
-      where: $where
-      offset: $offset
-      limit: $limit
-      order_by: { token_id: $direction }
-    ) {
+    tokens(where: $where, offset: $offset, limit: $limit, order_by: $sort) {
       count
       data {
         token_id
@@ -52,7 +47,7 @@ export const useGraphQlCollectionTokens = ({
 }) => {
   const {
     pagination: { page, limit },
-    direction,
+    sort,
   } = options;
   const { search, type } = filter;
   let ownership = {};
@@ -79,7 +74,7 @@ export const useGraphQlCollectionTokens = ({
     variables: {
       limit,
       offset: limit * page,
-      direction,
+      sort,
       where: {
         collection_id: { _eq: collectionId },
         _or: ownership,

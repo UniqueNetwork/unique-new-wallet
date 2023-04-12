@@ -22,6 +22,7 @@ import { ChainPropertiesContext } from '@app/context';
 
 import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useNFTsContext } from '../context';
+import { sortOptions } from './components/NFTFilters/constants';
 
 export interface NFTsComponentProps {
   className?: string;
@@ -37,7 +38,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const {
     tokensPage,
     statusFilter,
-    sortByTokenId,
+    sortBy,
     collectionsIds,
     searchText,
     changeSearchText,
@@ -76,7 +77,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     },
     {
       skip: !selectedAccount?.address,
-      direction: sortByTokenId,
+      sort: sortBy,
       pagination: { page: tokensPage, limit },
     },
   );
@@ -176,7 +177,11 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
       </PagePaper.Layout>
 
       {deviceSize <= DeviceSize.md && (
-        <MobileFilters collections={defaultCollections} resetFilters={resetFilters} />
+        <MobileFilters
+          sortOptions={sortOptions}
+          collections={defaultCollections}
+          resetFilters={resetFilters}
+        />
       )}
     </>
   );

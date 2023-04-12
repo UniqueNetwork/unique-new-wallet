@@ -4,8 +4,8 @@ import { Direction } from '@app/api/graphQL/types';
 import { StatusFilterNft, TypeFilterNft } from '@app/api/graphQL/tokens';
 
 export interface NTFsContextState {
-  sortByTokenId: Direction;
-  changeSortByTokenId: (tokenId: Direction) => void;
+  sortBy: { [field: string]: Direction };
+  changeSort: (sort: { [field: string]: Direction }) => void;
   tokensPage: number;
   changeTokensPage: (page: number) => void;
   statusFilter: StatusFilterNft;
