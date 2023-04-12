@@ -115,7 +115,6 @@ export const useGraphQlOwnerTokens = (
       offset: limit * page,
       order_by: sort,
       where: {
-        ...getConditionBySearchText('token_name', searchText),
         ...getConditionByStatusFilter(statusFilter),
         ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
@@ -123,15 +122,19 @@ export const useGraphQlOwnerTokens = (
           owner && Address.is.substrateAddress(owner)
             ? { _in: [owner, Address.mirror.substrateToEthereum(owner)] }
             : { _eq: owner },
-
-        _or: [
-          { type: { _eq: 'RFT' } },
+        _and: [
           {
-            type: { _eq: 'NFT' },
-            parent_id: {
-              _is_null: true,
-            },
+            _or: [
+              { type: { _eq: 'RFT' } },
+              {
+                type: { _eq: 'NFT' },
+                parent_id: {
+                  _is_null: true,
+                },
+              },
+            ],
           },
+          ...applySearchFilter(searchText),
         ],
         tokens_amount: { _neq: '0' },
         burned: { _eq: 'false' },
@@ -150,4 +153,20 @@ export const useGraphQlOwnerTokens = (
     error,
     refetchOwnerTokens: refetch,
   };
+};
+
+const applySearchFilter = (search: string | undefined) => {
+  if (!search) {
+    return [];
+  }
+
+  return [
+    {
+      _or: [
+        { token_name: { _ilike: `%${search}%` } },
+        { collection_name: { _ilike: `%${search}%` } },
+        ...(Number(search) ? [{ collection_id: { _eq: Number(search) } }] : []),
+      ],
+    },
+  ];
 };
