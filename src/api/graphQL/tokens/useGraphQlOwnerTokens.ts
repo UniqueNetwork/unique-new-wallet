@@ -69,6 +69,9 @@ const getConditionByTypeFilter = (statusFilter: TypeFilterNft = 'allType') => {
     type: {
       _eq: statusFilter,
     },
+    nested: {
+      _eq: 'false',
+    },
   };
 };
 
