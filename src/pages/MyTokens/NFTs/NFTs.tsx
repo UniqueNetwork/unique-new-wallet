@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, VFC } from 'react';
 import { Address } from '@unique-nft/utils';
 
-import ApiContext from '@app/api/ApiContext';
 import AccountContext from '@app/account/AccountContext';
 import {
   useGraphQlCollectionsByTokensOwner,
@@ -33,7 +32,6 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const { limit, setLimit } = useItemsLimit({ sm: 8, md: 9, lg: 24, xl: 24 });
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
-  const { currentChain } = useContext(ApiContext);
   const { chainProperties } = useContext(ChainPropertiesContext);
   const {
     tokensPage,
@@ -48,6 +46,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     changeTokensPage,
     typeFilter,
     changeTypeFilter,
+    clearAll,
   } = useNFTsContext();
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
@@ -133,15 +132,19 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   }, [searchText, statusFilter, typeFilter, collectionsIds, defaultCollections]);
 
   const resetFilters = useCallback(() => {
-    changeSearchText('');
-    changeStatusFilter('allStatus');
-    changeTypeFilter('allType');
-    setCollectionsIds([]);
-  }, [changeSearchText, changeStatusFilter, changeTypeFilter, setCollectionsIds]);
+    clearAll();
+  }, [clearAll]);
 
   useEffect(() => {
-    resetFilters();
-  }, [currentChain.network, resetFilters, selectedAccount]);
+    if (collectionsLoading) {
+      return;
+    }
+    setCollectionsIds(
+      collectionsIds.filter((collectionId) => {
+        return !!defaultCollections?.find(({ value }) => value === collectionId);
+      }),
+    );
+  }, [selectedAccount, collectionsLoading, defaultCollections]);
 
   return (
     <>

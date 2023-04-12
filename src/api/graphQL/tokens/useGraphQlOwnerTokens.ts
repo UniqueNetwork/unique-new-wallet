@@ -1,8 +1,6 @@
 import { Address } from '@unique-nft/utils';
 import { gql, OperationVariables, useQuery } from '@apollo/client';
 
-import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
-
 import { QueryOptions, QueryResponse, Token } from '../types';
 
 export type StatusFilterNft = 'purchased' | 'createdByMe' | 'allStatus';

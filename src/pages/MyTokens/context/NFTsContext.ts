@@ -17,6 +17,7 @@ export interface NTFsContextState {
   setCollectionsIds: (collectionsFilters: number[]) => void;
   searchText: string;
   changeSearchText: (searchText: string) => void;
+  clearAll: () => void;
 }
 
 const NTFsContext = createContext<NTFsContextState | null>(null);

@@ -30,7 +30,7 @@ const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
             {label}
           </Typography>
           <Typography size="s" color="grey-500">
-            [{id}]
+            [id {id}]
           </Typography>
         </LabelWrapper>
       }

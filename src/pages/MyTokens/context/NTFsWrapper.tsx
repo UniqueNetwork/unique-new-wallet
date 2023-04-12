@@ -1,36 +1,60 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { Direction } from '@app/api/graphQL/types';
 import { StatusFilterNft, TypeFilterNft } from '@app/api/graphQL/tokens';
+import { setUrlParameters } from '@app/utils';
+import ApiContext from '@app/api/ApiContext';
 
 import NTFsContext from './NFTsContext';
-import { defaultPage } from '../constants';
+import { defaultPage, defaultSort } from '../constants';
 
 export const NFTsWrapper: FC = ({ children }) => {
-  const [collectionsIds, setCollectionsIds] = useState<number[]>([]);
-  const [tokensStatusFilter, setTokensStatusFilter] =
-    useState<StatusFilterNft>('allStatus');
-  const [sortBy, setSortBy] = useState<Record<string, Direction>>({ token_id: 'asc' });
-  const [tokensPage, setTokensPage] = useState(defaultPage);
-  const [searchText, setSearchText] = useState('');
-  const [typeFilter, setTypeFilter] = useState<TypeFilterNft>('allType');
-
-  const changeSortByTokenIdHandler = useCallback(
-    (sort: { [field: string]: Direction }) => {
-      setSortBy(sort);
-      setTokensPage(defaultPage);
-    },
-    [],
+  const searchParams = new URLSearchParams(window.location.search);
+  const { currentChain } = useContext(ApiContext);
+  const chain = useRef<string>(currentChain.network);
+  const [collectionsIds, setCollectionsIds] = useState<number[]>(
+    searchParams
+      .get('collectionsIds')
+      ?.split(',')
+      .filter((s) => !!s)
+      .map(Number) || [],
   );
+  const [tokensStatusFilter, setTokensStatusFilter] = useState<StatusFilterNft>(
+    (searchParams.get('status') as StatusFilterNft) || 'allStatus',
+  );
+  const [sortBy, setSortBy] = useState<Record<string, Direction>>(() => {
+    const sortBy = searchParams.get('sortBy');
+    const [field, direction] = sortBy?.split('|') || [];
+    if (field && direction && direction in ['asc', 'desc']) {
+      return { [field]: direction as Direction };
+    }
+    return defaultSort;
+  });
+
+  const [tokensPage, setTokensPage] = useState(defaultPage);
+  const [searchText, setSearchText] = useState(searchParams.get('search') || '');
+  const [typeFilter, setTypeFilter] = useState<TypeFilterNft>(
+    (searchParams.get('type') as TypeFilterNft) || 'allType',
+  );
+
+  const changeSort = useCallback((sort: { [field: string]: Direction }) => {
+    setSortBy(sort);
+    setTokensPage(defaultPage);
+    setUrlParameters({ sortBy: `${Object.keys(sort)[0]}|${Object.values(sort)[0]}` });
+  }, []);
 
   const changeStatusFilterHandler = useCallback((statusFilter: StatusFilterNft) => {
     setTokensStatusFilter(statusFilter);
     setTokensPage(defaultPage);
+
+    setUrlParameters({ status: statusFilter });
   }, []);
 
   const changeTypeFilterHandler = useCallback((typeFilter: TypeFilterNft) => {
     setTypeFilter(typeFilter);
     setTokensPage(defaultPage);
+
+    setUrlParameters({ type: typeFilter });
   }, []);
 
   const changeCollectionsIdsHandler = useCallback((collectionId: number) => {
@@ -41,6 +65,7 @@ export const NFTsWrapper: FC = ({ children }) => {
         previous = [...previous, collectionId];
       }
 
+      setUrlParameters({ collectionsIds: previous.join(',') });
       return previous;
     });
     setTokensPage(defaultPage);
@@ -54,13 +79,37 @@ export const NFTsWrapper: FC = ({ children }) => {
   const changeSearchTextHandler = useCallback((searchText: string) => {
     setSearchText(searchText);
     setTokensPage(defaultPage);
+    setUrlParameters({ search: searchText });
   }, []);
+
+  const clearAll = useCallback(() => {
+    setTokensStatusFilter('allStatus');
+    setTypeFilter('allType');
+    setSearchText('');
+    setTokensPage(defaultPage);
+    setSortBy(defaultSort);
+    setCollectionsIds([]);
+    setUrlParameters({
+      status: 'allStatus',
+      type: 'allType',
+      search: '',
+      sortBy: 'token_id|asc',
+      collectionsIds: '',
+    });
+  }, []);
+
+  useEffect(() => {
+    if (currentChain.network !== chain.current) {
+      clearAll();
+      chain.current = currentChain.network;
+    }
+  }, [currentChain.network]);
 
   return (
     <NTFsContext.Provider
       value={{
         sortBy,
-        changeSort: changeSortByTokenIdHandler,
+        changeSort,
         tokensPage,
         changeTokensPage: setTokensPage,
         statusFilter: tokensStatusFilter,
@@ -72,6 +121,7 @@ export const NFTsWrapper: FC = ({ children }) => {
         changeSearchText: changeSearchTextHandler,
         typeFilter,
         changeTypeFilter: changeTypeFilterHandler,
+        clearAll,
       }}
     >
       {children}
