@@ -99,8 +99,6 @@ const PreviewCardTitle = styled.h5`
   line-height: 1.5;
 `;
 
-console.log(Typography);
-
 const PreviewCardDescription = styled(Typography).attrs({
   size: 's',
   color: 'grey-500',

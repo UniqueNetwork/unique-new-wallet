@@ -18,8 +18,9 @@ interface NftListComponentProps {
 }
 
 export const NftList = ({ className, collectionId }: NftListComponentProps) => {
-  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
-  const { search, direction, page, onChangePagination, type } = useNftFilterContext();
+  const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const { search, direction, page, onPageChange, onPageSizeChange, type } =
+    useNftFilterContext();
   const { selectedAccount } = useAccounts();
   const navigate = useNavigate();
   const getTokenPath = useGetTokenPath();
@@ -35,7 +36,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
       skip: !selectedAccount?.address,
       pagination: {
         page,
-        limit: getLimit,
+        limit,
       },
     },
   });
@@ -53,7 +54,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         direction,
         pagination: {
           page,
-          limit: getLimit,
+          limit,
         },
       },
     });
@@ -83,7 +84,7 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
         panelSettings={{
           pagination: {
             current: page,
-            pageSizes: [getLimit],
+            pageSizes: [limit],
             show: isPagination,
             size: tokenOwnersCount,
             viewMode: 'bottom',
@@ -107,8 +108,9 @@ export const NftList = ({ className, collectionId }: NftListComponentProps) => {
             }}
           />
         )}
-        visibleItems={getLimit}
-        onPageChange={onChangePagination}
+        visibleItems={limit}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
       />
     </PagePaper.Processing>
   );

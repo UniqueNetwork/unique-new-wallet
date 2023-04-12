@@ -34,7 +34,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const { selectedAccount } = useContext(AccountContext);
   const deviceSize = useDeviceSize();
   const navigate = useNavigate();
-  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const [isFilterOpen, setFilterOpen] = useState(false);
 
   const { collections: cacheCollections, excludeCollectionsCache } =
@@ -58,7 +58,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       order,
       pagination: {
         page,
-        limit: getLimit,
+        limit,
       },
       search,
     },
@@ -144,7 +144,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
               panelSettings={{
                 pagination: {
                   current: page,
-                  pageSizes: [getLimit],
+                  pageSizes: [limit],
                   show: isPagination,
                   size: collectionsCount,
                   viewMode: 'bottom',
@@ -170,7 +170,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                   />
                 </List.Item>
               )}
-              visibleItems={getLimit}
+              visibleItems={limit}
               onPageChange={onChangePagination}
             />
           </PagePaper.Processing>

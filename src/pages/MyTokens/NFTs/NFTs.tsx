@@ -29,7 +29,7 @@ export interface NFTsComponentProps {
 
 export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const deviceSize = useDeviceSize();
-  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 6, xl: 8 });
+  const { limit, setLimit } = useItemsLimit({ sm: 8, md: 9, lg: 24, xl: 24 });
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
   const { currentChain } = useContext(ApiContext);
@@ -77,7 +77,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     {
       skip: !selectedAccount?.address,
       direction: sortByTokenId,
-      pagination: { page: tokensPage, limit: getLimit },
+      pagination: { page: tokensPage, limit },
     },
   );
 
@@ -164,12 +164,14 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
           fetchMore={fetchMore}
           paginationSettings={{
             current: tokensPage,
-            pageSizes: [getLimit],
-            show: isPagination,
+            pageSizes: [limit],
+            show: deviceSize > DeviceSize.md || isPagination,
+            perPage: limit,
             size: tokensCount,
           }}
           onChipsReset={resetFilters}
           onPageChange={changeTokensPage}
+          onPageSizeChange={setLimit}
         />
       </PagePaper.Layout>
 

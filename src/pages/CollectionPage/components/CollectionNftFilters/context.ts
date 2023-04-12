@@ -9,10 +9,12 @@ type TListFilter = {
   search: string;
   type: ListNftsFilterType;
   page: number;
+  pageSize: number;
   onChangeDirection(direction: Direction): void;
   onChangeSearch(value: string): void;
   onChangeType(type: ListNftsFilterType): void;
-  onChangePagination(pagination: number): void;
+  onPageChange(page: number): void;
+  onPageSizeChange(pageSize: number): void;
 };
 
 export const nftListFilterContext = createContext<TListFilter | null>(null);
