@@ -28,3 +28,34 @@ export const truncateDecimalsBalanceSheet = (balance: string | undefined) => {
 };
 
 export const isTouchDevice = 'ontouchstart' in document.documentElement;
+
+export const setUrlParameters = (() => {
+  let delayId: NodeJS.Timeout | undefined;
+
+  return (parameters: Record<string, string>) => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    Object.keys(parameters).forEach((parameter) => {
+      searchParams.set(parameter, parameters[parameter]);
+    });
+    if (delayId) {
+      clearTimeout(delayId);
+    }
+    delayId = setTimeout(() => {
+      // eslint-disable-next-line no-restricted-globals
+      history.pushState(
+        null,
+        '',
+        `${window.location.pathname}?${searchParams.toString()}`,
+      );
+    }, 100);
+  };
+})();
+
+export const parseFilterState = (value: string | null) => {
+  try {
+    return value ? JSON.parse(value) : null;
+  } catch (e) {
+    return null;
+  }
+};

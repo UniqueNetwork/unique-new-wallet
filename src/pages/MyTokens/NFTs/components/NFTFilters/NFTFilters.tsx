@@ -5,41 +5,32 @@ import classNames from 'classnames';
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi } from '@app/hooks';
 import { ConfirmBtn, Select } from '@app/components';
-import { iconDown, iconUp, Option } from '@app/utils';
+import { Option } from '@app/utils';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { Direction } from '@app/api/graphQL/types';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { Search } from '@app/pages/components/Search';
 
+import { sortOptions } from './constants';
+
 interface NFTFiltersComponentProps {
   className?: string;
 }
-
-const sortOptions: Option[] = [
-  {
-    title: 'Token ID',
-    id: 'asc' as Direction,
-    iconRight: iconUp,
-  },
-  {
-    title: 'Token ID',
-    id: 'desc' as Direction,
-    iconRight: iconDown,
-  },
-];
 
 export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
   const { currentChain } = useApi();
   const [search, setSearch] = useState<string>('');
 
   const navigate = useNavigate();
-  const { sortByTokenId, searchText, changeSortByTokenId, changeSearchText } =
-    useNFTsContext();
+  const { sortBy, searchText, changeSort, changeSearchText } = useNFTsContext();
   const { selectedAccount } = useAccounts();
 
-  const sortByTokenIdHandler = useCallback(({ id }: Option) => {
-    changeSortByTokenId(id as Direction);
-  }, []);
+  const sortByTokenIdHandler = useCallback(
+    ({ sortParam }: Option & { sortParam: { [field: string]: Direction } }) => {
+      changeSort(sortParam);
+    },
+    [],
+  );
 
   useEffect(() => setSearch(searchText), [searchText]);
 
@@ -89,7 +80,7 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
           />
           <Select
             options={sortOptions}
-            value={sortByTokenId}
+            value={`${Object.keys(sortBy)[0]}_${Object.values(sortBy)[0]}`}
             onChange={sortByTokenIdHandler}
           />
         </>

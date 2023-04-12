@@ -15,6 +15,7 @@ export interface IPaginationProps {
   withIcons?: boolean;
   withPageSelector?: boolean;
   withPerPageSelector?: boolean;
+  itemTitle?: string;
   onPageChange: (index: number) => void;
   onGoToPage?: (index: number) => void;
   onPageSizeChange?: (size: number) => void;
@@ -33,19 +34,21 @@ const PageItem = ({ children, page, ...rest }: IPageItemProps) => (
 
 export const Pagination = ({
   size,
+  perPage,
   current = 0,
   visible = 5,
   pageSizes = [10, 20, 50, 100],
   withIcons,
   withPageSelector,
   withPerPageSelector,
+  itemTitle = 'item',
   onPageChange,
   onGoToPage,
   onPageSizeChange,
 }: IPaginationProps) => {
   const isMobile = visible === 2;
   const [currentIndex, setCurrentIndex] = useState<number>(current);
-  const [perPageCount, setPerPageCount] = useState<number>(pageSizes[0]);
+  const [perPageCount, setPerPageCount] = useState<number>(perPage || pageSizes[0]);
   const [currentSelector, setCurrentSelector] = useState<string>('');
   const prevIndex: number = usePrevious<number>(currentIndex);
   const totalCount = Math.ceil(size / perPageCount);
@@ -78,11 +81,17 @@ export const Pagination = ({
     setCurrentIndex(current);
   }, [current]);
 
+  useEffect(() => {
+    !!perPage && setPerPageCount(perPage);
+  }, [perPage]);
+
   return (
     <div className="unique-pagination-wrapper">
       {withPerPageSelector && (
         <div className="per-page-selector-wrapper">
-          <Typography weight="light">{size} items</Typography>
+          <Typography weight="light">
+            {size} {size > 1 ? `${itemTitle}s` : itemTitle}
+          </Typography>
           <Typography weight="light">Results on the page</Typography>
           <Select
             options={pageSizes.map((option) => ({

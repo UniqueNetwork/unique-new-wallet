@@ -32,10 +32,6 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
     }
   }, [activeTab, basePath, location.pathname, navigate, tabUrls]);
 
-  useEffect(() => {
-    navigate(tabUrls[activeTab]);
-  }, []);
-
   const currentTabIndex = tabUrls.findIndex((tab) =>
     location.pathname.includes(`${basePath}/${tab}`),
   );

@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, VFC } from 'react';
 import { Address } from '@unique-nft/utils';
 
-import ApiContext from '@app/api/ApiContext';
 import AccountContext from '@app/account/AccountContext';
 import {
   useGraphQlCollectionsByTokensOwner,
@@ -22,6 +21,7 @@ import { ChainPropertiesContext } from '@app/context';
 
 import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useNFTsContext } from '../context';
+import { sortOptions } from './components/NFTFilters/constants';
 
 export interface NFTsComponentProps {
   className?: string;
@@ -29,15 +29,14 @@ export interface NFTsComponentProps {
 
 export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const deviceSize = useDeviceSize();
-  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 6, xl: 8 });
+  const { limit, setLimit } = useItemsLimit({ sm: 8, md: 9, lg: 24, xl: 24 });
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
-  const { currentChain } = useContext(ApiContext);
   const { chainProperties } = useContext(ChainPropertiesContext);
   const {
     tokensPage,
     statusFilter,
-    sortByTokenId,
+    sortBy,
     collectionsIds,
     searchText,
     changeSearchText,
@@ -47,6 +46,7 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     changeTokensPage,
     typeFilter,
     changeTypeFilter,
+    clearAll,
   } = useNFTsContext();
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
@@ -76,8 +76,8 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
     },
     {
       skip: !selectedAccount?.address,
-      direction: sortByTokenId,
-      pagination: { page: tokensPage, limit: getLimit },
+      sort: sortBy,
+      pagination: { page: tokensPage, limit },
     },
   );
 
@@ -132,15 +132,19 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   }, [searchText, statusFilter, typeFilter, collectionsIds, defaultCollections]);
 
   const resetFilters = useCallback(() => {
-    changeSearchText('');
-    changeStatusFilter('allStatus');
-    changeTypeFilter('allType');
-    setCollectionsIds([]);
-  }, [changeSearchText, changeStatusFilter, changeTypeFilter, setCollectionsIds]);
+    clearAll();
+  }, [clearAll]);
 
   useEffect(() => {
-    resetFilters();
-  }, [currentChain.network, resetFilters, selectedAccount]);
+    if (collectionsLoading) {
+      return;
+    }
+    setCollectionsIds(
+      collectionsIds.filter((collectionId) => {
+        return !!defaultCollections?.find(({ value }) => value === collectionId);
+      }),
+    );
+  }, [selectedAccount, collectionsLoading, defaultCollections]);
 
   return (
     <>
@@ -164,17 +168,23 @@ export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
           fetchMore={fetchMore}
           paginationSettings={{
             current: tokensPage,
-            pageSizes: [getLimit],
-            show: isPagination,
+            pageSizes: [limit],
+            show: deviceSize > DeviceSize.md || isPagination,
+            perPage: limit,
             size: tokensCount,
           }}
           onChipsReset={resetFilters}
           onPageChange={changeTokensPage}
+          onPageSizeChange={setLimit}
         />
       </PagePaper.Layout>
 
       {deviceSize <= DeviceSize.md && (
-        <MobileFilters collections={defaultCollections} resetFilters={resetFilters} />
+        <MobileFilters
+          sortOptions={sortOptions}
+          collections={defaultCollections}
+          resetFilters={resetFilters}
+        />
       )}
     </>
   );

@@ -15,6 +15,7 @@ const DEFAULT_PAGE = 0;
 export const CollectionsNftFilterWrapper = ({ children }: CollectionFilterType) => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(DEFAULT_PAGE);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE);
   const [direction, setDirection] = useState<Direction>('desc');
   const [type, setType] = useState<ListNftsFilterType>('all');
 
@@ -35,10 +36,12 @@ export const CollectionsNftFilterWrapper = ({ children }: CollectionFilterType) 
         direction,
         page,
         search,
+        pageSize,
         onChangeDirection: handleChangeDirection,
-        onChangePagination: setPage,
         onChangeSearch: handleChangeSearch,
         onChangeType: setType,
+        onPageChange: setPage,
+        onPageSizeChange: setPageSize,
       }}
     >
       {children}

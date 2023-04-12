@@ -52,12 +52,12 @@ const radioOptions: RadioOptionValueType[] = [
 const sortOptions: SelectOption[] = [
   {
     id: 'asc',
-    title: 'NFT ID',
+    title: 'Token ID',
     iconRight: iconUp,
   },
   {
     id: 'desc',
-    title: 'NFT ID',
+    title: 'Token ID',
     iconRight: iconDown,
   },
 ];
@@ -107,22 +107,14 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
   };
 
   const handleApplyFilter = () => setFilterOpen(!isFilterOpen);
-  const barButtons = [];
-
-  if (!isFilterOpen) {
-    barButtons.push([
-      <Button
-        key="Filter-toggle-button"
-        role="primary"
-        title="Filter and sort"
-        onClick={handleApplyFilter}
-      />,
-    ]);
-  } else {
-    barButtons.push([
-      <Button key="Filter-apply-button" title="Apply" onClick={handleApplyFilter} />,
-    ]);
-  }
+  const barButtons = [
+    <Button
+      key="Filter-toggle-button"
+      role="primary"
+      title="Filter and sort"
+      onClick={handleApplyFilter}
+    />,
+  ];
 
   return (
     <>
@@ -197,9 +189,18 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
                 />
               </Accordion>
             </FormRow>
+            <ButtonsGroup>
+              <Button title="Apply" onClick={handleApplyFilter} />
+            </ButtonsGroup>
           </FormBodyStyled>
         </BottomBar>
       )}
     </>
   );
 };
+
+const ButtonsGroup = styled.div`
+  position: absolute;
+  bottom: 0;
+  padding: calc(var(--prop-gap) / 1.6) calc(var(--prop-gap) / 2);
+`;

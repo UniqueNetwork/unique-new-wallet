@@ -1,5 +1,6 @@
 import { OptionChips } from '@app/types';
 import { StatusFilterNft, TypeFilterNft } from '@app/api/graphQL/tokens';
+import { Direction } from '@app/api/graphQL/types';
 
 export const defaultStatusFilter: OptionChips<StatusFilterNft>[] = [
   { value: 'allStatus', label: 'All' },
@@ -13,5 +14,7 @@ export const defaultTypeFilter: OptionChips<TypeFilterNft>[] = [
   { value: 'RFT', label: 'Fractional' },
   { value: 'NESTED', label: 'Bundle' },
 ];
+
+export const defaultSort: Record<string, Direction> = { token_id: 'asc' };
 
 export const defaultPage = 0;
