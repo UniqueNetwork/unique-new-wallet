@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
-import { AccountSelect, Button, Icon, Link, Typography, Toggle } from '@app/components';
+import { AccountSelect, Button, Icon, Typography, Toggle } from '@app/components';
 
 import { AccountsManagerProps } from '../../AccountsManager';
 
@@ -17,6 +18,7 @@ export const AccountsManagerDropdown = ({
   depositDescription,
   balance,
   symbol,
+  manageBalanceLink,
   onAccountChange,
   onNetworkChange,
   onManageBalanceClick,
@@ -47,11 +49,13 @@ export const AccountsManagerDropdown = ({
       <div className="accounts-manager-wallet">
         <div className="wallet-link" data-testid="wallet-link">
           <Link
-            title="Manage accounts"
             color="primery-500"
             className="wallet-link-balance"
+            to={manageBalanceLink || ''}
             onClick={onManageBalanceClick}
-          />
+          >
+            Manage accounts
+          </Link>
         </div>
         <div className="wallet-content" data-testid="wallet-content">
           <Typography size="s" weight="light" color="grey-500">

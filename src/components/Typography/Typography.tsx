@@ -10,6 +10,7 @@ export interface ITextBaseProps {
   weight?: 'light' | 'regular' | 'bold';
   color?: string;
   appearance?: 'inline' | 'block';
+  title?: string;
 }
 
 export type TextProps = ITextBaseProps &
