@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import { Checkbox, Typography } from '@app/components';
 import noImage from '@app/static/icons/no-collections.svg';
+import { usePreloadImage } from '@app/hooks/usePreloadImage';
 
 export interface CollectionFilterItemComponentProps {
   id: number;
@@ -21,25 +22,29 @@ const CollectionFilterItemComponent: VFC<CollectionFilterItemComponentProps> = (
   label,
   checked,
   onChange,
-}) => (
-  <div className={classNames('collection-filter-item', className)}>
-    <Checkbox
-      label={
-        <LabelWrapper title={label.length > 15 ? label : undefined}>
-          <Typography className="collection-filter-item-name" size="s">
-            {label}
-          </Typography>
-          <Typography size="s" color="grey-500">
-            [id {id}]
-          </Typography>
-        </LabelWrapper>
-      }
-      checked={checked}
-      iconLeft={{ size: 22, file: icon || noImage }}
-      onChange={() => onChange(id)}
-    />
-  </div>
-);
+}) => {
+  const cover = usePreloadImage(icon, noImage);
+
+  return (
+    <div className={classNames('collection-filter-item', className)}>
+      <Checkbox
+        label={
+          <LabelWrapper title={label.length > 15 ? label : undefined}>
+            <Typography className="collection-filter-item-name" size="s">
+              {label}
+            </Typography>
+            <Typography size="s" color="grey-500">
+              [id {id}]
+            </Typography>
+          </LabelWrapper>
+        }
+        checked={checked}
+        iconLeft={{ size: 22, file: cover }}
+        onChange={() => onChange(id)}
+      />
+    </div>
+  );
+};
 
 const CollectionFilterItemStyled = styled(CollectionFilterItemComponent)`
   &.collection-filter-item {
