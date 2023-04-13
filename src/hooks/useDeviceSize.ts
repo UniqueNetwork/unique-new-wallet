@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 export enum DeviceSize {
-  xxs,
+  xxs = -1,
   xs,
   sm,
   md,
