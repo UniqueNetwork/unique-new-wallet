@@ -36,6 +36,7 @@ export interface AccountsManagerProps {
   deposit?: string;
   depositDescription?: ReactNode;
   manageBalanceLinkTitle?: string;
+  manageBalanceLink?: string;
   symbol: string;
   isLoading?: boolean;
   isTouch?: boolean;
@@ -92,7 +93,15 @@ export const AccountsManager = (props: AccountsManagerProps) => {
         <div className="accounts-manager-selected-account">
           <Icon size={20} name="user" />
           <div className="accounts-manager-selected-account-name">
-            <Typography color="blue-grey-500" size="s">
+            <Typography
+              color="blue-grey-500"
+              size="s"
+              title={
+                selectedAccount?.name && selectedAccount.name.length > 20
+                  ? selectedAccount.name
+                  : undefined
+              }
+            >
               {selectedAccount?.name}
             </Typography>
             <button

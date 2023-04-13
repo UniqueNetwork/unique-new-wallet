@@ -1,4 +1,4 @@
-import { Ethereum, IEthereumAccountResult } from '@unique-nft/utils/extension';
+import { Ethereum, IEthereumExtensionResultSafe } from '@unique-nft/utils/extension';
 import { ChainPropertiesResponse, UnsignedTxPayloadResponse } from '@unique-nft/sdk';
 import { ethers } from 'ethers';
 
@@ -8,8 +8,14 @@ import { Account, AccountSigner } from '@app/account/AccountContext';
 export const MetamaskAccountName = 'Metamask Account';
 export const MetamaskDefaultDecimals = 18;
 
-export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> {
-  private _accounts = new Map<string, BaseWalletType<IEthereumAccountResult>>();
+export class MetamaskWallet
+  implements BaseWalletEntity<IEthereumExtensionResultSafe['result']>
+{
+  private _accounts = new Map<
+    string,
+    BaseWalletType<IEthereumExtensionResultSafe['result']>
+  >();
+
   isMintingEnabled = false;
 
   // eslint-disable-next-line no-useless-constructor
@@ -39,22 +45,22 @@ export class MetamaskWallet implements BaseWalletEntity<IEthereumAccountResult> 
     if (!MetamaskWallet.existExtension()) {
       throw new Error('Metamask extension not found');
     }
-    const res = await Ethereum.getAccounts();
+    const res = await Ethereum.getAccountsSafe();
 
     if (res.error) {
       throw new Error(res.error.message);
     }
-    if (!res.address) {
+    if (!res.result.address) {
       return new Map();
     }
     this._accounts = new Map([
       [
-        res.address,
+        res.result.address,
         {
           name: MetamaskAccountName,
-          normalizedAddress: res.address,
-          address: res.address,
-          walletMetaInformation: res,
+          normalizedAddress: res.result.address,
+          address: res.result.address,
+          walletMetaInformation: res.result,
           signerType: AccountSigner.extension,
           sign: this.getSignature,
           changeChain: this.changeChain.bind(this),

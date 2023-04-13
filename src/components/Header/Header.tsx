@@ -1,6 +1,6 @@
 import { INetwork, useNotifications } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 
@@ -8,7 +8,7 @@ import { Button, Icon, IdentityIcon } from '@app/components';
 import { config } from '@app/config';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
-import { networks } from '@app/utils';
+import { formatKusamaBalance, networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
 import { Account } from '@app/account';
 
@@ -65,6 +65,13 @@ export const Header = () => {
     navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`);
   };
 
+  const balance = useMemo(() => {
+    if (deviceSize < DeviceSize.xs) {
+      return selectedAccount?.balance?.availableBalance.formatted.split('.')[0] ?? '0';
+    }
+    return selectedAccount?.balance?.availableBalance.amount ?? '0';
+  }, [selectedAccount?.balance?.availableBalance.amount, deviceSize]);
+
   return (
     <HeaderStyled>
       <LeftSideColumn>
@@ -111,9 +118,10 @@ export const Header = () => {
             accounts={[...accounts.values()]}
             avatarRender={(address: string) => <IdentityIcon address={address} />}
             activeNetwork={activeNetwork}
-            balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
+            balance={balance}
             isLoading={isLoading}
             manageBalanceLinkTitle="Manage my balance"
+            manageBalanceLink={`/${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
             networks={networks}
             isTouch={deviceSize <= DeviceSize.xs}
             open={isAccountManagerOpen}

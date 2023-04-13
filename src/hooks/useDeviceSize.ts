@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 export enum DeviceSize {
+  xxs,
   xs,
   sm,
   md,
@@ -10,6 +11,7 @@ export enum DeviceSize {
 }
 
 export enum SizeMap {
+  xxs = -1,
   xs = 0,
   sm = 1,
   md = 2,
@@ -38,6 +40,9 @@ export const useDeviceSize = (): DeviceSize => {
   }, []); // Empty array ensures that effect is only run on mount
 
   return useMemo(() => {
+    if (windowWidth && windowWidth < 390) {
+      return DeviceSize.xxs;
+    }
     if (windowWidth && windowWidth < 568) {
       return DeviceSize.xs;
     }

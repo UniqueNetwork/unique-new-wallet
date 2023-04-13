@@ -148,7 +148,14 @@ const AccountCard = ({
       <AccountInfoWrapper>
         {(accountName || accountType) && (
           <AccountInfoText>
-            {accountName && <span className="truncate-text">{accountName}</span>}
+            {accountName && (
+              <span
+                title={accountName.length > 20 ? accountName : undefined}
+                className="truncate-text"
+              >
+                {accountName}
+              </span>
+            )}
             {accountType && (
               <AccountInfoParams>
                 ({accountType})
