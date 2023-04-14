@@ -13,12 +13,14 @@ import {
   ConnectedWalletsName,
   useWalletCenter,
 } from '@app/account/useWalletCenter';
+import { useApi } from '@app/hooks';
 
 import { DefaultAccountKey } from './constants';
 import { SignModal } from '../components/SignModal/SignModal';
 import { Account, AccountProvider, WalletsType } from './AccountContext';
 
 export const AccountWrapper: FC = ({ children }) => {
+  const { currentChain } = useApi();
   const { chainProperties } = useContext(ChainPropertiesContext);
   const [accounts, setAccounts] = useState<Map<string, BaseWalletType<WalletsType>>>(
     new Map(),
@@ -27,8 +29,10 @@ export const AccountWrapper: FC = ({ children }) => {
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
   const [signer, setSigner] = useState<Account>();
+
   const { data: balanceAccount, refetch: refetchAccount } = useAccountBalanceService(
     selectedAccount?.address,
+    currentChain.apiEndpoint,
   );
   const { collectionsTotal, tokensTotal } = useGraphQlAccountCommonInfo(
     selectedAccount?.address,
