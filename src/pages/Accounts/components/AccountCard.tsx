@@ -150,7 +150,7 @@ const AccountCard = ({
           <AccountInfoText>
             {accountName && (
               <span
-                title={accountName.length > 20 ? accountName : undefined}
+                title={accountName.length > 12 ? accountName : undefined}
                 className="truncate-text"
               >
                 {accountName}
