@@ -1,7 +1,9 @@
-export const shortcutText = (text: string) => {
+export const shortcutText = (text: string, options: [number, number] = [5, 5]) => {
   // Cut it to the first and last 5 symbols
+  const [beginCount, endCount] = options;
+  const regExp = new RegExp(`^(.{${beginCount}}).*(.{${endCount}})$`);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, start, end] = /^(.{5}).*(.{5})$/.exec(text) || [];
+  const [_, start, end] = regExp.exec(text) || [];
 
   return start && end ? `${start}...${end}` : text;
 };

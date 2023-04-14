@@ -52,6 +52,7 @@ export const useAccounts = () => {
     [connectWallet],
   );
 
+  // deprecated
   const addAccountViaQR = useCallback(
     (scanned: {
       name: string;
@@ -83,10 +84,7 @@ export const useAccounts = () => {
         keyring.addPair(pair, password);
         await connectWallet('keyring');
       } catch (e: any) {
-        showError({
-          name: 'warning',
-          text: e.message || 'An error occurred while restoring your account',
-        });
+        throw new Error(e.message || 'An error occurred while restoring your account');
       }
     },
     [connectWallet, showError],

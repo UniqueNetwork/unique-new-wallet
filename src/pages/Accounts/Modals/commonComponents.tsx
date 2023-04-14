@@ -23,6 +23,13 @@ export const AdditionalText = styled(Typography).attrs({
   margin-bottom: var(--prop-gap);
 `;
 
+export const StatusText = styled(Typography).attrs({
+  color: 'coral-500',
+  size: 's',
+})`
+  margin-top: calc(var(--prop-gap) / 2);
+`;
+
 export const StepsTextStyled = styled(Typography)`
   flex: 1 1 100%;
   padding-right: var(--prop-gap);

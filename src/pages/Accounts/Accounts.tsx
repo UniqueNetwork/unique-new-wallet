@@ -2,6 +2,7 @@ import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { TableColumnProps } from '@unique-nft/ui-kit';
+import { useLocation } from 'react-router-dom';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
@@ -45,6 +46,15 @@ const AccountsPageHeader = styled.div`
   flex-wrap: wrap;
   align-items: center;
   padding-bottom: calc(var(--prop-gap) * 2);
+  column-gap: calc(var(--prop-gap) * 2);
+  row-gap: calc(var(--prop-gap) * 1.5);
+  justify-content: flex-end;
+
+  @media screen and (max-width: 568px) {
+    & > button {
+      width: 100%;
+    }
+  }
   @media screen and (min-width: 1024px) {
     border-bottom: 1px solid var(--color-grey-300);
     padding: calc(var(--prop-gap) * 2);
@@ -83,18 +93,6 @@ const AccountsPageContent = styled.div`
     }
   }
 `;
-
-/* TODO: uncomment when AccountsTotalBalance will be ready
-  const AccountsTotalBalanceStyled = styled(AccountsTotalBalance)`
-    flex: 1 1 100%;
-    margin-bottom: calc(var(--prop-gap) * 1.5);
-  
-    @media screen and (min-width: 1280px) {
-      flex: 0 0 auto;
-      margin: 0 calc(var(--prop-gap) * 3) 0 0;
-    }
-  `;
-*/
 
 const SearchStyled = styled(Search)`
   flex: 1 1 100%;
@@ -355,13 +353,15 @@ const getAccountsColumns = ({
 ];
 
 const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
+  const { state } = useLocation();
   const { accounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
-  const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
-  const [isOpenConnectWallet, setOpenConnectWallet] = useState(false);
+  const [isOpenConnectWallet, setOpenConnectWallet] = useState(
+    (state as { openConnectWallet?: boolean })?.openConnectWallet || false,
+  );
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
@@ -398,17 +398,6 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
     [],
   );
 
-  const filteredAccounts = useMemo(() => {
-    if (!searchString) {
-      return accountBalances;
-    }
-    return accountBalances?.filter(
-      (account) =>
-        account.address.toLowerCase().includes(searchString.toLowerCase()) ||
-        account.name?.toLowerCase().includes(searchString.toLowerCase()),
-    );
-  }, [accountBalances, searchString]);
-
   const onChangeAccountsFinish = useCallback(() => {
     setIsOpenModal(false);
     setWithdrawModalVisible(false);
@@ -436,10 +425,6 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
             title="Connect or create wallet"
             onClick={() => setOpenConnectWallet(true)}
           />
-          {/* TODO: uncomment when AccountsTotalBalance will be ready
-            <AccountsTotalBalanceStyled balance={totalBalance} />
-          */}
-          <SearchStyled value={searchString} onChange={setSearchString} />
         </AccountsPageHeader>
         <AccountsPageContent>
           <Table
@@ -449,7 +434,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
               onForgetWalletClick,
               onWithdrawBalance,
             })}
-            data={filteredAccounts}
+            data={accountBalances}
             loading={balances.some((balance) => balance.isLoading)}
             mobileCaption={
               <Typography color="grey-500" weight="light">
@@ -483,7 +468,10 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
         />
       )}
       {isOpenConnectWallet && (
-        <ConnectWallets onClose={() => setOpenConnectWallet(false)} />
+        <ConnectWallets
+          isOpen={isOpenConnectWallet}
+          onClose={() => setOpenConnectWallet(false)}
+        />
       )}
       <Confirm
         buttons={[

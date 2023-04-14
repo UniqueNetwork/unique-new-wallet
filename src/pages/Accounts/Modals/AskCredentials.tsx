@@ -4,6 +4,7 @@ import { Button, PasswordInput, InputText } from '@app/components';
 import {
   AdditionalText,
   LabelText,
+  StatusText,
   StepsTextStyled,
 } from '@app/pages/Accounts/Modals/commonComponents';
 import {
@@ -29,10 +30,14 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
     setName(value);
   }, []);
 
-  const validPassword = useMemo(
+  const validPassword = useMemo(() => !password || password.length > 4, [password]);
+
+  const validConfirmPassword = useMemo(
     () => password === confirmPassword,
     [password, confirmPassword],
   );
+
+  const validName = useMemo(() => !name || name.trim().length > 2, [name]);
 
   const onNextClick = useCallback(() => {
     if (!accountProperties) {
@@ -53,7 +58,12 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
           <AdditionalText size="s" color="grey-500">
             Give your account a name for easier identification and handling.
           </AdditionalText>
-          <InputText value={name} onChange={onAccountNameChange} />
+          <InputText
+            error={!validName}
+            statusText={!validName ? 'Name must be 3 characters or more' : undefined}
+            value={name}
+            onChange={onAccountNameChange}
+          />
         </ContentRow>
         <ContentRow>
           <LabelText size="m">Password</LabelText>
@@ -62,11 +72,25 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
             key pair. Ensure you are using a strong password for proper account
             protection.
           </AdditionalText>
-          <PasswordInput value={password} onChange={setPassword} />
+          <PasswordInput
+            isError={!validPassword}
+            value={password}
+            onChange={setPassword}
+          />
+          {!validPassword && (
+            <StatusText>Your password is too small, at least 5 characters</StatusText>
+          )}
         </ContentRow>
         <ContentRow>
           <LabelText size="m">Repeat password</LabelText>
-          <PasswordInput value={confirmPassword} onChange={setConfirmPassword} />
+          <PasswordInput
+            isError={!validConfirmPassword}
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+          />
+          {!validConfirmPassword && (
+            <StatusText>Your password and confirmation password do not match</StatusText>
+          )}
         </ContentRow>
       </ModalContent>
       <ModalFooter>
@@ -74,7 +98,9 @@ export const AskCredentialsModal: FC<TCreateAccountBodyModalProps> = ({
         <ButtonGroup stack>
           <Button title="Previous" onClick={onGoBack} />
           <Button
-            disabled={!validPassword || !password || !name}
+            disabled={
+              !name || !password || !validPassword || !validConfirmPassword || !validName
+            }
             role="primary"
             title="Next"
             onClick={onNextClick}
