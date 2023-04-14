@@ -74,7 +74,7 @@ export const Header = () => {
 
   const balance = useMemo(() => {
     if (deviceSize < DeviceSize.xs) {
-      return selectedAccount?.balance?.availableBalance.formatted.split('.')[0] ?? '0';
+      return selectedAccount?.balance?.availableBalance.formatted ?? '0';
     }
     return selectedAccount?.balance?.availableBalance.amount ?? '0';
   }, [selectedAccount?.balance?.availableBalance.amount, deviceSize]);
