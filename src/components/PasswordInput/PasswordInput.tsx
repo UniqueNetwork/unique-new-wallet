@@ -5,6 +5,7 @@ import { Icon } from '../Icon';
 
 interface PasswordInputProps {
   placeholder?: string;
+  isError?: boolean;
   value: string;
   onChange(value: string): void;
 }
@@ -12,6 +13,7 @@ interface PasswordInputProps {
 export const PasswordInput: FC<PasswordInputProps> = ({
   placeholder,
   value,
+  isError,
   onChange,
 }) => {
   const [isVisibleValue, setIsVisibleValue] = useState<boolean>(false);
@@ -28,7 +30,7 @@ export const PasswordInput: FC<PasswordInputProps> = ({
   }, [isVisibleValue]);
 
   return (
-    <PasswordInputWrapper>
+    <PasswordInputWrapper isError={!!isError}>
       <PasswordInputStyled
         type={isVisibleValue ? 'text' : 'password'}
         value={value}
@@ -42,8 +44,9 @@ export const PasswordInput: FC<PasswordInputProps> = ({
   );
 };
 
-const PasswordInputWrapper = styled.div`
-  border: 1px solid var(--color-grey-300);
+const PasswordInputWrapper = styled.div<{ isError: boolean }>`
+  border: 1px solid
+    var(${({ isError }) => (isError ? '--color-coral-500' : '--color-grey-300')});
   border-radius: 4px;
   display: flex;
   align-items: center;

@@ -1,7 +1,7 @@
 import { INetwork, useNotifications } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 
 import { Button, Icon, IdentityIcon } from '@app/components';
@@ -19,6 +19,7 @@ import MenuLink from './MenuLink';
 
 export const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const deviceSize = useDeviceSize();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
@@ -63,6 +64,12 @@ export const Header = () => {
   const gotoManageBalance = () => {
     setAccountManagerOpen(false);
     navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`);
+  };
+
+  const gotoConnectOrCreateWallet = () => {
+    navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`, {
+      state: { openConnectWallet: true },
+    });
   };
 
   const balance = useMemo(() => {
@@ -142,13 +149,15 @@ export const Header = () => {
             onOpenChange={(open) => setAccountManagerOpen(open)}
           />
         )}
-        {!isLoading && !accounts.size && (
-          <Button
-            title="Connect wallet"
-            className="create-account-btn account-group-btn-medium-font"
-            onClick={gotoManageBalance}
-          />
-        )}
+        {!isLoading &&
+          !accounts.size &&
+          location.pathname !== `/${activeNetwork?.id}/${ROUTE.ACCOUNTS}` && (
+            <Button
+              title="Connect or create wallet"
+              className="create-account-btn account-group-btn-medium-font"
+              onClick={gotoConnectOrCreateWallet}
+            />
+          )}
       </RightSide>
 
       {showMobileMenu && mobileMenuIsOpen && (

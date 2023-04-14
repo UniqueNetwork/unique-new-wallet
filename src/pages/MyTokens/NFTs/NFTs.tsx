@@ -29,7 +29,7 @@ export interface NFTsComponentProps {
 
 export const NFTs: VFC<NFTsComponentProps> = ({ className }) => {
   const deviceSize = useDeviceSize();
-  const { limit, setLimit } = useItemsLimit({ sm: 8, md: 9, lg: 24, xl: 24 });
+  const { limit, setLimit } = useItemsLimit({ sm: 8, md: 9, lg: 24, xl: 24, xxl: 24 });
   // this is temporal solution we need to discuss next steps
   const { selectedAccount } = useContext(AccountContext);
   const { chainProperties } = useContext(ChainPropertiesContext);

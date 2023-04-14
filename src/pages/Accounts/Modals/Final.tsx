@@ -112,7 +112,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
         <StepsTextStyled size="m">Step 3/3</StepsTextStyled>
         <ButtonGroup stack>
           <Button title="Previous" onClick={onGoBack} />
-          <Button role="primary" title="Create account" onClick={onSaveClick} />
+          <Button role="primary" title="Add account" onClick={onSaveClick} />
         </ButtonGroup>
       </ModalFooter>
     </>

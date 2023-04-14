@@ -145,7 +145,7 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
               }}
             />
           </SendGetWrapper>
-          {!!Number(balanceToWithdraw?.raw) && (
+          {balanceToWithdraw?.raw && balanceToWithdraw?.raw !== '0' && (
             <TransferBtn
               title={`Withdraw ${balanceToWithdraw?.formatted || ''} ${symbol}`}
               onClick={() => {

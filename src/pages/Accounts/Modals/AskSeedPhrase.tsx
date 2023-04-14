@@ -77,6 +77,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
           <ControlsGroup>
             <ControlWrapper>
               <Select
+                disabled
                 options={seedGenerators}
                 value={seedGenerator}
                 onChange={onSeedGeneratorChange}
@@ -101,7 +102,7 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
               </ControlIcon>
             </ControlWrapper>
             <ControlWrapper>
-              <Textarea value={seed} onChange={onSeedChange} />
+              <TextareaStyled value={seed} />
               <ControlIcon role="button" onClick={generateSeed}>
                 <Icon size={24} name="reload" color="inherit" />
               </ControlIcon>
@@ -197,5 +198,11 @@ const TooltipLink = styled(Link)`
         outline: -webkit-focus-ring-color auto 1px;
       }
     }
+  }
+`;
+
+const TextareaStyled = styled(Textarea)`
+  textarea {
+    font-size: 16px;
   }
 `;

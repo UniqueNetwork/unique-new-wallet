@@ -1,3 +1,5 @@
+import { loadavg } from 'os';
+
 import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
 import { Address } from '@unique-nft/utils/address';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -13,7 +15,7 @@ import { useChainProperties } from '@app/api/restApi/properties/useChainProperti
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
 import { RampModal } from '@app/pages';
-import { Heading } from '@app/components';
+import { Heading, NoItems } from '@app/components';
 import { SendFunds } from '@app/pages/SendFunds';
 import { Chain, NetworkType } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
@@ -54,7 +56,7 @@ export const Coins = () => {
   const [selectedChain, setSelectedChain] = useState<Chain>(config.defaultChain);
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
-  const { selectedAccount } = useAccounts();
+  const { selectedAccount, isLoading } = useAccounts();
 
   const accountBalances = useAccountBalancesService(
     Object.values(config.allChains).map((chain) => chain.apiEndpoint),
@@ -143,6 +145,10 @@ export const Coins = () => {
       },
     },
   };
+
+  if (!isLoading && !selectedAccount) {
+    return <NoItems iconName="no-accounts" />;
+  }
 
   return (
     <CoinsContainer>

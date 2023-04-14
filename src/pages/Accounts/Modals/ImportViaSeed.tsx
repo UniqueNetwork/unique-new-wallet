@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
+import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
 import { Modal } from '@app/components/Modal';
@@ -22,6 +23,8 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
   );
   const [accountProperties, setAccountProperties] = useState<TAccountProperties>();
   const { addLocalAccount } = useAccounts();
+
+  const { info } = useNotifications();
 
   const ModalBodyComponent = useMemo<FC<TCreateAccountBodyModalProps> | null>(() => {
     switch (stage) {
@@ -50,7 +53,7 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
           accountProperties.password || '',
           defaultPairType,
         );
-
+        info('Account added');
         onFinish();
         setStage(CreateAccountModalStages.AskSeed);
         return;
