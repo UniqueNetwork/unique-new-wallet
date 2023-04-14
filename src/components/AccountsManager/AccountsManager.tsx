@@ -97,7 +97,7 @@ export const AccountsManager = (props: AccountsManagerProps) => {
               color="blue-grey-500"
               size="s"
               title={
-                selectedAccount?.name && selectedAccount.name.length > 20
+                selectedAccount?.name && selectedAccount.name.length > 12
                   ? selectedAccount.name
                   : undefined
               }
