@@ -19,7 +19,6 @@ import {
   Typography,
   Button,
 } from '@app/components';
-import { Search } from '@app/pages/components/Search';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api';
@@ -94,21 +93,6 @@ const AccountsPageContent = styled.div`
   }
 `;
 
-const SearchStyled = styled(Search)`
-  flex: 1 1 100%;
-  margin-bottom: calc(var(--prop-gap) * 1.5);
-
-  @media screen and (min-width: 1024px) {
-    flex: 1 1 auto;
-    margin-bottom: 0;
-  }
-
-  @media screen and (min-width: 1280px) {
-    max-width: 720px;
-    margin-left: auto;
-  }
-`;
-
 const ExternalLink = styled.a`
   position: relative;
   display: inline-block;
@@ -137,8 +121,9 @@ const ButtonGet = styled(Button)`
 const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
   gap: var(--prop-gap);
-  flex-wrap: wrap;
   .unique-dropdown {
     .dropdown-wrapper,
     .dropdown-options {
@@ -149,10 +134,22 @@ const ActionsWrapper = styled.div`
   }
 `;
 
+const TransferBtnGroup = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-gap: var(--prop-gap);
+  width: -webkit-fill-available;
+`;
+
 const SendGetWrapper = styled.div`
   display: flex;
   align-items: center;
-  column-gap: var(--prop-gap);
+  gap: var(--prop-gap);
+  flex-wrap: nowrap;
+  button,
+  a {
+    flex: 1;
+  }
 `;
 
 const CaptionText: FC = () => {
@@ -317,14 +314,25 @@ const getAccountsColumns = ({
     render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <SendGetWrapper>
-            <TransferBtn
-              title="Send"
-              disabled={!Number(rowData.balance?.availableBalance.amount)}
-              onClick={onShowSendFundsModal(rowData)}
-            />
-            {getButtonRender(rowData.balance?.availableBalance.unit)}
-          </SendGetWrapper>
+          <TransferBtnGroup>
+            <SendGetWrapper>
+              <TransferBtn
+                title="Send"
+                disabled={!Number(rowData.balance?.availableBalance.amount)}
+                onClick={onShowSendFundsModal(rowData)}
+              />
+              {getButtonRender(rowData.balance?.availableBalance.unit)}
+            </SendGetWrapper>
+            {!!Number(rowData.withdrawBalance?.availableBalance.formatted) && (
+              <TransferBtn
+                title={`Withdraw ${rowData.withdrawBalance?.availableBalance.amount} ${rowData.withdrawBalance?.availableBalance.unit}`}
+                onClick={onWithdrawBalance(
+                  rowData,
+                  rowData.withdrawBalance?.availableBalance.raw || '',
+                )}
+              />
+            )}
+          </TransferBtnGroup>
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
               placement="right"
@@ -336,15 +344,6 @@ const getAccountsColumns = ({
             >
               <Icon name="more-horiz" size={24} />
             </Dropdown>
-          )}
-          {!!Number(rowData.withdrawBalance?.availableBalance.formatted) && (
-            <TransferBtn
-              title={`Withdraw ${rowData.withdrawBalance?.availableBalance.formatted} ${rowData.withdrawBalance?.availableBalance.unit}`}
-              onClick={onWithdrawBalance(
-                rowData,
-                rowData.withdrawBalance?.availableBalance.raw || '',
-              )}
-            />
           )}
         </ActionsWrapper>
       );
