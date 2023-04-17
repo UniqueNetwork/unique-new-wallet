@@ -176,6 +176,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
                 role="decimal"
                 value={value}
                 placeholder="Enter the amount"
+                maxLength={15}
                 iconRight={
                   isCalculateMaxAmount ? (
                     <LoaderWrapper>

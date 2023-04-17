@@ -63,7 +63,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     senderAccount: sendFundsDebounceValues.from,
   });
 
-  const { errorMessage, isValid, showFee } = useFormValidator({
+  const { errorMessage, isValid, showFee, isSufficientBalance } = useFormValidator({
     balanceValidationEnabled: true,
     address: sendFundsValues.from?.address,
     cost: [fee, sendFundsValues.amount?.toString()],
@@ -183,7 +183,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
               role="primary"
               title="Confirm"
               wide={size === DeviceSize.xs}
-              disabled={!isValid}
+              disabled={!isValid || feeLoading || !isSufficientBalance}
               tooltip={errorMessage}
               onClick={handleSubmit(submitHandler)}
             />
