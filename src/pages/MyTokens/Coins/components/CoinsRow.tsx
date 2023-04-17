@@ -10,7 +10,7 @@ import { Button, TransferBtn } from '@app/components';
 import { NetworkBalances, TNetworkBalances } from '@app/pages/components/NetworkBalances';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { formatAmount, formatKusamaBalance, shortAddress } from '@app/utils';
+import { shortAddress } from '@app/utils';
 
 type CoinsRowComponentProps = TNetworkBalances & {
   balanceToWithdraw?: BalanceResponse;
@@ -146,9 +146,10 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
               }}
             />
           </SendGetWrapper>
-          {!!Number(balanceToWithdraw?.raw) && (
+
+          {balanceToWithdraw?.raw && balanceToWithdraw?.raw !== '0' && (
             <TransferBtn
-              title={`Withdraw ${balanceToWithdraw?.formatted || ''} ${symbol}`}
+              title={`Withdraw ${balanceToWithdraw?.amount || ''} ${symbol}`}
               onClick={() => {
                 logUserEvent(`${UserEvents.WITHDRAW_COINS}_${symbol}`);
                 onWithdraw(symbol, chain, balanceToWithdraw?.raw || '0');

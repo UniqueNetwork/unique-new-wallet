@@ -66,5 +66,5 @@ export const useFormValidator = (
 
   const showFee = Object.keys(errors).filter((item) => item !== 'balance').length === 0;
 
-  return { errorMessage, isValid, showFee };
+  return { errorMessage, isValid, showFee, isSufficientBalance };
 };
