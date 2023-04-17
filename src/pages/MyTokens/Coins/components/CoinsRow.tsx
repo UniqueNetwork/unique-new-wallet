@@ -62,13 +62,17 @@ const Column = styled.div<{ width: string; align?: 'left' | 'right' | 'center' }
   }
 `;
 
-const ButtonGroup = styled.div`
+const ButtonsColumnWrapper = styled.div`
   display: flex;
-  gap: calc(var(--prop-gap) / 2);
-  flex-wrap: wrap;
-  .unique-button {
-    flex: 1 1 auto;
+  width: 100%;
+`;
 
+const ButtonGroup = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-gap: var(--prop-gap);
+  flex: 1;
+  .unique-button {
     @media screen and (min-width: 568px) {
       flex-grow: 0;
     }
@@ -79,6 +83,9 @@ const SendGetWrapper = styled.div`
   display: flex;
   align-items: center;
   column-gap: var(--prop-gap);
+  .unique-button {
+    flex-grow: 1;
+  }
 `;
 
 export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
@@ -126,35 +133,37 @@ export const CoinsRowComponent: VFC<CoinsRowComponentProps> = (props) => {
         )}
       </Column>
       <Column align="right" width="30%">
-        <ButtonGroup>
-          <SendGetWrapper>
-            <TransferBtn
-              disabled={sendDisabled}
-              title="Send"
-              onClick={() => {
-                logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
-                onSend(symbol, chain);
-              }}
-            />
-            <Button
-              disabled={getDisabled}
-              title="Get"
-              onClick={() => {
-                logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
-                onGet?.();
-              }}
-            />
-          </SendGetWrapper>
-          {balanceToWithdraw?.raw && balanceToWithdraw?.raw !== '0' && (
-            <TransferBtn
-              title={`Withdraw ${balanceToWithdraw?.formatted || ''} ${symbol}`}
-              onClick={() => {
-                logUserEvent(`${UserEvents.WITHDRAW_COINS}_${symbol}`);
-                onWithdraw(symbol, chain, balanceToWithdraw?.raw || '0');
-              }}
-            />
-          )}
-        </ButtonGroup>
+        <ButtonsColumnWrapper>
+          <ButtonGroup>
+            <SendGetWrapper>
+              <TransferBtn
+                disabled={sendDisabled}
+                title="Send"
+                onClick={() => {
+                  logUserEvent(`${UserEvents.SEND_COINS}_${symbol}`);
+                  onSend(symbol, chain);
+                }}
+              />
+              <Button
+                disabled={getDisabled}
+                title="Get"
+                onClick={() => {
+                  logUserEvent(`${UserEvents.GET_COINS}_${symbol}`);
+                  onGet?.();
+                }}
+              />
+            </SendGetWrapper>
+            {balanceToWithdraw?.raw && balanceToWithdraw?.raw !== '0' && (
+              <TransferBtn
+                title={`Withdraw ${balanceToWithdraw?.amount || ''} ${symbol}`}
+                onClick={() => {
+                  logUserEvent(`${UserEvents.WITHDRAW_COINS}_${symbol}`);
+                  onWithdraw(symbol, chain, balanceToWithdraw?.raw || '0');
+                }}
+              />
+            )}
+          </ButtonGroup>
+        </ButtonsColumnWrapper>
       </Column>
     </Wrapper>
   );

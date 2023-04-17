@@ -73,10 +73,17 @@ export const Header = () => {
   };
 
   const balance = useMemo(() => {
-    if (deviceSize < DeviceSize.xs) {
-      return selectedAccount?.balance?.availableBalance.formatted ?? '0';
+    const { formatted, amount } = selectedAccount?.balance?.availableBalance || {};
+
+    if (!formatted || !amount) {
+      return '0';
     }
-    return selectedAccount?.balance?.availableBalance.amount ?? '0';
+    if (deviceSize < DeviceSize.xs) {
+      return formatted.length > amount.slice(0, -5).length
+        ? amount.slice(0, -5)
+        : formatted;
+    }
+    return amount;
   }, [selectedAccount?.balance?.availableBalance.amount, deviceSize]);
 
   return (
@@ -231,6 +238,7 @@ const LogoIcon = styled.img`
   margin-right: calc(var(--prop-gap) * 2);
   @media (max-width: 700px) {
     width: 100px;
+    margin-right: calc(var(--prop-gap) / 2);
   }
 
   &.hidden-logo {

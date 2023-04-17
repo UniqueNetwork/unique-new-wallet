@@ -1,5 +1,3 @@
-import { loadavg } from 'os';
-
 import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
 import { Address } from '@unique-nft/utils/address';
 import React, { useCallback, useEffect, useState } from 'react';
