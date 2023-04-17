@@ -25,7 +25,10 @@ export const InputController = <TInput extends string, TOutput>({
   return (
     <Controller
       control={control}
-      render={({ field: { value, onChange, ...inputField } }) => (
+      render={({
+        field: { value, onChange, ...inputField },
+        fieldState: { error, isTouched },
+      }) => (
         <InputText
           {...inputField}
           value={transform?.input ? transform.input(value) : value ?? ''}
@@ -33,6 +36,8 @@ export const InputController = <TInput extends string, TOutput>({
             transform?.output ? onChange(transform.output(value)) : onChange(value);
           }}
           {...inputProps}
+          error={isTouched && !!error}
+          statusText={isTouched ? error?.message || '' : ''}
         />
       )}
       name={name}

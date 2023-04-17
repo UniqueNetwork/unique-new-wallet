@@ -8,7 +8,7 @@ import { Button, Icon, IdentityIcon } from '@app/components';
 import { config } from '@app/config';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
-import { formatKusamaBalance, networks } from '@app/utils';
+import { networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
 import { Account } from '@app/account';
 
@@ -75,7 +75,7 @@ export const Header = () => {
   const balance = useMemo(() => {
     const { formatted, amount } = selectedAccount?.balance?.availableBalance || {};
 
-    if (!formatted || !amount) {
+    if (!formatted || !amount || amount === '0') {
       return '0';
     }
     if (deviceSize < DeviceSize.xs) {

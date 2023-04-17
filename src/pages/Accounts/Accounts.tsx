@@ -323,15 +323,16 @@ const getAccountsColumns = ({
               />
               {getButtonRender(rowData.balance?.availableBalance.unit)}
             </SendGetWrapper>
-            {!!Number(rowData.withdrawBalance?.availableBalance.formatted) && (
-              <TransferBtn
-                title={`Withdraw ${rowData.withdrawBalance?.availableBalance.amount} ${rowData.withdrawBalance?.availableBalance.unit}`}
-                onClick={onWithdrawBalance(
-                  rowData,
-                  rowData.withdrawBalance?.availableBalance.raw || '',
-                )}
-              />
-            )}
+            {rowData.withdrawBalance?.availableBalance?.raw &&
+              rowData.withdrawBalance?.availableBalance?.raw !== '0' && (
+                <TransferBtn
+                  title={`Withdraw ${rowData.withdrawBalance?.availableBalance.amount} ${rowData.withdrawBalance?.availableBalance.unit}`}
+                  onClick={onWithdrawBalance(
+                    rowData,
+                    rowData.withdrawBalance?.availableBalance.raw || '',
+                  )}
+                />
+              )}
           </TransferBtnGroup>
           {rowData.signerType === AccountSigner.local && (
             <Dropdown
@@ -345,18 +346,6 @@ const getAccountsColumns = ({
               <Icon name="more-horiz" size={24} />
             </Dropdown>
           )}
-          {rowData.withdrawBalance?.availableBalance?.raw &&
-            rowData.withdrawBalance?.availableBalance?.raw !== '0' && (
-              <TransferBtn
-                title={`Withdraw ${
-                  rowData.withdrawBalance?.availableBalance?.amount || ''
-                } ${rowData.withdrawBalance?.availableBalance?.unit || ''}`}
-                onClick={onWithdrawBalance(
-                  rowData,
-                  rowData.withdrawBalance?.availableBalance.raw || '',
-                )}
-              />
-            )}
         </ActionsWrapper>
       );
     },

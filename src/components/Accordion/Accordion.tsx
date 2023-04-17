@@ -73,7 +73,6 @@ const AccordionWrapper = styled.div``;
 const AccordionHeaderWrapper = styled.div`
   display: flex;
   align-items: center;
-  height: 32px;
   justify-content: space-between;
 `;
 
@@ -83,6 +82,7 @@ const AccordionTitle = styled.div<{ isOpen?: boolean }>`
   align-items: center;
   column-gap: calc(var(--prop-gap) / 4);
   svg {
+    min-width: 24px;
     transform-origin: center;
     transform: ${({ isOpen }) => (isOpen ? 'rotate(0deg);' : 'rotate(-90deg);')};
     transition: all 0.3s;
@@ -112,7 +112,7 @@ const AccordionBodyWrapper = styled.div<{ isOpen?: boolean }>`
     }
     to {
       opacity: 1;
-      max-height: 500px;
+      max-height: 1000px;
       visibility: visible;
     }
   }
