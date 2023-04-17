@@ -16,8 +16,17 @@ export const TextareaController = ({
   return (
     <Controller
       control={control}
-      render={({ field: { value, ...textareaField } }) => (
-        <Textarea {...textareaField} value={value ?? ''} {...textareaProps} />
+      render={({
+        field: { value, ...textareaField },
+        fieldState: { error, isTouched },
+      }) => (
+        <Textarea
+          {...textareaField}
+          value={value ?? ''}
+          {...textareaProps}
+          error={isTouched && !!error}
+          statusText={isTouched ? error?.message || '' : ''}
+        />
       )}
       name={name}
       rules={rules}
