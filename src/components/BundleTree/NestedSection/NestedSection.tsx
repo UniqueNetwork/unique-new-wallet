@@ -1,12 +1,11 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Loader, Text } from '@unique-nft/ui-kit';
 
 import NoTrades from 'static/icons/no-trades.svg';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { NoItems } from '@app/components';
+import { NoItems, Loader, Typography } from '@app/components';
 
 import { INestedSectionView, INestingToken } from '../types';
 import { useCollection } from '../useCollection';
@@ -69,9 +68,9 @@ const Title = ({
     return <Loader size="large" />;
   }
   return (
-    <Text color="additional-dark" size="l">
+    <Typography color="additional-dark" size="l">
       Nested in {prefix} #{token.tokenId}
-    </Text>
+    </Typography>
   );
 };
 

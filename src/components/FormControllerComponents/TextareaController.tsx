@@ -1,7 +1,8 @@
 import { Controller } from 'react-hook-form';
-import { Textarea, TextareaProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
+
+import { Textarea, TextareaProps } from '../Textarea';
 
 type InputControllerProps = BaseControllerProps<TextareaProps>;
 

@@ -1,7 +1,7 @@
 import { Consumer, Context, createContext, Provider } from 'react';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { KeyringAddress } from '@polkadot/ui-keyring/types';
-import { IEthereumAccountResult } from '@unique-nft/utils/extension';
+import { IEthereumExtensionResultSafe } from '@unique-nft/utils/extension';
 
 import { AllBalancesResponse } from '@app/types/Api';
 import { NetworkType } from '@app/types';
@@ -16,7 +16,7 @@ export enum AccountSigner {
 export type WalletsType =
   | InjectedAccountWithMeta
   | KeyringAddress
-  | IEthereumAccountResult;
+  | IEthereumExtensionResultSafe['result'];
 
 export type Account<T extends WalletsType = WalletsType> = BaseWalletType<T> & {
   balance?: AllBalancesResponse;

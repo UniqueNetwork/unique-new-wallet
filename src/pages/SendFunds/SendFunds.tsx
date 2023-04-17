@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useMemo, VFC } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
-import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 
 import { DeviceSize, useApi, useDeviceSize, useFormValidator } from '@app/hooks';
 import { Account } from '@app/account';
-import { Alert, Stages, TransferBtn, Modal } from '@app/components';
+import { Alert, Stages, TransferBtn, Modal, Loader, Typography } from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
 import { useAccountBalanceTransfer } from '@app/api';
 
@@ -77,7 +77,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     if (!feeError) {
       return;
     }
-    error(feeError);
+    error(feeError.toString());
   }, [feeError]);
 
   useEffect(() => {
@@ -153,21 +153,23 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
                   </FeeLoader>
                 )}
                 {!showFee && (
-                  <Text color="inherit" size="s">
+                  <Typography color="inherit" size="s">
                     A fee will be calculated after entering the recipient and amount
-                  </Text>
+                  </Typography>
                 )}
                 {showFee && feeStatus === 'success' && (
-                  <Text color="inherit" size="s">
+                  <Typography color="inherit" size="s">
                     {`A fee of ~ ${feeFormatted} can be applied to the transaction, unless the transaction
               is sponsored`}
-                  </Text>
+                  </Typography>
                 )}
               </Alert>
             </ContentRow>
             {((sendFundsValues.amount && fee) || feeLoading) && (
               <ContentRow>
-                {!feeLoading && showFee && <Text weight="light">Total ~ {total}</Text>}
+                {!feeLoading && showFee && (
+                  <Typography weight="light">Total ~ {total}</Typography>
+                )}
                 {feeLoading && (
                   <TotalLoader>
                     <Loader label="Calculating total" placement="left" />

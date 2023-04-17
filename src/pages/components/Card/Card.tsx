@@ -1,9 +1,10 @@
 import { VFC } from 'react';
 import styled from 'styled-components';
-import { Avatar, Text } from '@unique-nft/ui-kit';
 
-import { Tag, Tags } from '@app/components';
+import { Tag, Tags, Avatar } from '@app/components';
 import { AttributeView } from '@app/pages/CreateNFT/types';
+
+import { Typography } from '../../../components/Typography/Typography';
 
 interface IPreviewCard {
   attributes?: AttributeView[];
@@ -13,6 +14,58 @@ interface IPreviewCard {
   picture?: string;
   title?: string;
 }
+
+export const Card: VFC<IPreviewCard> = ({
+  attributes,
+  attributesInline,
+  description = 'Description',
+  title = 'Name',
+  picture,
+  geometry = 'circle',
+}) => {
+  return (
+    <PreviewCard>
+      <Avatar size={64} src={picture} type={geometry} />
+      <PreviewCardInfo>
+        <PreviewCardTitle>{title}</PreviewCardTitle>
+        <PreviewCardDescription>{description}</PreviewCardDescription>
+        {(attributes || attributesInline?.length) && (
+          <PreviewCardAttributes>
+            <Typography size="m">
+              {attributesInline ? 'Attribute names' : 'Attributes'}
+            </Typography>
+            {attributesInline && (
+              <PreviewCardDescription>
+                {attributesInline.map(
+                  (el, i) =>
+                    el && `${el}${i !== attributesInline?.length - 1 ? ', ' : ''}`,
+                )}
+              </PreviewCardDescription>
+            )}
+            {attributes?.map((item, i) => {
+              return (
+                <AttributesGroup key={i}>
+                  <Typography size="s" color="grey-500">
+                    {item.group}
+                  </Typography>
+                  {item.values && (
+                    <Tags>
+                      {item.values
+                        .filter((val: string) => !!val)
+                        .map((value: string, index) => (
+                          <Tag key={`${value}-${index}`} label={value} type="default" />
+                        ))}
+                    </Tags>
+                  )}
+                </AttributesGroup>
+              );
+            })}
+          </PreviewCardAttributes>
+        )}
+      </PreviewCardInfo>
+    </PreviewCard>
+  );
+};
 
 const PreviewCard = styled.div`
   display: flex;
@@ -46,7 +99,7 @@ const PreviewCardTitle = styled.h5`
   line-height: 1.5;
 `;
 
-const PreviewCardDescription = styled(Text).attrs({
+const PreviewCardDescription = styled(Typography).attrs({
   size: 's',
   color: 'grey-500',
 })`
@@ -74,53 +127,3 @@ const AttributesGroup = styled.div`
     margin-top: var(--prop-gap);
   }
 `;
-
-export const Card: VFC<IPreviewCard> = ({
-  attributes,
-  attributesInline,
-  description = 'Description',
-  title = 'Name',
-  picture,
-  geometry = 'circle',
-}) => {
-  return (
-    <PreviewCard>
-      <Avatar size={64} src={picture} type={geometry} />
-      <PreviewCardInfo>
-        <PreviewCardTitle>{title}</PreviewCardTitle>
-        <PreviewCardDescription>{description}</PreviewCardDescription>
-        {(attributes || attributesInline?.length) && (
-          <PreviewCardAttributes>
-            <Text size="m">{attributesInline ? 'Attribute names' : 'Attributes'}</Text>
-            {attributesInline && (
-              <PreviewCardDescription>
-                {attributesInline.map(
-                  (el, i) =>
-                    el && `${el}${i !== attributesInline?.length - 1 ? ', ' : ''}`,
-                )}
-              </PreviewCardDescription>
-            )}
-            {attributes?.map((item, i) => {
-              return (
-                <AttributesGroup key={i}>
-                  <Text size="s" color="grey-500">
-                    {item.group}
-                  </Text>
-                  {item.values && (
-                    <Tags>
-                      {item.values
-                        .filter((val: string) => !!val)
-                        .map((value: string, index) => (
-                          <Tag key={`${value}-${index}`} label={value} type="default" />
-                        ))}
-                    </Tags>
-                  )}
-                </AttributesGroup>
-              );
-            })}
-          </PreviewCardAttributes>
-        )}
-      </PreviewCardInfo>
-    </PreviewCard>
-  );
-};

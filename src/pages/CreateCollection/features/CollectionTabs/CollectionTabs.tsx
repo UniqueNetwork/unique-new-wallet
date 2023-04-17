@@ -1,9 +1,7 @@
 import { FC, memo, ReactNode, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { Button, Stepper } from '@unique-nft/ui-kit';
-import { StepperProps } from '@unique-nft/ui-kit/dist/cjs/components/Stepper/Stepper';
 
-import { ConfirmBtn } from '@app/components';
+import { ConfirmBtn, Button, Stepper, StepperProps } from '@app/components';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 
 const CollectionStepperWrapper = styled.div`

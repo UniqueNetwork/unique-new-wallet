@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Link, useNotifications } from '@unique-nft/ui-kit';
+import { useNotifications } from '@unique-nft/ui-kit';
 
 import { shortcutText } from '@app/utils';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { Icon, IdentityIcon } from '@app/components';
+import { Link, Icon, IdentityIcon } from '@app/components';
 
 interface AccountCardProps {
   accountAddress: string;
@@ -148,7 +148,14 @@ const AccountCard = ({
       <AccountInfoWrapper>
         {(accountName || accountType) && (
           <AccountInfoText>
-            {accountName && <span className="truncate-text">{accountName}</span>}
+            {accountName && (
+              <span
+                title={accountName.length > 12 ? accountName : undefined}
+                className="truncate-text"
+              >
+                {accountName}
+              </span>
+            )}
             {accountType && (
               <AccountInfoParams>
                 ({accountType})

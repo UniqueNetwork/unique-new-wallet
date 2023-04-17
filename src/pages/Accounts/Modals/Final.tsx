@@ -1,7 +1,6 @@
 import { FC, useCallback, useMemo } from 'react';
-import { InputText } from '@unique-nft/ui-kit';
 
-import { Alert, Button, Icon, TooltipWrapper } from '@app/components';
+import { Alert, Button, Icon, TooltipWrapper, InputText } from '@app/components';
 import { LabelText, StepsTextStyled } from '@app/pages/Accounts/Modals/commonComponents';
 import {
   ContentRow,
@@ -113,7 +112,7 @@ export const FinalModal: FC<TCreateAccountBodyModalProps> = ({
         <StepsTextStyled size="m">Step 3/3</StepsTextStyled>
         <ButtonGroup stack>
           <Button title="Previous" onClick={onGoBack} />
-          <Button role="primary" title="Create account" onClick={onSaveClick} />
+          <Button role="primary" title="Add account" onClick={onSaveClick} />
         </ButtonGroup>
       </ModalFooter>
     </>

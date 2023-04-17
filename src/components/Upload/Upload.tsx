@@ -1,9 +1,9 @@
-import { ComponentProps } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { Icon } from '../Icon';
+import { Icon } from '..';
+import { ComponentProps } from '../types';
 
 export interface IUploadBaseProps {
   onChange?: (data: { url: string; file: Blob } | null) => void;

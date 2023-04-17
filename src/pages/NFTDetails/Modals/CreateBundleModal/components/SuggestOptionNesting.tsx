@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { Avatar, IAvatarProps } from '@unique-nft/ui-kit';
 
+import { Avatar, IAvatarProps } from '@app/components';
 import { SuggestOption } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 

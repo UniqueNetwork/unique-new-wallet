@@ -10,7 +10,7 @@ export const useAccountBalanceService = (
   address?: string,
   networkURL?: string,
 ): UseQueryResult<AllBalancesResponse> => {
-  const { api } = useApi();
+  const { api, currentChain } = useApi();
 
   const getBalance = (address: string) => {
     const apiSdk = networkURL ? new Sdk({ baseUrl: networkURL, signer: null }) : api;
@@ -22,7 +22,9 @@ export const useAccountBalanceService = (
   };
 
   return useQuery(
-    queryKeys.account.balance(networkURL ? `${networkURL}-${address}` : address),
+    queryKeys.account.balance(
+      networkURL ? `${networkURL}-${address}` : `${currentChain.name}-${address}`,
+    ),
     () => getBalance(address!),
     {
       enabled: !!address,

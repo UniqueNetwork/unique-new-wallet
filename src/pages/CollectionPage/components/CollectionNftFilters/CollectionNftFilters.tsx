@@ -2,14 +2,6 @@ import { KeyboardEvent, useState, VFC } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import {
-  Accordion,
-  Button,
-  IconProps,
-  RadioGroup,
-  RadioOptionValueType,
-  Select,
-} from '@unique-nft/ui-kit';
 
 import { iconDown, iconUp } from '@app/utils';
 import { ROUTE } from '@app/routes';
@@ -20,7 +12,15 @@ import {
   ListNftsFilterType,
   useNftFilterContext,
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
-import { ConfirmBtn } from '@app/components';
+import {
+  ConfirmBtn,
+  Accordion,
+  Button,
+  IconProps,
+  RadioGroup,
+  RadioOptionValueType,
+  Select,
+} from '@app/components';
 import { Search } from '@app/pages/components/Search';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
@@ -52,12 +52,12 @@ const radioOptions: RadioOptionValueType[] = [
 const sortOptions: SelectOption[] = [
   {
     id: 'asc',
-    title: 'NFT ID',
+    title: 'Token ID',
     iconRight: iconUp,
   },
   {
     id: 'desc',
-    title: 'NFT ID',
+    title: 'Token ID',
     iconRight: iconDown,
   },
 ];
@@ -107,22 +107,14 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
   };
 
   const handleApplyFilter = () => setFilterOpen(!isFilterOpen);
-  const barButtons = [];
-
-  if (!isFilterOpen) {
-    barButtons.push([
-      <Button
-        key="Filter-toggle-button"
-        role="primary"
-        title="Filter and sort"
-        onClick={handleApplyFilter}
-      />,
-    ]);
-  } else {
-    barButtons.push([
-      <Button key="Filter-apply-button" title="Apply" onClick={handleApplyFilter} />,
-    ]);
-  }
+  const barButtons = [
+    <Button
+      key="Filter-toggle-button"
+      role="primary"
+      title="Filter and sort"
+      onClick={handleApplyFilter}
+    />,
+  ];
 
   return (
     <>
@@ -189,7 +181,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               />
             </FormRow>
             <FormRow>
-              <Accordion expanded title="Status">
+              <Accordion isOpen title="Status">
                 <RadioGroup
                   align="vertical"
                   options={radioOptions}
@@ -197,9 +189,18 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
                 />
               </Accordion>
             </FormRow>
+            <ButtonsGroup>
+              <Button title="Apply" onClick={handleApplyFilter} />
+            </ButtonsGroup>
           </FormBodyStyled>
         </BottomBar>
       )}
     </>
   );
 };
+
+const ButtonsGroup = styled.div`
+  position: absolute;
+  bottom: 0;
+  padding: calc(var(--prop-gap) / 1.6) calc(var(--prop-gap) / 2);
+`;

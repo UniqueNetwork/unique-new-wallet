@@ -1,7 +1,7 @@
 import { createRef } from 'react';
-import { Loader, Tooltip } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
+import { Loader, Tooltip } from '@app/components';
 import { EntityItem } from '@app/pages/components/ListEntitysCache/EntityItem';
 
 export type TResultEntityCache = {

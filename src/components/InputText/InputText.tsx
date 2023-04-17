@@ -2,9 +2,10 @@
 
 import React, { ForwardedRef, ReactNode } from 'react';
 import classNames from 'classnames';
-import { ComponentProps, DimentionType } from '@unique-nft/ui-kit';
 
 import { Button, IconType, userIcon } from '@app/components';
+
+import { ComponentProps, DimentionType } from '../types';
 
 import './InputText.scss';
 

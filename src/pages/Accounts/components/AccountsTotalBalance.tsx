@@ -1,9 +1,10 @@
 import { useState, VFC } from 'react';
-import { Text, Heading, Dropdown, Icon, SelectOptionProps } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 import { BN } from '@polkadot/util';
 
+import { Typography, Heading, Dropdown, Icon } from '@app/components';
 import { formatAmount } from '@app/utils';
+import { SelectOptionProps } from '@app/components/types';
 
 interface AccountsTotalBalanceProps {
   balance: BN;
@@ -35,9 +36,9 @@ export const AccountsTotalBalance: VFC<{
 
   return (
     <AccountsTotalBalanceWrapper className={className}>
-      <Text color="grey-500" size="s">
+      <Typography color="grey-500" size="s">
         Total balance (QTZ)
-      </Text>
+      </Typography>
       <AccountsTotalBalanceValue>
         <Heading size="2">{`${currency.symbol}${formatAmount(
           balance.toString(),
@@ -82,7 +83,7 @@ const AccountsTotalBalanceValue = styled.div`
 const CurrencyOption = ({ title, icon }: Pick<ICurrency, 'title' | 'icon'>) => (
   <CurrencyOptionWrapper>
     <Icon size={24} name={icon} />
-    <Text>{title}</Text>
+    <Typography>{title}</Typography>
   </CurrencyOptionWrapper>
 );
 

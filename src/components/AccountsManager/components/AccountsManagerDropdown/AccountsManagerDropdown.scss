@@ -1,7 +1,7 @@
-.accounts-manager-dropdown {
+div.accounts-manager-dropdown {
   display: flex;
   flex-direction: column;
-  row-gap: 0;
+  row-gap: 0 !important;
   padding: calc(var(--prop-gap) * 1.5);
   min-width: 236px;
 
@@ -12,6 +12,17 @@
   .accounts-manager-wallet {
     .wallet-link-balance {
       margin-bottom: var(--prop-gap);
+      color: var(--color-primary-500);
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      outline: none;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .unique-link {

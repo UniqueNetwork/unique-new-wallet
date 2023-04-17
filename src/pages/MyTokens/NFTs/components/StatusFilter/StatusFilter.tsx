@@ -1,8 +1,8 @@
 import { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Accordion, RadioGroup } from '@unique-nft/ui-kit';
 
+import { Accordion, RadioGroup } from '@app/components';
 import { OptionChips } from '@app/types';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { StatusFilterNft } from '@app/api/graphQL/tokens';
@@ -22,7 +22,7 @@ const StatusFilterComponent: VFC<StatusFilterComponentProps> = ({
 
   return (
     <div className={classNames('status-filter', className)}>
-      <Accordion expanded title="Status">
+      <Accordion isOpen title="Status">
         <RadioGroupWrapper>
           <RadioGroup
             options={status}

@@ -2,13 +2,12 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Dropdown, Loader } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils';
 
 import Pin from 'static/icons/pin.svg';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { Icon, Image, TooltipWrapper } from '@app/components';
+import { Icon, Image, TooltipWrapper, Dropdown, Loader } from '@app/components';
 import { Button as UIButton } from '@app/components/Button';
 
 import { INestingToken, INodeView } from '../types';

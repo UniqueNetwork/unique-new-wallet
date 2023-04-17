@@ -1,0 +1,32 @@
+@import '../../styles/index.scss';
+
+.unique-link {
+    font-family: var(--prop-font-family);
+    font-size: var(--prop-font-size);
+    font-style: normal;
+    font-weight: 500;
+    outline: none;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    &.primary {
+        color: var(--color-primary-600);
+    }
+
+    &.secondary {
+        color: var(--color-grey-500);
+    }
+
+    &.danger {
+        color: var(--color-coral-500);
+    }
+
+    &.disabled {
+        color: var(--color-blue-grey-300);
+        cursor: not-allowed;
+    }
+}

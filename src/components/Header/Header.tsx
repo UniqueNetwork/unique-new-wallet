@@ -1,14 +1,14 @@
 import { INetwork, useNotifications } from '@unique-nft/ui-kit';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 
 import { Button, Icon, IdentityIcon } from '@app/components';
 import { config } from '@app/config';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
-import { networks } from '@app/utils';
+import { formatKusamaBalance, networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
 import { Account } from '@app/account';
 
@@ -19,6 +19,7 @@ import MenuLink from './MenuLink';
 
 export const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const deviceSize = useDeviceSize();
   const { currentChain, setCurrentChain } = useApi();
   const { accounts, changeAccount, isLoading, selectedAccount } = useAccounts();
@@ -64,6 +65,26 @@ export const Header = () => {
     setAccountManagerOpen(false);
     navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`);
   };
+
+  const gotoConnectOrCreateWallet = () => {
+    navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`, {
+      state: { openConnectWallet: true },
+    });
+  };
+
+  const balance = useMemo(() => {
+    const { formatted, amount } = selectedAccount?.balance?.availableBalance || {};
+
+    if (!formatted || !amount) {
+      return '0';
+    }
+    if (deviceSize < DeviceSize.xs) {
+      return formatted.length > amount.slice(0, -5).length
+        ? amount.slice(0, -5)
+        : formatted;
+    }
+    return amount;
+  }, [selectedAccount?.balance?.availableBalance.amount, deviceSize]);
 
   return (
     <HeaderStyled>
@@ -111,9 +132,10 @@ export const Header = () => {
             accounts={[...accounts.values()]}
             avatarRender={(address: string) => <IdentityIcon address={address} />}
             activeNetwork={activeNetwork}
-            balance={selectedAccount?.balance?.availableBalance.amount ?? '0'}
+            balance={balance}
             isLoading={isLoading}
             manageBalanceLinkTitle="Manage my balance"
+            manageBalanceLink={`/${activeNetwork?.id}/${ROUTE.ACCOUNTS}`}
             networks={networks}
             isTouch={deviceSize <= DeviceSize.xs}
             open={isAccountManagerOpen}
@@ -134,13 +156,15 @@ export const Header = () => {
             onOpenChange={(open) => setAccountManagerOpen(open)}
           />
         )}
-        {!isLoading && !accounts.size && (
-          <Button
-            title="Connect wallet"
-            className="create-account-btn account-group-btn-medium-font"
-            onClick={gotoManageBalance}
-          />
-        )}
+        {!isLoading &&
+          !accounts.size &&
+          location.pathname !== `/${activeNetwork?.id}/${ROUTE.ACCOUNTS}` && (
+            <Button
+              title="Connect or create wallet"
+              className="create-account-btn account-group-btn-medium-font"
+              onClick={gotoConnectOrCreateWallet}
+            />
+          )}
       </RightSide>
 
       {showMobileMenu && mobileMenuIsOpen && (
@@ -214,6 +238,7 @@ const LogoIcon = styled.img`
   margin-right: calc(var(--prop-gap) * 2);
   @media (max-width: 700px) {
     width: 100px;
+    margin-right: calc(var(--prop-gap) / 2);
   }
 
   &.hidden-logo {

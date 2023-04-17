@@ -1,7 +1,7 @@
 import React, { VFC } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Text } from '@unique-nft/ui-kit';
 
+import { Typography } from '@app/components';
 import { shortcutText } from '@app/utils';
 
 interface AccountLinkProps {
@@ -25,9 +25,9 @@ export const AccountLinkComponent: VFC<AccountLinkProps> = ({
 
   return (
     <Link to={`/account/${value}`}>
-      <Text color="primary-600" size={size}>
+      <Typography color="primary-600" size={size}>
         {shortcut}
-      </Text>
+      </Typography>
     </Link>
   );
 };

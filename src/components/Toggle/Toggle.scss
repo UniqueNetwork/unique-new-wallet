@@ -1,0 +1,69 @@
+@import '../../styles/index.scss';
+
+.unique-toggle-wrapper {
+    font-family: var(--prop-font-family);
+    font-size: var(--prop-font-size);
+    font-weight: var(--prop-font-weight);
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    input {
+        display: none;
+    }
+
+    .inner {
+        position: absolute;
+        box-sizing: border-box;
+        width: 32px;
+        height: 18px;
+        background-color: var(--color-blue-grey-400);
+        background-size: 200%;
+        border-radius: 30px;
+        &:after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            top: 2px;
+            left: 2px;
+            border-radius: 30px;
+            background-color: var(--color-additional-light);
+        }
+        &.on {
+            background-color: var(--color-primary-500);
+            &:after {
+                left: 16px;
+            }
+        }
+    }
+
+    label {
+        color: var(--color-secondary-500);
+        cursor: pointer;
+        margin-left: 40px;
+    }
+
+    &.disabled {
+        .inner {
+            background-color: var(--color-blue-grey-300);
+        }
+        label {
+            color: var(--color-blue-grey-300);
+        }
+    }
+
+    &.toggle-size {
+        &-s {
+            label {
+                font-size: var(--prop-font-size);
+            }
+        }
+        &-m {
+            label {
+                font-size: 16px;
+            }
+        }
+    }
+}

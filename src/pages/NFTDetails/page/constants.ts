@@ -1,4 +1,4 @@
-import { SelectOptionProps } from '@unique-nft/ui-kit';
+import { SelectOptionProps } from '@app/components/types';
 
 export const menuButtonsNft: SelectOptionProps[] = [
   {

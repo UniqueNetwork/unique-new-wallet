@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
-import { BreadcrumbsProps } from '@unique-nft/ui-kit';
+
+import { BreadcrumbsProps } from '@app/components';
 
 interface PageSettingContextState {
   breadcrumbs?: BreadcrumbsProps;

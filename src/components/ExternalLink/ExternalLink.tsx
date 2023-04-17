@@ -1,6 +1,7 @@
 import { memo, ReactNode } from 'react';
 import styled from 'styled-components';
-import { Icon } from '@unique-nft/ui-kit';
+
+import { Icon } from '../Icon';
 
 interface ExternalLinkProps {
   children: ReactNode;

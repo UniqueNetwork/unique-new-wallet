@@ -1,9 +1,9 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Checkbox } from '@unique-nft/ui-kit';
 import styled from 'styled-components/macro';
 
 import { Statuses } from './types';
-import Accordion from '../Accordion/Accordion';
+import { Accordion } from '../Accordion';
+import { Checkbox } from '../Checkbox';
 
 interface StatusFilterProps {
   onChange(value: Statuses): void;

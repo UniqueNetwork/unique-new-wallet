@@ -1,8 +1,8 @@
 import React, { memo, VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Avatar, Heading, Text } from '@unique-nft/ui-kit';
 
+import { Avatar, Heading, Typography } from '@app/components';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 interface CollectionInformationProps {
@@ -26,7 +26,7 @@ const CollectionInformationComponent: VFC<CollectionInformationProps> = ({
           {title}
         </Heading>
         {!!description && (
-          <Text
+          <Typography
             appearance="block"
             size="s"
             weight="light"
@@ -34,7 +34,7 @@ const CollectionInformationComponent: VFC<CollectionInformationProps> = ({
             className="collection-description"
           >
             {description}
-          </Text>
+          </Typography>
         )}
       </div>
     </div>

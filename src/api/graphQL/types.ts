@@ -15,7 +15,7 @@ export type Pagination = {
 
 export type QueryOptions = {
   skip?: boolean;
-  direction?: Direction;
+  sort?: { [field: string]: Direction };
   pagination: Pagination;
 };
 

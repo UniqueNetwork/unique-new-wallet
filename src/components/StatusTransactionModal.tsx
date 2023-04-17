@@ -1,6 +1,6 @@
-import { Loader } from '@unique-nft/ui-kit';
-
 import { Modal, ModalProps } from '@app/components/Modal';
+
+import { Loader } from './Loader';
 
 type Props = Pick<ModalProps, 'isVisible'> & {
   description: string;

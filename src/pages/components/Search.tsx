@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Button, ComponentProps } from '@unique-nft/ui-kit';
 
-import { Icon, InputBaseProps, InputText } from '@app/components';
+import { ComponentProps } from '@app/components/types';
+import { InputBaseProps, InputText, Button } from '@app/components';
 
 type SearchProps = Pick<ComponentProps, 'className' | 'value' | 'onKeyDown'> &
   Pick<InputBaseProps, 'onChange'> & {

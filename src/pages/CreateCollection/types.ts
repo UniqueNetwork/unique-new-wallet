@@ -7,7 +7,7 @@ export type Warning = {
 
 export type AttributeFieldType = {
   id: 'string' | 'enum' | 'repeated';
-  title: 'Text' | 'Select' | 'Multiselect';
+  title: 'Typography' | 'Select' | 'Multiselect';
 };
 
 export type AttributeFieldOptional = {

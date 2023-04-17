@@ -1,7 +1,8 @@
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
 
-export const LabelText = styled(Text).attrs({
+import { Typography } from '@app/components';
+
+export const LabelText = styled(Typography).attrs({
   appearance: 'block',
 })`
   margin-bottom: calc(var(--prop-gap) / 4);
@@ -16,13 +17,20 @@ export const LabelText = styled(Text).attrs({
   }
 `;
 
-export const AdditionalText = styled(Text).attrs({
+export const AdditionalText = styled(Typography).attrs({
   appearance: 'block',
 })`
   margin-bottom: var(--prop-gap);
 `;
 
-export const StepsTextStyled = styled(Text)`
+export const StatusText = styled(Typography).attrs({
+  color: 'coral-500',
+  size: 's',
+})`
+  margin-top: calc(var(--prop-gap) / 2);
+`;
+
+export const StepsTextStyled = styled(Typography)`
   flex: 1 1 100%;
   padding-right: var(--prop-gap);
 

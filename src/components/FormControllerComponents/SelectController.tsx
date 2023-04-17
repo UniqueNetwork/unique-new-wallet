@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Select, SelectProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
+
+import { Select, SelectProps } from '../Select';
 
 type SelectControllerProps = BaseControllerProps<Omit<SelectProps, 'onChange'>> & {
   transform?: {

@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react';
-import { Loader, Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { ModalContent } from '@app/pages/components/ModalComponents';
-import { Alert } from '@app/components';
+import { Loader, Typography, Alert } from '@app/components';
 
 type Props = {
   children: ReactNode;
@@ -40,9 +39,9 @@ export const FormWrapper = ({
     <ModalContent>
       {children}
       <TransferRow>
-        <Text>
+        <Typography>
           Proceed with caution, once confirmed the transaction cannot be reverted.
-        </Text>
+        </Typography>
       </TransferRow>
       <TransferRow gap="sm">{feeComponent}</TransferRow>
     </ModalContent>

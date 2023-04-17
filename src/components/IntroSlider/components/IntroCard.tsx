@@ -1,11 +1,10 @@
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Heading, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { ROUTE } from '@app/routes';
-import { Button } from '@app/components/Button';
+import { Button, Heading, Typography } from '@app/components';
 
 type IntroCardProps = {
   imgPath: string;
@@ -34,7 +33,7 @@ export const IntroCard = ({
     <IntroCardWrapper>
       <img width="96" src={imgPath} alt="" />
       <Heading size={isXsMobile ? '3' : '2'}>{title}</Heading>
-      <Text appearance="block">{description}</Text>
+      <Typography appearance="block">{description}</Typography>
       <div className="buttons-wrapper">
         {isLast ? (
           <div className="group-btn">
