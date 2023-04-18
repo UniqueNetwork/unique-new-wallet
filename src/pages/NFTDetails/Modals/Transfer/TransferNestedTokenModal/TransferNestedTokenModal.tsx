@@ -158,15 +158,27 @@ export const TransferNestedTokenModal = ({
                     error={!!fieldState.error}
                     statusText={fieldState.error?.message}
                     onChange={onChange}
+                    onClear={() => onChange('')}
                   />
                 );
               }}
               rules={{
                 required: true,
-                validate: (val: string) =>
-                  Address.is.ethereumAddress(val) ||
-                  Address.is.substrateAddress(val) ||
-                  'Invalid address',
+                validate: (val: string) => {
+                  if (
+                    selectedAccount?.address
+                      .toLowerCase()
+                      .localeCompare(val.trim().toLowerCase()) === 0
+                  ) {
+                    return 'Invalid address';
+                  }
+
+                  return (
+                    Address.is.ethereumAddress(val) ||
+                    Address.is.substrateAddress(val) ||
+                    'Invalid address'
+                  );
+                },
               }}
             />
           </TransferRow>
