@@ -25,7 +25,7 @@ export const AccountWrapper: FC = ({ children }) => {
   const [accounts, setAccounts] = useState<Map<string, BaseWalletType<WalletsType>>>(
     new Map(),
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
   const [signer, setSigner] = useState<Account>();

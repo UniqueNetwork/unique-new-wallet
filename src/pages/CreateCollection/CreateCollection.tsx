@@ -13,7 +13,7 @@ import {
   useDeviceSize,
 } from '@app/hooks';
 import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
-import { ROUTE } from '@app/routes';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import {
   Alert,
   Button,
@@ -64,7 +64,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const navigate = useNavigate();
   const { currentChain } = useApi();
   const { error, info } = useNotifications();
-  const { selectedAccount } = useAccounts();
+  const { selectedAccount, isLoading } = useAccounts();
   const formMapper = useCollectionFormMapper();
   const {
     getFee,
@@ -107,12 +107,17 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
   useEffect(() => {
-    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
-      navigate('/');
+    if (isLoading) {
       return;
     }
-    collectionForm.setValue('address', selectedAccount.address);
-  }, [selectedAccount]);
+
+    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
+      window.location.pathname = `${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`;
+      navigate(`${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    } else {
+      collectionForm.setValue('address', selectedAccount.address);
+    }
+  }, [selectedAccount, isLoading]);
 
   useEffect(() => {
     if (!feeError) {
