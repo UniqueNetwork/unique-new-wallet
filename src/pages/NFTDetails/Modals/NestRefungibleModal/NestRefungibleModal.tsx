@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider } from 'react-hook-form';
 import styled from 'styled-components';
 import { Address } from '@unique-nft/utils';
@@ -16,7 +15,13 @@ import {
   useTokenRefungibleTransfer,
 } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { Loader, Typography, Modal, TransferBtn } from '@app/components';
+import {
+  Loader,
+  Typography,
+  Modal,
+  TransferBtn,
+  useNotifications,
+} from '@app/components';
 import { Suggest } from '@app/components/Suggest';
 import {
   useGraphQlCollectionsByNestingAccount,

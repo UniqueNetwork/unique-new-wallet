@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { Alert, Loader, useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Address } from '@unique-nft/utils';
 import { NestTokenBody, TokenId } from '@unique-nft/sdk';
 
-import { Modal, BaseActionBtn } from '@app/components';
+import { Modal, BaseActionBtn, Alert, Loader, useNotifications } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
 import {

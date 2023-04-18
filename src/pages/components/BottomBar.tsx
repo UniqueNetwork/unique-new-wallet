@@ -3,7 +3,10 @@ import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 
 import { ButtonGroup } from '@app/pages/components/FormComponents';
-import { Icon, Heading, Link, Typography } from '@app/components';
+import { Icon, Typography } from '@app/components';
+
+import { Heading } from '../../components/Heading';
+import { Link } from '../../components/Link';
 
 export interface BottomBarProps {
   buttons: ReactNode[];

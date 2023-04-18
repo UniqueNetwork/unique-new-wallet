@@ -1,4 +1,3 @@
-import { useNotifications } from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm, FormProvider, useFormContext } from 'react-hook-form';
@@ -21,6 +20,7 @@ import {
   Typography,
   Loader,
   BaseActionBtn,
+  useNotifications,
 } from '@app/components';
 import { FORM_ERRORS } from '@app/pages/constants';
 
@@ -119,8 +119,15 @@ export const AskQuestionComponent = () => {
                 value: true,
                 message: 'You did not fill in the required fields',
               },
-              validate: (value) =>
-                value.trim().length ? true : 'You did not fill in the required fields',
+              validate: (value) => {
+                if (!value.trim().length) {
+                  return 'You did not fill in the required fields';
+                }
+                if (/^\W+$/.test(value.trim())) {
+                  return 'Name is not correct';
+                }
+                return true;
+              },
             }}
           />
           <InputController
@@ -152,8 +159,15 @@ export const AskQuestionComponent = () => {
                 value: true,
                 message: 'You did not fill in the required fields',
               },
-              validate: (value) =>
-                value.trim().length ? true : 'You did not fill in the required fields',
+              validate: (value) => {
+                if (!value.trim().length) {
+                  return 'You did not fill in the required fields';
+                }
+                if (/^\W+$/.test(value.trim())) {
+                  return 'Question is not correct';
+                }
+                return true;
+              },
             }}
           />
           <ConfirmWrapper>

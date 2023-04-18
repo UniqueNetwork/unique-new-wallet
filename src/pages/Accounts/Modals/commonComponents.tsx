@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro';
 
-import { Typography } from '@app/components';
+import { Typography } from '../../../components/Typography/Typography';
 
 export const LabelText = styled(Typography).attrs({
   appearance: 'block',

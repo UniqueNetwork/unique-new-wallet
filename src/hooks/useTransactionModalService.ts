@@ -1,10 +1,10 @@
 import { DeepPartial, FieldValues, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 import { useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { ExtrinsicResultResponse, FeeResponse } from '@unique-nft/sdk';
 import { UseMutateAsyncFunction } from 'react-query';
 
+import { useNotifications } from '@app/components';
 import { Account, WalletsType } from '@app/account';
 
 import { useIsSufficientBalance } from './useBalanceInsufficient';

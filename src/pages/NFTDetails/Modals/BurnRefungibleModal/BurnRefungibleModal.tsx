@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -9,7 +8,7 @@ import { BurnRefungibleBody, BurnRefungibleParsed } from '@unique-nft/sdk';
 import { useAccounts, useApi } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
 import { useTokenRefungibleBurn } from '@app/api/restApi/token/useTokenRefungibleBurn';
-import { Modal, TransferBtn, Typography } from '@app/components';
+import { Modal, TransferBtn, Typography, useNotifications } from '@app/components';
 import {
   FormWrapper,
   TransferRow,

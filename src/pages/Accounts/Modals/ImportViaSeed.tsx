@@ -1,8 +1,7 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 
 import { useAccounts } from '@app/hooks';
-import { Modal } from '@app/components/Modal';
+import { Modal, useNotifications } from '@app/components';
 import { AskCredentialsModal, AskExistsSeedPhrase } from '@app/pages';
 
 import {

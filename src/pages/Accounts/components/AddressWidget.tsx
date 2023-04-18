@@ -4,7 +4,9 @@ import classNames from 'classnames';
 
 import { shortAddress } from '@app/utils';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
-import { IdentityIcon, Typography } from '@app/components';
+import { IdentityIcon } from '@app/components';
+
+import { Typography } from '../../../components/Typography';
 
 interface AddressWidgetProps {
   address?: string;

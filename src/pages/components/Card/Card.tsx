@@ -29,7 +29,7 @@ export const Card: VFC<IPreviewCard> = ({
       <PreviewCardInfo>
         <PreviewCardTitle>{title}</PreviewCardTitle>
         <PreviewCardDescription>{description}</PreviewCardDescription>
-        {(attributes || attributesInline?.length) && (
+        {(attributes || !!attributesInline?.length) && (
           <PreviewCardAttributes>
             <Typography size="m">
               {attributesInline ? 'Attribute names' : 'Attributes'}

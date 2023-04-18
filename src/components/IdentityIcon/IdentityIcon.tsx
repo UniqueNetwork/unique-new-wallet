@@ -2,7 +2,8 @@ import { VFC } from 'react';
 import styled from 'styled-components';
 // @ts-ignore
 import Jdenticon from 'react-jdenticon';
-import { useNotifications } from '@unique-nft/ui-kit';
+
+import { useNotifications } from '@app/components';
 
 interface IdentityIconProps {
   address: string;

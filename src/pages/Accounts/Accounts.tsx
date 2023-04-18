@@ -17,7 +17,6 @@ import {
   Dropdown,
   Icon,
   Typography,
-  Button,
 } from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
@@ -27,6 +26,7 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ConnectWallets } from '@app/pages';
 import { useAccountsWithdrawableBalanceService } from '@app/api/restApi/balance/useAccountsWithdrawableBalanceService';
 
+import { Button } from '../../components/Button';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 import { WithdrawModal } from '../MyTokens/Coins/modals/Withdraw';
@@ -124,6 +124,9 @@ const ActionsWrapper = styled.div`
   justify-content: flex-start;
   flex-wrap: nowrap;
   gap: var(--prop-gap);
+  div:last-child {
+    min-width: 24px;
+  }
   .unique-dropdown {
     .dropdown-wrapper,
     .dropdown-options {
@@ -334,18 +337,20 @@ const getAccountsColumns = ({
                 />
               )}
           </TransferBtnGroup>
-          {rowData.signerType === AccountSigner.local && (
-            <Dropdown
-              placement="right"
-              dropdownRender={() => (
-                <AccountContextMenu
-                  onForgetWalletClick={onForgetWalletClick(rowData?.address)}
-                />
-              )}
-            >
-              <Icon name="more-horiz" size={24} />
-            </Dropdown>
-          )}
+          <div>
+            {rowData.signerType === AccountSigner.local && (
+              <Dropdown
+                placement="right"
+                dropdownRender={() => (
+                  <AccountContextMenu
+                    onForgetWalletClick={onForgetWalletClick(rowData?.address)}
+                  />
+                )}
+              >
+                <Icon name="more-horiz" size={24} />
+              </Dropdown>
+            )}
+          </div>
         </ActionsWrapper>
       );
     },

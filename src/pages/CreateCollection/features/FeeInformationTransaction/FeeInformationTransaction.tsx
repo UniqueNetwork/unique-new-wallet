@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 
+import { useNotifications } from '@app/components';
 import { FeeInformationTransaction as FeeInformationTransactionComponent } from '@app/components/FeeInformationTransaction';
 
 import { useFeeContext } from '../../context';

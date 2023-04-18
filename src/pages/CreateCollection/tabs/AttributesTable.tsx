@@ -1,9 +1,9 @@
 import { ReactNode, useCallback, VFC } from 'react';
 import styled from 'styled-components';
 import { Controller, useFieldArray, useWatch } from 'react-hook-form';
-import { InputText, Select, TableColumnProps } from '@unique-nft/ui-kit';
+import { TableColumnProps } from '@unique-nft/ui-kit';
 
-import { Button, Icon, Table, TooltipWrapper } from '@app/components';
+import { Button, Icon, Table, TooltipWrapper, InputText, Select } from '@app/components';
 import { FORM_ERRORS } from '@app/pages/constants';
 
 import { EnumsInputController } from '../components/EnumsInput/EnumsInputController';

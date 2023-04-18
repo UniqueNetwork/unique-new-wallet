@@ -1,0 +1,114 @@
+div.notification-container {
+  position: absolute;
+  top: calc(80px + var(--prop-gap));
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 1100;
+  overflow: hidden;
+
+  .notification-alert {
+    column-gap: 8px;
+    align-items: center;
+    display: flex;
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    border-radius: var(--prop-border-radius);
+    max-height: 100%;
+    max-width: 33vw;
+    font-size: 16px;
+    font-weight: 500;
+    animation: slide-open-right 0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000) both;
+    overflow-y: hidden;
+    svg {
+      min-width: 32px;
+    }
+    &.info {
+      background-color: var(--color-additional-positive-500);
+      color: var(--color-additional-light);
+    }
+    &.warning {
+      background-color: var(--color-additional-warning-500);
+      color: var(--color-additional-light);
+    }
+    &.error {
+      background-color: var(--color-coral-500);
+      color: var(--color-additional-light);
+    }
+    &.closed {
+      animation: slide-close-right 0.6s ease-in-out both;
+    }
+  }
+
+  &.left {
+    right: unset;
+    left: 16px;
+    align-items: flex-start;
+    .notification-alert {
+      animation: slide-open-left 0.5s cubic-bezier(0.190, 1.000, 0.220, 1.000) both;
+      &.closed {
+        animation: slide-close-left 0.6s ease-in-out both;
+      }
+    }
+  }
+}
+
+@keyframes slide-open-right {
+  0% {
+    transform: translateX(200%);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes slide-close-right {
+  0% {
+    transform: translateX(0px);
+  }
+  80% {
+    transform: translateX(200%);
+    max-height: 100%;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    height: initial;
+  }
+  100% {
+    transform: translateX(200%);
+    max-height: 0;
+    margin-bottom: 0;
+    padding: 0;
+    height: 0;
+  }
+}
+
+
+@keyframes slide-open-left {
+  0% {
+    transform: translateX(-200%);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes slide-close-left {
+  0% {
+    transform: translateX(0px);
+  }
+  80% {
+    transform: translateX(-200%);
+    max-height: 100%;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    height: initial;
+  }
+  100% {
+    transform: translateX(-100%);
+    max-height: 0;
+    margin-bottom: 0;
+    padding: 0;
+    height: 0;
+  }
+}

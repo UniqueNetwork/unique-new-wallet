@@ -13,12 +13,13 @@ import { useChainProperties } from '@app/api/restApi/properties/useChainProperti
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
 import { RampModal } from '@app/pages';
-import { Heading, NoItems } from '@app/components';
+import { NoItems } from '@app/components';
 import { SendFunds } from '@app/pages/SendFunds';
 import { Chain, NetworkType } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CoinsRow } from './components';
+import { Heading } from '../../../components/Heading';
 import { WithdrawModal } from './modals/Withdraw';
 
 const CoinsContainer = styled.div`
