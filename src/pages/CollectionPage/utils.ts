@@ -5,20 +5,16 @@ export const getSponsorShip = (
     return null;
   }
   try {
-    const objectSponsorship = JSON.parse(sponsorship);
-    const sponsorshipValue = objectSponsorship.confirmed ?? objectSponsorship.unconfirmed;
+    const sponsorshipValue = sponsorship;
 
     if (sponsorshipValue) {
       return {
-        // eslint-disable-next-line no-prototype-builtins
-        isConfirmed: objectSponsorship.hasOwnProperty('confirmed'),
+        isConfirmed: true,
         value: sponsorshipValue,
       };
     }
-
     return null;
   } catch (e) {
-    console.error(e);
     return null;
   }
 };
