@@ -44,6 +44,13 @@ export const CollectionsFilter = styled(CollectionsFilterComponent)`
   }
   &.collections-filter {
     padding-top: calc(var(--prop-gap)) 0;
+
+    & div[class*='AccordionBodyWrapper'] {
+      max-height: 420px !important;
+      overflow-y: auto;
+      margin-right: -16px;
+      padding-right: 16px;
+    }
   }
   &.collection-filter-item {
     margin-top: 16px;
