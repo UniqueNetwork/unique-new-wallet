@@ -70,14 +70,14 @@ export const FeeLoader = styled.span`
     .loader {
       width: calc(var(--prop-gap) * 1.375);
       height: calc(var(--prop-gap) * 1.375);
-      border-top-color: var(--color-additional-warning-500);
-      border-left-color: var(--color-additional-warning-500);
+      border-top-color: var(--color-primary-500);
+      border-left-color: var(--color-primary-500);
     }
 
     .loader-label {
       font-size: var(--prop-font-size);
       font-weight: calc(var(--prop-font-weight) + 100);
-      color: var(--color-additional-warning-500);
+      color: var(--color-primary-500);
     }
   }
 `;
