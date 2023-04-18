@@ -14,7 +14,7 @@ export const FeeInformationTransaction = ({ fee, className, feeLoading }: Props)
     <StyledAlert className={className} type="warning">
       {feeLoading ? (
         <FeeLoader>
-          <Loader size="small" label="Calculating fee" placement="left" />
+          <Loader size="small" label="Loading" placement="left" />
         </FeeLoader>
       ) : (
         <Typography
