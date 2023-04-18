@@ -79,6 +79,9 @@ export const Header = () => {
       return '0';
     }
     if (deviceSize < DeviceSize.xs) {
+      if (!amount.includes('.')) {
+        return amount;
+      }
       return formatted.length > amount.slice(0, -5).length
         ? amount.slice(0, -5)
         : formatted;
