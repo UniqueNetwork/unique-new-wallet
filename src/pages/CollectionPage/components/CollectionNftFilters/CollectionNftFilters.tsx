@@ -95,10 +95,14 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
     onChangeDirection(option.id);
   };
 
-  const handleSearch = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.keyCode === KEY_CODE_ENTER) {
+  const handleSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.code === 'Enter') {
       onChangeSearch(search);
     }
+  };
+
+  const handleSearch = () => {
+    onChangeSearch(search);
   };
 
   const handleSearchClear = () => {
@@ -146,9 +150,10 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
             />
             <Search
               value={search}
-              onKeyDown={handleSearch}
+              onKeyDown={handleSearchKeyDown}
               onChange={setSearch}
               onClear={handleSearchClear}
+              onClick={handleSearch}
             />
             <Select
               options={sortOptions}
