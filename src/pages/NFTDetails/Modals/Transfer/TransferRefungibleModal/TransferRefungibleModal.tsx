@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider } from 'react-hook-form';
 import {
@@ -12,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAccounts } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api/restApi/token/useTokenGetBalance';
 import { useTokenRefungibleTransfer } from '@app/api';
-import { Modal, TransferBtn, Loader } from '@app/components';
+import { Modal, TransferBtn, Loader, useNotifications } from '@app/components';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
 

@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
-import { Typography } from '@app/components';
 import { NetworkType } from '@app/types';
+
+import { Typography } from '../../components/Typography';
 
 export type TNetworkBalances = {
   balanceFull?: string;

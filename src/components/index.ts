@@ -29,6 +29,7 @@ export * from './List';
 export * from './Loader';
 export * from './Modal';
 export * from './NoItems';
+export * from './Notifications';
 export * from './PageLayout';
 export * from './PagePaper';
 export * from './Pagination';

@@ -1,10 +1,9 @@
 import { FC, useCallback, useMemo, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useAccounts } from '@app/hooks';
 import { AskCredentialsModal, AskSeedPhrase } from '@app/pages';
-import { Modal } from '@app/components/Modal';
+import { Modal, useNotifications } from '@app/components';
 
 import {
   CreateAccountModalStages,

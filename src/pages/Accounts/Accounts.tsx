@@ -17,7 +17,6 @@ import {
   Dropdown,
   Icon,
   Typography,
-  Button,
 } from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { AccountContextMenu } from '@app/pages/Accounts/components';
@@ -27,6 +26,7 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ConnectWallets } from '@app/pages';
 import { useAccountsWithdrawableBalanceService } from '@app/api/restApi/balance/useAccountsWithdrawableBalanceService';
 
+import { Button } from '../../components/Button';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 import { WithdrawModal } from '../MyTokens/Coins/modals/Withdraw';

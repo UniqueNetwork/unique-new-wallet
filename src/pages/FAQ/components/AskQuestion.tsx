@@ -1,4 +1,3 @@
-import { useNotifications } from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useForm, FormProvider, useFormContext } from 'react-hook-form';
@@ -21,6 +20,7 @@ import {
   Typography,
   Loader,
   BaseActionBtn,
+  useNotifications,
 } from '@app/components';
 import { FORM_ERRORS } from '@app/pages/constants';
 

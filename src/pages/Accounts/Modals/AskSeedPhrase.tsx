@@ -9,9 +9,7 @@ import {
   Checkbox,
   Heading,
   Icon,
-  Link,
   Select,
-  Textarea,
   TooltipWrapper,
 } from '@app/components';
 import {
@@ -25,6 +23,8 @@ import {
 } from '@app/pages/components/ModalComponents';
 import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 
+import { Textarea } from '../../../components/Textarea';
+import { Link } from '../../../components/Link';
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
 

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -13,6 +12,7 @@ import {
   InputText,
   Loader,
   Typography,
+  useNotifications,
 } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';

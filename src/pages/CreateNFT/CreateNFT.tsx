@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, VFC } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useNotifications } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { CreateTokenBody, TokenId } from '@unique-nft/sdk';
@@ -19,7 +18,13 @@ import {
   useTokenCreate,
 } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { Alert, Button, ConfirmBtn, StatusTransactionModal } from '@app/components';
+import {
+  Alert,
+  Button,
+  ConfirmBtn,
+  StatusTransactionModal,
+  useNotifications,
+} from '@app/components';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { getTokenIpfsUriByImagePath } from '@app/utils';

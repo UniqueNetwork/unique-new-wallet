@@ -1,10 +1,8 @@
 import React, { FC, useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
-import { Address } from '@unique-nft/utils';
 
 import { useApi } from '@app/hooks';
 import { Account } from '@app/account';
-import { Stages, Modal } from '@app/components';
+import { Stages, Modal, useNotifications } from '@app/components';
 import { Chain, StageStatus } from '@app/types';
 import { useAccountBalanceWithdraw } from '@app/api';
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
+import { useNotifications } from '@app/components';
 import { ROUTE } from '@app/routes';
 import { useAccounts, useApi, useIsSufficientBalance } from '@app/hooks';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';

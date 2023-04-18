@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { TransferTokenBody, TransferTokenParsed } from '@unique-nft/sdk';
 import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
-import { Modal, TransferBtn, Loader } from '@app/components';
+import { Modal, TransferBtn, Loader, useNotifications } from '@app/components';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
 import { useTokenParentGetById, useTokenTransfer } from '@app/api';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';

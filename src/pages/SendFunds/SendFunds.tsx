@@ -1,11 +1,18 @@
 import React, { FC, useEffect, useMemo, VFC } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { useDebounce } from 'use-debounce';
 
 import { DeviceSize, useApi, useDeviceSize, useFormValidator } from '@app/hooks';
 import { Account } from '@app/account';
-import { Alert, Stages, TransferBtn, Modal, Loader, Typography } from '@app/components';
+import {
+  Alert,
+  Stages,
+  TransferBtn,
+  Modal,
+  Loader,
+  Typography,
+  useNotifications,
+} from '@app/components';
 import { Chain, NetworkType, StageStatus } from '@app/types';
 import { useAccountBalanceTransfer } from '@app/api';
 

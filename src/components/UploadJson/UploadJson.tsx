@@ -1,4 +1,3 @@
-import { useNotifications } from '@unique-nft/ui-kit';
 import React, { FC, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
 
@@ -6,7 +5,7 @@ import { FILE_FORMAT_ERROR } from '@app/pages';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
 import { shortcutText } from '@app/utils';
 
-import { Icon, Typography } from '..';
+import { Icon, Typography, useNotifications } from '..';
 
 interface UploadProps {
   onChange(file: File): void;

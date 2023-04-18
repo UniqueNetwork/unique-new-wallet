@@ -1,5 +1,4 @@
 import React, { VFC, useCallback } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { Controller } from 'react-hook-form';
 import styled from 'styled-components';
 
@@ -31,6 +30,7 @@ import {
   Textarea,
   Upload,
   Loader,
+  useNotifications,
 } from '@app/components';
 
 interface MainInformationProps {

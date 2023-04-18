@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-import { Alert, Loader, Typography } from '../components';
+import { Loader, Typography } from '../components';
+import { Alert } from '../components/Alert';
 
 type Props = {
   fee?: string;
