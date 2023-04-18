@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ComponentProps } from '@app/components/types';
-import { InputBaseProps, InputText, Button } from '@app/components';
+import { InputBaseProps, InputText, Button, Icon } from '@app/components';
 
 type SearchProps = Pick<ComponentProps, 'className' | 'value' | 'onKeyDown'> &
   Pick<InputBaseProps, 'onChange'> & {
@@ -13,6 +13,8 @@ type SearchProps = Pick<ComponentProps, 'className' | 'value' | 'onKeyDown'> &
 const Wrapper = styled.div`
   display: flex;
   gap: calc(var(--prop-gap) / 2);
+  position: relative;
+  flex-basis: 570px;
 
   .unique-input-text {
     width: 100%;
@@ -28,13 +30,9 @@ const Wrapper = styled.div`
           padding-bottom: 7px !important;
         }
       }
-    }
-  }
-  button.unique-button.primary {
-    display: none;
-    width: auto;
-    @media screen and (min-width: 1024px) {
-      display: flex;
+      button.unique-button.with-icon.to-right {
+        margin-right: 36px;
+      }
     }
   }
 `;
@@ -42,7 +40,7 @@ const Wrapper = styled.div`
 export const Search = ({
   className,
   value,
-  hideButton,
+  hideButton = false,
   onChange,
   onKeyDown,
   onClick,
@@ -52,7 +50,6 @@ export const Search = ({
     <Wrapper className={className}>
       <InputText
         clearable
-        iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-blue-grey-500)' }}
         value={value}
         placeholder="Search"
         onChange={onChange}
@@ -60,8 +57,23 @@ export const Search = ({
         onClear={onClear}
       />
       {!hideButton && (
-        <Button role="primary" type="button" title="Search" onClick={onClick} />
+        <ButtonWrapper>
+          <Button
+            title=""
+            role="ghost"
+            iconLeft={{ name: 'magnify', size: 18, color: 'var(--color-primary-500)' }}
+            onClick={onClick}
+          />
+        </ButtonWrapper>
       )}
     </Wrapper>
   );
 };
+
+const ButtonWrapper = styled.div`
+  position: absolute;
+  right: calc(var(--prop-gap) / 4);
+  button.unique-button.ghost {
+    padding: 0;
+  }
+`;

@@ -156,7 +156,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
               <Alert type="warning">
                 {feeLoading && (
                   <FeeLoader>
-                    <Loader size="small" label="Calculating fee" placement="left" />
+                    <Loader size="small" label="Loading" placement="left" />
                   </FeeLoader>
                 )}
                 {!showFee && (

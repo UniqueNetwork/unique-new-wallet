@@ -145,7 +145,6 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
             />
             <Search
-              hideButton
               value={search}
               onKeyDown={handleSearch}
               onChange={setSearch}

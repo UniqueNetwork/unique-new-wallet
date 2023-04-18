@@ -180,7 +180,7 @@ export const ControlGroup = styled.div`
 
 const ControlsContainer = styled.div`
   @media screen and (min-width: 1024px) {
-    margin-left: auto;
+    /* margin-left: auto; */
   }
 `;
 
@@ -188,7 +188,7 @@ export const TopFilter = styled(TopFilterComponent)`
   box-sizing: border-box;
   flex: 1 1 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex-direction: ${(p) => p.view};
   align-items: center;
   width: 100%;

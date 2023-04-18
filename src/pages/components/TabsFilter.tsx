@@ -37,7 +37,7 @@ const TabsFilterWrapper = styled.div`
   }
 
   .filter-search-wrapper {
-    max-width: 370px;
+    max-width: 570px;
     width: 100%;
   }
 
