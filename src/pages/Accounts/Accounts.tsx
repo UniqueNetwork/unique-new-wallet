@@ -30,6 +30,7 @@ import { Button } from '../../components/Button';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 import { WithdrawModal } from '../MyTokens/Coins/modals/Withdraw';
+import trash from '../../static/icons/trash.svg';
 
 type AccountsColumnsProps = {
   onShowSendFundsModal(account: Account): () => void;
@@ -134,6 +135,9 @@ const ActionsWrapper = styled.div`
       padding: 0;
       cursor: pointer;
     }
+  }
+  button.unique-button.ghost {
+    padding: 8px 0;
   }
 `;
 
@@ -339,16 +343,12 @@ const getAccountsColumns = ({
           </TransferBtnGroup>
           <div>
             {rowData.signerType === AccountSigner.local && (
-              <Dropdown
-                placement="right"
-                dropdownRender={() => (
-                  <AccountContextMenu
-                    onForgetWalletClick={onForgetWalletClick(rowData?.address)}
-                  />
-                )}
-              >
-                <Icon name="more-horiz" size={24} />
-              </Dropdown>
+              <Button
+                title=""
+                role="ghost"
+                iconLeft={{ file: trash, size: 24 }}
+                onClick={onForgetWalletClick(rowData?.address)}
+              />
             )}
           </div>
         </ActionsWrapper>
