@@ -1,9 +1,8 @@
 import { ReactNode, useEffect } from 'react';
-import { IconProps, Text, useNotifications } from '@unique-nft/ui-kit';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
 import { Account } from '@app/account';
-import { Dropdown, Icon } from '@app/components';
+import { Dropdown, Icon, Typography, IconProps, useNotifications } from '@app/components';
 
 import { isTouchDevice } from '../../utils';
 import { AccountsManagerDropdown } from './components';
@@ -36,6 +35,7 @@ export interface AccountsManagerProps {
   deposit?: string;
   depositDescription?: ReactNode;
   manageBalanceLinkTitle?: string;
+  manageBalanceLink?: string;
   symbol: string;
   isLoading?: boolean;
   isTouch?: boolean;
@@ -92,9 +92,17 @@ export const AccountsManager = (props: AccountsManagerProps) => {
         <div className="accounts-manager-selected-account">
           <Icon size={20} name="user" />
           <div className="accounts-manager-selected-account-name">
-            <Text color="blue-grey-500" size="s">
+            <Typography
+              color="blue-grey-500"
+              size="s"
+              title={
+                selectedAccount?.name && selectedAccount.name.length > 12
+                  ? selectedAccount.name
+                  : undefined
+              }
+            >
               {selectedAccount?.name}
-            </Text>
+            </Typography>
             <button
               className="address-copy"
               type="button"
@@ -109,7 +117,10 @@ export const AccountsManager = (props: AccountsManagerProps) => {
               <Icon size={16} name="copy" />
             </button>
           </div>
-          <Text className="selected-balance" size="s">{`${balance} ${symbol}`}</Text>
+          <Typography
+            className="selected-balance"
+            size="s"
+          >{`${balance} ${symbol}`}</Typography>
         </div>
         <div className="accounts-manager-network">
           {activeNetwork && (

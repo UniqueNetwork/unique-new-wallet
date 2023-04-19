@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -9,13 +8,13 @@ import { BurnRefungibleBody, BurnRefungibleParsed } from '@unique-nft/sdk';
 import { useAccounts, useApi } from '@app/hooks';
 import { useTokenGetBalance } from '@app/api';
 import { useTokenRefungibleBurn } from '@app/api/restApi/token/useTokenRefungibleBurn';
-import { Modal, TransferBtn } from '@app/components';
+import { Modal, TransferBtn, Typography, useNotifications } from '@app/components';
 import {
   FormWrapper,
   TransferRow,
   InputAmount,
 } from '@app/pages/NFTDetails/Modals/Transfer';
-import { ROUTE } from '@app/routes';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { formatBlockNumber } from '@app/utils';
 import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
 
@@ -105,7 +104,9 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
 
       info('RFT burned successfully');
       if (Number(amount) === fractionsBalance?.amount) {
-        navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+        navigate(
+          `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+        );
       }
       await onComplete();
     } catch {
@@ -163,9 +164,12 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
                     label={
                       <LabelWrapper>
                         Number of fractions
-                        <Text size="s" color="grey-500">{`You own: ${formatBlockNumber(
+                        <Typography
+                          size="s"
+                          color="grey-500"
+                        >{`You own: ${formatBlockNumber(
                           fractionsBalance?.amount || 0,
-                        )}`}</Text>
+                        )}`}</Typography>
                       </LabelWrapper>
                     }
                     value={value}

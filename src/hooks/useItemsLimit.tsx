@@ -1,14 +1,17 @@
+import { useState } from 'react';
+
 import { SizeMap, useDeviceSize } from '@app/hooks/useDeviceSize';
 
 const DEFAULT_ITEMS_COUNT = 10;
 
-export const useItemsLimit = (breakpoints: Record<string, number>): number => {
+export const useItemsLimit = (breakpoints: Record<string, number>) => {
   const deviceSize = useDeviceSize();
   const size = SizeMap[deviceSize];
 
-  if (!breakpoints) {
-    return DEFAULT_ITEMS_COUNT;
-  }
+  const [limits, setLimits] = useState(breakpoints || {});
 
-  return size in breakpoints ? breakpoints[size] : DEFAULT_ITEMS_COUNT;
+  return {
+    limit: size in limits ? limits[size] : DEFAULT_ITEMS_COUNT,
+    setLimit: (limit: number) => setLimits({ ...limits, [size]: limit }),
+  };
 };

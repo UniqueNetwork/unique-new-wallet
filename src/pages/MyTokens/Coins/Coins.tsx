@@ -1,5 +1,4 @@
 import { AllBalancesResponse, ChainPropertiesResponse } from '@unique-nft/sdk';
-import { Heading } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import React, { useCallback, useEffect, useState } from 'react';
 import { UseQueryResult } from 'react-query';
@@ -14,11 +13,13 @@ import { useChainProperties } from '@app/api/restApi/properties/useChainProperti
 import { config } from '@app/config';
 import { useAccounts } from '@app/hooks';
 import { RampModal } from '@app/pages';
+import { NoItems } from '@app/components';
 import { SendFunds } from '@app/pages/SendFunds';
 import { Chain, NetworkType } from '@app/types';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 
 import { CoinsRow } from './components';
+import { Heading } from '../../../components/Heading';
 import { WithdrawModal } from './modals/Withdraw';
 
 const CoinsContainer = styled.div`
@@ -54,7 +55,7 @@ export const Coins = () => {
   const [selectedChain, setSelectedChain] = useState<Chain>(config.defaultChain);
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
-  const { selectedAccount } = useAccounts();
+  const { selectedAccount, isLoading } = useAccounts();
 
   const accountBalances = useAccountBalancesService(
     Object.values(config.allChains).map((chain) => chain.apiEndpoint),
@@ -91,8 +92,11 @@ export const Coins = () => {
   const closeTransferFundsModalHandler = useCallback(() => {
     setFundsModalVisible(false);
     setWithdrawModalVisible(false);
-    refetchWithdrawableBalances();
   }, []);
+
+  const onWithdrawSuccess = useCallback(async () => {
+    await refetchWithdrawableBalances();
+  }, [refetchWithdrawableBalances]);
 
   const onWithdrawHandler = useCallback(
     (networkType: NetworkType, chain: Chain, amount: string) => {
@@ -143,6 +147,10 @@ export const Coins = () => {
       },
     },
   };
+
+  if (!isLoading && !selectedAccount) {
+    return <NoItems iconName="no-accounts" />;
+  }
 
   return (
     <CoinsContainer>
@@ -216,6 +224,7 @@ export const Coins = () => {
             chain={selectedChain}
             amount={amountToWithdraw}
             onClose={closeTransferFundsModalHandler}
+            onWithdrawSuccess={onWithdrawSuccess}
           />
         </ApiWrapper>
       )}

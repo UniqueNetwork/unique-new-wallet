@@ -1,8 +1,8 @@
 import { VFC } from 'react';
 import classNames from 'classnames';
 import styled from 'styled-components';
-import { Accordion } from '@unique-nft/ui-kit';
 
+import { Accordion } from '@app/components';
 import { OptionChips } from '@app/types';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -22,7 +22,7 @@ const CollectionsFilterComponent: VFC<CollectionsFilterComponentProps> = ({
 
   return (
     <div className={classNames('collections-filter', className)}>
-      <Accordion expanded title="Collections">
+      <Accordion isOpen title="Collections">
         {collections?.map((c) => (
           <CollectionFilterItem
             key={c.value}
@@ -44,6 +44,13 @@ export const CollectionsFilter = styled(CollectionsFilterComponent)`
   }
   &.collections-filter {
     padding-top: calc(var(--prop-gap)) 0;
+
+    & div[class*='AccordionBodyWrapper'] {
+      max-height: 420px !important;
+      overflow-y: auto;
+      margin-right: -16px;
+      padding-right: 16px;
+    }
   }
   &.collection-filter-item {
     margin-top: 16px;

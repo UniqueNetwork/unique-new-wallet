@@ -1,9 +1,19 @@
 import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { KeyringPair } from '@polkadot/keyring/types';
 
-import { Alert, Button, PasswordInput, UploadJson } from '@app/components';
+import {
+  Alert,
+  Button,
+  PasswordInput,
+  useNotifications,
+  UploadJson,
+} from '@app/components';
 import { Modal } from '@app/components/Modal';
-import { AdditionalText, LabelText } from '@app/pages/Accounts/Modals/commonComponents';
+import {
+  AdditionalText,
+  LabelText,
+  StatusText,
+} from '@app/pages/Accounts/Modals/commonComponents';
 import { ContentRow } from '@app/pages/components/ModalComponents';
 import { convertToU8a, keyringFromFile } from '@app/utils';
 import { ChainPropertiesContext } from '@app/context';
@@ -17,8 +27,10 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
 }) => {
   const [pair, setPair] = useState<KeyringPair | null>(null);
   const [password, setPassword] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
   const { chainProperties } = useContext(ChainPropertiesContext);
   const { restoreJSONAccount } = useAccounts();
+  const { error, info } = useNotifications();
 
   useEffect(() => {
     if (isVisible) {
@@ -47,8 +59,18 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
     if (!pair || !password) {
       return;
     }
-    await restoreJSONAccount(pair, password);
-    onFinish();
+    try {
+      await restoreJSONAccount(pair, password);
+      info('Account restored');
+      onFinish();
+    } catch (e: any) {
+      const errorMessage: string = e.message;
+      if (errorMessage.includes('passphrase')) {
+        setPasswordError('Wrong password');
+      } else {
+        error(errorMessage);
+      }
+    }
   }, [onFinish, pair, password, restoreJSONAccount]);
 
   return (
@@ -64,7 +86,7 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
         />
       }
       isVisible={isVisible}
-      title="Add an account via backup JSON file"
+      title="Add an account via JSON file"
       onClose={onFinish}
     >
       <ContentRow>
@@ -79,7 +101,13 @@ export const ImportViaJSONAccountModal: FC<TCreateAccountModalProps> = ({
         <AdditionalText size="s" color="grey-500">
           The password that was previously used to encrypt this account
         </AdditionalText>
-        <PasswordInput placeholder="Password" value={password} onChange={setPassword} />
+        <PasswordInput
+          isError={!!passwordError}
+          placeholder="Password"
+          value={password}
+          onChange={setPassword}
+        />
+        {passwordError && <StatusText>{passwordError}</StatusText>}
       </ContentRow>
       <ContentRow>
         <Alert type="warning">

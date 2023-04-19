@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNotifications, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { TokenModalsProps, UnnestStagesModal } from '@app/pages/NFTDetails/Modals';
-import { Modal, TransferBtn } from '@app/components';
+import { Modal, TransferBtn, Loader, useNotifications } from '@app/components';
 import { TNestingToken } from '@app/pages/NFTDetails/type';
 import { useTokenUnnest } from '@app/api';
 import { useAccounts } from '@app/hooks';

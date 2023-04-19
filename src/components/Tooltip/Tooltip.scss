@@ -1,0 +1,85 @@
+@import '../../styles/index.scss';
+
+.unique-tooltip {
+    font-family: var(--prop-font-family);
+    font-size: var(--prop-font-size);
+    font-weight: var(--prop-font-weight);
+    position: fixed;
+    padding: 8px 15px;
+    max-width: 350px;
+    width: fit-content;
+    background-color: var(--color-secondary-500);
+    color: var(--color-additional-light);
+    border-radius: 2px;
+    z-index: 100;
+    line-height: 22px;
+    display: inline-flex;
+
+    &:before {
+        position: absolute;
+        content: '';
+        left: -15px;
+        top: -15px;
+        width: calc(100% + 15px);
+        height: calc(100% + 15px);
+    }
+
+    .content {
+        z-index: 101;
+    }
+
+    .arrow {
+        position: absolute;
+
+        .icon {
+            width: 8px;
+            height: 8px;
+            transform: rotate(45deg);
+            background-color: var(--color-secondary-500);
+        }
+    }
+
+    .vertical {
+        &.top {
+            top: -4px;
+        }
+
+        &.bottom {
+            bottom: -4px;
+        }
+
+        &.left {
+            left: 10px;
+        }
+
+        &.middle {
+            left: calc(50% - 4px);
+        }
+
+        &.right {
+            left: calc(100% - 24px);
+        }
+    }
+
+    .horizontal {
+        &.right {
+            right: -4px;
+        }
+
+        &.left {
+            left: -4px;
+        }
+
+        &.middle {
+            top: calc(50% - 4px);
+        }
+
+        &.top {
+            top: 11px;
+        }
+
+        &.bottom {
+            bottom: 11px;
+        }
+    }
+}

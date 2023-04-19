@@ -1,9 +1,8 @@
 import { Outlet } from 'react-router-dom';
-import { Notifications } from '@unique-nft/ui-kit';
 import amplitude from 'amplitude-js';
 
 import { AccountWrapper } from '@app/account';
-import { PageLayout } from '@app/components';
+import { Notifications, PageLayout } from '@app/components';
 import { PageSettingsWrapper } from '@app/context';
 import { IntroCard } from '@app/components/IntroSlider/components';
 import { IntroSlider } from '@app/components/IntroSlider';

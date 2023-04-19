@@ -1,6 +1,4 @@
-import { Text } from '@unique-nft/ui-kit';
-
-import { Confirm } from '@app/components';
+import { Confirm, Typography } from '@app/components';
 
 type WarningModalProps = {
   warning?: { title: string; description: string };
@@ -24,7 +22,7 @@ export const WarningModal = ({ warning, onCancel, onConfirm }: WarningModalProps
       title={warning?.title}
       onClose={onCancel}
     >
-      <Text>{warning?.description}</Text>
+      <Typography>{warning?.description}</Typography>
     </Confirm>
   );
 };

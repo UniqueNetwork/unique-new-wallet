@@ -1,10 +1,10 @@
 import { FieldError, FieldValues, useFormContext, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 import { useEffect, useMemo } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { ExtrinsicResultResponse, FeeResponse } from '@unique-nft/sdk';
 import { UseMutateAsyncFunction } from 'react-query';
 
+import { useNotifications } from '@app/components';
 import { Account, WalletsType } from '@app/account';
 import {
   NOT_ENOUGH_BALANCE_MESSAGE,

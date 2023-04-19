@@ -1,8 +1,6 @@
 import { Address } from '@unique-nft/utils';
 import { gql, OperationVariables, useQuery } from '@apollo/client';
 
-import { getConditionBySearchText } from '@app/api/graphQL/tokens/utils';
-
 import { QueryOptions, QueryResponse, Token } from '../types';
 
 export type StatusFilterNft = 'purchased' | 'createdByMe' | 'allStatus';
@@ -21,14 +19,9 @@ const OWNER_TOKENS_QUERY = gql`
     $where: TokenWhereParams
     $offset: Int
     $limit: Int
-    $direction: GQLOrderByParamsArgs
+    $order_by: TokenOrderByParams
   ) {
-    tokens(
-      where: $where
-      offset: $offset
-      limit: $limit
-      order_by: { token_id: $direction }
-    ) {
+    tokens(where: $where, offset: $offset, limit: $limit, order_by: $order_by) {
       count
       data {
         token_id
@@ -74,6 +67,9 @@ const getConditionByTypeFilter = (statusFilter: TypeFilterNft = 'allType') => {
     type: {
       _eq: statusFilter,
     },
+    nested: {
+      _eq: 'false',
+    },
   };
 };
 
@@ -95,8 +91,8 @@ export const useGraphQlOwnerTokens = (
   options: QueryOptions,
 ) => {
   const { collectionsIds, statusFilter, searchText, typeFilter } = filters;
-  const { direction, pagination, skip } = options ?? {
-    direction: 'desc',
+  const { sort, pagination, skip } = options ?? {
+    sort: { token_id: 'desc' },
     skip: !owner,
   };
   const { page, limit } = pagination;
@@ -115,9 +111,8 @@ export const useGraphQlOwnerTokens = (
     variables: {
       limit,
       offset: limit * page,
-      direction,
+      order_by: sort,
       where: {
-        ...getConditionBySearchText('token_name', searchText),
         ...getConditionByStatusFilter(statusFilter),
         ...getConditionByTypeFilter(typeFilter),
         ...getConditionByCollectionsIds(collectionsIds),
@@ -125,15 +120,19 @@ export const useGraphQlOwnerTokens = (
           owner && Address.is.substrateAddress(owner)
             ? { _in: [owner, Address.mirror.substrateToEthereum(owner)] }
             : { _eq: owner },
-
-        _or: [
-          { type: { _eq: 'RFT' } },
+        _and: [
           {
-            type: { _eq: 'NFT' },
-            parent_id: {
-              _is_null: true,
-            },
+            _or: [
+              { type: { _eq: 'RFT' } },
+              {
+                type: { _eq: 'NFT' },
+                parent_id: {
+                  _is_null: true,
+                },
+              },
+            ],
           },
+          ...applySearchFilter(searchText),
         ],
         tokens_amount: { _neq: '0' },
         burned: { _eq: 'false' },
@@ -152,4 +151,20 @@ export const useGraphQlOwnerTokens = (
     error,
     refetchOwnerTokens: refetch,
   };
+};
+
+const applySearchFilter = (search: string | undefined) => {
+  if (!search) {
+    return [];
+  }
+
+  return [
+    {
+      _or: [
+        { token_name: { _ilike: `%${search}%` } },
+        { collection_name: { _ilike: `%${search}%` } },
+        ...(Number(search) ? [{ collection_id: { _eq: Number(search) } }] : []),
+      ],
+    },
+  ];
 };

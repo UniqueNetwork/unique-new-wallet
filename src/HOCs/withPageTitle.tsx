@@ -1,11 +1,10 @@
 import { ComponentType, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { Text } from '@unique-nft/ui-kit';
 
 import { useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
-import { Icon } from '@app/components';
+import { Icon, Typography } from '@app/components';
 
 type TitleConfig = {
   header?: string;
@@ -32,9 +31,9 @@ export const withPageTitle =
       const link = (
         <BackLink to={`/${currentChain?.network}/${LINK}`}>
           <Icon color="var(--color-blue-grey-500)" name="arrow-left" size={16} />
-          <Text color="blue-grey-500" weight="light">
+          <Typography color="blue-grey-500" weight="light">
             back
-          </Text>
+          </Typography>
         </BackLink>
       );
       const options = LINK ? [link] : [];

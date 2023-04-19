@@ -1,4 +1,4 @@
-import { Heading, Table, Text } from '@unique-nft/ui-kit';
+import { Heading, Table, Typography } from '@app/components';
 
 import { CollectionStepper } from '../CreateCollection/components/CollectionStepper';
 
@@ -7,11 +7,11 @@ const NftAttributes = () => {
     <>
       <CollectionStepper activeStep={2} />
       <Heading size="2">NFT attributes</Heading>
-      <Text>
+      <Typography>
         This functionality allows you to customize the token. You can define your NFT
         traits in the fields below. For example, name, accessory, gender, background,
         face, body, tier etc.
-      </Text>
+      </Typography>
       <Table
         columns={[
           {

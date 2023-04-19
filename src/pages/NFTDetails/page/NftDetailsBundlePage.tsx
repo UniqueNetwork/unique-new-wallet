@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Heading, Text } from '@unique-nft/ui-kit';
 import { TokenByIdResponse } from '@unique-nft/sdk';
 import { Address } from '@unique-nft/utils';
 
@@ -21,7 +20,7 @@ import { NestedSection } from '@app/components/BundleTree/NestedSection/NestedSe
 import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { useIsOwner } from '@app/pages/NFTDetails/hooks/useIsOwner';
 import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
-import { Achievement, Button, TransferBtn } from '@app/components';
+import { Achievement, Button, TransferBtn, Heading, Typography } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { menuButtonsNft } from '@app/pages/NFTDetails/page/constants';
@@ -403,9 +402,9 @@ export const NftDetailsBundlePage = () => {
           <BundleWrapper>
             <HeaderStyled>
               <Heading size="2">Bundle tree structure</Heading>
-              <Text color="grey-500" size="m" className="tokens-count">
+              <Typography color="grey-500" size="m" className="tokens-count">
                 {tokensCount + 1} items total
-              </Text>
+              </Typography>
             </HeaderStyled>
             {BundleTreeRendered}
           </BundleWrapper>
@@ -433,9 +432,9 @@ export const NftDetailsBundlePage = () => {
             ]}
             header={
               <BottomBarHeader showBackLink={false} title="Bundle tree structure">
-                <Text color="grey-500" size="m" className="tokens-count">
+                <Typography color="grey-500" size="m" className="tokens-count">
                   {tokensCount + 1} items total
-                </Text>
+                </Typography>
               </BottomBarHeader>
             }
             isOpen={isShowBundleTreeMobile}

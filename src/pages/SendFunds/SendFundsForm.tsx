@@ -1,7 +1,6 @@
 import { useCallback, useContext, useMemo, useState, VFC } from 'react';
 import { GroupBase, Options, OptionsOrGroups } from 'react-select';
 import { Controller, useWatch } from 'react-hook-form';
-import { Loader, Text } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils';
 import styled from 'styled-components';
 
@@ -9,7 +8,7 @@ import { Account } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { useAccountBalanceService } from '@app/api';
 import { ChainPropertiesContext } from '@app/context';
-import { AccountSelect, InputText } from '@app/components';
+import { AccountSelect, InputText, Loader, Typography } from '@app/components';
 
 import { Group, InputAmount, InputAmountButton, StyledAdditionalText } from './styles';
 import { ContentRow } from '../components/ModalComponents';
@@ -98,13 +97,14 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           amount: Number(senderBalance?.availableBalance.amount) || 0,
         });
 
-        onChange(
-          (
-            Number(senderBalance?.availableBalance.amount) -
-            (Number(feeResponse?.fee?.amount) || 0)
-          ).toString() || '0',
-        );
-      } catch {
+        const feeAmount = Number(feeResponse?.fee?.amount || 0);
+        const balanceAmount = Number(senderBalance?.availableBalance.amount);
+
+        const maxValue =
+          feeAmount < balanceAmount ? balanceAmount - feeAmount : balanceAmount;
+
+        onChange(maxValue.toString());
+      } catch (e) {
         onChange(senderBalance?.availableBalance.amount || '0');
       } finally {
         setIsCalculateMaxAmount(false);
@@ -134,9 +134,9 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
             )}
           />
           {senderBalance && (
-            <Text size="s">
+            <Typography size="s">
               {`${senderBalance?.availableBalance.amount} ${senderBalance?.availableBalance.unit}`}
-            </Text>
+            </Typography>
           )}
         </Group>
         <Group>
@@ -158,9 +158,9 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
             )}
           />
           {recipientBalance && (
-            <Text size="s">
+            <Typography size="s">
               {`${recipientBalance?.availableBalance.amount} ${recipientBalance?.availableBalance.unit}`}
-            </Text>
+            </Typography>
           )}
         </Group>
       </ContentRow>

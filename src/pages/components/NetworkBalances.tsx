@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import { Text } from '@unique-nft/ui-kit';
 
 import { NetworkType } from '@app/types';
+
+import { Typography } from '../../components/Typography';
 
 export type TNetworkBalances = {
   balanceFull?: string;
@@ -12,7 +13,7 @@ export type TNetworkBalances = {
 
 const Wrapper = styled.div``;
 
-const BalanceLocked = styled(Text).attrs({
+const BalanceLocked = styled(Typography).attrs({
   appearance: 'block',
   color: 'grey-500',
   size: 's',
@@ -41,9 +42,9 @@ export const NetworkBalances = ({
 
   return (
     <Wrapper>
-      <Text appearance="block">
+      <Typography appearance="block">
         {balanceFull || '0'} {symbol}
-      </Text>
+      </Typography>
       <BalanceLocked>{calculateBalanceTransferable()}</BalanceLocked>
       {Number(balanceLocked) ? (
         <BalanceLocked>{`${balanceLocked || 0} ${symbol} locked`}</BalanceLocked>

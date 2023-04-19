@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Text } from '@unique-nft/ui-kit';
 
 import { shortAddress } from '@app/utils';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
 import { IdentityIcon } from '@app/components';
+
+import { Typography } from '../../../components/Typography';
 
 interface AddressWidgetProps {
   address?: string;
@@ -42,7 +43,7 @@ const Wrapper = styled.div`
   }
 `;
 
-export const AddressText = styled(Text).attrs({
+export const AddressText = styled(Typography).attrs({
   appearance: 'block',
   size: 's',
 })`

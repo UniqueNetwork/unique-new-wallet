@@ -1,15 +1,6 @@
-import {
-  Button,
-  Heading,
-  Icon,
-  Text,
-  useNotifications,
-  Loader,
-  TooltipAlign,
-} from '@unique-nft/ui-kit';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useForm, FormProvider, useWatch, useFormContext } from 'react-hook-form';
+import { useForm, FormProvider, useFormContext } from 'react-hook-form';
 
 import {
   InputController,
@@ -20,9 +11,18 @@ import {
   useAskQuestionRequest,
 } from '@app/api/restApi/ask-question/useAskQuestionRequest';
 import { Modal } from '@app/components/Modal';
-import { DeviceSize, useDeviceSize, useFormValidator } from '@app/hooks';
+import { DeviceSize, useDeviceSize } from '@app/hooks';
 import { config } from '@app/config';
-import { ConfirmBtn, TooltipWrapper } from '@app/components';
+import {
+  Button,
+  Heading,
+  Icon,
+  Typography,
+  Loader,
+  BaseActionBtn,
+  useNotifications,
+} from '@app/components';
+import { FORM_ERRORS } from '@app/pages/constants';
 
 import { SidePlateFooter } from './SidePlateFooter';
 import { SocialNav } from './SocialNav';
@@ -43,7 +43,9 @@ export const AskQuestionComponent = () => {
   const [visibleModal, setVisibleModal] = useState(false);
 
   const size = useDeviceSize();
-  const { isValid, errorMessage } = useFormValidator();
+  const {
+    formState: { isValid },
+  } = useFormContext();
   const { handleSubmit, reset } = useFormContext<AskQuestionRequestType>();
 
   const { info, error } = useNotifications();
@@ -66,7 +68,7 @@ export const AskQuestionComponent = () => {
 
   return (
     <Wrapper>
-      <Heading size="3">Didn&apos;t find the answer? Write to us.</Heading>
+      <Heading size="3">Didn&apos;t find the answer? Write&nbsp;to&nbsp;us.</Heading>
       <Button
         title="Ask a question"
         onClick={() => {
@@ -74,7 +76,7 @@ export const AskQuestionComponent = () => {
         }}
       />
       <SidePlateFooter>
-        <Text>You can also find information in our community</Text>
+        <Typography>You can also find information in our community</Typography>
         <SocialNav>
           <a href={config.socialLinks.telegram} target="_blank" rel="noreferrer noopener">
             <Icon name="social-telegram" color="currentColor" size={32} />
@@ -111,10 +113,20 @@ export const AskQuestionComponent = () => {
             label="Name *"
             className="input"
             id="name"
+            maxLength={200}
             rules={{
               required: {
                 value: true,
                 message: 'You did not fill in the required fields',
+              },
+              validate: (value) => {
+                if (!value.trim().length) {
+                  return 'You did not fill in the required fields';
+                }
+                if (/^[!@#$%^&*()_+~<>{}?]+$/.test(value.trim())) {
+                  return 'Name is not correct';
+                }
+                return true;
               },
             }}
           />
@@ -123,6 +135,7 @@ export const AskQuestionComponent = () => {
             label="Email *"
             className="input"
             id="email"
+            maxLength={100}
             rules={{
               required: {
                 value: true,
@@ -140,21 +153,33 @@ export const AskQuestionComponent = () => {
             className="textarea"
             id="question"
             rows={6}
+            maxLength={1000}
             rules={{
               required: {
                 value: true,
                 message: 'You did not fill in the required fields',
               },
+              validate: (value) => {
+                if (!value.trim().length) {
+                  return 'You did not fill in the required fields';
+                }
+                if (/^[!@#$%^&*()_+~<>{}?]+$/.test(value.trim())) {
+                  return 'Question is not correct';
+                }
+                return true;
+              },
             }}
           />
           <ConfirmWrapper>
-            <ConfirmBtn
+            <BaseActionBtn
+              actionEnabled
               title="Send"
               role="primary"
               type="submit"
               disabled={!isValid}
               wide={size === DeviceSize.xs}
-              tooltip={!isValid ? errorMessage : null}
+              tooltip={!isValid ? FORM_ERRORS.REQUIRED_FIELDS : null}
+              actionText={null}
               onClick={handleSubmit(onSubmit)}
             />
           </ConfirmWrapper>
@@ -201,7 +226,10 @@ const ConfirmWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   button.unique-button {
-    min-width: 300px;
+    min-width: 88px;
+    @media screen and (max-width: 568px) {
+      min-width: 88px;
+    }
   }
 `;
 

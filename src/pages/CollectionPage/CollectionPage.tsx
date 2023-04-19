@@ -1,15 +1,15 @@
 import React, { useEffect, VFC } from 'react';
-import { Tabs } from '@unique-nft/ui-kit';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useAccounts, useApi } from '@app/hooks';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useGraphQlCollectionById } from '@app/api/graphQL/collections';
-import { ROUTE } from '@app/routes';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { TokenTypeEnum } from '@app/api/graphQL/types';
+import { Tabs } from '@app/components';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
@@ -21,7 +21,7 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
   const location = useLocation();
-  const { selectedAccount } = useAccounts();
+  const { selectedAccount, isLoading } = useAccounts();
   const { collectionId } = useParams<'collectionId'>();
   const baseUrl = collectionId
     ? `/${currentChain?.network}/${basePath}/${collectionId}`
@@ -33,6 +33,16 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
     parseInt(collectionId || ''),
     selectedAccount?.address,
   );
+
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!selectedAccount) {
+      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    }
+  }, [selectedAccount, isLoading]);
 
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);

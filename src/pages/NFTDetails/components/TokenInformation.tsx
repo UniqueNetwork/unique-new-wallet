@@ -1,8 +1,7 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-import { Heading, Text } from '@unique-nft/ui-kit';
 
-import { Icon, Tag, Tags, TooltipWrapper } from '@app/components';
+import { Icon, Tag, Tags, TooltipWrapper, Heading, Typography } from '@app/components';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
@@ -50,11 +49,13 @@ const TokenInformationComponent = <T extends TBaseToken>({
         </TooltipWrapper>
       </Heading>
       {(!attributes || !attributes.length) && (
-        <Text color="blue-grey-500">There are no attributes for this token</Text>
+        <Typography color="blue-grey-500">
+          There are no attributes for this token
+        </Typography>
       )}
       {attributes?.map(({ title, tags }, index) => (
         <div className="attribute-row" key={`${title}${index}`}>
-          <Text
+          <Typography
             appearance="block"
             className="attribute-title"
             size="m"
@@ -62,7 +63,7 @@ const TokenInformationComponent = <T extends TBaseToken>({
             color="grey-500"
           >
             {title}
-          </Text>
+          </Typography>
           <Tags>
             {tags.map((value, index) => (
               <Tag key={`${value}-${index}`} label={value} />

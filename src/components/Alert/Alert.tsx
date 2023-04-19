@@ -22,8 +22,8 @@ const AlertStyledWrapper = styled.div`
   line-height: 20px;
 
   &.warning {
-    background: var(--color-additional-warning-100);
-    color: var(--color-additional-warning-500);
+    background: var(--color-primary-100);
+    color: var(--color-primary-500);
   }
 
   &.error {

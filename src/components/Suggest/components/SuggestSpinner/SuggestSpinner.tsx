@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
-import { Loader } from '@unique-nft/ui-kit';
+
+import { Loader } from '../../../';
 
 import './SuggestSpinner.scss';
 

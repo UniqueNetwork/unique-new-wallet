@@ -1,18 +1,18 @@
 import { useEffect, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Select } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { TOrderBy } from '@app/api';
 import { useApi } from '@app/hooks';
-import { IconProps, ConfirmBtn } from '@app/components';
+import { IconProps, ConfirmBtn, Select } from '@app/components';
 import { Direction } from '@app/api/graphQL/types';
 import { iconDown, iconUp, Option } from '@app/utils';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useMyCollectionsContext } from '@app/pages/MyCollections/context';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
 import { Search } from '@app/pages/components/Search';
+import { ControlGroup } from '@app/pages/components/ControlGroup';
 
 type SelectOption = {
   id: string;
@@ -116,8 +116,9 @@ export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
   return (
     <div className={classNames('my-collections-filter', className)}>
       {showFilter && (
-        <ControlGroup className={'__as_' + view}>
+        <ControlGroup>
           <Search
+            hideButton={view === 'column'}
             value={searchString}
             onChange={setSearchString}
             onKeyDown={handleSearchString}
@@ -155,33 +156,9 @@ export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
   );
 };
 
-export const ControlGroup = styled.div`
-  flex: 1 1 100%;
-  display: grid;
-  gap: var(--prop-gap);
-
-  &.__as {
-    &_row {
-      @media screen and (min-width: 768px) {
-        grid-template-columns: 2fr 1fr;
-      }
-
-      @media screen and (min-width: 1024px) {
-        max-width: 786px;
-      }
-    }
-
-    &_column {
-      width: 100%;
-      max-width: 765px;
-      margin-right: auto;
-    }
-  }
-`;
-
 const ControlsContainer = styled.div`
   @media screen and (min-width: 1024px) {
-    margin-left: auto;
+    /* margin-left: auto; */
   }
 `;
 
@@ -189,7 +166,7 @@ export const TopFilter = styled(TopFilterComponent)`
   box-sizing: border-box;
   flex: 1 1 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex-direction: ${(p) => p.view};
   align-items: center;
   width: 100%;
@@ -198,11 +175,6 @@ export const TopFilter = styled(TopFilterComponent)`
 
   @media screen and (min-width: 1024px) {
     padding-bottom: 0;
-  }
-
-  .unique-input-text,
-  .unique-select {
-    width: 100%;
   }
 `;
 

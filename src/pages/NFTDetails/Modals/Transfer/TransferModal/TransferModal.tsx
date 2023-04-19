@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils/address';
 import { Controller, FormProvider } from 'react-hook-form';
 import { TransferTokenBody, TransferTokenParsed } from '@unique-nft/sdk';
@@ -10,7 +9,7 @@ import { TransferStagesModal } from '@app/pages/NFTDetails/Modals/Transfer/Trans
 import { useTokenTransfer } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
 import { TokenModalsProps } from '@app/pages/NFTDetails/Modals';
-import { Modal, TransferBtn } from '@app/components';
+import { Modal, TransferBtn, useNotifications } from '@app/components';
 import { FormWrapper } from '@app/pages/NFTDetails/Modals/Transfer/components/FormWrapper';
 import { TransferRow } from '@app/pages/NFTDetails/Modals/Transfer/components/TransferRow';
 import { InputTransfer } from '@app/pages/NFTDetails/Modals/Transfer/components/InputTransfer';
@@ -136,10 +135,20 @@ export const TransferModal = <T extends TBaseToken>({
               }}
               rules={{
                 required: true,
-                validate: (val: string) =>
-                  Address.is.ethereumAddress(val) ||
-                  Address.is.substrateAddress(val) ||
-                  'Invalid address',
+                validate: (val: string) => {
+                  if (
+                    selectedAccount?.address
+                      .toLowerCase()
+                      .localeCompare(val.trim().toLowerCase()) === 0
+                  ) {
+                    return 'Invalid address';
+                  }
+                  return (
+                    Address.is.ethereumAddress(val) ||
+                    Address.is.substrateAddress(val) ||
+                    'Invalid address'
+                  );
+                },
               }}
             />
           </TransferRow>

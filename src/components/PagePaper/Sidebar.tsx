@@ -5,6 +5,7 @@ const Wrapper = styled.aside`
   border-right: 1px solid var(--color-grey-300);
   padding: calc(var(--prop-gap) * 2) calc(var(--prop-gap) * 1.5) calc(var(--prop-gap) * 2)
     calc(var(--prop-gap) * 2);
+  min-width: 200px;
 `;
 
 export interface SidebarProps {

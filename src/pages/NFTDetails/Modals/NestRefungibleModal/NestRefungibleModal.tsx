@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Loader, Text, useNotifications } from '@unique-nft/ui-kit';
 import { Controller, FormProvider } from 'react-hook-form';
 import styled from 'styled-components';
 import { Address } from '@unique-nft/utils';
@@ -16,7 +15,13 @@ import {
   useTokenRefungibleTransfer,
 } from '@app/api';
 import { TBaseToken } from '@app/pages/NFTDetails/type';
-import { Modal, TransferBtn } from '@app/components';
+import {
+  Loader,
+  Typography,
+  Modal,
+  TransferBtn,
+  useNotifications,
+} from '@app/components';
 import { Suggest } from '@app/components/Suggest';
 import {
   useGraphQlCollectionsByNestingAccount,
@@ -225,9 +230,12 @@ export const NestRefungibleModal = <T extends TBaseToken>({
                     label={
                       <LabelWrapper>
                         Number of fractions to be nested
-                        <Text size="s" color="grey-500">{`You own: ${formatBlockNumber(
+                        <Typography
+                          size="s"
+                          color="grey-500"
+                        >{`You own: ${formatBlockNumber(
                           fractionsBalance?.amount || 0,
-                        )}`}</Text>
+                        )}`}</Typography>
                       </LabelWrapper>
                     }
                     value={value}

@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
 
-import { Icon } from '@app/components';
+import { Icon, Typography } from '@app/components';
 
 interface AccountContextMenuProps {
   onForgetWalletClick(): void;
@@ -11,7 +10,7 @@ interface AccountContextMenuProps {
 export const AccountContextMenu = ({ onForgetWalletClick }: AccountContextMenuProps) => (
   <ContextMenuItem onClick={onForgetWalletClick}>
     <Icon size={24} name="logout" color="currentColor" />
-    <Text>Forget wallet</Text>
+    <Typography>Forget wallet</Typography>
   </ContextMenuItem>
 );
 

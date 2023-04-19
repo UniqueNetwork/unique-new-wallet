@@ -1,0 +1,29 @@
+@import '../../styles/index.scss';
+
+.unique-chip {
+    font-family: var(--prop-font-family);
+    font-size: var(--prop-font-size);
+    font-weight: var(--prop-font-weight);
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    padding: 0 8px;
+    border-radius: 4px;
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-500);
+    border: 1px solid var(--color-primary-500);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+
+    img {
+        border-radius: 22px;
+    }
+
+    .icon {
+        padding: 0 3px 0 0;
+        cursor: pointer;
+        fill: var(--color-primary-500);
+    }
+}

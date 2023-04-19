@@ -15,3 +15,4 @@ export * from './useFormValidator';
 export * from './useTimer';
 export * from './useMintingFormService';
 export * from './useTransactionModalService';
+export * from './usePrevious';

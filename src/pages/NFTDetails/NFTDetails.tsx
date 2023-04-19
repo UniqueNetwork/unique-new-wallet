@@ -1,6 +1,5 @@
 import { useEffect, VFC } from 'react';
 import { useParams } from 'react-router-dom';
-import { Loader } from '@unique-nft/ui-kit';
 import { Address } from '@unique-nft/utils';
 
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
@@ -8,7 +7,7 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { useTokenIsBundle } from '@app/api';
 import { NftDetailsPage } from '@app/pages/NFTDetails/page/NftDetailsPage';
 import { NftDetailsBundlePage } from '@app/pages/NFTDetails/page/NftDetailsBundlePage';
-import { ErrorPage } from '@app/components';
+import { ErrorPage, Loader } from '@app/components';
 
 interface NFTDetailsProps {
   className?: string;

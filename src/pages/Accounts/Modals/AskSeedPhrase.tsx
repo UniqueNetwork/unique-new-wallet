@@ -1,18 +1,17 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
+
+import { addressFromSeed } from '@app/utils';
 import {
+  Alert,
   Button,
   Checkbox,
   Heading,
   Icon,
-  Link,
   Select,
-  Textarea,
-} from '@unique-nft/ui-kit';
-
-import { addressFromSeed } from '@app/utils';
-import { Alert, Tooltip } from '@app/components';
+  TooltipWrapper,
+} from '@app/components';
 import {
   ButtonGroup,
   StepsTextStyled,
@@ -24,6 +23,8 @@ import {
 } from '@app/pages/components/ModalComponents';
 import { AddressWidget } from '@app/pages/Accounts/components/AddressWidget';
 
+import { Textarea } from '../../../components/Textarea';
+import { Link } from '../../../components/Link';
 import { defaultPairType, derivePath } from './CreateAccount';
 import { TCreateAccountBodyModalProps } from './types';
 
@@ -76,13 +77,14 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
           <ControlsGroup>
             <ControlWrapper>
               <Select
+                disabled
                 options={seedGenerators}
                 value={seedGenerator}
                 onChange={onSeedGeneratorChange}
               />
               <ControlIcon className="align-middle">
-                <Tooltip
-                  title={
+                <TooltipWrapper
+                  message={
                     <span style={{ whiteSpace: 'nowrap' }}>
                       Find out more on{' '}
                       <TooltipLink
@@ -96,11 +98,11 @@ export const AskSeedPhrase: FC<TCreateAccountBodyModalProps> = ({ onFinish }) =>
                   }
                 >
                   <Icon size={24} name="question" color="var(--color-primary-500)" />
-                </Tooltip>
+                </TooltipWrapper>
               </ControlIcon>
             </ControlWrapper>
             <ControlWrapper>
-              <Textarea value={seed} onChange={onSeedChange} />
+              <TextareaStyled value={seed} />
               <ControlIcon role="button" onClick={generateSeed}>
                 <Icon size={24} name="reload" color="inherit" />
               </ControlIcon>
@@ -196,5 +198,11 @@ const TooltipLink = styled(Link)`
         outline: -webkit-focus-ring-color auto 1px;
       }
     }
+  }
+`;
+
+const TextareaStyled = styled(Textarea)`
+  textarea {
+    font-size: 16px;
   }
 `;

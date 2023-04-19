@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Text } from '@unique-nft/ui-kit';
+
+import { Typography } from '../../components/Typography/Typography';
 
 export const Form = styled.form``;
 
@@ -113,7 +114,7 @@ export const SettingsRow = styled.div`
   }
 `;
 
-export const LabelText = styled(Text).attrs({
+export const LabelText = styled(Typography).attrs({
   appearance: 'block',
   color: 'additional-dark',
   size: 'm',
@@ -144,7 +145,7 @@ export const SuggestOption = styled.div`
   }
 `;
 
-export const AdditionalText = styled(Text).attrs({
+export const AdditionalText = styled(Typography).attrs({
   appearance: 'block',
   size: 's',
   color: 'grey-500',

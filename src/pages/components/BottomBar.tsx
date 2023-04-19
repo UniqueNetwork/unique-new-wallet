@@ -1,10 +1,12 @@
 import { ReactNode, useEffect, useRef, useState, VFC } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { Heading, Link, Text } from '@unique-nft/ui-kit';
 
 import { ButtonGroup } from '@app/pages/components/FormComponents';
-import { Icon } from '@app/components';
+import { Icon, Typography } from '@app/components';
+
+import { Heading } from '../../components/Heading';
+import { Link } from '../../components/Link';
 
 export interface BottomBarProps {
   buttons: ReactNode[];
@@ -72,9 +74,9 @@ export const BottomBarHeader = ({
       {showBackLink && (
         <BackLink href="#close" onClick={onBackClick}>
           <Icon color="var(--color-blue-grey-500)" name="arrow-left" size={16} />
-          <Text color="blue-grey-500" weight="light">
+          <Typography color="blue-grey-500" weight="light">
             back
-          </Text>
+          </Typography>
         </BackLink>
       )}
       {children && children}

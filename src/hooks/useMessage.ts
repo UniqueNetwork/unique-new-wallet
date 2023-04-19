@@ -1,4 +1,4 @@
-import { useNotifications } from '@unique-nft/ui-kit';
+import { useNotifications } from '@app/components';
 
 interface Message {
   name: string;

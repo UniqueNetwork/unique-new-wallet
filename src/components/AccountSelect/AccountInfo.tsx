@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, TouchEventHandler, VFC } from 'react';
-import { Icon, Text } from '@unique-nft/ui-kit';
+import { Icon, Typography } from '../';
 
 import { IdentityIcon } from '@app/components';
 
@@ -22,11 +22,11 @@ export const AccountInfo: VFC<AccountInfoProps> = ({
     <AccountWrapper>
       <IdentityIcon address={address} />
       <AccountGroup>
-        {name && <Text>{name}</Text>}
+        {name && <Typography>{name}</Typography>}
         <AccountAddress>
-          <Text className="address-text" weight="light" color="inherit" size="s">
+          <Typography className="address-text" weight="light" color="inherit" size="s">
             {address}
-          </Text>
+          </Typography>
           {canCopy && (
             <AddressCopy onMouseDown={onCopy as MouseEventHandler<HTMLButtonElement>}>
               <Icon size={16} name="copy" color="var(--color-blue-grey-400)" />

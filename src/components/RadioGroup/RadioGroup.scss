@@ -1,0 +1,118 @@
+@import '../../styles/index.scss';
+
+.unique-radio-group-wrapper {
+    display: flex;
+
+    &.vertical {
+        flex-direction: column;
+
+        .unique-radio-item {
+            & + .unique-radio-item {
+                margin-top: 15px;
+            }
+        }
+    }
+
+    &.horizontal {
+        flex-direction: row;
+
+        .unique-radio-item {
+            & + .unique-radio-item {
+                margin-left: 15px;
+            }
+        }
+    }
+
+    .unique-radio-item {
+        font-family: var(--prop-font-family);
+        font-size: var(--prop-font-size);
+        font-weight: var(--prop-font-weight);
+        position: relative;
+
+        .label {
+            margin-left: 28px;
+        }
+
+        .inner {
+            position: absolute;
+            box-sizing: border-box;
+            border: 1px solid var(--color-grey-300);
+            border-radius: 30px;
+        }
+
+        .inner.checked {
+            border: 2px solid var(--color-primary-500);
+            &:after {
+                content: '';
+                position: absolute;
+                background-color: var(--color-primary-500);
+                border-radius: 30px;
+            }
+        }
+
+        label {
+            display: inline-flex;
+            align-items: center;
+            color: var(--color-secondary-500);
+            cursor: pointer;
+
+            &:hover .inner {
+                border-color: var(--color-primary-500);
+            }
+        }
+
+        &.disabled {
+            cursor: default;
+            .inner {
+                &.checked {
+                    border: 2px solid var(--color-grey-300);
+                    &:after {
+                        background-color: var(--color-grey-300);
+                    }
+                }
+            }
+            &:hover {
+                .inner {
+                    border-color: var(--color-grey-300);
+                }
+            }
+            label {
+                color: var(--color-blue-grey-300);
+                cursor: default;
+            }
+        }
+
+        &.radio-size {
+            &-s {
+                .inner {
+                    width: 20px;
+                    height: 20px;
+                    &.checked::after {
+                        height: 12px;
+                        width: 12px;
+                        top: 2px;
+                        left: 2px;
+                    }
+                }
+                label {
+                    font-size: var(--prop-font-size);
+                }
+            }
+            &-m {
+                .inner {
+                    width: 23px;
+                    height: 23px;
+                    &.checked::after {
+                        height: 13px;
+                        width: 13px;
+                        top: 3px;
+                        left: 3px;
+                    }
+                }
+                label {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}

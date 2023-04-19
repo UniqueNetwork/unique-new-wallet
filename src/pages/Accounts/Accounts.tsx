@@ -1,25 +1,35 @@
 import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { Dropdown, Icon, TableColumnProps, Text, Button } from '@unique-nft/ui-kit';
+import { TableColumnProps } from '@unique-nft/ui-kit';
+import { useLocation } from 'react-router-dom';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
 import { NetworkType } from '@app/types';
 import { AllBalancesResponse } from '@app/types/Api';
-import { Confirm, PagePaper, Table, TooltipWrapper, TransferBtn } from '@app/components';
-import { Search } from '@app/pages/components/Search';
+import {
+  Confirm,
+  PagePaper,
+  Table,
+  TooltipWrapper,
+  TransferBtn,
+  Icon,
+  Typography,
+} from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
-import { AccountContextMenu } from '@app/pages/Accounts/components';
-import { account, useAccountsBalanceService } from '@app/api';
+import { useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ConnectWallets } from '@app/pages';
 import { useAccountsWithdrawableBalanceService } from '@app/api/restApi/balance/useAccountsWithdrawableBalanceService';
+import { sleep } from '@app/utils';
 
+import { Button } from '../../components/Button';
 import { SendFunds } from '../SendFunds';
 import { NetworkBalances } from '../components/NetworkBalances';
 import { WithdrawModal } from '../MyTokens/Coins/modals/Withdraw';
+import trash from '../../static/icons/trash.svg';
 
 type AccountsColumnsProps = {
   onShowSendFundsModal(account: Account): () => void;
@@ -35,6 +45,15 @@ const AccountsPageHeader = styled.div`
   flex-wrap: wrap;
   align-items: center;
   padding-bottom: calc(var(--prop-gap) * 2);
+  column-gap: calc(var(--prop-gap) * 2);
+  row-gap: calc(var(--prop-gap) * 1.5);
+  justify-content: flex-end;
+
+  @media screen and (max-width: 568px) {
+    & > button {
+      width: 100%;
+    }
+  }
   @media screen and (min-width: 1024px) {
     border-bottom: 1px solid var(--color-grey-300);
     padding: calc(var(--prop-gap) * 2);
@@ -74,33 +93,6 @@ const AccountsPageContent = styled.div`
   }
 `;
 
-/* TODO: uncomment when AccountsTotalBalance will be ready
-  const AccountsTotalBalanceStyled = styled(AccountsTotalBalance)`
-    flex: 1 1 100%;
-    margin-bottom: calc(var(--prop-gap) * 1.5);
-  
-    @media screen and (min-width: 1280px) {
-      flex: 0 0 auto;
-      margin: 0 calc(var(--prop-gap) * 3) 0 0;
-    }
-  `;
-*/
-
-const SearchStyled = styled(Search)`
-  flex: 1 1 100%;
-  margin-bottom: calc(var(--prop-gap) * 1.5);
-
-  @media screen and (min-width: 1024px) {
-    flex: 1 1 auto;
-    margin-bottom: 0;
-  }
-
-  @media screen and (min-width: 1280px) {
-    max-width: 720px;
-    margin-left: auto;
-  }
-`;
-
 const ExternalLink = styled.a`
   position: relative;
   display: inline-block;
@@ -129,8 +121,12 @@ const ButtonGet = styled(Button)`
 const ActionsWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
   gap: var(--prop-gap);
-  flex-wrap: wrap;
+  div:last-child {
+    min-width: 24px;
+  }
   .unique-dropdown {
     .dropdown-wrapper,
     .dropdown-options {
@@ -139,12 +135,27 @@ const ActionsWrapper = styled.div`
       cursor: pointer;
     }
   }
+  button.unique-button.ghost {
+    padding: 8px 0;
+  }
+`;
+
+const TransferBtnGroup = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-gap: var(--prop-gap);
+  width: -webkit-fill-available;
 `;
 
 const SendGetWrapper = styled.div`
   display: flex;
   align-items: center;
-  column-gap: var(--prop-gap);
+  gap: var(--prop-gap);
+  flex-wrap: nowrap;
+  button,
+  a {
+    flex: 1;
+  }
 `;
 
 const CaptionText: FC = () => {
@@ -239,7 +250,7 @@ const BlockExplorer = ({ account }: { account: Account }) => {
           rel="noreferrer"
           href={`${currentChain.subscanAddress}/account/${account?.address}`}
         >
-          <Text color="primary-500">Subscan</Text>
+          <Typography color="primary-500">Subscan</Typography>
           <Icon size={16} name="arrow-up-right" color="currentColor" />
         </ExternalLink>
       )}
@@ -249,7 +260,7 @@ const BlockExplorer = ({ account }: { account: Account }) => {
           rel="noreferrer"
           href={`${currentChain.uniquescanAddress}/account/${account?.address}`}
         >
-          <Text color="primary-500">UniqueScan</Text>
+          <Typography color="primary-500">UniqueScan</Typography>
           <Icon size={16} name="arrow-up-right" color="currentColor" />
         </ExternalLink>
       )}
@@ -309,38 +320,36 @@ const getAccountsColumns = ({
     render(address, rowData: Account) {
       return (
         <ActionsWrapper>
-          <SendGetWrapper>
-            <TransferBtn
-              title="Send"
-              disabled={!Number(rowData.balance?.availableBalance.amount)}
-              onClick={onShowSendFundsModal(rowData)}
-            />
-            {getButtonRender(rowData.balance?.availableBalance.unit)}
-          </SendGetWrapper>
-          {rowData.signerType === AccountSigner.local && (
-            <Dropdown
-              placement="right"
-              dropdownRender={() => (
-                <AccountContextMenu
-                  onForgetWalletClick={onForgetWalletClick(rowData?.address)}
+          <TransferBtnGroup>
+            <SendGetWrapper>
+              <TransferBtn
+                title="Send"
+                disabled={!Number(rowData.balance?.availableBalance.amount)}
+                onClick={onShowSendFundsModal(rowData)}
+              />
+              {getButtonRender(rowData.balance?.availableBalance.unit)}
+            </SendGetWrapper>
+            {rowData.withdrawBalance?.availableBalance?.raw &&
+              rowData.withdrawBalance?.availableBalance?.raw !== '0' && (
+                <TransferBtn
+                  title={`Withdraw ${rowData.withdrawBalance?.availableBalance.amount} ${rowData.withdrawBalance?.availableBalance.unit}`}
+                  onClick={onWithdrawBalance(
+                    rowData,
+                    rowData.withdrawBalance?.availableBalance.raw || '',
+                  )}
                 />
               )}
-            >
-              <Icon name="more-horiz" size={24} />
-            </Dropdown>
-          )}
-          {rowData.withdrawBalance?.availableBalance?.raw &&
-            rowData.withdrawBalance?.availableBalance?.raw !== '0' && (
-              <TransferBtn
-                title={`Withdraw ${
-                  rowData.withdrawBalance?.availableBalance?.amount || ''
-                } ${rowData.withdrawBalance?.availableBalance?.unit || ''}`}
-                onClick={onWithdrawBalance(
-                  rowData,
-                  rowData.withdrawBalance?.availableBalance.raw || '',
-                )}
+          </TransferBtnGroup>
+          <div>
+            {rowData.signerType === AccountSigner.local && (
+              <Button
+                title=""
+                role="ghost"
+                iconLeft={{ file: trash, size: 24 }}
+                onClick={onForgetWalletClick(rowData?.address)}
               />
             )}
+          </div>
         </ActionsWrapper>
       );
     },
@@ -348,13 +357,15 @@ const getAccountsColumns = ({
 ];
 
 const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
+  const { state } = useLocation();
   const { accounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
-  const [searchString, setSearchString] = useState<string>('');
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
-  const [isOpenConnectWallet, setOpenConnectWallet] = useState(false);
+  const [isOpenConnectWallet, setOpenConnectWallet] = useState(
+    (state as { openConnectWallet?: boolean })?.openConnectWallet || false,
+  );
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
@@ -391,17 +402,6 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
     [],
   );
 
-  const filteredAccounts = useMemo(() => {
-    if (!searchString) {
-      return accountBalances;
-    }
-    return accountBalances?.filter(
-      (account) =>
-        account.address.toLowerCase().includes(searchString.toLowerCase()) ||
-        account.name?.toLowerCase().includes(searchString.toLowerCase()),
-    );
-  }, [accountBalances, searchString]);
-
   const onChangeAccountsFinish = useCallback(() => {
     setIsOpenModal(false);
     setWithdrawModalVisible(false);
@@ -416,6 +416,13 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
     [],
   );
 
+  const onWithdrawSuccess = useCallback(async () => {
+    await Promise.all(
+      withdrawableBalances.map(({ refetch }) => refetch({ fetching: true })),
+    );
+    await sleep(2000);
+  }, [selectedAddress, withdrawableBalances]);
+
   return (
     <>
       <PagePaper
@@ -429,10 +436,6 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
             title="Connect or create wallet"
             onClick={() => setOpenConnectWallet(true)}
           />
-          {/* TODO: uncomment when AccountsTotalBalance will be ready
-            <AccountsTotalBalanceStyled balance={totalBalance} />
-          */}
-          <SearchStyled value={searchString} onChange={setSearchString} />
         </AccountsPageHeader>
         <AccountsPageContent>
           <Table
@@ -442,12 +445,12 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
               onForgetWalletClick,
               onWithdrawBalance,
             })}
-            data={filteredAccounts}
+            data={accountBalances}
             loading={balances.some((balance) => balance.isLoading)}
             mobileCaption={
-              <Text color="grey-500" weight="light">
+              <Typography color="grey-500" weight="light">
                 <CaptionText />
-              </Text>
+              </Typography>
             }
           />
         </AccountsPageContent>
@@ -473,10 +476,14 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
           chain={currentChain}
           amount={amountToWithdraw}
           onClose={onChangeAccountsFinish}
+          onWithdrawSuccess={onWithdrawSuccess}
         />
       )}
       {isOpenConnectWallet && (
-        <ConnectWallets onClose={() => setOpenConnectWallet(false)} />
+        <ConnectWallets
+          isOpen={isOpenConnectWallet}
+          onClose={() => setOpenConnectWallet(false)}
+        />
       )}
       <Confirm
         buttons={[
@@ -494,10 +501,10 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
         title="Forget wallet"
         onClose={() => setForgetWalletAddress('')}
       >
-        <Text>
+        <Typography>
           Are you sure you want to perform this action? You can always recover your wallet
           with your seed password using the &rsquo;Add account via&rsquo; button
-        </Text>
+        </Typography>
       </Confirm>
     </>
   );

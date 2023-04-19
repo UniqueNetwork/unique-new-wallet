@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import {
+  PagePaper,
+  StatusTransactionModal,
+  TooltipWrapper,
   Button,
   Checkbox,
   Heading,
   Icon,
   InputText,
   Loader,
-  Text,
+  Typography,
   useNotifications,
-} from '@unique-nft/ui-kit';
-import { useNavigate } from 'react-router-dom';
-
-import { PagePaper, StatusTransactionModal, TooltipWrapper } from '@app/components';
+} from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { BurnCollectionModal } from '@app/pages/CollectionNft/components/BurnCollectionModal';
 import { useAccounts, useApi } from '@app/hooks';
@@ -117,10 +119,10 @@ const CollectionSettings = () => {
           <>
             <FormHeader>
               <Heading size="3">Advanced settings</Heading>
-              <Text>
+              <Typography>
                 These settings are intended for users who want to place their collection
                 on the marketplace.
-              </Text>
+              </Typography>
             </FormHeader>
             <FormBody>
               <Form>
@@ -160,11 +162,11 @@ const CollectionSettings = () => {
                 </SettingsRow>
                 <FormRow>
                   <Heading size="4">One-time install options</Heading>
-                  <Text>
+                  <Typography>
                     Please note that once installed, these settings cannot be changed
                     later. If you do not change them now, you can change them once on the
                     Settings tab in the collection detail card.
-                  </Text>
+                  </Typography>
                 </FormRow>
                 <SettingsRow>
                   <InputText

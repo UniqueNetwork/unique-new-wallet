@@ -1,12 +1,10 @@
-import { Layout } from '@unique-nft/ui-kit';
 import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { usePageSettingContext } from '@app/context';
 
-import { Header } from '../';
-import { Footer } from '../Footer';
+import { Header, Layout, Footer } from '../';
 
 export const PageLayout: FC = () => {
   const { breadcrumbs, heading } = usePageSettingContext();

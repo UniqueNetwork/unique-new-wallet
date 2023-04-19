@@ -1,9 +1,8 @@
 import React, { FC, memo } from 'react';
 import styled from 'styled-components/macro';
-import { IconProps, Text } from '@unique-nft/ui-kit';
 
-import { Icon } from '@app/components/Icon';
-
+import { Icon, IconProps } from '../components';
+import { Typography } from './Typography/Typography';
 interface NoItemsProps {
   className?: string;
   file?: string;
@@ -22,7 +21,7 @@ const Wrapper = styled.div`
   user-select: none;
 `;
 
-const Title = styled(Text).attrs({ color: 'grey-500', weight: 'light' })`
+const Title = styled(Typography).attrs({ color: 'grey-500', weight: 'light' })`
   margin-top: var(--prop-gap);
 `;
 

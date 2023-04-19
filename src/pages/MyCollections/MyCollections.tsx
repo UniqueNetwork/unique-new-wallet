@@ -1,9 +1,8 @@
 import { useContext, useEffect, useState, VFC } from 'react';
 import { Outlet, useNavigate, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
-import { Text } from '@unique-nft/ui-kit';
 
-import { Button, PagePaper, TokenLink } from '@app/components';
+import { Button, PagePaper, TokenLink, Typography, List } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
@@ -14,7 +13,6 @@ import { Collection } from '@app/api/graphQL/types';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
 import { useGraphQlCheckInExistCollectionsByAccount } from '@app/api/graphQL/collections/useGraphQlCheckInExistCollectionsByAccount';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
-import List from '@app/components/List';
 import {
   BottomBar,
   BottomBarHeader,
@@ -36,7 +34,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const { selectedAccount } = useContext(AccountContext);
   const deviceSize = useDeviceSize();
   const navigate = useNavigate();
-  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const [isFilterOpen, setFilterOpen] = useState(false);
 
   const { collections: cacheCollections, excludeCollectionsCache } =
@@ -60,7 +58,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       order,
       pagination: {
         page,
-        limit: getLimit,
+        limit,
       },
       search,
     },
@@ -146,7 +144,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
               panelSettings={{
                 pagination: {
                   current: page,
-                  pageSizes: [getLimit],
+                  pageSizes: [limit],
                   show: isPagination,
                   size: collectionsCount,
                   viewMode: 'bottom',
@@ -160,10 +158,10 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                     title={`${collection.name} [id ${collection.collection_id}]`}
                     meta={
                       <>
-                        <Text color="grey-500" size="s">
+                        <Typography color="grey-500" size="s">
                           Items:{' '}
-                        </Text>
-                        <Text size="s">{collection.tokens_count || 0}</Text>
+                        </Typography>
+                        <Typography size="s">{collection.tokens_count || 0}</Typography>
                       </>
                     }
                     key={collection.collection_id}
@@ -172,7 +170,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                   />
                 </List.Item>
               )}
-              visibleItems={getLimit}
+              visibleItems={limit}
               onPageChange={onChangePagination}
             />
           </PagePaper.Processing>

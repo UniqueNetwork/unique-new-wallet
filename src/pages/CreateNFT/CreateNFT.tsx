@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState, VFC } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Alert, Button, useNotifications } from '@unique-nft/ui-kit';
-import { useDebounce } from 'use-debounce';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { CreateTokenBody, TokenId } from '@unique-nft/sdk';
@@ -20,7 +18,13 @@ import {
   useTokenCreate,
 } from '@app/api';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { ConfirmBtn, StatusTransactionModal } from '@app/components';
+import {
+  Alert,
+  Button,
+  ConfirmBtn,
+  StatusTransactionModal,
+  useNotifications,
+} from '@app/components';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { config } from '@app/config';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
@@ -188,7 +192,9 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
         info('NFT created successfully');
 
         closable
-          ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
+          ? navigate(
+              `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+            )
           : reset(undefined, { keepDefaultValues: true });
       });
     }
@@ -230,7 +236,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 A fee will be calculated after corrected filling required fields
               </Alert>
             )}
-            <ButtonGroup>
+            <ButtonGroup stack>
               <ConfirmBtn
                 role="primary"
                 title="Confirm and create more"

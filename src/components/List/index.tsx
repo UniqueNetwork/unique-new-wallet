@@ -2,11 +2,11 @@ import { ReactNode, useState } from 'react';
 import { OperationVariables } from '@apollo/client/core/types';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { IPaginationProps, Loader, Pagination, Text } from '@unique-nft/ui-kit';
 
 import { DeviceSize, SizeMap, useDeviceSize } from '@app/hooks';
 import { Button, NoItems, PagePaper } from '@app/components';
 
+import { IPaginationProps, Loader, Pagination, Typography } from '..';
 import Item from './Item';
 
 List.Item = Item;
@@ -15,10 +15,11 @@ type Position = 'both' | 'bottom' | 'top';
 
 type IPaginationSettings = Pick<
   IPaginationProps,
-  'current' | 'size' | 'pageSizes' | 'visible'
+  'current' | 'size' | 'pageSizes' | 'visible' | 'itemTitle' | 'perPage'
 > & {
   show?: boolean;
   viewMode: Position | undefined;
+  perPageSelector?: boolean;
 };
 
 interface IPanelSettings {
@@ -27,7 +28,7 @@ interface IPanelSettings {
   viewMode?: Position;
 }
 
-export type ListProps<T> = Pick<IPaginationProps, 'onPageChange'> & {
+export type ListProps<T> = Pick<IPaginationProps, 'onPageChange' | 'onPageSizeChange'> & {
   className?: string;
   dataSource: T[];
   fetchMore?(variables?: any): void;
@@ -69,14 +70,25 @@ const ListBody = styled.div`
 
 const ListPanel = styled.div`
   flex: 0 0 auto;
+  display: flex;
+  align-items: stretch !important;
+  flex-direction: column;
 
   &[class*='__stackedWith'] {
     padding-left: 0;
     padding-right: 0;
   }
 
+  &[class*='__stackedWith_top'] {
+    .unique-pagination-wrapper .unique-select .select-wrapper .select-dropdown {
+      top: unset;
+      bottom: calc(100% + 4px);
+    }
+  }
+
   .unique-pagination-wrapper {
-    margin-left: auto;
+    flex: 1;
+    justify-content: space-between;
   }
 `;
 
@@ -110,7 +122,7 @@ const ButtonMoreWrapper = styled.div`
   padding-top: calc(var(--prop-gap) * 2);
 `;
 
-function List<T>({
+export function List<T>({
   className,
   dataSource,
   fetchMore,
@@ -120,6 +132,7 @@ function List<T>({
   renderItem,
   visibleItems,
   onPageChange,
+  onPageSizeChange,
   noItemsIconName = 'box',
   resultsComponent,
 }: ListProps<T>) {
@@ -144,21 +157,10 @@ function List<T>({
     childrenContent = <NoItems iconName={noItemsIconName} />;
   }
 
-  const paginationContent = panelSettings.pagination.show ? (
-    <Pagination
-      withIcons
-      current={panelSettings.pagination.current}
-      pageSizes={panelSettings.pagination.pageSizes}
-      size={panelSettings.pagination.size}
-      visible={5}
-      onPageChange={onPageChange}
-    />
-  ) : null;
-
   const ResultItemText = resultsComponent || (
-    <Text>{`${panelSettings.pagination.size} ${
+    <Typography>{`${panelSettings.pagination.size} ${
       panelSettings.pagination.size === 1 ? 'result' : 'results'
-    }`}</Text>
+    }`}</Typography>
   );
 
   const [count, setCount] = useState(2);
@@ -187,15 +189,31 @@ function List<T>({
       {(panelSettings.viewMode === 'both' || panelSettings.viewMode === 'top') && (
         <ListPanel as={PagePaper.Panel} stacked="bottom">
           <ListExtra>
-            {!!dataSource.length && ResultItemText}
+            {!panelSettings.pagination.perPageSelector &&
+              !!dataSource.length &&
+              ResultItemText}
             {panelSettings.extraText}
           </ListExtra>
 
-          {!!dataSource.length &&
+          {panelSettings.pagination.show &&
+            panelSettings.pagination.perPageSelector &&
+            !!dataSource.length &&
             !fetchMore &&
             (panelSettings.pagination.viewMode === 'both' ||
-              panelSettings.pagination.viewMode === 'top') &&
-            paginationContent}
+              panelSettings.pagination.viewMode === 'top') && (
+              <Pagination
+                withIcons
+                current={panelSettings.pagination.current}
+                perPage={panelSettings.pagination.perPage}
+                pageSizes={panelSettings.pagination.pageSizes}
+                size={panelSettings.pagination.size}
+                withPerPageSelector={panelSettings.pagination.perPageSelector}
+                itemTitle={panelSettings.pagination.itemTitle}
+                visible={5}
+                onPageChange={onPageChange}
+                onPageSizeChange={onPageSizeChange}
+              />
+            )}
         </ListPanel>
       )}
 
@@ -217,17 +235,26 @@ function List<T>({
 
       {deviceSize >= DeviceSize.lg &&
         !!dataSource.length &&
-        !!paginationContent &&
+        panelSettings.pagination.show &&
         (panelSettings.viewMode === 'both' || panelSettings.viewMode === 'bottom') && (
           <ListPanel as={PagePaper.Panel} stacked="top">
-            {!!dataSource.length && ResultItemText}
             {(panelSettings.pagination.viewMode === 'both' ||
-              panelSettings.pagination.viewMode === 'bottom') &&
-              paginationContent}
+              panelSettings.pagination.viewMode === 'bottom') && (
+              <Pagination
+                withIcons
+                current={panelSettings.pagination.current}
+                perPage={panelSettings.pagination.perPage}
+                pageSizes={panelSettings.pagination.pageSizes}
+                size={panelSettings.pagination.size}
+                withPerPageSelector={panelSettings.pagination.perPageSelector}
+                itemTitle={panelSettings.pagination.itemTitle}
+                visible={5}
+                onPageChange={onPageChange}
+                onPageSizeChange={onPageSizeChange}
+              />
+            )}
           </ListPanel>
         )}
     </Wrapper>
   );
 }
-
-export default List;

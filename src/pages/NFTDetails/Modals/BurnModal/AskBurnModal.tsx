@@ -1,5 +1,4 @@
 import React, { useMemo, VFC } from 'react';
-import { Text, Loader } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 
 import { Modal } from '@app/components/Modal';
@@ -7,6 +6,7 @@ import { BaseActionBtn } from '@app/components';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { useAccounts } from '@app/hooks';
 
+import { Typography } from '../../../../components/Typography';
 import { NOT_ENOUGH_BALANCE_MESSAGE } from '../constants';
 
 interface AskBurnModalProps {
@@ -61,6 +61,6 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
   );
 };
 
-const TextWrapper = styled(Text)`
+const TextWrapper = styled(Typography)`
   margin-bottom: calc(var(--prop-gap));
 `;

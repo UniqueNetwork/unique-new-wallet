@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useNotifications } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
-import { ROUTE } from '@app/routes';
+import { useNotifications } from '@app/components';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { useAccounts, useApi, useIsSufficientBalance } from '@app/hooks';
 import { AskBurnModal, BurnStagesModal } from '@app/pages/NFTDetails/Modals/BurnModal';
 import { useTokenBurn, useTokenOwner } from '@app/api';
@@ -80,7 +80,9 @@ export const BurnModal = <T extends TBaseToken>({
     }).then(() => {
       info('NFT burned successfully');
 
-      navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+      navigate(
+        `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+      );
     });
   };
 

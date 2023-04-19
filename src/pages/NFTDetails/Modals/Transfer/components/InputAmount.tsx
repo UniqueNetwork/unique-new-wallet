@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import { Text } from '@unique-nft/ui-kit';
 
-import { InputText, InputTextProps } from '@app/components';
+import { Typography, InputText, InputTextProps } from '@app/components';
 import { formatBlockNumber } from '@app/utils';
 
 type InputAmountProps = InputTextProps & {
@@ -19,9 +18,9 @@ export const InputAmount = ({ maxValue, ...inputProps }: InputAmountProps) => {
         label={
           <LabelWrapper>
             Number of fractions to be sent
-            <Text size="s" color="grey-500">{`You own: ${formatBlockNumber(
+            <Typography size="s" color="grey-500">{`You own: ${formatBlockNumber(
               maxValue || 0,
-            )}`}</Text>
+            )}`}</Typography>
           </LabelWrapper>
         }
         maxLength={49}

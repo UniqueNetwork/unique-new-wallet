@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
-import { Loader, TableColumnProps, TableRowProps, Text } from '@unique-nft/ui-kit';
+import { TableColumnProps, TableRowProps } from '@unique-nft/ui-kit';
 
 import { getDeepValue } from '@app/utils';
-import { NoItems } from '@app/components';
+import { NoItems, Loader, Typography } from '@app/components';
 
 interface MobileTableProps {
   className?: string;
@@ -56,7 +56,7 @@ const MobileTable: FC<MobileTableProps> = ({
                 {typeof column?.title === 'object' ? (
                   column.title
                 ) : (
-                  <Text color="grey-500">{column?.title}</Text>
+                  <Typography color="grey-500">{column?.title}</Typography>
                 )}
                 {column.render?.(getDeepValue(item, column.field), item, {
                   columnIndex: colIdx,

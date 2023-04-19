@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { useAccounts } from '@app/hooks';
-import { Modal } from '@app/components/Modal';
+import { Modal, useNotifications } from '@app/components';
 import { AskCredentialsModal, AskExistsSeedPhrase } from '@app/pages';
 
 import {
@@ -22,6 +22,8 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
   );
   const [accountProperties, setAccountProperties] = useState<TAccountProperties>();
   const { addLocalAccount } = useAccounts();
+
+  const { info } = useNotifications();
 
   const ModalBodyComponent = useMemo<FC<TCreateAccountBodyModalProps> | null>(() => {
     switch (stage) {
@@ -50,7 +52,7 @@ export const ImportViaSeedAccountModal: FC<TCreateAccountModalProps> = ({
           accountProperties.password || '',
           defaultPairType,
         );
-
+        info('Account added');
         onFinish();
         setStage(CreateAccountModalStages.AskSeed);
         return;

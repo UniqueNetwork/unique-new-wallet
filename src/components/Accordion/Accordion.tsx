@@ -1,10 +1,10 @@
 import React, { FC, ReactNode, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { Text } from '@unique-nft/ui-kit';
 
+import { Typography } from '../Typography';
 import { Button } from '../Button';
 
-interface AccordionProps {
+export interface AccordionProps {
   title: ReactNode;
   isOpen?: boolean;
   isClearShow?: boolean;
@@ -32,7 +32,7 @@ const AccordionChevronIcon = () => {
   );
 };
 
-const Accordion: FC<AccordionProps> = ({
+export const Accordion: FC<AccordionProps> = ({
   title,
   isOpen: isOpenProps,
   children,
@@ -56,7 +56,7 @@ const Accordion: FC<AccordionProps> = ({
     <AccordionWrapper className={className}>
       <AccordionHeaderWrapper>
         <AccordionTitle isOpen={isOpen} onClick={onTitleClick}>
-          <Text>{title}</Text>
+          <Typography>{title}</Typography>
           <AccordionChevronIcon />
         </AccordionTitle>
         {isClearShow && (
@@ -73,7 +73,6 @@ const AccordionWrapper = styled.div``;
 const AccordionHeaderWrapper = styled.div`
   display: flex;
   align-items: center;
-  height: 32px;
   justify-content: space-between;
 `;
 
@@ -83,6 +82,7 @@ const AccordionTitle = styled.div<{ isOpen?: boolean }>`
   align-items: center;
   column-gap: calc(var(--prop-gap) / 4);
   svg {
+    min-width: 24px;
     transform-origin: center;
     transform: ${({ isOpen }) => (isOpen ? 'rotate(0deg);' : 'rotate(-90deg);')};
     transition: all 0.3s;
@@ -112,10 +112,8 @@ const AccordionBodyWrapper = styled.div<{ isOpen?: boolean }>`
     }
     to {
       opacity: 1;
-      max-height: 500px;
+      max-height: 1000px;
       visibility: visible;
     }
   }
 `;
-
-export default Accordion;

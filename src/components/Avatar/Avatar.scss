@@ -1,0 +1,15 @@
+@import '../../styles/index.scss';
+
+.unique-avatar {
+    background-color: var(--color-blue-grey-100);
+
+    &.circle {
+        border-radius: 50%;
+        outline: 1px solid var(--color-grey-200);
+    }
+
+    &.square {
+        border-radius: var(--prop-border-radius);
+    }
+    
+}

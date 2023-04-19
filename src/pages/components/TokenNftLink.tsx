@@ -1,8 +1,7 @@
-import { Text } from '@unique-nft/ui-kit';
 import styled from 'styled-components';
 import { Address } from '@unique-nft/utils';
 
-import { Achievement, TokenLink } from '@app/components';
+import { Achievement, TokenLink, Typography } from '@app/components';
 import { Token, TokenTypeEnum } from '@app/api/graphQL/types';
 import { formatLongNumber, shortAddress } from '@app/utils';
 import { useIsOwner } from '@app/hooks/useIsOwner';
@@ -69,44 +68,44 @@ export const TokenNftLink = ({
       badge={renderBadge(token.type, token.nested)}
       title={
         <>
-          <Text appearance="block" size="l">
+          <Typography appearance="block" size="l">
             {token.token_name}
-          </Text>
-          <Text appearance="block" weight="light" size="s">
+          </Typography>
+          <Typography appearance="block" weight="light" size="s">
             {token.collection_name} [id {token.collection_id}]
-          </Text>
+          </Typography>
           {!token.parent_id && token.nested && (
             <AdditionalWrapper>
-              <Text appearance="block" weight="light" size="s" color="grey-500">
+              <Typography appearance="block" weight="light" size="s" color="grey-500">
                 Nested items: <span className="count">{token.children_count}</span>
-              </Text>
+              </Typography>
             </AdditionalWrapper>
           )}
           {token.type === TokenTypeEnum.RFT && (
             <AdditionalWrapper>
-              <Text appearance="block" weight="light" size="s" color="grey-500">
+              <Typography appearance="block" weight="light" size="s" color="grey-500">
                 Owned fractions:{' '}
                 <span className="count">
                   {formatLongNumber(Number(token.tokens_amount))}/
                   {formatLongNumber(Number(token.total_pieces))}
                 </span>
-              </Text>
+              </Typography>
             </AdditionalWrapper>
           )}
           {showOwner && (
             <AdditionalWrapper>
               {isOwner && (
-                <Text appearance="block" weight="light" size="s" color="grey-500">
+                <Typography appearance="block" weight="light" size="s" color="grey-500">
                   You own it
-                </Text>
+                </Typography>
               )}
               {!isOwner && (
-                <Text appearance="block" weight="light" size="s" color="grey-500">
+                <Typography appearance="block" weight="light" size="s" color="grey-500">
                   {Address.is.nestingAddress(token.tokens_owner)
                     ? 'Nested in'
                     : 'Owned by:'}{' '}
                   <span className="count">{shortAddress(token.tokens_owner)}</span>
-                </Text>
+                </Typography>
               )}
             </AdditionalWrapper>
           )}

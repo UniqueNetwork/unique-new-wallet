@@ -1,9 +1,9 @@
 import classNames from 'classnames';
-import { ComponentProps, DimentionType } from '@unique-nft/ui-kit';
 
 import { Icon, IconProps } from '@app/components';
 
 import './Button.scss';
+import { ComponentProps, DimentionType } from '../types';
 
 export interface ButtonBaseProps {
   title: string;

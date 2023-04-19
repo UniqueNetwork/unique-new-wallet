@@ -1,8 +1,7 @@
-import { Avatar, Text } from '@unique-nft/ui-kit';
 import React, { ReactNode } from 'react';
 
 import useCopyToClipboard from '@app/hooks/useCopyToClipboard';
-import { Icon } from '@app/components';
+import { Icon, Avatar, Typography } from '@app/components';
 
 import defaultAvatarSrc from '../../../../static/icons/avatar.jpg';
 import { IAccount } from '../../AccountsManager';
@@ -28,11 +27,11 @@ export const AccountCard = ({ name, address, avatarRender }: AccountCardProps) =
         <Avatar src={defaultAvatarSrc} type="circle" />
       )}
       <div className="account-card-content">
-        <Text size="m">{name}</Text>
+        <Typography size="m">{name}</Typography>
         <div className="account-card-address">
-          <Text size="s" color="grey-500">
+          <Typography size="s" color="grey-500">
             {shortAddress}
-          </Text>
+          </Typography>
           <div
             className="address-copy"
             data-testid={`address-copy-${address}`}

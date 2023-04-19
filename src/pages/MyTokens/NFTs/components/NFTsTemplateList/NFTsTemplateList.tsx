@@ -1,19 +1,24 @@
 import classNames from 'classnames';
-import { Chip, IconProps, IPaginationProps, Link } from '@unique-nft/ui-kit';
 import { useNavigate } from 'react-router-dom';
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
-import { useItemsLimit } from '@app/hooks';
-import { PagePaper } from '@app/components';
-import List from '@app/components/List';
+import { DeviceSize, useDeviceSize, useItemsLimit } from '@app/hooks';
+import {
+  PagePaper,
+  Chip,
+  IconProps,
+  IPaginationProps,
+  Link,
+  List,
+} from '@app/components';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 import { TokenNftLink } from '@app/pages/components/TokenNftLink';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
 type PaginationSettingsProps = Pick<
   IPaginationProps,
-  'current' | 'pageSizes' | 'size'
+  'current' | 'pageSizes' | 'size' | 'perPage'
 > & {
   show?: boolean;
 };
@@ -30,11 +35,14 @@ type NFTsListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
   }[];
   fetchMore?(variables?: any): void;
   onPageChange: IPaginationProps['onPageChange'];
+  onPageSizeChange: IPaginationProps['onPageSizeChange'];
   onChipsReset?(): void;
   cacheTokens: TTokensCacheVar;
 };
 
 const DEFAULT_TOKENS: Token[] = [];
+
+export const DEFAULT_PAGE_SIZE_OPTIONS: number[] = [24, 36, 48, 60];
 
 export const NFTsTemplateList = ({
   className,
@@ -44,12 +52,16 @@ export const NFTsTemplateList = ({
   paginationSettings,
   fetchMore,
   onPageChange,
+  onPageSizeChange,
   onChipsReset,
   cacheTokens,
 }: NFTsListComponentProps) => {
-  const getLimit = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const getTokenPath = useGetTokenPath();
   const navigate = useNavigate();
+  const deviceSize = useDeviceSize();
+
+  const hidePurePagination = deviceSize < DeviceSize.lg;
 
   return (
     <PagePaper.Processing>
@@ -57,17 +69,20 @@ export const NFTsTemplateList = ({
       <List
         className={classNames('nft-list', className)}
         dataSource={tokens}
-        fetchMore={fetchMore}
+        fetchMore={hidePurePagination ? fetchMore : undefined}
         isLoading={isLoading}
         itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
         noItemsIconName="not-found"
         panelSettings={{
           pagination: {
             current: paginationSettings.current,
-            pageSizes: [getLimit],
+            perPage: paginationSettings.perPage,
+            pageSizes: hidePurePagination ? [limit] : DEFAULT_PAGE_SIZE_OPTIONS,
             show: paginationSettings.show,
             size: paginationSettings.size,
-            viewMode: 'bottom',
+            perPageSelector: !hidePurePagination,
+            viewMode: 'both',
+            itemTitle: 'result',
           },
           extraText: (
             <>
@@ -96,8 +111,9 @@ export const NFTsTemplateList = ({
             }}
           />
         )}
-        visibleItems={getLimit}
+        visibleItems={limit}
         onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
       />
     </PagePaper.Processing>
   );

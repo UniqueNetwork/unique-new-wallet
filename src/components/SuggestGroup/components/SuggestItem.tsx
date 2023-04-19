@@ -1,10 +1,10 @@
-import { SuggestItemProps } from '@unique-nft/ui-kit/dist/cjs/components/Suggest/components';
 import classNames from 'classnames';
 import styled from 'styled-components/macro';
 
 import { TestSuggestValues } from '@app/components/SuggestGroup/SuggestGroup';
 // TODO: test image for static
 import nft1 from '@app/static/nft-1.png';
+import { SuggestItemProps } from '@app/components';
 
 export const SuggestItem = ({
   suggestion,

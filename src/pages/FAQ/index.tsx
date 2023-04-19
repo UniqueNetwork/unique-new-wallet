@@ -9,7 +9,7 @@ import {
   WrapperSidebar,
 } from '@app/pages/components/PageComponents';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
-import Accordion from '@app/components/Accordion/Accordion';
+import { Accordion } from '@app/components';
 
 import { AskQuestion, faqItems } from './components';
 
@@ -20,6 +20,9 @@ const WrapperContentStyled = styled(WrapperContent)`
     font-size: 1rem;
     line-height: 1.4;
     color: var(--color-additional-dark);
+    a {
+      white-space: break-spaces;
+    }
 
     .tooltip {
       position: absolute;
@@ -165,7 +168,7 @@ const FaqComponent = (): React.ReactElement<void> => {
                 }
                 onToggle={onToggleItem(i)}
               >
-                {item.content}
+                <div>{item.content}</div>
               </Accordion>
             );
           },

@@ -25,6 +25,8 @@ export const useAccountsBalanceService = (
         },
         enabled: addresses.length !== 0,
         refetchOnMount: 'always',
+        refetchIntervalInBackground: true,
+        refetchInterval: 60_000,
       };
     }),
   );

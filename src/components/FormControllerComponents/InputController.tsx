@@ -1,7 +1,8 @@
 import { Controller } from 'react-hook-form';
-import { InputText, InputTextProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
+
+import { InputText, InputTextProps } from '../InputText';
 
 type InputControllerProps<
   TInput extends string,
@@ -24,7 +25,10 @@ export const InputController = <TInput extends string, TOutput>({
   return (
     <Controller
       control={control}
-      render={({ field: { value, onChange, ...inputField } }) => (
+      render={({
+        field: { value, onChange, ...inputField },
+        fieldState: { error, isTouched },
+      }) => (
         <InputText
           {...inputField}
           value={transform?.input ? transform.input(value) : value ?? ''}
@@ -32,6 +36,8 @@ export const InputController = <TInput extends string, TOutput>({
             transform?.output ? onChange(transform.output(value)) : onChange(value);
           }}
           {...inputProps}
+          error={isTouched && !!error}
+          statusText={isTouched ? error?.message || '' : ''}
         />
       )}
       name={name}
