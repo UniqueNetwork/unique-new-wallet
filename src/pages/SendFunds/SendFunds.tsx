@@ -46,7 +46,7 @@ const TransferStagesModal: VFC = () => {
 };
 
 export const SendFundsComponent: FC<SendFundsProps> = (props) => {
-  const { onClose, senderAccount, onSendSuccess, chain } = props;
+  const { onClose, onSendSuccess, chain } = props;
 
   const {
     control,
