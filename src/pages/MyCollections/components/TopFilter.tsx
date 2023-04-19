@@ -118,6 +118,7 @@ export const TopFilterComponent: VFC<TopFilterComponentProps> = ({
       {showFilter && (
         <ControlGroup>
           <Search
+            hideButton={view === 'column'}
             value={searchString}
             onChange={setSearchString}
             onKeyDown={handleSearchString}

@@ -10,7 +10,7 @@ type SearchProps = Pick<ComponentProps, 'className' | 'value' | 'onKeyDown'> &
     onClear?: () => void;
   };
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ hideButton: boolean }>`
   display: flex;
   gap: calc(var(--prop-gap) / 2);
   position: relative;
@@ -35,7 +35,7 @@ const Wrapper = styled.div`
         }
       }
       button.unique-button.with-icon.to-right {
-        margin-right: 36px;
+        margin-right: ${({ hideButton }) => (hideButton ? '8px' : '36px')};
       }
     }
   }
@@ -51,7 +51,7 @@ export const Search = ({
   onClear,
 }: SearchProps) => {
   return (
-    <Wrapper className={className}>
+    <Wrapper className={className} hideButton={hideButton}>
       <InputText
         clearable
         value={value}

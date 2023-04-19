@@ -1,12 +1,10 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components/macro';
 
-import { Direction } from '@app/api/graphQL/types';
 import { CollectionsFilter, StatusFilter, TypeFilter } from '@app/pages';
 import { defaultStatusFilter, defaultTypeFilter } from '@app/pages/MyTokens/constants';
 import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { OptionChips as CollectionOption } from '@app/types';
-import { iconDown, iconUp, Option } from '@app/utils';
 import { Search } from '@app/pages/components/Search';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { SortOption } from '@app/pages/MyTokens/NFTs/components/NFTFilters/types';
@@ -82,6 +80,7 @@ export const MobileFilters = ({
       >
         <FiltersWrapper>
           <Search
+            hideButton
             className="filter-input"
             value={search}
             onChange={setSearch}

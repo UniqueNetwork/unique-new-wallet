@@ -3,7 +3,6 @@ import { GroupBase, Options, OptionsOrGroups } from 'react-select';
 import { Controller, useWatch } from 'react-hook-form';
 import { Address } from '@unique-nft/utils';
 import styled from 'styled-components';
-import { BN } from '@polkadot/util';
 
 import { Account } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
