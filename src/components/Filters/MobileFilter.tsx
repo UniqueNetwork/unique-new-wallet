@@ -86,6 +86,7 @@ export const MobileFilters = ({
             value={search}
             onChange={setSearch}
             onKeyDown={searchHandler}
+            onClear={() => setSearch('')}
           />
           <Select
             className="filter-input"

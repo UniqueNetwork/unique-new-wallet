@@ -25,6 +25,7 @@ import { Search } from '@app/pages/components/Search';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { FormBody, FormRow, SettingsRow } from '@app/pages/components/FormComponents';
+import { ControlGroup } from '@app/pages/components/ControlGroup';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -142,7 +143,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
         }
         className={classNames('collection-nft-filters', className)}
         controls={
-          <>
+          <ControlGroup>
             <RadioGroup
               align="horizontal"
               options={radioOptions}
@@ -160,7 +161,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               value={direction}
               onChange={handleChangeDirection}
             />
-          </>
+          </ControlGroup>
         }
       />
 
@@ -175,7 +176,12 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
         >
           <FormBodyStyled>
             <SettingsRow>
-              <Search value={search} onKeyDown={handleSearch} onChange={setSearch} />
+              <Search
+                value={search}
+                onKeyDown={handleSearch}
+                onChange={setSearch}
+                onClear={handleSearchClear}
+              />
             </SettingsRow>
             <FormRow>
               <Select
@@ -185,13 +191,11 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               />
             </FormRow>
             <FormRow>
-              <Accordion isOpen title="Status">
-                <RadioGroup
-                  align="vertical"
-                  options={radioOptions}
-                  onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
-                />
-              </Accordion>
+              <RadioGroup
+                align="vertical"
+                options={radioOptions}
+                onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
+              />
             </FormRow>
             <ButtonsGroup>
               <Button title="Apply" onClick={handleApplyFilter} />

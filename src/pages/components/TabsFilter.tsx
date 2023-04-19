@@ -22,6 +22,7 @@ const TabsFilterWrapper = styled.div`
       flex: 1 1 auto;
       align-items: center;
       justify-content: flex-end;
+      gap: var(--prop-gap);
     }
     &__buttons {
       @media screen and (max-width: 568px) {
@@ -34,24 +35,6 @@ const TabsFilterWrapper = styled.div`
   .unique-select,
   .unique-button {
     width: 100%;
-  }
-
-  .filter-search-wrapper {
-    max-width: 570px;
-    width: 100%;
-  }
-
-  .unique-select {
-    margin-left: var(--prop-gap);
-
-    @media screen and (min-width: 1024px) {
-      flex: 1 1 50%;
-      max-width: 180px;
-    }
-
-    .select-value {
-      grid-column-gap: 7px;
-    }
   }
 
   .unique-radio-group-wrapper {

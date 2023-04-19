@@ -14,7 +14,9 @@ const Wrapper = styled.div`
   display: flex;
   gap: calc(var(--prop-gap) / 2);
   position: relative;
-  flex-basis: 570px;
+  @media screen and (min-width: 1024px) {
+    flex-basis: 570px;
+  }
 
   .unique-input-text {
     width: 100%;
