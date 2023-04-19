@@ -97,13 +97,14 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           amount: Number(senderBalance?.availableBalance.amount) || 0,
         });
 
-        onChange(
-          (
-            Number(senderBalance?.availableBalance.amount) -
-            (Number(feeResponse?.fee?.amount) || 0)
-          ).toString() || '0',
-        );
-      } catch {
+        const feeAmount = Number(feeResponse?.fee?.amount || 0);
+        const balanceAmount = Number(senderBalance?.availableBalance.amount);
+
+        const maxValue =
+          feeAmount < balanceAmount ? balanceAmount - feeAmount : balanceAmount;
+
+        onChange(maxValue.toString());
+      } catch (e) {
         onChange(senderBalance?.availableBalance.amount || '0');
       } finally {
         setIsCalculateMaxAmount(false);

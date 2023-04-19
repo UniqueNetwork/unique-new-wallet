@@ -21,7 +21,7 @@ export const warnings: Record<string, Warning> = {
 };
 
 export const types: AttributeFieldType[] = [
-  { id: 'string', title: 'Typography' },
+  { id: 'string', title: 'Text' },
   { id: 'enum', title: 'Select' },
   { id: 'repeated', title: 'Multiselect' },
 ];

@@ -25,6 +25,7 @@ import { Search } from '@app/pages/components/Search';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { FormBody, FormRow, SettingsRow } from '@app/pages/components/FormComponents';
+import { ControlGroup } from '@app/pages/components/ControlGroup';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
@@ -85,11 +86,14 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
   const { collectionId } = useParams<{ collectionId: string }>();
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
   const deviceSize = useDeviceSize();
+  const { direction, type, search, onChangeSearch, onChangeDirection, onChangeType } =
+    useNftFilterContext();
 
   const { currentChain } = useApi();
-  const [search, setSearch] = useState('');
-  const { direction, onChangeSearch, onChangeDirection, onChangeType } =
-    useNftFilterContext();
+  const [searchText, setSearchText] = useState(search);
+
+  const [directionValue, setDirectionValue] = useState<Direction>(direction || 'desc');
+  const [typeValue, setTypeValue] = useState<ListNftsFilterType>(type || 'all');
 
   const handleChangeDirection = (option: SelectOption) => {
     onChangeDirection(option.id);
@@ -97,20 +101,26 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
 
   const handleSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
-      onChangeSearch(search);
+      onChangeSearch(searchText);
     }
   };
 
   const handleSearch = () => {
-    onChangeSearch(search);
+    onChangeSearch(searchText);
   };
 
   const handleSearchClear = () => {
     onChangeSearch('');
-    setSearch('');
+    setSearchText('');
   };
 
-  const handleApplyFilter = () => setFilterOpen(!isFilterOpen);
+  const handleApplyFilter = () => {
+    onChangeDirection(directionValue);
+    onChangeSearch(searchText);
+    onChangeType(typeValue);
+    setFilterOpen(!isFilterOpen);
+  };
+
   const barButtons = [
     <Button
       key="Filter-toggle-button"
@@ -142,16 +152,17 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
         }
         className={classNames('collection-nft-filters', className)}
         controls={
-          <>
+          <ControlGroup>
             <RadioGroup
               align="horizontal"
               options={radioOptions}
+              value={type}
               onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
             />
             <Search
-              value={search}
+              value={searchText}
               onKeyDown={handleSearchKeyDown}
-              onChange={setSearch}
+              onChange={setSearchText}
               onClear={handleSearchClear}
               onClick={handleSearch}
             />
@@ -160,7 +171,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
               value={direction}
               onChange={handleChangeDirection}
             />
-          </>
+          </ControlGroup>
         }
       />
 
@@ -175,23 +186,28 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
         >
           <FormBodyStyled>
             <SettingsRow>
-              <Search value={search} onKeyDown={handleSearch} onChange={setSearch} />
+              <Search
+                hideButton
+                value={searchText}
+                onKeyDown={handleSearchKeyDown}
+                onChange={setSearchText}
+                onClear={handleSearchClear}
+              />
             </SettingsRow>
             <FormRow>
               <Select
                 options={sortOptions}
-                value={direction}
-                onChange={handleChangeDirection}
+                value={directionValue}
+                onChange={(option: SelectOption) => setDirectionValue(option.id)}
               />
             </FormRow>
             <FormRow>
-              <Accordion isOpen title="Status">
-                <RadioGroup
-                  align="vertical"
-                  options={radioOptions}
-                  onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
-                />
-              </Accordion>
+              <RadioGroup
+                align="vertical"
+                options={radioOptions}
+                value={typeValue}
+                onChange={({ value }) => setTypeValue(value as ListNftsFilterType)}
+              />
             </FormRow>
             <ButtonsGroup>
               <Button title="Apply" onClick={handleApplyFilter} />

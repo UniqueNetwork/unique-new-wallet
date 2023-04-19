@@ -192,7 +192,9 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
         info('NFT created successfully');
 
         closable
-          ? navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`)
+          ? navigate(
+              `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+            )
           : reset(undefined, { keepDefaultValues: true });
       });
     }
@@ -234,7 +236,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
                 A fee will be calculated after corrected filling required fields
               </Alert>
             )}
-            <ButtonGroup>
+            <ButtonGroup stack>
               <ConfirmBtn
                 role="primary"
                 title="Confirm and create more"

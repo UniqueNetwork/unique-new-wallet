@@ -10,7 +10,7 @@ export interface WithdrawProps {
   isVisible: boolean;
   senderAccount: Account;
   onClose: () => void;
-  onWithdrawSuccess?(): void;
+  onWithdrawSuccess?(): Promise<void>;
   chain: Chain;
   amount: string;
 }
@@ -54,8 +54,8 @@ export const WithdrawModal: FC<WithdrawProps> = ({
           address: senderAccount.address,
           amount,
         });
+        await onWithdrawSuccess?.();
         info('Transfer completed successfully');
-        onWithdrawSuccess?.();
         onClose();
       } catch (e) {
         error('Something went wrong');

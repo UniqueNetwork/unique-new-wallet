@@ -123,7 +123,7 @@ export const AskQuestionComponent = () => {
                 if (!value.trim().length) {
                   return 'You did not fill in the required fields';
                 }
-                if (/^\W+$/.test(value.trim())) {
+                if (/^[!@#$%^&*()_+~<>{}?]+$/.test(value.trim())) {
                   return 'Name is not correct';
                 }
                 return true;
@@ -163,7 +163,7 @@ export const AskQuestionComponent = () => {
                 if (!value.trim().length) {
                   return 'You did not fill in the required fields';
                 }
-                if (/^\W+$/.test(value.trim())) {
+                if (/^[!@#$%^&*()_+~<>{}?]+$/.test(value.trim())) {
                   return 'Question is not correct';
                 }
                 return true;
