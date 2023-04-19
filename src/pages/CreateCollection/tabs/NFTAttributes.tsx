@@ -35,7 +35,7 @@ export const NFTAttributes = () => {
       </FormHeader>
       <FormBody>
         <AttributesTable />
-        <AdvancedSettingsAccordion title="Advanced settings">
+        <AdvancedSettingsAccordion isOpen title="Advanced settings">
           <FormRow>
             <Heading size="4">Nesting</Heading>
             <Typography>
