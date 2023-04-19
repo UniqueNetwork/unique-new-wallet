@@ -20,8 +20,10 @@ const Wrapper = styled.div`
 
   .unique-input-text {
     width: 100%;
+    height: 40px;
 
     .input-wrapper {
+      height: 38px;
       &:hover {
         border: 1px solid var(--color-grey-500);
       }
