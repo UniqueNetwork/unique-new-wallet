@@ -14,7 +14,7 @@ import {
   TransferRow,
   InputAmount,
 } from '@app/pages/NFTDetails/Modals/Transfer';
-import { ROUTE } from '@app/routes';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import { formatBlockNumber } from '@app/utils';
 import { useTransactionFormService } from '@app/hooks/useTransactionModalService';
 
@@ -104,7 +104,9 @@ export const BurnRefungibleModal = <T extends TNestingToken>({
 
       info('RFT burned successfully');
       if (Number(amount) === fractionsBalance?.amount) {
-        navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}`);
+        navigate(
+          `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+        );
       }
       await onComplete();
     } catch {
