@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { Tag, Tags, Avatar } from '@app/components';
 import { AttributeView } from '@app/pages/CreateNFT/types';
+import { usePreloadImage } from '@app/hooks/usePreloadImage';
+import noImage from '@app/static/icons/no-collections.svg';
 
 import { Typography } from '../../../components/Typography/Typography';
 
@@ -25,7 +27,7 @@ export const Card: VFC<IPreviewCard> = ({
 }) => {
   return (
     <PreviewCard>
-      <Avatar size={64} src={picture} type={geometry} />
+      <Avatar size={64} src={usePreloadImage(picture || '', noImage)} type={geometry} />
       <PreviewCardInfo>
         <PreviewCardTitle>{title}</PreviewCardTitle>
         <PreviewCardDescription>{description}</PreviewCardDescription>
