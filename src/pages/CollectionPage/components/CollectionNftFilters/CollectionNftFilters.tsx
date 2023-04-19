@@ -86,11 +86,14 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
   const { collectionId } = useParams<{ collectionId: string }>();
   const [isFilterOpen, setFilterOpen] = useState<boolean>(false);
   const deviceSize = useDeviceSize();
+  const { direction, type, search, onChangeSearch, onChangeDirection, onChangeType } =
+    useNftFilterContext();
 
   const { currentChain } = useApi();
-  const [search, setSearch] = useState('');
-  const { direction, onChangeSearch, onChangeDirection, onChangeType } =
-    useNftFilterContext();
+  const [searchText, setSearchText] = useState(search);
+
+  const [directionValue, setDirectionValue] = useState<Direction>(direction || 'desc');
+  const [typeValue, setTypeValue] = useState<ListNftsFilterType>(type || 'all');
 
   const handleChangeDirection = (option: SelectOption) => {
     onChangeDirection(option.id);
@@ -98,20 +101,26 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
 
   const handleSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
-      onChangeSearch(search);
+      onChangeSearch(searchText);
     }
   };
 
   const handleSearch = () => {
-    onChangeSearch(search);
+    onChangeSearch(searchText);
   };
 
   const handleSearchClear = () => {
     onChangeSearch('');
-    setSearch('');
+    setSearchText('');
   };
 
-  const handleApplyFilter = () => setFilterOpen(!isFilterOpen);
+  const handleApplyFilter = () => {
+    onChangeDirection(directionValue);
+    onChangeSearch(searchText);
+    onChangeType(typeValue);
+    setFilterOpen(!isFilterOpen);
+  };
+
   const barButtons = [
     <Button
       key="Filter-toggle-button"
@@ -147,12 +156,13 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
             <RadioGroup
               align="horizontal"
               options={radioOptions}
+              value={type}
               onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
             />
             <Search
-              value={search}
+              value={searchText}
               onKeyDown={handleSearchKeyDown}
-              onChange={setSearch}
+              onChange={setSearchText}
               onClear={handleSearchClear}
               onClick={handleSearch}
             />
@@ -177,24 +187,26 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
           <FormBodyStyled>
             <SettingsRow>
               <Search
-                value={search}
-                onKeyDown={handleSearch}
-                onChange={setSearch}
+                hideButton
+                value={searchText}
+                onKeyDown={handleSearchKeyDown}
+                onChange={setSearchText}
                 onClear={handleSearchClear}
               />
             </SettingsRow>
             <FormRow>
               <Select
                 options={sortOptions}
-                value={direction}
-                onChange={handleChangeDirection}
+                value={directionValue}
+                onChange={(option: SelectOption) => setDirectionValue(option.id)}
               />
             </FormRow>
             <FormRow>
               <RadioGroup
                 align="vertical"
                 options={radioOptions}
-                onChange={({ value }) => onChangeType(value as ListNftsFilterType)}
+                value={typeValue}
+                onChange={({ value }) => setTypeValue(value as ListNftsFilterType)}
               />
             </FormRow>
             <ButtonsGroup>
