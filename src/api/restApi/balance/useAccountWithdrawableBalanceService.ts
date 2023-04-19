@@ -9,7 +9,7 @@ import { queryKeys } from '../keysConfig';
 export const useAccountWithdrawableBalancesService = (
   chainsUrl: string[],
   address?: string,
-): { results: QueriesResults<AllBalancesResponse[]>; refetchAll(): void } => {
+): { results: QueriesResults<AllBalancesResponse[]>; refetchAll(): Promise<void> } => {
   const results: QueriesResults<AllBalancesResponse[]> = useQueries<
     AllBalancesResponse[]
   >(
@@ -34,12 +34,14 @@ export const useAccountWithdrawableBalancesService = (
         },
         enabled: chainsUrl.length !== 0 && !!address,
         refetchOnMount: 'always',
+        refetchIntervalInBackground: true,
+        refetchInterval: 60_000,
       };
     }),
   );
 
-  const refetchAll = useCallback(() => {
-    results.forEach((result) => result.refetch());
+  const refetchAll = useCallback(async () => {
+    await Promise.all(results.map(({ refetch }) => refetch({ fetching: true })));
   }, [results]);
 
   return {
