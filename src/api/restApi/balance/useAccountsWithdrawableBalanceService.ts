@@ -28,6 +28,8 @@ export const useAccountsWithdrawableBalanceService = (
         },
         enabled: addresses.length !== 0 && Address.is.substrateAddressInAnyForm(address),
         refetchOnMount: 'always',
+        refetchIntervalInBackground: true,
+        refetchInterval: 60_000,
       };
     }),
   );

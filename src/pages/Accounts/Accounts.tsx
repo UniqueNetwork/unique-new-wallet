@@ -14,17 +14,16 @@ import {
   Table,
   TooltipWrapper,
   TransferBtn,
-  Dropdown,
   Icon,
   Typography,
 } from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
-import { AccountContextMenu } from '@app/pages/Accounts/components';
 import { useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ConnectWallets } from '@app/pages';
 import { useAccountsWithdrawableBalanceService } from '@app/api/restApi/balance/useAccountsWithdrawableBalanceService';
+import { sleep } from '@app/utils';
 
 import { Button } from '../../components/Button';
 import { SendFunds } from '../SendFunds';
@@ -417,6 +416,13 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
     [],
   );
 
+  const onWithdrawSuccess = useCallback(async () => {
+    await Promise.all(
+      withdrawableBalances.map(({ refetch }) => refetch({ fetching: true })),
+    );
+    await sleep(2000);
+  }, [selectedAddress, withdrawableBalances]);
+
   return (
     <>
       <PagePaper
@@ -470,6 +476,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
           chain={currentChain}
           amount={amountToWithdraw}
           onClose={onChangeAccountsFinish}
+          onWithdrawSuccess={onWithdrawSuccess}
         />
       )}
       {isOpenConnectWallet && (

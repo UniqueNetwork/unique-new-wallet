@@ -92,8 +92,11 @@ export const Coins = () => {
   const closeTransferFundsModalHandler = useCallback(() => {
     setFundsModalVisible(false);
     setWithdrawModalVisible(false);
-    refetchWithdrawableBalances();
   }, []);
+
+  const onWithdrawSuccess = useCallback(async () => {
+    await refetchWithdrawableBalances();
+  }, [refetchWithdrawableBalances]);
 
   const onWithdrawHandler = useCallback(
     (networkType: NetworkType, chain: Chain, amount: string) => {
@@ -221,6 +224,7 @@ export const Coins = () => {
             chain={selectedChain}
             amount={amountToWithdraw}
             onClose={closeTransferFundsModalHandler}
+            onWithdrawSuccess={onWithdrawSuccess}
           />
         </ApiWrapper>
       )}
