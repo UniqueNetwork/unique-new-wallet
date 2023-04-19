@@ -10,6 +10,7 @@ import { useNFTsContext } from '@app/pages/MyTokens/context';
 import { Direction } from '@app/api/graphQL/types';
 import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { Search } from '@app/pages/components/Search';
+import { ControlGroup } from '@app/pages/components/ControlGroup';
 
 import { sortOptions } from './constants';
 
@@ -69,7 +70,7 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
         />
       }
       controls={
-        <>
+        <ControlGroup>
           <Search
             className="filter-search-wrapper"
             value={search}
@@ -83,7 +84,7 @@ export const NFTFilters: VFC<NFTFiltersComponentProps> = ({ className }) => {
             value={`${Object.keys(sortBy)[0]}_${Object.values(sortBy)[0]}`}
             onChange={sortByTokenIdHandler}
           />
-        </>
+        </ControlGroup>
       }
       className={classNames('nft-filters', className)}
     />
