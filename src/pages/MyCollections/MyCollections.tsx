@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, VFC } from 'react';
 import { Outlet, useNavigate, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { Button, PagePaper, TokenLink, Typography, List } from '@app/components';
+import { Button, PagePaper, TokenLinkBase, Typography, List } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
@@ -153,7 +153,8 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
               }}
               renderItem={(collection: Collection) => (
                 <List.Item key={collection.collection_id}>
-                  <TokenLink
+                  <TokenLinkBase
+                    link={`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection.collection_id}/${MY_COLLECTIONS_ROUTE.NFT}`}
                     image={getTokenIpfsUriByImagePath(collection.collection_cover)}
                     title={`${collection.name} [id ${collection.collection_id}]`}
                     meta={
@@ -165,7 +166,6 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                       </>
                     }
                     key={collection.collection_id}
-                    onTokenClick={() => onClickNavigate(collection.collection_id)}
                     onMetaClick={() => onClickNavigate(collection.collection_id)}
                   />
                 </List.Item>

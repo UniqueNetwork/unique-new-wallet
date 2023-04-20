@@ -1,2 +1,2 @@
-export { TokenLink } from './TokenLink';
-export type { ITokenLinkProps } from './TokenLink';
+export { TokenLinkBase } from './TokenLinkBase';
+export type { ITokenLinkBaseProps } from './TokenLinkBase';

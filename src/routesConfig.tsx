@@ -11,7 +11,7 @@ import {
   MyCollections,
   MyTokens,
   NFTDetails,
-  NFTs,
+  Tokens,
   NotFound,
 } from '@app/pages';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
@@ -48,7 +48,7 @@ export const routes: RouteConfig = {
       ),
       children: [
         {
-          element: <NFTs />,
+          element: <Tokens />,
           name: 'NFTs',
           path: MY_TOKENS_TABS_ROUTE.NFT,
         },

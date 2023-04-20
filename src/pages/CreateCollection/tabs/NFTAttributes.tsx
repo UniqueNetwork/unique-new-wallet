@@ -18,7 +18,7 @@ import {
   FormRow,
   SettingsRow,
 } from '@app/pages/components/FormComponents';
-import { maxTokenLimit } from '@app/pages/constants/token';
+import { maxTokenLimit } from '@app/pages/constants';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 
 import { AttributesTable } from './AttributesTable';
