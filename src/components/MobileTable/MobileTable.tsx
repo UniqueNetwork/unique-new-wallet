@@ -1,9 +1,10 @@
 import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
-import { TableColumnProps, TableRowProps } from '@unique-nft/ui-kit';
 
 import { getDeepValue } from '@app/utils';
-import { NoItems, Loader, Typography } from '@app/components';
+import { Loader, Typography, TableRowProps, TableColumnProps } from '@app/components';
+
+import { NoItems } from '../NoItems';
 
 interface MobileTableProps {
   className?: string;

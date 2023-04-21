@@ -90,7 +90,6 @@ export const AccountsManager = (props: AccountsManagerProps) => {
     >
       <div className="unique-accounts-manager">
         <div className="accounts-manager-selected-account">
-          <Icon size={20} name="user" />
           <div className="accounts-manager-selected-account-name">
             <Typography
               color="blue-grey-500"

@@ -1,7 +1,6 @@
 import { FC, useCallback, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { TableColumnProps } from '@unique-nft/ui-kit';
 import { useLocation } from 'react-router-dom';
 
 import { Account, AccountSigner } from '@app/account';
@@ -16,6 +15,7 @@ import {
   TransferBtn,
   Icon,
   Typography,
+  TableColumnProps,
 } from '@app/components';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { useAccountsBalanceService } from '@app/api';
