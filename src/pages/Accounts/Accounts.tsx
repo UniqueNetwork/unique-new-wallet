@@ -1,7 +1,7 @@
-import { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
+import { FC, useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
@@ -21,10 +21,10 @@ import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { useAccountsBalanceService } from '@app/api';
 import { config } from '@app/config';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
-import { ConnectWallets } from '@app/pages';
 import { useAccountsWithdrawableBalanceService } from '@app/api/restApi/balance/useAccountsWithdrawableBalanceService';
 import { sleep } from '@app/utils';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import { ConnectWalletModalContext } from '@app/context';
 
 import { Button } from '../../components/Button';
 import { SendFunds } from '../SendFunds';
@@ -358,16 +358,15 @@ const getAccountsColumns = ({
 ];
 
 const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
-  const { state } = useLocation();
+  const { setIsOpenConnectWalletModal, isOpenConnectWalletModal } = useContext(
+    ConnectWalletModalContext,
+  );
   const navigate = useNavigate();
   const { accounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [forgetWalletAddress, setForgetWalletAddress] = useState<string>('');
   const [selectedAddress, setSelectedAddress] = useState<Account>();
-  const [isOpenConnectWallet, setOpenConnectWallet] = useState(
-    (state as { openConnectWallet?: boolean })?.openConnectWallet || false,
-  );
   const [withdrawModalVisible, setWithdrawModalVisible] = useState(false);
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>('0');
 
@@ -442,7 +441,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
           <Button
             role="primary"
             title="Connect or create wallet"
-            onClick={() => setOpenConnectWallet(true)}
+            onClick={() => setIsOpenConnectWalletModal(true)}
           />
         </AccountsPageHeader>
         <AccountsPageContent>
@@ -485,12 +484,6 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
           amount={amountToWithdraw}
           onClose={onChangeAccountsFinish}
           onWithdrawSuccess={onWithdrawSuccess}
-        />
-      )}
-      {isOpenConnectWallet && (
-        <ConnectWallets
-          isOpen={isOpenConnectWallet}
-          onClose={() => setOpenConnectWallet(false)}
         />
       )}
       <Confirm
