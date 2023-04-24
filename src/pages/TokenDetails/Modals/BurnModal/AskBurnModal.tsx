@@ -50,7 +50,7 @@ export const AskBurnModal: VFC<AskBurnModalProps> = ({
         />,
       ]}
       isVisible={isVisible}
-      title="Burn NFT"
+      title="Burn token"
       onClose={onClose}
     >
       <TextWrapper size="m" appearance="block">

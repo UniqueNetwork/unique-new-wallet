@@ -12,7 +12,7 @@ export const BurnBtn = (props: ButtonProps) => {
       actionEnabled={
         Boolean(selectedAccount?.isMintingEnabled) && currentChain.mintingEnabled
       }
-      actionText="Burn NFT temporary unavailable due to a chain upgrade"
+      actionText="Burn token temporary unavailable due to a chain upgrade"
     />
   );
 };

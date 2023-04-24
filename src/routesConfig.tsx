@@ -49,7 +49,7 @@ export const routes: RouteConfig = {
       children: [
         {
           element: <Tokens />,
-          name: 'NFTs',
+          name: 'Tokens',
           path: MY_TOKENS_TABS_ROUTE.NFT,
         },
         {
@@ -71,7 +71,7 @@ export const routes: RouteConfig = {
           children: [
             {
               element: <CollectionNft />,
-              name: 'NFTs',
+              name: 'Tokens',
               path: COLLECTION_TABS_ROUTE.NFT,
             },
             {
@@ -102,7 +102,7 @@ export const routes: RouteConfig = {
     },
     {
       element: <CreateNFT />,
-      name: 'Create a NFT',
+      name: 'Create a token',
       path: ROUTE.CREATE_NFT,
     },
     {

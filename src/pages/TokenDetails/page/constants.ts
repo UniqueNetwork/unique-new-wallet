@@ -10,7 +10,7 @@ export const menuButtonsNft: SelectOptionProps[] = [
   {
     icon: 'arrow-up-right',
     id: 'scan',
-    title: 'View NFT on UniqueScan',
+    title: 'View token on UniqueScan',
     type: 'primary',
   },
 ];
