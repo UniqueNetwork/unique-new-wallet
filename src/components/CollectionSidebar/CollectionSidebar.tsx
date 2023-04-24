@@ -26,7 +26,7 @@ export const CollectionSidebarComponent: VFC<{
         />
       </SidebarRow>
       <SidebarRow>
-        <Heading size="3">NFT preview</Heading>
+        <Heading size="3">Token preview</Heading>
         <Card
           // TODO: пустой массив
           attributesInline={attributesInline}

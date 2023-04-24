@@ -102,7 +102,7 @@ export const TransferModal = <T extends TBaseToken>({
   return (
     <Modal
       isVisible={true}
-      title="Transfer NFT"
+      title="Transfer token"
       footerButtons={
         <TransferBtn
           title="Confirm"

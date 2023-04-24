@@ -11,7 +11,7 @@ const stages = [
 
 export const TransferStagesModal = () => {
   return (
-    <Modal isVisible={true} isClosable={false} title="Transfer NFT">
+    <Modal isVisible={true} isClosable={false} title="Transfer token">
       <Stages stages={stages} />
     </Modal>
   );

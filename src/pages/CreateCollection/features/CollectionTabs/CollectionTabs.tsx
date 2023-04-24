@@ -20,7 +20,7 @@ interface CollectionTabsProps extends Pick<StepperProps, 'onClickStep'> {
   onCreateCollection?: () => void;
 }
 
-const steps: StepperProps['steps'] = ['Main information', 'NFT attributes'];
+const steps: StepperProps['steps'] = ['Main information', 'Token attributes'];
 
 const CollectionTabsComponent: FC<CollectionTabsProps> = ({
   children,

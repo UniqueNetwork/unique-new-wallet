@@ -294,7 +294,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       </MainWrapper>
       <StatusTransactionModal
         isVisible={isLoadingSubmitResult}
-        description="Creating NFT"
+        description="Creating token"
       />
     </>
   );
@@ -323,6 +323,6 @@ const CreateNFTForm = () => {
 };
 
 export const CreateNFT = withPageTitle({
-  header: 'Create an NFT',
+  header: 'Create a token',
   backLink: `${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
 })(CreateNFTForm);

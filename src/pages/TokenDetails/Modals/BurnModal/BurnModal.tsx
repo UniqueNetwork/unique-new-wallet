@@ -78,7 +78,7 @@ export const BurnModal = <T extends TBaseToken>({
         from: tokenOwner?.owner,
       },
     }).then(() => {
-      info('NFT burned successfully');
+      info('Token burned successfully');
 
       navigate(
         `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,

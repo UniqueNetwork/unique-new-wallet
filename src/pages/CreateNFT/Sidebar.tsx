@@ -41,7 +41,7 @@ const SidebarComponent: VFC<SidebarProps> = ({
           />
         </SidebarRow>
         <SidebarRow>
-          <Heading size="3">NFT preview</Heading>
+          <Heading size="3">Token preview</Heading>
           <Card
             geometry="square"
             title={tokenPrefix}
