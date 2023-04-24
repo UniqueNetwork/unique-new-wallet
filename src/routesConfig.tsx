@@ -105,6 +105,11 @@ export const routes: RouteConfig = {
       name: 'Create a NFT',
       path: ROUTE.CREATE_NFT,
     },
+    {
+      element: <Accounts />,
+      name: 'Accounts',
+      path: ROUTE.ACCOUNTS,
+    },
   ],
   sharedRoutes: [
     {
@@ -116,11 +121,6 @@ export const routes: RouteConfig = {
       element: <Faq />,
       name: 'FAQ',
       path: ROUTE.FAQ,
-    },
-    {
-      element: <Accounts />,
-      name: 'Accounts',
-      path: ROUTE.ACCOUNTS,
     },
     {
       element: <NotFound />,

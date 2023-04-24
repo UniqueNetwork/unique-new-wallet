@@ -1,7 +1,7 @@
-import { FC, useCallback, useMemo, useState, VFC } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState, VFC } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Account, AccountSigner } from '@app/account';
 import { useAccounts, useApi } from '@app/hooks';
@@ -24,6 +24,7 @@ import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ConnectWallets } from '@app/pages';
 import { useAccountsWithdrawableBalanceService } from '@app/api/restApi/balance/useAccountsWithdrawableBalanceService';
 import { sleep } from '@app/utils';
+import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 
 import { Button } from '../../components/Button';
 import { SendFunds } from '../SendFunds';
@@ -358,6 +359,7 @@ const getAccountsColumns = ({
 
 const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const { accounts, forgetLocalAccount, selectedAccount } = useAccounts();
   const { currentChain } = useApi();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -386,6 +388,12 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
       })),
     [accounts, balances, withdrawableBalances],
   );
+
+  useEffect(() => {
+    if (!accounts.size) {
+      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    }
+  }, [accounts.size]);
 
   const onSendFundsClick = useCallback(
     (account: Account) => () => {

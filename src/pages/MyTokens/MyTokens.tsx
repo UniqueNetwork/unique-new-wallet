@@ -6,9 +6,11 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { PagePaper, Tabs } from '@app/components';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { useAccounts } from '@app/hooks';
 
 import { TokensFilters } from './Tokens';
 import { TokensWrapper } from './context';
+import Stub from '../components/Stub';
 
 interface MyTokensComponentProps {
   activeTab: number;
@@ -25,6 +27,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { accounts } = useAccounts();
 
   useEffect(() => {
     if (location.pathname === basePath) {
@@ -39,6 +42,10 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);
   };
+
+  if (!accounts.size) {
+    return <Stub />;
+  }
 
   return (
     <TokensWrapper>

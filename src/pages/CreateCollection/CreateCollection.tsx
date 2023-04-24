@@ -64,7 +64,11 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const navigate = useNavigate();
   const { currentChain } = useApi();
   const { error, info } = useNotifications();
-  const { selectedAccount, isLoading } = useAccounts();
+  const {
+    selectedAccount,
+    isLoading,
+    accounts: { size: accountsLength },
+  } = useAccounts();
   const formMapper = useCollectionFormMapper();
   const {
     getFee,
@@ -107,17 +111,20 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
   useEffect(() => {
+    navigate(tabsUrls[currentStep - 1]);
+  }, [currentStep, navigate]);
+
+  useEffect(() => {
     if (isLoading) {
       return;
     }
 
-    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
-      window.location.pathname = `${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`;
-      navigate(`${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
+      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
     } else {
-      collectionForm.setValue('address', selectedAccount.address);
+      selectedAccount && collectionForm.setValue('address', selectedAccount?.address);
     }
-  }, [selectedAccount, isLoading]);
+  }, [selectedAccount, isLoading, accountsLength]);
 
   useEffect(() => {
     if (!feeError) {
@@ -132,10 +139,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     }
     error(submitWaitResultError);
   }, [submitWaitResultError]);
-
-  useEffect(() => {
-    navigate(tabsUrls[currentStep - 1]);
-  }, [currentStep, navigate]);
 
   useEffect(() => {
     if (collectionDebounceValue && isValid) {

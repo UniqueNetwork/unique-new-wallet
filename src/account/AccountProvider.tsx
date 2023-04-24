@@ -25,7 +25,7 @@ export const AccountWrapper: FC = ({ children }) => {
   const [accounts, setAccounts] = useState<Map<string, BaseWalletType<WalletsType>>>(
     new Map(),
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchAccountsError, setFetchAccountsError] = useState<string | undefined>();
   const [selectedAccount, setSelectedAccount] = useState<Account>();
   const [signer, setSigner] = useState<Account>();
@@ -158,6 +158,7 @@ export const AccountWrapper: FC = ({ children }) => {
   useEffect(() => {
     const getConnectedWallets = localStorage.getItem(CONNECTED_WALLET_TYPE);
     if (!getConnectedWallets) {
+      setIsLoading(false);
       return;
     }
     setIsLoading(true);
@@ -165,6 +166,10 @@ export const AccountWrapper: FC = ({ children }) => {
     const connectedWallets = wallets.map((typeWallet) =>
       walletsCenter.connectWallet(typeWallet),
     );
+    if (!connectedWallets.length) {
+      setIsLoading(false);
+      return;
+    }
 
     Promise.allSettled(connectedWallets).finally(() => {
       setIsLoading(false);
