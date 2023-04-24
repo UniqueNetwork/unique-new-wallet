@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { PagePaper } from '@app/components';
 
-import { CollectionDescription, NftList } from './components';
+import { CollectionDescription, CollectionTokenList } from './components';
 
 interface CollectionNftProps {
   className?: string;
@@ -22,7 +22,7 @@ export const CollectionNft: VFC<CollectionNftProps> = ({ className }) => {
       className={classNames('collection-nft', className)}
       sidebar={<CollectionDescription collectionId={collectionId} />}
     >
-      <NftList collectionId={collectionId} />
+      <CollectionTokenList collectionId={collectionId} />
     </PagePaper.Layout>
   );
 };

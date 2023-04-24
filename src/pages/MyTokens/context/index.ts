@@ -1,2 +1,2 @@
-export * from './NFTsContext';
-export * from './NTFsWrapper';
+export * from './TokensContext';
+export * from './TokensWrapper';

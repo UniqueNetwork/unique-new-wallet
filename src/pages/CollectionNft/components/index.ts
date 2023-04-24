@@ -1,2 +1,2 @@
 export * from './CollectionDescription';
-export * from './NftList';
+export * from './CollectionTokenList';

@@ -11,7 +11,7 @@ import {
   MyCollections,
   MyTokens,
   NFTDetails,
-  NFTs,
+  Tokens,
   NotFound,
 } from '@app/pages';
 import CollectionSettings from '@app/pages/CollectionPage/pages/CollectionSettings';
@@ -48,7 +48,7 @@ export const routes: RouteConfig = {
       ),
       children: [
         {
-          element: <NFTs />,
+          element: <Tokens />,
           name: 'NFTs',
           path: MY_TOKENS_TABS_ROUTE.NFT,
         },
@@ -105,6 +105,11 @@ export const routes: RouteConfig = {
       name: 'Create a NFT',
       path: ROUTE.CREATE_NFT,
     },
+    {
+      element: <Accounts />,
+      name: 'Accounts',
+      path: ROUTE.ACCOUNTS,
+    },
   ],
   sharedRoutes: [
     {
@@ -116,11 +121,6 @@ export const routes: RouteConfig = {
       element: <Faq />,
       name: 'FAQ',
       path: ROUTE.FAQ,
-    },
-    {
-      element: <Accounts />,
-      name: 'Accounts',
-      path: ROUTE.ACCOUNTS,
     },
     {
       element: <NotFound />,

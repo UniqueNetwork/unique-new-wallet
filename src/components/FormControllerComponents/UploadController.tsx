@@ -1,7 +1,8 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { Upload, UploadProps } from '@unique-nft/ui-kit';
 
 import { BaseControllerProps } from '@app/components/FormControllerComponents/base-type';
+
+import { Upload, UploadProps } from '../Upload';
 
 type InputControllerProps = BaseControllerProps<UploadProps>;
 

@@ -19,3 +19,5 @@ export const FORM_ERRORS: FormError = {
   INSUFFICIENT_BALANCE: "You don't have enough ",
   INVALID_AMOUNT: 'Amount must be a positive number greater than zero',
 };
+
+export const maxTokenLimit = 4294967295;

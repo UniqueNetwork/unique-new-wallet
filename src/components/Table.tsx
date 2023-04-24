@@ -1,20 +1,20 @@
 import React, { FC, ReactNode } from 'react';
 import styled from 'styled-components';
-import {
-  Loader,
-  SortQuery,
-  Table as UITable,
-  TableColumnProps,
-  TableProps,
-} from '@unique-nft/ui-kit';
 
 import { DeviceSize, useDeviceSize } from '@app/hooks';
 
-import MobileTable from './MobileTable/MobileTable';
+import {
+  MobileTable,
+  Loader,
+  SortQuery,
+  TableBase as UITable,
+  TableColumnProps,
+  TableBaseProps,
+} from '.';
 
 interface UITableProps {
   columns: TableColumnProps[];
-  columnPadding?: TableProps['columnPadding'];
+  columnPadding?: TableBaseProps['columnPadding'];
   data?: any[];
   desktopCaption?: ReactNode;
   loading?: boolean;

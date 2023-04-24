@@ -1,0 +1,73 @@
+@import '../../styles/index.scss';
+
+.unique-table {
+    font-family: var(--prop-font-family);
+    font-size: var(--prop-font-size);
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+
+    &-header {
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        background-color: var(--color-blue-grey-100);
+        color: var(--color-blue-grey-600);
+
+        .table-header-cell {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 0 16px;
+
+            &.sortable .table-header-sorter {
+                cursor: pointer;
+                height: 14px;
+
+                &:hover svg {
+                    fill: var(--color-primary-500);
+                }
+            }
+
+            &.active svg {
+                fill: var(--color-primary-500);
+            }
+        }
+    }
+
+    &-data {
+        &-row {
+            display: flex;
+            align-items: center;
+            min-height: 40px;
+            flex-direction: row;
+            background-image: linear-gradient(
+                to right,
+                var(--color-grey-300) 50%,
+                rgba(255, 255, 255, 0) 0%
+            );
+            background-position: bottom;
+            background-size: 4px 1px;
+            background-repeat: repeat-x;
+            color: var(--color-blue-grey-600);
+
+            & > div {
+                padding: 0 16px;
+
+                a {
+                    font-weight: inherit;
+                }
+            }
+        }
+    }
+
+    &-no-data {
+        margin-top: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+    }
+}

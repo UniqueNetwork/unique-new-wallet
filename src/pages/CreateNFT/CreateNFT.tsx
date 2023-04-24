@@ -74,7 +74,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const navigate = useNavigate();
   const { currentChain } = useApi();
-  const { selectedAccount } = useAccounts();
+  const {
+    selectedAccount,
+    accounts: { size: accountsLength },
+  } = useAccounts();
   const { warning, info, error } = useNotifications();
 
   const {
@@ -167,13 +170,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [debouncedFormValues]);
 
   useEffect(() => {
-    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
-      navigate('/');
+    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
+      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
       return;
     }
-    setValue('address', selectedAccount?.address);
-    setValue('owner', selectedAccount?.address);
-  }, [selectedAccount]);
+    if (selectedAccount) {
+      setValue('address', selectedAccount?.address);
+      setValue('owner', selectedAccount?.address);
+    }
+  }, [selectedAccount, accountsLength]);
 
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
     if (isValid) {

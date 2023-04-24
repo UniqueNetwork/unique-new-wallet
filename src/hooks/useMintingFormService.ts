@@ -9,7 +9,7 @@ import { Account, WalletsType } from '@app/account';
 import {
   NOT_ENOUGH_BALANCE_MESSAGE,
   FILL_REQUIRED_MESSAGE,
-} from '@app/pages/NFTDetails/Modals/constants';
+} from '@app/pages/TokenDetails/Modals/constants';
 
 import { useIsSufficientBalance } from './useBalanceInsufficient';
 import { useAccounts } from './useAccounts';

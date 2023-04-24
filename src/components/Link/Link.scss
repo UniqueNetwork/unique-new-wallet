@@ -29,4 +29,7 @@
         color: var(--color-blue-grey-300);
         cursor: not-allowed;
     }
+    &.medium {
+        font-size: calc(var(--prop-font-size) + 2);
+    }
 }
