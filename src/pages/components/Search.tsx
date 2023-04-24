@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import { ComponentProps } from '@app/components/types';
-import { InputBaseProps, InputText, Button, Icon } from '@app/components';
+import { InputBaseProps, InputText, Button } from '@app/components';
 
 type SearchProps = Pick<ComponentProps, 'className' | 'value' | 'onKeyDown'> &
   Pick<InputBaseProps, 'onChange'> & {

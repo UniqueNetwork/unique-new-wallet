@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Ethereum } from '@unique-nft/utils/extension';
 
@@ -34,6 +34,10 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
   const [missingExtension, setMissingExtension] = useState<'Polkadot' | 'Metamask'>();
   const { walletsCenter } = useAccounts();
+
+  useEffect(() => {
+    setIsOpenConnectWalletModal(!!isOpen);
+  }, [isOpen]);
 
   const onCreateAccountClick = useCallback(() => {
     logUserEvent(UserEvents.CREATE_SUBSTRATE);

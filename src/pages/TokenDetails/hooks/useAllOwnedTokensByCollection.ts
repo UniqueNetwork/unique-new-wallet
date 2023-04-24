@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { useEffect, useState } from 'react';
 import { ApolloQueryResult } from '@apollo/client';
 
