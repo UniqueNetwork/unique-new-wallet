@@ -45,7 +45,7 @@ const CollectionSettings = () => {
     isLoadingSubmitResult,
   } = useCollectionBurn();
   const navigate = useNavigate();
-  const { error } = useNotifications();
+  const { error, info } = useNotifications();
 
   useEffect(() => {
     logUserEvent(UserEvents.SETTINGS_OF_COLLECTION);
@@ -92,6 +92,7 @@ const CollectionSettings = () => {
           address: selectedAccount.address,
         },
       });
+      info('The collection burned successfully');
       navigate(`/${currentChain.network}/my-collections`);
     } catch (e: any) {
       error(e.message);
