@@ -26,6 +26,7 @@ import {
   BottomBarProps,
 } from '@app/pages/components/BottomBar';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
+import { usePageSettingContext } from '@app/context';
 
 import { useMyCollectionsContext } from './context';
 import { TopFilter } from './components';
@@ -46,6 +47,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const navigate = useNavigate();
   const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const [isFilterOpen, setFilterOpen] = useState(false);
+  const { setPageHeading } = usePageSettingContext();
 
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();
@@ -140,6 +142,13 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
     }
   }, [accounts.size, isChildExist]);
 
+  useEffect(() => {
+    if (isChildExist) {
+      return;
+    }
+    setPageHeading('My collections');
+  }, [setPageHeading, isChildExist]);
+
   if (!accounts.size) {
     return <Stub />;
   }
@@ -174,6 +183,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
               renderItem={(collection: Collection) => (
                 <List.Item key={collection.collection_id}>
                   <TokenLinkBase
+                    state={{ collectionName: collection.name }}
                     link={`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection.collection_id}/${MY_COLLECTIONS_ROUTE.NFT}`}
                     image={getTokenIpfsUriByImagePath(collection.collection_cover)}
                     title={`${collection.name} [id ${collection.collection_id}]`}

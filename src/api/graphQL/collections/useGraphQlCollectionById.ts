@@ -12,6 +12,7 @@ const COLLECTION_BY_ID_QUERY = gql`
       }
     ) {
       data {
+        name
         token_limit
         token_prefix
         tokens_count

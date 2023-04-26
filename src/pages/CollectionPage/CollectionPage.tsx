@@ -10,6 +10,7 @@ import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/component
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { Tabs } from '@app/components';
 import { useCollectionGetById } from '@app/api';
+import { usePageSettingContext } from '@app/context';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
@@ -21,6 +22,7 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
   const { currentChain } = useApi();
   const navigate = useNavigate();
   const location = useLocation();
+  const { setPageHeading } = usePageSettingContext();
   const { selectedAccount } = useAccounts();
   const { collectionId } = useParams<'collectionId'>();
   const baseUrl = collectionId
@@ -52,6 +54,16 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
   useEffect(() => {
     logUserEvent(UserEvents.REVIEW_COLLECTION);
   }, []);
+
+  useEffect(() => {
+    if (loading || !collection) {
+      setPageHeading(
+        (location.state as { collectionName?: string })?.collectionName || ' ',
+      );
+      return;
+    }
+    setPageHeading(collection.name);
+  }, [setPageHeading, collection, loading]);
 
   return (
     <CollectionsNftFilterWrapper>
