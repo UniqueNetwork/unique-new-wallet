@@ -10,7 +10,7 @@ import {
   useNotifications,
   Alert,
   Icon,
-  Checkbox,
+  Toggle,
 } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { ConfirmUpdateCollectionModal } from '@app/pages/CollectionPage/pages/CollectionSettings/components/ConfirmUpdateCollectionModal';
@@ -180,8 +180,8 @@ export const Limits = ({ onComplete }: SettingsSavingProps) => {
         </Typography>
       </FormRow>
       <SettingsRow>
-        <Checkbox
-          checked={ownerCanDestroy}
+        <Toggle
+          on={ownerCanDestroy}
           label={
             <>
               Owner can burn collection

@@ -4,11 +4,11 @@ import {
   StatusTransactionModal,
   TooltipWrapper,
   Button,
-  Checkbox,
   Heading,
   Typography,
   useNotifications,
   Alert,
+  Toggle,
 } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { ConfirmUpdateCollectionModal } from '@app/pages/CollectionPage/pages/CollectionSettings/components/ConfirmUpdateCollectionModal';
@@ -145,16 +145,12 @@ export const NestingPermissions = ({ onComplete }: SettingsSavingProps) => {
             </Typography>
           </FormRow>
           <SettingsRow>
-            <Checkbox
-              checked={ownerCanNest}
-              label={<>Owner can nest</>}
-              onChange={setOwnerCanNest}
-            />
+            <Toggle on={ownerCanNest} label="Owner can nest" onChange={setOwnerCanNest} />
           </SettingsRow>
           <SettingsRow>
-            <Checkbox
-              checked={collectionAdminCanNest}
-              label={<>Collection admin can nest</>}
+            <Toggle
+              on={collectionAdminCanNest}
+              label="Collection admin can nest"
               onChange={setCollectionAdminCanNest}
             />
           </SettingsRow>
