@@ -30,6 +30,7 @@ import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
 import { useMyCollectionsContext } from './context';
 import { TopFilter } from './components';
 import Stub from '../components/Stub';
+import { NothingToDisplay } from '../components/NothingToDisplay';
 
 interface MyCollectionsComponentProps {
   className?: string;
@@ -49,8 +50,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();
 
-  const { order, page, search, onChangePagination, onChangeSearch } =
-    useMyCollectionsContext();
+  const { order, page, search, onChangePagination } = useMyCollectionsContext();
 
   const isChildExist = useOutlet();
 
@@ -169,6 +169,8 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                 },
                 viewMode: 'both',
               }}
+              noItemsIconName={search ? 'magnifier-found' : 'box'}
+              noItemsTitle={search ? 'Nothing found' : <NothingToDisplay />}
               renderItem={(collection: Collection) => (
                 <List.Item key={collection.collection_id}>
                   <TokenLinkBase

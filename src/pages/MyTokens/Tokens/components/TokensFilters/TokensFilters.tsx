@@ -23,7 +23,8 @@ export const TokensFilters: VFC<TokensFiltersComponentProps> = ({ className }) =
   const [search, setSearch] = useState<string>('');
 
   const navigate = useNavigate();
-  const { sortBy, searchText, changeSort, changeSearchText } = useTokensContext();
+  const { sortBy, searchText, changeSort, changeSearchText, isFilterVisible } =
+    useTokensContext();
   const { selectedAccount } = useAccounts();
 
   const sortByTokenIdHandler = useCallback(
@@ -70,21 +71,23 @@ export const TokensFilters: VFC<TokensFiltersComponentProps> = ({ className }) =
         />
       }
       controls={
-        <ControlGroup>
-          <Search
-            className="filter-search-wrapper"
-            value={search}
-            onChange={setSearch}
-            onKeyDown={keyPressHandler}
-            onClear={clearSearchHandler}
-            onClick={searchHandler}
-          />
-          <Select
-            options={sortOptions}
-            value={`${Object.keys(sortBy)[0]}_${Object.values(sortBy)[0]}`}
-            onChange={sortByTokenIdHandler}
-          />
-        </ControlGroup>
+        isFilterVisible ? (
+          <ControlGroup>
+            <Search
+              className="filter-search-wrapper"
+              value={search}
+              onChange={setSearch}
+              onKeyDown={keyPressHandler}
+              onClear={clearSearchHandler}
+              onClick={searchHandler}
+            />
+            <Select
+              options={sortOptions}
+              value={`${Object.keys(sortBy)[0]}_${Object.values(sortBy)[0]}`}
+              onChange={sortByTokenIdHandler}
+            />
+          </ControlGroup>
+        ) : null
       }
       className={classNames('nft-filters', className)}
     />

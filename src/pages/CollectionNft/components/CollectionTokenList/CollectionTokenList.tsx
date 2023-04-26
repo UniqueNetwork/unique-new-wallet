@@ -9,6 +9,8 @@ import { TokenLink } from '@app/pages/components/TokenLink';
 import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 import { useGraphQlGetCollectionTokensOwners } from '@app/api/graphQL/tokens/useGraphQlGetCollectionTokensOwners';
+import { NothingToDisplay } from '@app/pages/components/NothingToDisplay';
+import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 
 interface CollectionTokenListComponentProps {
   className?: string;
@@ -20,6 +22,7 @@ export const CollectionTokenList = ({
   collectionId,
 }: CollectionTokenListComponentProps) => {
   const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
+  const { collection } = useCollectionContext() || {};
   const { search, direction, page, onPageChange, onPageSizeChange, type } =
     useNftFilterContext();
   const { selectedAccount } = useAccounts();
@@ -68,6 +71,10 @@ export const CollectionTokenList = ({
   const getTotalResults = () => {
     const elementsTitle = tokenOwnersCount > 1 ? 'unique elements' : 'unique element';
     const tokensTitle = tokensCount > 1 ? 'tokens' : 'token';
+
+    if (collection?.mode === 'NFT') {
+      return `${tokensCount} ${tokensTitle}`;
+    }
     return `${tokenOwnersCount} ${elementsTitle}, ${tokensCount} ${tokensTitle}`;
   };
 
@@ -91,6 +98,8 @@ export const CollectionTokenList = ({
           },
           viewMode: 'both',
         }}
+        noItemsIconName={type !== 'all' || search ? 'magnifier-found' : 'not-found'}
+        noItemsTitle={type !== 'all' || search ? 'Nothing found' : <NothingToDisplay />}
         renderItem={(token: Token) => (
           <TokenLink
             showOwner

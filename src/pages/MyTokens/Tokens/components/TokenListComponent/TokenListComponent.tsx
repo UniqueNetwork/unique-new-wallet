@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { ReactNode } from 'react';
 
 import { Token } from '@app/api/graphQL/types';
 import { TTokensCacheVar } from '@app/api';
@@ -37,6 +38,8 @@ type TokensListComponentProps = Pick<IPaginationProps, 'onPageChange'> & {
   onPageSizeChange: IPaginationProps['onPageSizeChange'];
   onChipsReset?(): void;
   cacheTokens: TTokensCacheVar;
+  noItemsIconName?: string;
+  noItemsTitle?: ReactNode;
 };
 
 const DEFAULT_TOKENS: Token[] = [];
@@ -54,6 +57,8 @@ export const TokenListComponent = ({
   onPageSizeChange,
   onChipsReset,
   cacheTokens,
+  noItemsIconName = 'not-found',
+  noItemsTitle = 'Nothing found',
 }: TokensListComponentProps) => {
   const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const getTokenPath = useGetTokenPath();
@@ -70,7 +75,8 @@ export const TokenListComponent = ({
         fetchMore={hidePurePagination ? fetchMore : undefined}
         isLoading={isLoading}
         itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
-        noItemsIconName="not-found"
+        noItemsIconName={noItemsIconName}
+        noItemsTitle={noItemsTitle}
         panelSettings={{
           pagination: {
             current: paginationSettings.current,
