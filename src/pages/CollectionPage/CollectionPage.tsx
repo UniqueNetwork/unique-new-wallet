@@ -8,8 +8,8 @@ import { ROUTE } from '@app/routes';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
-import { TokenTypeEnum } from '@app/api/graphQL/types';
 import { Tabs } from '@app/components';
+import { useCollectionGetById } from '@app/api';
 
 import { CollectionNftFilters } from './components';
 import { collectionContext } from './context';
@@ -33,6 +33,11 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
     parseInt(collectionId || ''),
     selectedAccount?.address,
   );
+  const {
+    data: collectionSettings,
+    isLoading,
+    refetch: refetchSettings,
+  } = useCollectionGetById(parseInt(collectionId || ''));
 
   useEffect(() => {
     if (location.pathname === baseUrl) {
@@ -48,14 +53,12 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
     logUserEvent(UserEvents.REVIEW_COLLECTION);
   }, []);
 
-  const TokenTabTitle = collection?.mode === TokenTypeEnum.RFT ? 'Fractional' : 'NFTs';
-
   return (
     <CollectionsNftFilterWrapper>
       <TabsHeader>
         <Tabs
           activeIndex={currentTabIndex}
-          labels={[TokenTabTitle, 'Settings']}
+          labels={['Tokens', 'Settings']}
           type="slim"
           onClick={handleClick}
         />
@@ -65,7 +68,14 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
         </Tabs>
       </TabsHeader>
       <TabsBody>
-        <collectionContext.Provider value={{ collection, collectionLoading: loading }}>
+        <collectionContext.Provider
+          value={{
+            collection,
+            collectionSettings,
+            collectionLoading: isLoading || loading,
+            refetchSettings,
+          }}
+        >
           <Tabs activeIndex={currentTabIndex}>
             <Outlet />
             <Outlet />

@@ -9,11 +9,7 @@ import { NftDetailsPage } from '@app/pages/TokenDetails/page/NftDetailsPage';
 import { NftDetailsBundlePage } from '@app/pages/TokenDetails/page/NftDetailsBundlePage';
 import { ErrorPage, Loader } from '@app/components';
 
-interface TokenDetailsProps {
-  className?: string;
-}
-
-const TokenDetailsComponent: VFC<TokenDetailsProps> = ({ className }) => {
+const TokenDetailsComponent: VFC = () => {
   const { collectionId = '', tokenId = '', address = '' } = useParams();
 
   const { data, isLoading, refetch } = useTokenIsBundle({

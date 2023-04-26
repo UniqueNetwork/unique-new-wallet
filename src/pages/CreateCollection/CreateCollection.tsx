@@ -93,10 +93,8 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       symbol: '',
       description: '',
       address: selectedAccount?.address,
-      nesting: {
-        tokenOwner: true,
-      },
-      ownerCanDestroy: false,
+      nesting: undefined,
+      ownerCanDestroy: true,
     },
   });
   const {
@@ -321,6 +319,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           <StatusTransactionModal
             isVisible={isLoadingSubmitResult}
             description="Creating collection"
+            warning="Advanced settings you will find them on the collection page after creating the collection"
           />
         </FormWrapper>
       </WrapperContentStyled>
