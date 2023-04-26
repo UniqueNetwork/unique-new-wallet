@@ -36,6 +36,7 @@ export const TokensWrapper: FC = ({ children }) => {
   const [typeFilter, setTypeFilter] = useState<TypeFilterNft>(
     (searchParams.get('type') as TypeFilterNft) || 'allType',
   );
+  const [isFilterVisible, setFilterVisible] = useState<boolean>(true);
 
   const changeSort = useCallback((sort: { [field: string]: Direction }) => {
     setSortBy(sort);
@@ -122,6 +123,8 @@ export const TokensWrapper: FC = ({ children }) => {
         typeFilter,
         changeTypeFilter: changeTypeFilterHandler,
         clearAll,
+        isFilterVisible,
+        setFilterVisible,
       }}
     >
       {children}

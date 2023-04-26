@@ -18,6 +18,7 @@ import {
   TypeFilter,
 } from '@app/pages';
 import { ChainPropertiesContext } from '@app/context';
+import { NothingToDisplay } from '@app/pages/components/NothingToDisplay';
 
 import { defaultStatusFilter, defaultTypeFilter } from '../constants';
 import { useTokensContext } from '../context';
@@ -47,6 +48,8 @@ export const Tokens: VFC<NFTsComponentProps> = ({ className }) => {
     typeFilter,
     changeTypeFilter,
     clearAll,
+    isFilterVisible,
+    setFilterVisible,
   } = useTokensContext();
 
   const { collections, collectionsLoading } = useGraphQlCollectionsByTokensOwner(
@@ -80,6 +83,19 @@ export const Tokens: VFC<NFTsComponentProps> = ({ className }) => {
       pagination: { page: tokensPage, limit },
     },
   );
+
+  const filterFlag = useMemo(() => {
+    return (
+      !!searchText ||
+      !!collectionsIds?.length ||
+      typeFilter !== 'allType' ||
+      statusFilter !== 'allStatus'
+    );
+  }, [searchText, collectionsIds, typeFilter, statusFilter]);
+
+  useEffect(() => {
+    setFilterVisible(filterFlag || !!tokens?.length);
+  }, [tokens?.length, isPagination]);
 
   const { cacheTokens } = useCheckExistTokensByAccount({
     tokens,
@@ -151,7 +167,8 @@ export const Tokens: VFC<NFTsComponentProps> = ({ className }) => {
       <PagePaper.Layout
         className={className}
         sidebar={
-          !collectionsLoading && (
+          !collectionsLoading &&
+          isFilterVisible && (
             <>
               <StatusFilter status={defaultStatusFilter} />
               <TypeFilter type={defaultTypeFilter} />
@@ -173,13 +190,15 @@ export const Tokens: VFC<NFTsComponentProps> = ({ className }) => {
             perPage: limit,
             size: tokensCount,
           }}
+          noItemsIconName={filterFlag ? 'magnifier-found' : 'not-found'}
+          noItemsTitle={filterFlag ? 'Nothing found' : <NothingToDisplay />}
           onChipsReset={resetFilters}
           onPageChange={changeTokensPage}
           onPageSizeChange={setLimit}
         />
       </PagePaper.Layout>
 
-      {deviceSize <= DeviceSize.md && (
+      {deviceSize <= DeviceSize.md && isFilterVisible && (
         <MobileFilters
           sortOptions={sortOptions}
           collections={defaultCollections}

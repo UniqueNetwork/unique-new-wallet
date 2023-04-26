@@ -504,7 +504,7 @@ const AccountsComponent: VFC<{ className?: string }> = ({ className }) => {
       >
         <Typography>
           Are you sure you want to perform this action? You can always recover your wallet
-          with your seed password using the &rsquo;Add account via&rsquo; button
+          with your seed password using the &rsquo;Connect or create wallet&rsquo; button
         </Typography>
       </Confirm>
     </>

@@ -12,6 +12,7 @@ const COLLECTION_BY_ID_QUERY = gql`
       }
     ) {
       data {
+        name
         token_limit
         token_prefix
         tokens_count
@@ -21,6 +22,7 @@ const COLLECTION_BY_ID_QUERY = gql`
         description
         date_of_creation
         owner_can_destroy
+        nesting_enabled
         mode
       }
     }

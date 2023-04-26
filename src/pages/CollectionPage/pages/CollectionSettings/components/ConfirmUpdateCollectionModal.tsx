@@ -5,27 +5,27 @@ import { Typography, Loader, TransferBtn } from '@app/components';
 import { useAccounts, useIsSufficientBalance } from '@app/hooks';
 import { NOT_ENOUGH_BALANCE_MESSAGE } from '@app/pages/TokenDetails/Modals/constants';
 
-type BurnCollectionModalProps = Omit<
+type ConfirmUpdateCollectionModalProps = Omit<
   ModalProps,
   'children' | 'footerButtons' | 'title'
 > & {
   onConfirm(): void;
   fee: string;
   isLoading: boolean;
+  title: string;
 };
 
-export const BurnCollectionModal = ({
+export const ConfirmUpdateCollectionModal = ({
   onConfirm,
   fee,
   isLoading,
   ...modalProps
-}: BurnCollectionModalProps) => {
+}: ConfirmUpdateCollectionModalProps) => {
   const { selectedAccount } = useAccounts();
 
   const isSufficientBalance = useIsSufficientBalance(selectedAccount?.address, fee);
   return (
     <Modal
-      title="Burn collection"
       footerButtons={
         <TransferBtn
           role="primary"

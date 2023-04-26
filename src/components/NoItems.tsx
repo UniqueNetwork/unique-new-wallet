@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, ReactNode } from 'react';
 import styled from 'styled-components/macro';
 
 import { Icon, IconProps } from '../components';
@@ -8,7 +8,7 @@ interface NoItemsProps {
   file?: string;
   iconName?: IconProps['name'];
   iconSize?: number;
-  title?: string;
+  title?: ReactNode;
 }
 
 const Wrapper = styled.div`
@@ -34,7 +34,7 @@ const NoItemsComponent: FC<NoItemsProps> = ({
 }) => {
   return (
     <Wrapper className={className}>
-      {file ? <img src={file} alt={title} /> : <Icon name={iconName} size={iconSize} />}
+      {file ? <img src={file} alt="nothing" /> : <Icon name={iconName} size={iconSize} />}
       <Title>{title}</Title>
     </Wrapper>
   );

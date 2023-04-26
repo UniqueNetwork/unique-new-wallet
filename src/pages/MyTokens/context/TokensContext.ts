@@ -18,6 +18,8 @@ export interface TokensContextState {
   searchText: string;
   changeSearchText: (searchText: string) => void;
   clearAll: () => void;
+  isFilterVisible: boolean;
+  setFilterVisible(value: boolean): void;
 }
 
 const TokensContext = createContext<TokensContextState | null>(null);
