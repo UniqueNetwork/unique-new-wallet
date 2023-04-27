@@ -96,6 +96,15 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
     }
   };
 
+  const collectionName = useMemo(() => {
+    if (!collection?.name) {
+      return '';
+    }
+    return collection?.name.length > 10
+      ? `${collection?.name.slice(0, 10)}…`
+      : collection?.name;
+  }, [collection]);
+
   return (
     <>
       <FormRow>
@@ -165,6 +174,7 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
           >
             <CollectionBurn
               collectionId={collectionId}
+              collectionName={collectionName}
               canBurn={collection?.tokens_count === 0}
             />
           </TooltipWrapper>
