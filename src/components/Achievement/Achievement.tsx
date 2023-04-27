@@ -19,6 +19,7 @@ const AchievementWrapper = styled.span`
   background: var(--color-additional-light);
   border: 1px solid var(--color-blue-grey-200);
   border-radius: var(--prop-border-radius);
+  color: var(--color-additional-dark);
   position: absolute;
   right: calc(var(--prop-gap) / 2);
   top: calc(var(--prop-gap) / 2);
