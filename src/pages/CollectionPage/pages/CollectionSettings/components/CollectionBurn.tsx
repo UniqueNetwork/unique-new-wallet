@@ -9,10 +9,16 @@ import { ConfirmUpdateCollectionModal } from '@app/pages/CollectionPage/pages/Co
 type Props = {
   canBurn: boolean;
   collectionId?: number;
+  collectionName?: string;
   onComplete?(): Promise<void>;
 };
 
-export const CollectionBurn = ({ canBurn, collectionId, onComplete }: Props) => {
+export const CollectionBurn = ({
+  canBurn,
+  collectionId,
+  collectionName,
+  onComplete,
+}: Props) => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
   const { selectedAccount } = useAccounts();
   const { currentChain } = useApi();
@@ -92,7 +98,8 @@ export const CollectionBurn = ({ canBurn, collectionId, onComplete }: Props) => 
       />
 
       <ConfirmUpdateCollectionModal
-        title={`Burn collection (id: ${collectionId})`}
+        title={`Burn collection ${collectionName} [id: ${collectionId}]`}
+        warning="You will not be able to undo this action."
         isVisible={isVisibleConfirmModal}
         isLoading={feeLoading}
         fee={feeFormatted}

@@ -178,6 +178,7 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
 
       <ConfirmUpdateCollectionModal
         title="Updating burning permission"
+        warning="You will not be able to undo this action."
         isVisible={isVisibleConfirmModal}
         isLoading={feeLoading}
         fee={feeFormatted}
