@@ -156,7 +156,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
         <Form>
           <FormRow>
             <LabelText>Collection*</LabelText>
-            {selectedAccount?.collectionsTotal === 0 && (
+            {collectionsOptions.length === 0 && (
               <CreateCollectionButton
                 role="ghost"
                 title={<Typography color="primary-500">Create collection</Typography>}
@@ -164,7 +164,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                 onClick={onCreateCollectionClick}
               />
             )}
-            {selectedAccount?.collectionsTotal !== 0 && (
+            {collectionsOptions.length !== 0 && (
               <Controller
                 name="collectionId"
                 rules={{
