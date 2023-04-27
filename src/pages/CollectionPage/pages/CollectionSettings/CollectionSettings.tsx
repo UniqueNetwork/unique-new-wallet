@@ -10,12 +10,15 @@ import {
   FormWrapper,
 } from '@app/pages/components/FormComponents';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
+import { DeviceSize, useDeviceSize } from '@app/hooks';
 
 import { NestingPermissions } from './components/NestingPermissions';
 import { Sponsorship } from './components/Sponsorship';
 import { Limits } from './components/Limits';
+import { BurningPermission } from './components/BurningPermission';
 
 const CollectionSettings = () => {
+  const deviseSize = useDeviceSize();
   const { collectionLoading, refetchSettings } = useCollectionContext() || {};
   useEffect(() => {
     logUserEvent(UserEvents.SETTINGS_OF_COLLECTION);
@@ -26,7 +29,7 @@ const CollectionSettings = () => {
   }, [refetchSettings]);
 
   return (
-    <PagePaper>
+    <PagePaper noPadding={deviseSize <= DeviceSize.md}>
       <FormWrapper>
         {collectionLoading ? (
           <Loader />
@@ -43,6 +46,7 @@ const CollectionSettings = () => {
                 </FormRow>
                 <Sponsorship onComplete={onComplite} />
                 <Limits onComplete={onComplite} />
+                <BurningPermission onComplete={onComplite} />
               </Form>
             </FormBody>
           </>

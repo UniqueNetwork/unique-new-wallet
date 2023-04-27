@@ -1,3 +1,5 @@
+import styled from 'styled-components';
+
 import { Modal, ModalProps } from '@app/components/Modal';
 import { ContentRow } from '@app/pages/components/ModalComponents';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
@@ -45,9 +47,11 @@ export const ConfirmUpdateCollectionModal = ({
       <ContentRow>
         <Typography>You will not be able to undo this action.</Typography>
       </ContentRow>
-      <ContentRow>
-        <FeeInformationTransaction fee={fee} />
-      </ContentRow>
+      <AlertStyled fee={fee} />
     </Modal>
   );
 };
+
+const AlertStyled = styled(FeeInformationTransaction)`
+  margin-bottom: 0 !important;
+`;

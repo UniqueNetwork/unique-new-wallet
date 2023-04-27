@@ -1,10 +1,10 @@
 import React, { useEffect, VFC } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { useAccounts, useApi } from '@app/hooks';
+import { useAccounts, useApi, useIsFirstRender } from '@app/hooks';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { useGraphQlCollectionById } from '@app/api/graphQL/collections';
-import { ROUTE } from '@app/routes';
+import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
@@ -46,6 +46,15 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
       navigate(tabUrls[activeTab]);
     }
   }, [baseUrl, location.pathname]);
+
+  const isFirstRender = useIsFirstRender();
+
+  useEffect(() => {
+    if (isFirstRender) {
+      return;
+    }
+    navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/`);
+  }, [selectedAccount?.address]);
 
   const handleClick = (tabIndex: number) => {
     navigate(tabUrls[tabIndex]);
