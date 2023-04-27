@@ -28,6 +28,7 @@ export const useAccountBalanceService = (
     () => getBalance(address!),
     {
       enabled: !!address,
+      refetchOnMount: true,
     },
   );
 };
