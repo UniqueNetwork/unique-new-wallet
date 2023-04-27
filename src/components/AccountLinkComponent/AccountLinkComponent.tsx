@@ -26,7 +26,7 @@ export const AccountLinkComponent: VFC<AccountLinkProps> = ({
   }
 
   return (
-    <ExternalLink to={`${currentChain.uniquescanAddress}/account/${value}`}>
+    <ExternalLink href={`${currentChain.uniquescanAddress}/account/${value}`}>
       <Typography color="primary-600" size={size}>
         {shortcut}
       </Typography>
