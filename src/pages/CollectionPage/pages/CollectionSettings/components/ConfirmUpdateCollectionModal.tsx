@@ -15,12 +15,14 @@ type ConfirmUpdateCollectionModalProps = Omit<
   fee: string;
   isLoading: boolean;
   title: string;
+  warning?: string;
 };
 
 export const ConfirmUpdateCollectionModal = ({
   onConfirm,
   fee,
   isLoading,
+  warning,
   ...modalProps
 }: ConfirmUpdateCollectionModalProps) => {
   const { selectedAccount } = useAccounts();
@@ -44,9 +46,11 @@ export const ConfirmUpdateCollectionModal = ({
       {...modalProps}
     >
       {isLoading && <Loader isFullPage={true} />}
-      <ContentRow>
-        <Typography>You will not be able to undo this action.</Typography>
-      </ContentRow>
+      {warning && (
+        <ContentRow>
+          <Typography>{warning}</Typography>
+        </ContentRow>
+      )}
       <AlertStyled fee={fee} />
     </Modal>
   );

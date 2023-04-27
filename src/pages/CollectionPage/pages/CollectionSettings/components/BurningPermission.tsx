@@ -103,13 +103,6 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
         <Alert type="warning">
           Collection burning permission can only be&nbsp;toggled once
         </Alert>
-        <Typography appearance="block">
-          Although this is&nbsp;an&nbsp;immutable setting, when enabling it&nbsp;during
-          the&nbsp;initial collection creation an&nbsp;additional one-time opportunity
-          is&nbsp;provided in&nbsp;which it&nbsp;can be&nbsp;reverted
-          in&nbsp;the&nbsp;settings panel. On&nbsp;the&nbsp;other hand, accepting
-          the&nbsp;default value will render it&nbsp;permanent.
-        </Typography>
       </FormRow>
       <SettingsRow>
         <Toggle
@@ -146,7 +139,7 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
           <FeeInformationTransaction fee={feeFormatted} feeLoading={feeLoading} />
         ) : (
           <Alert type="warning">
-            A fee will be calculated after changing the&nbsp;sponsor address
+            A fee will be calculated after changing the&nbsp;burning permission
           </Alert>
         )}
       </SettingsRow>
@@ -185,6 +178,7 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
 
       <ConfirmUpdateCollectionModal
         title="Updating burning permission"
+        warning="You will not be able to undo this action."
         isVisible={isVisibleConfirmModal}
         isLoading={feeLoading}
         fee={feeFormatted}

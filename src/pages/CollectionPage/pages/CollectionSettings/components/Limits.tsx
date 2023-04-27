@@ -43,11 +43,13 @@ export const Limits = ({ onComplete }: SettingsSavingProps) => {
   const { limits, id: collectionId } = collectionSettings || {};
 
   const [tokenLimit, setTokenLimit] = useState<string | undefined>(
-    limits?.tokenLimit?.toString() || maxTokenLimit.toString(),
+    limits?.tokenLimit?.toString(),
   );
 
   const isChanged = useMemo(() => {
-    return Number(tokenLimit) !== (limits?.tokenLimit || maxTokenLimit);
+    return (
+      (Number(tokenLimit) || maxTokenLimit) !== (limits?.tokenLimit || maxTokenLimit)
+    );
   }, [tokenLimit, limits]);
 
   const isValid = useMemo(() => {
@@ -126,6 +128,7 @@ export const Limits = ({ onComplete }: SettingsSavingProps) => {
           <SettingsRow>
             <InputText
               label="Numbers of tokens"
+              placeholder="Unlimited"
               id="limit"
               role="number"
               value={tokenLimit}
@@ -153,7 +156,7 @@ export const Limits = ({ onComplete }: SettingsSavingProps) => {
               <FeeInformationTransaction fee={feeFormatted} feeLoading={feeLoading} />
             ) : (
               <Alert type="warning">
-                A fee will be calculated after changing the&nbsp;sponsor address
+                A fee will be calculated after changing the&nbsp;token limit
               </Alert>
             )}
           </SettingsRow>
