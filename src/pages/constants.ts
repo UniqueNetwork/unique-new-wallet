@@ -20,4 +20,6 @@ export const FORM_ERRORS: FormError = {
   INVALID_AMOUNT: 'Amount must be a positive number greater than zero',
 };
 
+export const USER_HAS_NO_COLLECTION = 'First you need to create collection';
+
 export const maxTokenLimit = 4294967295;
