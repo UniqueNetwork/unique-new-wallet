@@ -149,7 +149,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     >;
     const presetCollectionExists =
       collections.findIndex(
-        ({ collection_id }) => collection_id === presetCollection.collection_id,
+        ({ collection_id }) => collection_id === presetCollection?.collection_id,
       ) !== -1;
     return [
       ...(collections
