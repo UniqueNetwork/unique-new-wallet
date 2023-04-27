@@ -49,7 +49,7 @@ export const Sponsorship = ({ onComplete }: SettingsSavingProps) => {
   const [sponsor, setSponsor] = useState<string | undefined>(sponsorship?.address);
 
   const isValid = useMemo(() => {
-    return !sponsor || Address.is.validAddressInAnyForm(sponsor);
+    return !sponsor || Address.is.substrateAddressInAnyForm(sponsor);
   }, [sponsor]);
 
   const isChanged = useMemo(() => {
@@ -62,6 +62,10 @@ export const Sponsorship = ({ onComplete }: SettingsSavingProps) => {
       selectedAccount?.address.toLowerCase() === sponsorship?.address.toLowerCase()
     );
   }, [sponsorship, selectedAccount?.address]);
+
+  useEffect(() => {
+    setSponsor(sponsorship?.address);
+  }, [sponsorship]);
 
   useEffect(() => {
     if (feeError) {
@@ -133,6 +137,7 @@ export const Sponsorship = ({ onComplete }: SettingsSavingProps) => {
             <InputText
               clearable
               id="address"
+              label="Address"
               value={sponsor}
               error={!isValid}
               statusText={!isValid ? 'Sponsor address is not correct' : ''}
@@ -179,7 +184,7 @@ export const Sponsorship = ({ onComplete }: SettingsSavingProps) => {
 
       <StatusTransactionModal
         isVisible={isLoadingSubmitResult}
-        description="Update collection sponsor"
+        description="Updating collection sponsor"
       />
 
       <ConfirmUpdateCollectionModal

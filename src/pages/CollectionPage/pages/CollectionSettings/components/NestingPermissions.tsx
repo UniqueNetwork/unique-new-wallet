@@ -179,7 +179,7 @@ export const NestingPermissions = ({ onComplete }: SettingsSavingProps) => {
 
       <StatusTransactionModal
         isVisible={isLoadingSubmitResult}
-        description="Update collection nesting permissions"
+        description="Updating collection nesting permissions"
       />
 
       <ConfirmUpdateCollectionModal

@@ -17,7 +17,7 @@ export interface ToggleProps {
 export const Toggle = ({
   on = false,
   label,
-  size = 's',
+  size = 'm',
   disabled,
   onChange,
 }: ToggleProps) => {
