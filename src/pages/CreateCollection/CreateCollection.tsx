@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FieldError, FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
@@ -62,6 +62,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentChain } = useApi();
   const { error, info } = useNotifications();
   const {
@@ -110,9 +111,15 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
 
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
+  const returnToCreateToken = useMemo(() => {
+    return (
+      (location.state as { returnToCreateToken: boolean })?.returnToCreateToken || false
+    );
+  }, [location.state]);
+
   useEffect(() => {
-    navigate(tabsUrls[currentStep - 1]);
-  }, [currentStep, navigate]);
+    navigate(tabsUrls[currentStep - 1], { state: { returnToCreateToken } });
+  }, [currentStep, returnToCreateToken]);
 
   useEffect(() => {
     if (isLoading) {
@@ -191,6 +198,18 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         entityData: payload,
       });
 
+      if (returnToCreateToken) {
+        navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`, {
+          state: {
+            collection_id: res?.parsed?.collectionId,
+            name: payload.name,
+            description: payload.description,
+            // @ts-ignore
+            collection_cover: payload.schema?.coverPicture.ipfsCid,
+          },
+        });
+        return;
+      }
       navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
     });
   };

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, VFC } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { CreateTokenBody, TokenId } from '@unique-nft/sdk';
@@ -35,7 +35,7 @@ import { BottomBar } from '@app/pages/components/BottomBar';
 import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
-import { TokenTypeEnum } from '@app/api/graphQL/types';
+import { Collection, TokenTypeEnum } from '@app/api/graphQL/types';
 import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { CreateNftForm } from './CreateNftForm';
@@ -73,12 +73,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
+  const { state: locationState } = useLocation();
   const { currentChain } = useApi();
   const {
     selectedAccount,
     accounts: { size: accountsLength },
   } = useAccounts();
-  const { warning, info, error } = useNotifications();
+  const { warning, info } = useNotifications();
 
   const {
     isValid,
@@ -141,9 +142,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     return attrs;
   }, [collection, formValues]);
 
-  const collectionsOptions = useMemo(
-    () =>
-      collections
+  const collectionsOptions = useMemo(() => {
+    const presetCollection = locationState as Pick<
+      Collection,
+      'collection_id' | 'collection_cover' | 'description' | 'name'
+    >;
+    return [
+      ...(collections
         // filter NFT collections only until RFT minting is implemented
         ?.filter((collection) => collection.mode === TokenTypeEnum.NFT)
         .map<Option>((collection) => ({
@@ -151,9 +156,29 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           title: collection.name,
           description: collection.description,
           img: getTokenIpfsUriByImagePath(collection.collection_cover),
-        })) ?? [],
-    [collections],
-  );
+        })) ?? []),
+      ...(presetCollection?.collection_id
+        ? [
+            {
+              id: presetCollection.collection_id,
+              title: presetCollection.name,
+              description: presetCollection.description,
+              img: getTokenIpfsUriByImagePath(presetCollection.collection_cover),
+            },
+          ]
+        : []),
+    ];
+  }, [collections, locationState]);
+
+  useEffect(() => {
+    const presetCollection = locationState as Pick<
+      Collection,
+      'collection_id' | 'collection_cover' | 'description' | 'name'
+    >;
+    if (presetCollection?.collection_id) {
+      setValue('collectionId', presetCollection?.collection_id);
+    }
+  }, [locationState]);
 
   useEffect(() => {
     if (isOldCollection) {
