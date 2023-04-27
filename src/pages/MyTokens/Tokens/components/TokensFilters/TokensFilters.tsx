@@ -61,12 +61,12 @@ export const TokensFilters: VFC<TokensFiltersComponentProps> = ({ className }) =
           }}
           role="primary"
           title="Create a token"
-          disabled={!Number(selectedAccount?.collectionsTotal)}
-          tooltip={
-            !Number(selectedAccount?.collectionsTotal)
-              ? 'Please create a collection first'
-              : null
-          }
+          // disabled={!Number(selectedAccount?.collectionsTotal)}
+          // tooltip={
+          //   !Number(selectedAccount?.collectionsTotal)
+          //     ? 'Please create a collection first'
+          //     : null
+          // }
           onClick={() => navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`)}
         />
       }

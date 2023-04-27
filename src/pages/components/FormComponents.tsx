@@ -67,7 +67,7 @@ export const FormRow = styled.div`
     margin-bottom: calc(var(--prop-gap) * 2.5);
   }
 
-  span.unique-text {
+  & > span.unique-text {
     margin-bottom: calc(var(--prop-gap) / 2);
   }
 `;
