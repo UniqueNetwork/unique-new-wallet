@@ -36,7 +36,6 @@ export const Limits = ({ onComplete }: SettingsSavingProps) => {
     feeError,
     feeLoading,
     submitWaitResult,
-    submitWaitResultError,
     isLoadingSubmitResult,
   } = useCollectionSetLimits();
   const { error, info } = useNotifications();
@@ -64,10 +63,7 @@ export const Limits = ({ onComplete }: SettingsSavingProps) => {
     if (feeError) {
       error(feeError);
     }
-    if (submitWaitResultError) {
-      error(submitWaitResultError);
-    }
-  }, [feeError, submitWaitResultError]);
+  }, [feeError]);
 
   useEffect(() => {
     if (!isValid || !isChanged || !collectionId || !selectedAccount?.address) {

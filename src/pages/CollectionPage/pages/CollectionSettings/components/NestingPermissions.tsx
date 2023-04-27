@@ -35,7 +35,6 @@ export const NestingPermissions = ({ onComplete }: SettingsSavingProps) => {
     feeError,
     feeLoading,
     submitWaitResult,
-    submitWaitResultError,
     isLoadingSubmitResult,
   } = useCollectionSetPermissions();
   const { error, info } = useNotifications();
@@ -69,10 +68,7 @@ export const NestingPermissions = ({ onComplete }: SettingsSavingProps) => {
     if (feeError) {
       error(feeError);
     }
-    if (submitWaitResultError) {
-      error(submitWaitResultError);
-    }
-  }, [feeError, submitWaitResultError]);
+  }, [feeError]);
 
   useEffect(() => {
     if (!collectionId || !selectedAccount?.address) {

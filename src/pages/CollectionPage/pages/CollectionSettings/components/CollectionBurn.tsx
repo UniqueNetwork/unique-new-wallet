@@ -23,7 +23,6 @@ export const CollectionBurn = ({ canBurn, collectionId, onComplete }: Props) => 
     feeError,
     feeLoading,
     submitWaitResult,
-    submitWaitResultError,
     isLoadingSubmitResult,
   } = useCollectionBurn();
   const navigate = useNavigate();
@@ -32,10 +31,7 @@ export const CollectionBurn = ({ canBurn, collectionId, onComplete }: Props) => 
     if (feeError) {
       error(feeError);
     }
-    if (submitWaitResultError) {
-      error(submitWaitResultError);
-    }
-  }, [feeError, submitWaitResultError]);
+  }, [feeError]);
 
   useEffect(() => {
     if (!isVisibleConfirmModal || !collectionId || !selectedAccount?.address) {
@@ -96,7 +92,7 @@ export const CollectionBurn = ({ canBurn, collectionId, onComplete }: Props) => 
       />
 
       <ConfirmUpdateCollectionModal
-        title="Burn collection"
+        title={`Burn collection (id: ${collectionId})`}
         isVisible={isVisibleConfirmModal}
         isLoading={feeLoading}
         fee={feeFormatted}

@@ -20,7 +20,6 @@ export const RemoveSponsorship = ({ collectionId, onComplete }: Props) => {
     feeError,
     feeLoading,
     submitWaitResult,
-    submitWaitResultError,
     isLoadingSubmitResult,
   } = useCollectionRemoveSponsorship();
   const { error, info } = useNotifications();
@@ -28,10 +27,7 @@ export const RemoveSponsorship = ({ collectionId, onComplete }: Props) => {
     if (feeError) {
       error(feeError);
     }
-    if (submitWaitResultError) {
-      error(submitWaitResultError);
-    }
-  }, [feeError, submitWaitResultError]);
+  }, [feeError]);
 
   useEffect(() => {
     if (!isVisibleConfirmModal || !collectionId || !selectedAccount?.address) {
