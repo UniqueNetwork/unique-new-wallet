@@ -147,6 +147,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       Collection,
       'collection_id' | 'collection_cover' | 'description' | 'name'
     >;
+    const presetCollectionExists =
+      collections.findIndex(
+        ({ collection_id }) => collection_id === presetCollection.collection_id,
+      ) !== -1;
     return [
       ...(collections
         // filter NFT collections only until RFT minting is implemented
@@ -157,7 +161,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           description: collection.description,
           img: getTokenIpfsUriByImagePath(collection.collection_cover),
         })) ?? []),
-      ...(presetCollection?.collection_id
+      ...(presetCollection?.collection_id && !presetCollectionExists
         ? [
             {
               id: presetCollection.collection_id,
