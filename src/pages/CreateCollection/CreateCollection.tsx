@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FieldError, FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
@@ -62,9 +62,14 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentChain } = useApi();
   const { error, info } = useNotifications();
-  const { selectedAccount, isLoading } = useAccounts();
+  const {
+    selectedAccount,
+    isLoading,
+    accounts: { size: accountsLength },
+  } = useAccounts();
   const formMapper = useCollectionFormMapper();
   const {
     getFee,
@@ -91,8 +96,8 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       address: selectedAccount?.address,
       nesting: {
         tokenOwner: true,
+        collectionAdmin: true,
       },
-      ownerCanDestroy: false,
     },
   });
   const {
@@ -106,18 +111,27 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
 
   const [collectionDebounceValue] = useDebounce(collectionFormValues as any, 500);
 
+  const returnToCreateToken = useMemo(() => {
+    return (
+      (location.state as { returnToCreateToken: boolean })?.returnToCreateToken || false
+    );
+  }, [location.state]);
+
+  useEffect(() => {
+    navigate(tabsUrls[currentStep - 1], { state: { returnToCreateToken } });
+  }, [currentStep, returnToCreateToken]);
+
   useEffect(() => {
     if (isLoading) {
       return;
     }
 
-    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
-      window.location.pathname = `${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`;
-      navigate(`${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
+      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
     } else {
-      collectionForm.setValue('address', selectedAccount.address);
+      selectedAccount && collectionForm.setValue('address', selectedAccount?.address);
     }
-  }, [selectedAccount, isLoading]);
+  }, [selectedAccount, isLoading, accountsLength]);
 
   useEffect(() => {
     if (!feeError) {
@@ -132,10 +146,6 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     }
     error(submitWaitResultError);
   }, [submitWaitResultError]);
-
-  useEffect(() => {
-    navigate(tabsUrls[currentStep - 1]);
-  }, [currentStep, navigate]);
 
   useEffect(() => {
     if (collectionDebounceValue && isValid) {
@@ -188,6 +198,18 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
         entityData: payload,
       });
 
+      if (returnToCreateToken) {
+        navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`, {
+          state: {
+            collection_id: res?.parsed?.collectionId,
+            name: payload.name,
+            description: payload.description,
+            // @ts-ignore
+            collection_cover: payload.schema?.coverPicture.ipfsCid,
+          },
+        });
+        return;
+      }
       navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
     });
   };
@@ -318,6 +340,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           <StatusTransactionModal
             isVisible={isLoadingSubmitResult}
             description="Creating collection"
+            warning="Advanced settings will be available on the collection page after creating the collection"
           />
         </FormWrapper>
       </WrapperContentStyled>

@@ -7,6 +7,7 @@ interface TooltipWrapperProps {
   align?: TooltipAlign;
   children?: ReactNode | undefined;
   message: ReactNode;
+  className?: string;
 }
 
 const TooltipParent = styled.span`
@@ -18,13 +19,14 @@ export const TooltipWrapper: VFC<TooltipWrapperProps> = ({
   children,
   message,
   align,
+  className,
 }) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
       {message && (
-        <Tooltip targetRef={tooltipRef} align={align}>
+        <Tooltip targetRef={tooltipRef} align={align} className={className}>
           {message}
         </Tooltip>
       )}

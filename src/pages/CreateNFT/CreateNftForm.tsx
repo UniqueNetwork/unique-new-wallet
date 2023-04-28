@@ -1,8 +1,9 @@
-import { FC, useCallback, useMemo, VFC } from 'react';
+import { FC, Fragment, useCallback, useMemo, VFC } from 'react';
 import classNames from 'classnames';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 import { CollectionInfoWithSchemaResponse } from '@unique-nft/sdk';
+import { useNavigate } from 'react-router-dom';
 
 import {
   AdditionalText,
@@ -17,7 +18,7 @@ import {
 } from '@app/pages/components/FormComponents';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
 import { useFileUpload } from '@app/api';
-import { Suggest } from '@app/components/Suggest';
+import { Suggest, SuggestListProps } from '@app/components/Suggest';
 import {
   Avatar,
   Heading,
@@ -26,7 +27,10 @@ import {
   Upload,
   useNotifications,
 } from '@app/components';
+import { useApi } from '@app/hooks';
+import { ROUTE } from '@app/routes';
 
+import { Button } from '../../components/Button';
 import { AttributeType, Option } from './types';
 import { AttributesRow } from './AttributesRow';
 import {
@@ -67,6 +71,8 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   selectedCollection,
   className,
 }) => {
+  const navigate = useNavigate();
+  const { currentChain } = useApi();
   const { error } = useNotifications();
 
   const { resetField } = useFormContext();
@@ -111,6 +117,35 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
     [],
   );
 
+  const onCreateCollectionClick = () => {
+    navigate(`/${currentChain.network}/${ROUTE.CREATE_COLLECTION}/`, {
+      state: {
+        returnToCreateToken: true,
+      },
+    });
+  };
+
+  const CollectionsSuggestionList: FC<SuggestListProps<Option>> = ({
+    suggestions,
+    children,
+  }) => {
+    return (
+      <>
+        <CreateCollectionOption
+          role="ghost"
+          title={<Typography color="primary-500">Create collection</Typography>}
+          iconLeft={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
+          onClick={onCreateCollectionClick}
+        />
+        {suggestions.map((suggest, idx) => (
+          <Fragment key={idx}>
+            {children(suggest, idx === suggestions.length - 1)}
+          </Fragment>
+        ))}
+      </>
+    );
+  };
+
   return (
     <>
       <FormHeader>
@@ -120,6 +155,16 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
         <Form>
           <FormRow>
             <LabelText>Collection*</LabelText>
+            {collectionsOptionsLoading && <Loader />}
+            {!collectionsOptionsLoading && collectionsOptions.length === 0 && (
+              <CreateCollectionButton
+                role="ghost"
+                title={<Typography color="primary-500">Create collection</Typography>}
+                iconLeft={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
+                onClick={onCreateCollectionClick}
+              />
+            )}
+
             <Controller
               name="collectionId"
               rules={{
@@ -129,29 +174,34 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                 },
               }}
               render={({ field: { value, onChange } }) => (
-                <Suggest
-                  components={{
-                    SuggestItem: CollectionSuggestion,
-                  }}
-                  suggestions={collectionsOptions}
-                  isLoading={collectionsOptionsLoading}
-                  value={collectionsOptions.find((co) => co.id === value)}
-                  getActiveSuggestOption={(option: Option) => {
-                    return option.id === (value as number);
-                  }}
-                  getSuggestionValue={({ title }: Option) => title}
-                  onChange={(val) => {
-                    resetField('attributes');
-                    onChange(val?.id);
-                  }}
-                  onSuggestionsFetchRequested={(value) =>
-                    collectionsOptions.filter(
-                      ({ id, title }) =>
-                        title.toLowerCase().includes(value.toLowerCase()) ||
-                        id.toString().includes(value),
-                    )
-                  }
-                />
+                <>
+                  {collectionsOptions.length !== 0 && (
+                    <Suggest
+                      components={{
+                        SuggestItem: CollectionSuggestion,
+                        SuggestList: CollectionsSuggestionList,
+                      }}
+                      suggestions={collectionsOptions}
+                      isLoading={collectionsOptionsLoading}
+                      value={collectionsOptions.find((co) => co.id === value)}
+                      getActiveSuggestOption={(option: Option) => {
+                        return option.id === (value as number);
+                      }}
+                      getSuggestionValue={({ title }: Option) => title}
+                      onChange={(val) => {
+                        resetField('attributes');
+                        onChange(val?.id);
+                      }}
+                      onSuggestionsFetchRequested={(value) =>
+                        collectionsOptions.filter(
+                          ({ id, title }) =>
+                            title.toLowerCase().includes(value.toLowerCase()) ||
+                            id.toString().includes(value),
+                        )
+                      }
+                    />
+                  )}
+                </>
               )}
             />
           </FormRow>
@@ -222,4 +272,13 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
 
 export const CreateNftForm = styled(CreateNftFormComponent)`
   margin-bottom: calc(var(--prop-gap) * 2.5);
+`;
+
+const CreateCollectionButton = styled(Button)`
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+`;
+
+const CreateCollectionOption = styled(Button)`
+  padding-left: calc(var(--prop-gap) / 2) !important;
 `;

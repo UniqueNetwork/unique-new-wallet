@@ -2,11 +2,18 @@ import { useContext, useEffect, useState, VFC } from 'react';
 import { Outlet, useNavigate, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
 
-import { Button, PagePaper, TokenLink, Typography, List } from '@app/components';
+import { Button, PagePaper, TokenLinkBase, Typography, List } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
-import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
-import { DeviceSize, useApi, useDeviceSize, useItemsLimit, useTimer } from '@app/hooks';
+import { MY_COLLECTIONS_ROUTE, MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
+import {
+  DeviceSize,
+  useAccounts,
+  useApi,
+  useDeviceSize,
+  useItemsLimit,
+  useTimer,
+} from '@app/hooks';
 import AccountContext from '@app/account/AccountContext';
 import { useExtrinsicCacheEntities } from '@app/api';
 import { Collection } from '@app/api/graphQL/types';
@@ -19,9 +26,12 @@ import {
   BottomBarProps,
 } from '@app/pages/components/BottomBar';
 import { ListEntitiesCache } from '@app/pages/components/ListEntitysCache';
+import { usePageSettingContext } from '@app/context';
 
 import { useMyCollectionsContext } from './context';
 import { TopFilter } from './components';
+import Stub from '../components/Stub';
+import { NothingToDisplay } from '../components/NothingToDisplay';
 
 interface MyCollectionsComponentProps {
   className?: string;
@@ -30,18 +40,19 @@ interface MyCollectionsComponentProps {
 export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   className,
 }) => {
+  const { accounts } = useAccounts();
   const { currentChain } = useApi();
   const { selectedAccount } = useContext(AccountContext);
   const deviceSize = useDeviceSize();
   const navigate = useNavigate();
   const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const [isFilterOpen, setFilterOpen] = useState(false);
+  const { setPageHeading } = usePageSettingContext();
 
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();
 
-  const { order, page, search, onChangePagination, onChangeSearch } =
-    useMyCollectionsContext();
+  const { order, page, search, onChangePagination } = useMyCollectionsContext();
 
   const isChildExist = useOutlet();
 
@@ -125,6 +136,22 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       // <Button disabled key="Reset-button-filter" title="Reset" />,
     ]);
   }
+  useEffect(() => {
+    if (!accounts.size && isChildExist) {
+      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    }
+  }, [accounts.size, isChildExist]);
+
+  useEffect(() => {
+    if (isChildExist) {
+      return;
+    }
+    setPageHeading('My collections');
+  }, [setPageHeading, isChildExist]);
+
+  if (!accounts.size) {
+    return <Stub />;
+  }
 
   return (
     <PagePaper
@@ -151,9 +178,13 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                 },
                 viewMode: 'both',
               }}
+              noItemsIconName={search ? 'magnifier-found' : 'box'}
+              noItemsTitle={search ? 'Nothing found' : <NothingToDisplay />}
               renderItem={(collection: Collection) => (
                 <List.Item key={collection.collection_id}>
-                  <TokenLink
+                  <TokenLinkBase
+                    state={{ collectionName: collection.name }}
+                    link={`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}/${collection.collection_id}/${MY_COLLECTIONS_ROUTE.NFT}`}
                     image={getTokenIpfsUriByImagePath(collection.collection_cover)}
                     title={`${collection.name} [id ${collection.collection_id}]`}
                     meta={
@@ -165,7 +196,6 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
                       </>
                     }
                     key={collection.collection_id}
-                    onTokenClick={() => onClickNavigate(collection.collection_id)}
                     onMetaClick={() => onClickNavigate(collection.collection_id)}
                   />
                 </List.Item>

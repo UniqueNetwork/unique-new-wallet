@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import styled from 'styled-components';
 import { Ethereum } from '@unique-nft/utils/extension';
 
@@ -12,11 +12,7 @@ import {
   ImportViaSeedAccountModal,
 } from '@app/pages';
 import { useAccounts } from '@app/hooks';
-
-type Props = {
-  isOpen?: boolean;
-  onClose?: () => void;
-};
+import { ConnectWalletModalContext } from '@app/context';
 
 enum AccountModal {
   CREATE = 'create',
@@ -26,23 +22,13 @@ enum AccountModal {
   EXTENSION_MISSING = 'extensionMissing',
 }
 
-const dropdownItems = [
-  { title: 'Backup JSON file', modal: AccountModal.VIA_JSON },
-  { title: 'Seed phrase', modal: AccountModal.VIA_SEED },
-  { title: 'QR-code', modal: AccountModal.VIA_QR },
-];
-
-export const ConnectWallets = ({ isOpen, onClose }: Props) => {
-  const [open, setOpen] = useState<boolean>(() => {
-    return isOpen ?? true;
-  });
+export const ConnectWallets = () => {
+  const { isOpenConnectWalletModal, setIsOpenConnectWalletModal } = useContext(
+    ConnectWalletModalContext,
+  );
   const [currentModal, setCurrentModal] = useState<AccountModal | undefined>();
   const [missingExtension, setMissingExtension] = useState<'Polkadot' | 'Metamask'>();
   const { walletsCenter } = useAccounts();
-
-  useEffect(() => {
-    setOpen(!!isOpen);
-  }, [isOpen]);
 
   const onCreateAccountClick = useCallback(() => {
     logUserEvent(UserEvents.CREATE_SUBSTRATE);
@@ -51,8 +37,7 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
 
   const onChangeAccountsFinish = useCallback(() => {
     setCurrentModal(undefined);
-    setOpen(false);
-    onClose?.();
+    setIsOpenConnectWalletModal(false);
   }, []);
 
   const handleOpenModal = (modalType: AccountModal) => () => {
@@ -64,8 +49,7 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
     try {
       await Ethereum.requestAccounts();
       await walletsCenter.connectWallet('metamask');
-      setOpen(false);
-      onClose?.();
+      setIsOpenConnectWalletModal(false);
     } catch (e: any) {
       setMissingExtension('Metamask');
       setCurrentModal(AccountModal.EXTENSION_MISSING);
@@ -76,8 +60,7 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
     try {
       await walletsCenter.connectWallet('polkadot');
       await walletsCenter.connectWallet('keyring');
-      setOpen(false);
-      onClose?.();
+      setIsOpenConnectWalletModal(false);
     } catch (e: any) {
       setMissingExtension('Polkadot');
       setCurrentModal(AccountModal.EXTENSION_MISSING);
@@ -87,11 +70,10 @@ export const ConnectWallets = ({ isOpen, onClose }: Props) => {
   return (
     <>
       <Modal
-        isVisible={open}
+        isVisible={isOpenConnectWalletModal}
         title="Connect wallet"
         onClose={() => {
-          setOpen(false);
-          onClose?.();
+          setIsOpenConnectWalletModal(false);
         }}
       >
         <p>Create or import an existing one in any suitable way:</p>

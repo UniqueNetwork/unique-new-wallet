@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'; // Todo: https://cryptousetech.atlassian.net/browse/NFTPAR-1201
 
@@ -11,6 +11,7 @@ import { networks } from '@app/utils';
 import { UserEvents } from '@app/utils/logUserEvent';
 import { Account } from '@app/account';
 import { INetwork } from '@app/types';
+import { ConnectWalletModalContext } from '@app/context';
 
 import logo from '../../static/icons/logo.svg';
 import { AccountsManager } from '../AccountsManager';
@@ -18,6 +19,7 @@ import { Footer } from '../Footer';
 import MenuLink from './MenuLink';
 
 export const Header = () => {
+  const { setIsOpenConnectWalletModal } = useContext(ConnectWalletModalContext);
   const navigate = useNavigate();
   const location = useLocation();
   const deviceSize = useDeviceSize();
@@ -67,9 +69,7 @@ export const Header = () => {
   };
 
   const gotoConnectOrCreateWallet = () => {
-    navigate(`${activeNetwork?.id}/${ROUTE.ACCOUNTS}`, {
-      state: { openConnectWallet: true },
-    });
+    setIsOpenConnectWalletModal(true);
   };
 
   const balance = useMemo(() => {

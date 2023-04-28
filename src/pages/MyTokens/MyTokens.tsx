@@ -6,9 +6,11 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { PagePaper, Tabs } from '@app/components';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
+import { useAccounts } from '@app/hooks';
 
-import { NFTFilters } from './NFTs';
-import { NFTsWrapper } from './context';
+import { TokensFilters } from './Tokens';
+import { TokensWrapper } from './context';
+import Stub from '../components/Stub';
 
 interface MyTokensComponentProps {
   activeTab: number;
@@ -25,6 +27,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { accounts } = useAccounts();
 
   useEffect(() => {
     if (location.pathname === basePath) {
@@ -40,8 +43,12 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
     navigate(tabUrls[tabIndex]);
   };
 
+  if (!accounts.size) {
+    return <Stub />;
+  }
+
   return (
-    <NFTsWrapper>
+    <TokensWrapper>
       <PagePaper
         noPadding
         flexLayout="column"
@@ -55,7 +62,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
             onClick={handleClick}
           />
           <Tabs activeIndex={currentTabIndex}>
-            <NFTFilters />
+            <TokensFilters />
             <></>
           </Tabs>
         </TabsHeader>
@@ -66,7 +73,7 @@ const MyTokensComponent: VFC<MyTokensComponentProps> = ({
           </Tabs>
         </TabsBody>
       </PagePaper>
-    </NFTsWrapper>
+    </TokensWrapper>
   );
 };
 

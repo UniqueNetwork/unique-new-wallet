@@ -3,11 +3,11 @@ import styled from 'styled-components/macro';
 
 import { CollectionsFilter, StatusFilter, TypeFilter } from '@app/pages';
 import { defaultStatusFilter, defaultTypeFilter } from '@app/pages/MyTokens/constants';
-import { useNFTsContext } from '@app/pages/MyTokens/context';
+import { useTokensContext } from '@app/pages/MyTokens/context';
 import { OptionChips as CollectionOption } from '@app/types';
 import { Search } from '@app/pages/components/Search';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
-import { SortOption } from '@app/pages/MyTokens/NFTs/components/NFTFilters/types';
+import { SortOption } from '@app/pages/MyTokens/Tokens/components/TokensFilters/types';
 
 import { Button, Select } from '../';
 
@@ -22,7 +22,7 @@ export const MobileFilters = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [search, setSearch] = useState<string>('');
-  const { sortBy, searchText, changeSort, changeSearchText } = useNFTsContext();
+  const { sortBy, searchText, changeSort, changeSearchText } = useTokensContext();
   const onVisibleButtonClick = useCallback(() => {
     setIsVisible(true);
   }, [setIsVisible]);

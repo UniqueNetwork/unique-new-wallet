@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, VFC } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { CreateTokenBody, TokenId } from '@unique-nft/sdk';
@@ -35,12 +35,13 @@ import { BottomBar } from '@app/pages/components/BottomBar';
 import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
-import { TokenTypeEnum } from '@app/api/graphQL/types';
+import { Collection, TokenTypeEnum } from '@app/api/graphQL/types';
 import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { CreateNftForm } from './CreateNftForm';
 import { mapTokenForm } from './helpers';
 import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
+import { USER_HAS_NO_COLLECTION } from '../constants';
 
 interface ICreateNFTProps {
   className?: string;
@@ -73,9 +74,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
+  const { state: locationState } = useLocation();
   const { currentChain } = useApi();
-  const { selectedAccount } = useAccounts();
-  const { warning, info, error } = useNotifications();
+  const {
+    selectedAccount,
+    accounts: { size: accountsLength },
+  } = useAccounts();
+  const { warning, info } = useNotifications();
 
   const {
     isValid,
@@ -138,9 +143,17 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     return attrs;
   }, [collection, formValues]);
 
-  const collectionsOptions = useMemo(
-    () =>
-      collections
+  const collectionsOptions = useMemo(() => {
+    const presetCollection = locationState as Pick<
+      Collection,
+      'collection_id' | 'collection_cover' | 'description' | 'name'
+    >;
+    const presetCollectionExists =
+      collections.findIndex(
+        ({ collection_id }) => collection_id === presetCollection?.collection_id,
+      ) !== -1;
+    return [
+      ...(collections
         // filter NFT collections only until RFT minting is implemented
         ?.filter((collection) => collection.mode === TokenTypeEnum.NFT)
         .map<Option>((collection) => ({
@@ -148,9 +161,29 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           title: collection.name,
           description: collection.description,
           img: getTokenIpfsUriByImagePath(collection.collection_cover),
-        })) ?? [],
-    [collections],
-  );
+        })) ?? []),
+      ...(presetCollection?.collection_id && !presetCollectionExists
+        ? [
+            {
+              id: presetCollection.collection_id,
+              title: presetCollection.name,
+              description: presetCollection.description,
+              img: getTokenIpfsUriByImagePath(presetCollection.collection_cover),
+            },
+          ]
+        : []),
+    ];
+  }, [collections, locationState]);
+
+  useEffect(() => {
+    const presetCollection = locationState as Pick<
+      Collection,
+      'collection_id' | 'collection_cover' | 'description' | 'name'
+    >;
+    if (presetCollection?.collection_id) {
+      setValue('collectionId', presetCollection?.collection_id);
+    }
+  }, [locationState]);
 
   useEffect(() => {
     if (isOldCollection) {
@@ -167,13 +200,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [debouncedFormValues]);
 
   useEffect(() => {
-    if (!selectedAccount || selectedAccount.name === MetamaskAccountName) {
-      navigate('/');
+    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
+      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
       return;
     }
-    setValue('address', selectedAccount?.address);
-    setValue('owner', selectedAccount?.address);
-  }, [selectedAccount]);
+    if (selectedAccount) {
+      setValue('address', selectedAccount?.address);
+      setValue('owner', selectedAccount?.address);
+    }
+  }, [selectedAccount, accountsLength]);
 
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
     if (isValid) {
@@ -195,7 +230,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           ? navigate(
               `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
             )
-          : reset(undefined, { keepDefaultValues: true });
+          : reset({ collectionId: payload.collectionId }, { keepDefaultValues: true });
       });
     }
   };
@@ -223,6 +258,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     />
   );
 
+  const hasNoCollections = collectionsOptions.length === 0;
+  const tooltip = isOldCollection
+    ? config.oldCollectionMessage
+    : hasNoCollections
+    ? USER_HAS_NO_COLLECTION
+    : validationMessage;
+  const disableButtons =
+    !isValid || feeLoading || !isSufficientBalance || isOldCollection;
+
   return (
     <>
       <MainWrapper className={classNames('create-nft-page', className)}>
@@ -240,22 +284,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               <ConfirmBtn
                 role="primary"
                 title="Confirm and create more"
-                disabled={
-                  !isValid || feeLoading || !isSufficientBalance || isOldCollection
-                }
-                tooltip={
-                  isOldCollection ? config.oldCollectionMessage : validationMessage
-                }
+                disabled={disableButtons}
+                tooltip={tooltip}
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
               <ConfirmBtn
                 title="Confirm and close"
-                disabled={
-                  !isValid || feeLoading || !isSufficientBalance || isOldCollection
-                }
-                tooltip={
-                  isOldCollection ? config.oldCollectionMessage : validationMessage
-                }
+                disabled={disableButtons}
+                tooltip={tooltip}
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
               />
             </ButtonGroup>
@@ -289,7 +325,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       </MainWrapper>
       <StatusTransactionModal
         isVisible={isLoadingSubmitResult}
-        description="Creating NFT"
+        description="Creating token"
       />
     </>
   );
@@ -318,6 +354,6 @@ const CreateNFTForm = () => {
 };
 
 export const CreateNFT = withPageTitle({
-  header: 'Create an NFT',
+  header: 'Create a token',
   backLink: `${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
 })(CreateNFTForm);

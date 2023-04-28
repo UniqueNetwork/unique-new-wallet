@@ -7,7 +7,7 @@ import { existValue, getTokenIpfsUriByImagePath } from '@app/utils';
 import { AccountLinkComponent, ExternalLink, Avatar, Loader } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { getSponsorShip } from '@app/pages/CollectionPage/utils';
-import { maxTokenLimit } from '@app/pages/constants/token';
+import { maxTokenLimit } from '@app/pages/constants';
 
 const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
   collectionId,

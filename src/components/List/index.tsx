@@ -38,6 +38,7 @@ export type ListProps<T> = Pick<IPaginationProps, 'onPageChange' | 'onPageSizeCh
   renderItem?: (item: T, index: number) => ReactNode;
   visibleItems?: number;
   noItemsIconName?: string;
+  noItemsTitle?: ReactNode;
   resultsComponent?: ReactNode;
 };
 
@@ -134,6 +135,7 @@ export function List<T>({
   onPageChange,
   onPageSizeChange,
   noItemsIconName = 'box',
+  noItemsTitle = 'Nothing found',
   resultsComponent,
 }: ListProps<T>) {
   const deviceSize = useDeviceSize();
@@ -154,7 +156,7 @@ export function List<T>({
       </ItemScope>
     );
   } else if (!isLoading) {
-    childrenContent = <NoItems iconName={noItemsIconName} />;
+    childrenContent = <NoItems iconName={noItemsIconName} title={noItemsTitle} />;
   }
 
   const ResultItemText = resultsComponent || (

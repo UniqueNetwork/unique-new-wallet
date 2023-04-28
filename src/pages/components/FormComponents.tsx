@@ -16,7 +16,9 @@ export const FormHeader = styled.div`
   }
 `;
 
-export const FormBody = styled.div``;
+export const FormBody = styled.div`
+  margin-bottom: calc(var(--prop-gap) * 2);
+`;
 
 export const FormWrapper = styled.div`
   @media screen and (min-width: 1024px) {
@@ -65,12 +67,8 @@ export const FormRow = styled.div`
     margin-bottom: calc(var(--prop-gap) * 2.5);
   }
 
-  .unique-select .select-wrapper .select-dropdown {
-    max-height: 300px;
-    overflow-y: scroll;
-  }
-  textarea {
-    font-size: calc(var(--prop-font-size) + 2px);
+  & > span.unique-text {
+    margin-bottom: calc(var(--prop-gap) / 2);
   }
 `;
 
@@ -93,7 +91,7 @@ export const UploadWidget = styled.div`
 
 export const SettingsRow = styled.div`
   &:not(:last-child) {
-    margin-bottom: calc(var(--prop-gap) * 2);
+    margin-bottom: calc(var(--prop-gap) * 1.5);
   }
 
   label {

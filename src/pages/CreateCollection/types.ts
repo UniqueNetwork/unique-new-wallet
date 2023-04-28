@@ -32,5 +32,5 @@ export type CollectionForm = {
   tokenLimit?: number;
   ownerCanDestroy?: boolean;
   attributes?: AttributeField[];
-  nesting: Pick<CollectionNestingPermissionsDto, 'tokenOwner'>;
+  nesting: Pick<CollectionNestingPermissionsDto, 'tokenOwner' | 'collectionAdmin'>;
 };

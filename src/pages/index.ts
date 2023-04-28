@@ -9,4 +9,4 @@ export * from './FAQ';
 export * from './MyTokens';
 export * from './MyCollections';
 export * from './ConnectWallets';
-export * from './NFTDetails';
+export * from './TokenDetails';

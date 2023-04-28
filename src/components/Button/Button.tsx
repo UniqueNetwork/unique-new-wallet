@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import classNames from 'classnames';
 
 import { Icon, IconProps } from '@app/components';
@@ -6,7 +7,7 @@ import './Button.scss';
 import { ComponentProps, DimentionType } from '../types';
 
 export interface ButtonBaseProps {
-  title: string;
+  title: ReactNode;
   size?: DimentionType;
   role?:
     | 'primary'

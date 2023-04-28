@@ -3,10 +3,11 @@
  */
 
 import classNames from 'classnames';
+import { ReactNode } from 'react';
 import './Toggle.scss';
 
 export interface ToggleProps {
-  label: string;
+  label: ReactNode;
   on?: boolean;
   size?: 's' | 'm';
   disabled?: boolean;
@@ -16,19 +17,21 @@ export interface ToggleProps {
 export const Toggle = ({
   on = false,
   label,
-  size = 's',
+  size = 'm',
   disabled,
   onChange,
-}: ToggleProps) => (
-  <div
-    className={classNames('unique-toggle-wrapper', `toggle-size-${size}`, {
-      disabled,
-    })}
-    {...(!disabled && {
-      onClick: () => onChange(!on),
-    })}
-  >
-    <span className={classNames('inner', { on })} />
-    <label>{label}</label>
-  </div>
-);
+}: ToggleProps) => {
+  return (
+    <div
+      className={classNames('unique-toggle-wrapper', `toggle-size-${size}`, {
+        disabled,
+      })}
+      {...(!disabled && {
+        onClick: () => onChange(!on),
+      })}
+    >
+      <span className={classNames('inner', { on })} />
+      <label>{label}</label>
+    </div>
+  );
+};
