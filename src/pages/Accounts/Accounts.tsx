@@ -209,7 +209,6 @@ const getButtonRender = (unit?: string) => {
         <ButtonGet
           title="Get"
           role="outlined"
-          link={config.telegramBot}
           onClick={() => {
             window.open(config.telegramBot, '_blank', 'noopener');
           }}
