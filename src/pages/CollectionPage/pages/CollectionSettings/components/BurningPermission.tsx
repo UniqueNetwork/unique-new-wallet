@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
 
 import {
   StatusTransactionModal,
-  TooltipWrapper,
   Button,
   Heading,
-  Typography,
   useNotifications,
   Alert,
   Icon,
@@ -13,18 +12,20 @@ import {
 } from '@app/components';
 import { useCollectionContext } from '@app/pages/CollectionPage/useCollectionContext';
 import { ConfirmUpdateCollectionModal } from '@app/pages/CollectionPage/pages/CollectionSettings/components/ConfirmUpdateCollectionModal';
-import { useAccounts } from '@app/hooks';
+import { DeviceSize, useAccounts, useDeviceSize } from '@app/hooks';
 import { ButtonGroup, FormRow, SettingsRow } from '@app/pages/components/FormComponents';
 import { DEFAULT_POSITION_TOOLTIP } from '@app/pages';
 import { useCollectionSetLimits } from '@app/api';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 
+import { TooltipWrapper } from '../../../../../components/TooltipWrapper';
 import { CollectionBurn } from './CollectionBurn';
 import { SettingsSavingProps } from './types';
 
 export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
   const [isVisibleConfirmModal, setVisibleConfirmModal] = useState(false);
   const { collectionSettings, collection } = useCollectionContext() || {};
+  const deviceSize = useDeviceSize();
   const { selectedAccount } = useAccounts();
   const {
     feeFormatted,
@@ -119,8 +120,7 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
           label={
             <>
               Owner can burn collection
-              <TooltipWrapper
-                align={DEFAULT_POSITION_TOOLTIP}
+              <TooltipWrapperStyled
                 message={
                   <>
                     Should you decide to&nbsp;keep the right to&nbsp;destroy
@@ -130,10 +130,19 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
                     in&nbsp;the&nbsp;future
                   </>
                 }
+                align={
+                  deviceSize < DeviceSize.md
+                    ? {
+                        vertical: 'bottom',
+                        appearance: 'vertical',
+                        horizontal: 'right',
+                      }
+                    : DEFAULT_POSITION_TOOLTIP
+                }
               >
                 {' '}
                 <Icon name="question" size={22} color="var(--color-primary-500)" />
-              </TooltipWrapper>
+              </TooltipWrapperStyled>
             </>
           }
           disabled={
@@ -198,3 +207,16 @@ export const BurningPermission = ({ onComplete }: SettingsSavingProps) => {
     </>
   );
 };
+
+const TooltipWrapperStyled = styled(TooltipWrapper)`
+  @media screen and (max-width: 768px) {
+    .arrow {
+      left: 272px !important;
+    }
+  }
+  @media screen and (max-width: 568px) {
+    .arrow {
+      left: 264px !important;
+    }
+  }
+`;
