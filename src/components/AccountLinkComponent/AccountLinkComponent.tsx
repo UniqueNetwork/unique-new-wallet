@@ -1,8 +1,9 @@
 import React, { VFC } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import { Typography } from '@app/components';
+import { ExternalLink, Typography } from '@app/components';
 import { shortcutText } from '@app/utils';
+import { useApi } from '@app/hooks';
 
 interface AccountLinkProps {
   value: string;
@@ -16,6 +17,7 @@ export const AccountLinkComponent: VFC<AccountLinkProps> = ({
   value,
 }) => {
   const { accountId } = useParams();
+  const { currentChain } = useApi();
 
   const shortcut = noShort ? value : shortcutText(value);
 
@@ -24,11 +26,11 @@ export const AccountLinkComponent: VFC<AccountLinkProps> = ({
   }
 
   return (
-    <Link to={`/account/${value}`}>
+    <ExternalLink href={`${currentChain.uniquescanAddress}/account/${value}`}>
       <Typography color="primary-600" size={size}>
         {shortcut}
       </Typography>
-    </Link>
+    </ExternalLink>
   );
 };
 

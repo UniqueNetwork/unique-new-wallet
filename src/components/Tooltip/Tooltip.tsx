@@ -112,6 +112,9 @@ export const Tooltip: React.FC<TooltipProps> = (props) => {
         }
         if (horizontal === 'right') {
           leftPos = left + width - tooltipRef.current.clientWidth + 10;
+          if (leftPos < 0) {
+            leftPos = 4;
+          }
           arrowPos.x = 'right';
         }
         if (horizontal === 'middle') {

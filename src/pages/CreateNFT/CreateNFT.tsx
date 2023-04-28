@@ -41,6 +41,7 @@ import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 import { CreateNftForm } from './CreateNftForm';
 import { mapTokenForm } from './helpers';
 import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
+import { USER_HAS_NO_COLLECTION } from '../constants';
 
 interface ICreateNFTProps {
   className?: string;
@@ -229,7 +230,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           ? navigate(
               `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
             )
-          : reset(undefined, { keepDefaultValues: true });
+          : reset({ collectionId: payload.collectionId }, { keepDefaultValues: true });
       });
     }
   };
@@ -257,6 +258,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     />
   );
 
+  const hasNoCollections = collectionsOptions.length === 0;
+  const tooltip = isOldCollection
+    ? config.oldCollectionMessage
+    : hasNoCollections
+    ? USER_HAS_NO_COLLECTION
+    : validationMessage;
+  const disableButtons =
+    !isValid || feeLoading || !isSufficientBalance || isOldCollection;
+
   return (
     <>
       <MainWrapper className={classNames('create-nft-page', className)}>
@@ -274,22 +284,14 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               <ConfirmBtn
                 role="primary"
                 title="Confirm and create more"
-                disabled={
-                  !isValid || feeLoading || !isSufficientBalance || isOldCollection
-                }
-                tooltip={
-                  isOldCollection ? config.oldCollectionMessage : validationMessage
-                }
+                disabled={disableButtons}
+                tooltip={tooltip}
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm))}
               />
               <ConfirmBtn
                 title="Confirm and close"
-                disabled={
-                  !isValid || feeLoading || !isSufficientBalance || isOldCollection
-                }
-                tooltip={
-                  isOldCollection ? config.oldCollectionMessage : validationMessage
-                }
+                disabled={disableButtons}
+                tooltip={tooltip}
                 onClick={handleSubmit((tokenForm) => onSubmit(tokenForm, true))}
               />
             </ButtonGroup>

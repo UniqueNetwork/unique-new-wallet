@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback, useEffect, useMemo, VFC } from 'react';
+import { FC, Fragment, useCallback, useMemo, VFC } from 'react';
 import classNames from 'classnames';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
@@ -27,7 +27,7 @@ import {
   Upload,
   useNotifications,
 } from '@app/components';
-import { useAccounts, useApi } from '@app/hooks';
+import { useApi } from '@app/hooks';
 import { ROUTE } from '@app/routes';
 
 import { Button } from '../../components/Button';
@@ -71,12 +71,11 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   selectedCollection,
   className,
 }) => {
-  const { selectedAccount } = useAccounts();
   const navigate = useNavigate();
   const { currentChain } = useApi();
   const { error } = useNotifications();
 
-  const { resetField, setValue } = useFormContext();
+  const { resetField } = useFormContext();
 
   const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
 
@@ -126,7 +125,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
     });
   };
 
-  const CollctionsSuggestionList: FC<SuggestListProps<Option>> = ({
+  const CollectionsSuggestionList: FC<SuggestListProps<Option>> = ({
     suggestions,
     children,
   }) => {
@@ -156,7 +155,8 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
         <Form>
           <FormRow>
             <LabelText>Collection*</LabelText>
-            {selectedAccount?.collectionsTotal === 0 && (
+            {collectionsOptionsLoading && <Loader />}
+            {!collectionsOptionsLoading && collectionsOptions.length === 0 && (
               <CreateCollectionButton
                 role="ghost"
                 title={<Typography color="primary-500">Create collection</Typography>}
@@ -164,43 +164,46 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                 onClick={onCreateCollectionClick}
               />
             )}
-            {selectedAccount?.collectionsTotal !== 0 && (
-              <Controller
-                name="collectionId"
-                rules={{
-                  required: {
-                    value: true,
-                    message: FORM_ERRORS.REQUIRED_FIELDS,
-                  },
-                }}
-                render={({ field: { value, onChange } }) => (
-                  <Suggest
-                    components={{
-                      SuggestItem: CollectionSuggestion,
-                      SuggestList: CollctionsSuggestionList,
-                    }}
-                    suggestions={collectionsOptions}
-                    isLoading={collectionsOptionsLoading}
-                    value={collectionsOptions.find((co) => co.id === value)}
-                    getActiveSuggestOption={(option: Option) => {
-                      return option.id === (value as number);
-                    }}
-                    getSuggestionValue={({ title }: Option) => title}
-                    onChange={(val) => {
-                      resetField('attributes');
-                      onChange(val?.id);
-                    }}
-                    onSuggestionsFetchRequested={(value) =>
-                      collectionsOptions.filter(
-                        ({ id, title }) =>
-                          title.toLowerCase().includes(value.toLowerCase()) ||
-                          id.toString().includes(value),
-                      )
-                    }
-                  />
-                )}
-              />
-            )}
+
+            <Controller
+              name="collectionId"
+              rules={{
+                required: {
+                  value: true,
+                  message: FORM_ERRORS.REQUIRED_FIELDS,
+                },
+              }}
+              render={({ field: { value, onChange } }) => (
+                <>
+                  {collectionsOptions.length !== 0 && (
+                    <Suggest
+                      components={{
+                        SuggestItem: CollectionSuggestion,
+                        SuggestList: CollectionsSuggestionList,
+                      }}
+                      suggestions={collectionsOptions}
+                      isLoading={collectionsOptionsLoading}
+                      value={collectionsOptions.find((co) => co.id === value)}
+                      getActiveSuggestOption={(option: Option) => {
+                        return option.id === (value as number);
+                      }}
+                      getSuggestionValue={({ title }: Option) => title}
+                      onChange={(val) => {
+                        resetField('attributes');
+                        onChange(val?.id);
+                      }}
+                      onSuggestionsFetchRequested={(value) =>
+                        collectionsOptions.filter(
+                          ({ id, title }) =>
+                            title.toLowerCase().includes(value.toLowerCase()) ||
+                            id.toString().includes(value),
+                        )
+                      }
+                    />
+                  )}
+                </>
+              )}
+            />
           </FormRow>
           <FormRow className="has_uploader">
             <UploadWidget>
