@@ -11,7 +11,6 @@ import { useIsOwner } from '@app/pages/TokenDetails/hooks/useIsOwner';
 import { Achievement, ErrorPage, TransferBtn, Button } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
-import { menuButtonsNft } from '@app/pages/TokenDetails/page/constants';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 
 export const NftDetailsPage = () => {
@@ -83,21 +82,6 @@ export const NftDetailsPage = () => {
     setCurrentModal('none');
   };
 
-  const menuButtons = useMemo(() => {
-    const items = [...menuButtonsNft];
-
-    if (isOwner) {
-      items.push({
-        icon: 'burn',
-        id: isFractional ? 'burn-refungible' : 'burn',
-        title: 'Burn token',
-        type: 'danger',
-      });
-    }
-
-    return items;
-  }, [isOwner, isFractional]);
-
   if (
     !isLoadingToken &&
     !isFetchingBalance &&
@@ -116,7 +100,6 @@ export const NftDetailsPage = () => {
     <TokenDetailsLayout isLoading={isLoadingToken} tokenExist={!!token}>
       <TokenDetailsCard
         token={token}
-        menuButtons={menuButtons}
         isFractional={isFractional}
         balance={balance?.amount}
         pieces={pieces?.amount}
@@ -133,6 +116,8 @@ export const NftDetailsPage = () => {
             />
           )
         }
+        canBurn={isOwner}
+        burnModal={isFractional ? 'burn-refungible' : 'burn'}
         owner={
           isOwner ? (
             'You own it'
