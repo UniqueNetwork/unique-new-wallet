@@ -15,6 +15,8 @@ interface IPreviewCard {
   geometry?: 'square' | 'circle';
   picture?: string;
   title?: string;
+  size?: number;
+  color?: string;
 }
 
 export const Card: VFC<IPreviewCard> = ({
@@ -24,12 +26,14 @@ export const Card: VFC<IPreviewCard> = ({
   title = 'Name',
   picture,
   geometry = 'circle',
+  size = 64,
+  color,
 }) => {
   return (
     <PreviewCard>
-      <Avatar size={64} src={usePreloadImage(picture || '', noImage)} type={geometry} />
+      <Avatar size={size} src={usePreloadImage(picture || '', noImage)} type={geometry} />
       <PreviewCardInfo>
-        <PreviewCardTitle>{title}</PreviewCardTitle>
+        <PreviewCardTitle color={color}>{title}</PreviewCardTitle>
         <PreviewCardDescription>{description}</PreviewCardDescription>
         {(attributes || !!attributesInline?.length) && (
           <PreviewCardAttributes>
@@ -94,11 +98,12 @@ const PreviewCardInfo = styled.div`
   padding-left: var(--prop-gap);
 `;
 
-const PreviewCardTitle = styled.h5`
+const PreviewCardTitle = styled.h5<{ color?: string }>`
   margin-bottom: calc(var(--prop-gap) / 4);
   font-weight: 500;
   font-size: 1.125rem;
   line-height: 1.5;
+  color: ${({ color }) => color || 'inherit'};
 `;
 
 const PreviewCardDescription = styled(Typography).attrs({
