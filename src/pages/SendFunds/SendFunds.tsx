@@ -133,7 +133,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     const parsedAmount = Number(sendFundsValues?.amount);
 
     if (parsedFee && parsedAmount) {
-      return (parsedFee + parsedAmount).toFixed(3);
+      return (parsedFee + parsedAmount).toFixed(4);
     }
 
     return 0;
