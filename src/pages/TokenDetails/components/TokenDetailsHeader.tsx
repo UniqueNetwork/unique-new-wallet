@@ -35,12 +35,22 @@ const HeaderContainerInfo = styled.div`
       color: var(--color-coral-500);
     }
   }
+
+  @media screen and (max-width: 768px) {
+    h1 {
+      max-width: calc(100% - 30px);
+      word-wrap: break-word;
+    }
+  }
 `;
 
 const HeaderContent = styled.div`
   min-width: 0;
+  width: 100%;
 
   .header-link {
+    display: flex;
+    gap: calc(var(--prop-gap) / 2);
     margin-bottom: calc(var(--prop-gap) / 2);
     font-size: 1rem;
 
@@ -55,6 +65,17 @@ const HeaderContent = styled.div`
     }
     img + div {
       padding-left: calc(var(--prop-gap) / 2);
+    }
+
+    & > div {
+      flex: 1;
+    }
+    & > button {
+      padding: 0 !important;
+      height: auto !important;
+      &:hover {
+        background: none !important;
+      }
     }
   }
 
@@ -88,6 +109,10 @@ const TitleWrapper = styled.div`
   button {
     padding: 0 !important;
   }
+
+  @media screen and (max-width: 768px) {
+    height: auto;
+  }
 `;
 
 const TokenDetailsHeaderComponent: VFC<TokenDetailsHeaderProps> = ({
@@ -114,6 +139,19 @@ const TokenDetailsHeaderComponent: VFC<TokenDetailsHeaderProps> = ({
               size={40}
               color="var(--color-primary-500)"
             />
+            {canBurn && (
+              <Button
+                className="danger"
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'burn',
+                  size: 16,
+                }}
+                role="ghost"
+                title="Burn token"
+                onClick={() => onShowModal(burnModal)}
+              />
+            )}
           </div>
           <TitleWrapper>
             <Heading className="collection-heading">{title}</Heading>
@@ -130,19 +168,6 @@ const TokenDetailsHeaderComponent: VFC<TokenDetailsHeaderProps> = ({
           </TitleWrapper>
           <TextOwner>{owner}</TextOwner>
         </HeaderContent>
-        {canBurn && (
-          <Button
-            className="danger"
-            iconRight={{
-              color: 'currentColor',
-              name: 'burn',
-              size: 16,
-            }}
-            role="ghost"
-            title="Burn token"
-            onClick={() => onShowModal(burnModal)}
-          />
-        )}
       </HeaderContainerInfo>
 
       {buttons && (

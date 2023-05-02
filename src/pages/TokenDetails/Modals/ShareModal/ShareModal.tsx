@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import getSocialLink from '@app/pages/TokenDetails/Modals/utils/getSocialLink';
 import { TBaseToken } from '@app/pages/TokenDetails/type';
 import { TokenModalsProps } from '@app/pages/TokenDetails/Modals';
-import { Button, Modal, IconProps } from '@app/components';
+import { Button, Modal, IconProps, useNotifications } from '@app/components';
 
 import RedditLogo from '../../../../static/icons/reddit.svg';
 import FacebookLogo from '../../../../static/icons/facebook.svg';
@@ -19,6 +19,7 @@ export const ShareModal = <T extends TBaseToken>({
   token,
   onClose,
 }: Omit<TokenModalsProps<T> & { token: T }, 'onComplete'>) => {
+  const { info } = useNotifications();
   const openLink = (url: string) => () => {
     window.open(url);
   };
@@ -75,6 +76,7 @@ export const ShareModal = <T extends TBaseToken>({
 
   const onCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
+    info('Link copied successfully');
   };
 
   return (
