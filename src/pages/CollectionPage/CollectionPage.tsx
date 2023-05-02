@@ -76,33 +76,33 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
 
   return (
     <CollectionsNftFilterWrapper>
-      <TabsHeader>
-        <Tabs
-          activeIndex={currentTabIndex}
-          labels={['Tokens', 'Settings']}
-          type="slim"
-          onClick={handleClick}
-        />
-        <Tabs activeIndex={currentTabIndex}>
-          <CollectionNftFilters />
-          <></>
-        </Tabs>
-      </TabsHeader>
-      <TabsBody>
-        <collectionContext.Provider
-          value={{
-            collection,
-            collectionSettings,
-            collectionLoading: isLoading || loading,
-            refetchSettings,
-          }}
-        >
+      <collectionContext.Provider
+        value={{
+          collection,
+          collectionSettings,
+          collectionLoading: isLoading || loading,
+          refetchSettings,
+        }}
+      >
+        <TabsHeader>
+          <Tabs
+            activeIndex={currentTabIndex}
+            labels={['Tokens', 'Settings']}
+            type="slim"
+            onClick={handleClick}
+          />
+          <Tabs activeIndex={currentTabIndex}>
+            <CollectionNftFilters />
+            <></>
+          </Tabs>
+        </TabsHeader>
+        <TabsBody>
           <Tabs activeIndex={currentTabIndex}>
             <Outlet />
             <Outlet />
           </Tabs>
-        </collectionContext.Provider>
-      </TabsBody>
+        </TabsBody>
+      </collectionContext.Provider>
     </CollectionsNftFilterWrapper>
   );
 };

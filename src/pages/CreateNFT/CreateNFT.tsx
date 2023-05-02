@@ -161,6 +161,8 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           title: collection.name,
           description: collection.description,
           img: getTokenIpfsUriByImagePath(collection.collection_cover),
+          tokensCount: collection.tokens_count,
+          tokensLimit: collection.token_limit,
         })) ?? []),
       ...(presetCollection?.collection_id && !presetCollectionExists
         ? [
@@ -169,6 +171,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               title: presetCollection.name,
               description: presetCollection.description,
               img: getTokenIpfsUriByImagePath(presetCollection.collection_cover),
+              tokensCount: 0,
             },
           ]
         : []),

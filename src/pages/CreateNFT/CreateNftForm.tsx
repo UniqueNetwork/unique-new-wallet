@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback, useMemo, VFC } from 'react';
+import { FC, Fragment, useCallback, useMemo, useState, VFC } from 'react';
 import classNames from 'classnames';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
@@ -39,6 +39,7 @@ import {
   FORM_ERRORS,
   FILE_FORMAT_ERROR,
 } from '../constants';
+import { ReachedTokensLimitModal } from './ReachedTokensLimitModal';
 
 interface CreateNftFormProps {
   collectionsOptions: Option[];
@@ -74,6 +75,8 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   const navigate = useNavigate();
   const { currentChain } = useApi();
   const { error } = useNotifications();
+  const [isReachedTokensLimitModalVisible, setIsReachedTokensLimitModalVisible] =
+    useState(false);
 
   const { resetField } = useFormContext();
 
@@ -189,6 +192,13 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
                       }}
                       getSuggestionValue={({ title }: Option) => title}
                       onChange={(val) => {
+                        if (
+                          val &&
+                          (val.tokensLimit || Number.MAX_SAFE_INTEGER) <= val.tokensCount
+                        ) {
+                          setIsReachedTokensLimitModalVisible(true);
+                        }
+
                         resetField('attributes');
                         onChange(val?.id);
                       }}
@@ -266,6 +276,13 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
           )}
         </Form>
       </FormBody>
+      <ReachedTokensLimitModal
+        isVisible={isReachedTokensLimitModalVisible}
+        onClose={() => {
+          resetField('collectionId');
+          setIsReachedTokensLimitModalVisible(false);
+        }}
+      />
     </>
   );
 };

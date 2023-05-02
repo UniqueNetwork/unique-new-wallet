@@ -3,6 +3,8 @@ export interface Option {
   title: string;
   description: string | undefined;
   img: string | undefined;
+  tokensLimit?: number;
+  tokensCount: number;
 }
 
 export type Attribute = string | AttributeOption | AttributeOption[];
