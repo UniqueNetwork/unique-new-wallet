@@ -52,6 +52,7 @@ export const TabsHeader = styled.div`
   flex-wrap: wrap;
   align-items: center;
   padding-bottom: calc(var(--prop-gap) * 2);
+  height: 104px;
 
   @media screen and (min-width: 1024px) {
     border-bottom: 1px solid var(--color-grey-300);
@@ -68,6 +69,7 @@ export const TabsHeader = styled.div`
     @media screen and (min-width: 1024px) {
       flex: 0 0 auto;
       margin-bottom: 0;
+      height: 103px;
     }
 
     &.slim {
