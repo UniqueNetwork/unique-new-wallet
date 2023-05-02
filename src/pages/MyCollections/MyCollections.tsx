@@ -160,7 +160,15 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
       className={classNames('my-collections', className)}
     >
       {!isChildExist ? (
-        <PagePaper.Layout header={<TopFilter showFilter={deviceSize >= DeviceSize.lg} />}>
+        <PagePaper.Layout
+          header={
+            <TopFilter
+              showFilter={
+                (!!search || collectionsCount > 0) && deviceSize >= DeviceSize.lg
+              }
+            />
+          }
+        >
           <PagePaper.Processing>
             <ListEntitiesCache entities={cacheCollections} />
             <List
