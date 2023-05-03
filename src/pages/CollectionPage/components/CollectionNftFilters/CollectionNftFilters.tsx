@@ -88,7 +88,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
   const deviceSize = useDeviceSize();
   const { direction, type, search, onChangeSearch, onChangeDirection, onChangeType } =
     useNftFilterContext();
-  const { collection } = useCollectionContext() || {};
+  const { collection, lastToken } = useCollectionContext() || {};
   const [isReachedTokensLimitModalVisible, setIsReachedTokensLimitModalVisible] =
     useState(false);
 
@@ -133,6 +133,17 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
     />,
   ];
 
+  const onCreateTokenClick = () => {
+    if (collection && collection.token_limit <= (lastToken?.tokenId || 0)) {
+      setIsReachedTokensLimitModalVisible(true);
+      return;
+    }
+    logUserEvent(UserEvents.CREATE_NFT);
+    navigate(
+      `/${currentChain?.network}/${ROUTE.CREATE_NFT}?collectionId=${collectionId}`,
+    );
+  };
+
   return (
     <>
       <TabsFilter
@@ -145,16 +156,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
             }}
             title="Create a token"
             role="primary"
-            onClick={() => {
-              if (collection && collection.token_limit <= collection.tokens_count) {
-                setIsReachedTokensLimitModalVisible(true);
-                return;
-              }
-              logUserEvent(UserEvents.CREATE_NFT);
-              navigate(
-                `/${currentChain?.network}/${ROUTE.CREATE_NFT}?collectionId=${collectionId}`,
-              );
-            }}
+            onClick={onCreateTokenClick}
           />
         }
         className={classNames('collection-nft-filters', className)}
