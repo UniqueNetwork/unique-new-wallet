@@ -106,7 +106,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
         const maxValue =
           feeAmount < balanceAmount ? balanceAmount - feeAmount : balanceAmount;
 
-        onChange(maxValue.toFixed(4));
+        onChange((Math.floor(maxValue * 10000) / 10000).toFixed(4));
       } catch (e) {
         onChange(senderBalance?.availableBalance.amount || '0');
       } finally {
