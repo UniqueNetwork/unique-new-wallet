@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, ReactNode, useMemo, useState } from 'react';
 
 import { PageSettingsContext } from '@app/context';
 import { BreadcrumbsProps } from '@app/components';
@@ -6,6 +6,7 @@ import { BreadcrumbsProps } from '@app/components';
 export const PageSettingsWrapper: FC = ({ children }) => {
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbsProps>();
   const [heading, setHeading] = useState<string | null>();
+  const [backLink, setBackLink] = useState<string | null>();
 
   const setPageBreadcrumbs = (breadcrumbs: any) => {
     setBreadcrumbs(breadcrumbs);
@@ -19,10 +20,12 @@ export const PageSettingsWrapper: FC = ({ children }) => {
     () => ({
       breadcrumbs,
       heading,
+      backLink,
       setPageBreadcrumbs,
       setPageHeading,
+      setBackLink,
     }),
-    [breadcrumbs, heading],
+    [breadcrumbs, heading, backLink],
   );
 
   return (

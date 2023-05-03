@@ -1,48 +1,25 @@
 import { ComponentType, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
+import { useLocation } from 'react-router-dom';
 
-import { useApi } from '@app/hooks';
 import { usePageSettingContext } from '@app/context';
-import { Icon, Typography } from '@app/components';
 
 type TitleConfig = {
   header?: string;
   backLink?: string;
+  backByHistory?: boolean;
 };
-
-const BackLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: calc(var(--prop-gap) / 4);
-`;
 
 export const withPageTitle =
   ({ header, backLink }: TitleConfig) =>
   <P,>(Page: ComponentType<P>) =>
   (props: P) => {
-    const { currentChain } = useApi();
-    const { setPageBreadcrumbs, setPageHeading } = usePageSettingContext();
+    const { setBackLink, setPageHeading } = usePageSettingContext();
     const state = useLocation().state as null | { backLink: string };
 
-    const LINK = state?.backLink || backLink;
-
     useEffect(() => {
-      const link = (
-        <BackLink to={`/${currentChain?.network}/${LINK}`}>
-          <Icon color="var(--color-blue-grey-500)" name="arrow-left" size={16} />
-          <Typography color="blue-grey-500" weight="light">
-            back
-          </Typography>
-        </BackLink>
-      );
-      const options = LINK ? [link] : [];
-
-      setPageBreadcrumbs({
-        options,
-      });
+      setBackLink(state?.backLink || backLink || null);
       setPageHeading(header);
-    }, []);
+    }, [header, state?.backLink, backLink]);
 
     return <Page {...props} />;
   };

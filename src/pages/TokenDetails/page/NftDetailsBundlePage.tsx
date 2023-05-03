@@ -134,21 +134,24 @@ export const NftDetailsBundlePage = () => {
     console.log(data);
   };
 
-  const handleViewTokenDetails = ({
-    nestingParentToken,
-    tokenId,
-    collectionId,
-    owner,
-  }: INestingToken) => {
-    if (nestingParentToken) {
+  const handleViewTokenDetails = (gotoToken: INestingToken) => {
+    if (gotoToken.nestingParentToken) {
       const parentAddress = Address.nesting.idsToAddress(
-        nestingParentToken.collectionId,
-        nestingParentToken.tokenId,
+        gotoToken.nestingParentToken.collectionId,
+        gotoToken.nestingParentToken.tokenId,
       );
-      navigate(getTokenPath(parentAddress, collectionId, tokenId));
+      navigate(getTokenPath(parentAddress, gotoToken.collectionId, gotoToken.tokenId), {
+        state: {
+          backLink: getTokenPath(
+            gotoToken.nestingParentOwner,
+            gotoToken.nestingParentToken.collectionId,
+            gotoToken.nestingParentToken.tokenId,
+          ),
+        },
+      });
       return;
     }
-    navigate(getTokenPath(owner, collectionId, tokenId));
+    navigate(getTokenPath(gotoToken.owner, gotoToken.collectionId, gotoToken.tokenId));
   };
 
   const isBundleToken = () => {

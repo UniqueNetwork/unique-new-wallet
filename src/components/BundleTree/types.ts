@@ -9,6 +9,7 @@ export interface INestingToken extends GetBundleResponse {
   name?: string;
   collectionName?: string;
   isFractional?: boolean;
+  nestingParentOwner?: string;
 }
 
 export interface ITokenCard {

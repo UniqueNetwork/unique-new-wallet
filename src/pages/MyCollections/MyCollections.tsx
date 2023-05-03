@@ -47,7 +47,7 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
   const navigate = useNavigate();
   const { limit } = useItemsLimit({ sm: 8, md: 9, lg: 8, xl: 8 });
   const [isFilterOpen, setFilterOpen] = useState(false);
-  const { setPageHeading } = usePageSettingContext();
+  const { setPageHeading, setBackLink } = usePageSettingContext();
 
   const { collections: cacheCollections, excludeCollectionsCache } =
     useExtrinsicCacheEntities();
@@ -144,10 +144,12 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
 
   useEffect(() => {
     if (isChildExist) {
+      setBackLink(ROUTE.MY_COLLECTIONS);
       return;
     }
     setPageHeading('My collections');
-  }, [setPageHeading, isChildExist]);
+    setBackLink(null);
+  }, [isChildExist]);
 
   if (!accounts.size) {
     return <Stub />;

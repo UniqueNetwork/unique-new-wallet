@@ -6,6 +6,7 @@ export * from './Achievement';
 export * from './ActionBtn';
 export * from './Alert';
 export * from './Avatar';
+export * from './BackLink';
 export * from './Breadcrumbs';
 export * from './Button';
 export * from './Checkbox';

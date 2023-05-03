@@ -1,4 +1,4 @@
-import { Fragment, isValidElement, ReactNode } from 'react';
+import { Fragment, isValidElement, ReactElement, ReactNode } from 'react';
 
 import { Icon } from '../Icon';
 import './Breadcrumbs.scss';
@@ -12,7 +12,7 @@ export const Breadcrumbs = ({ options }: BreadcrumbsProps) => (
     {options.map((option, index) => {
       const last = index === options.length - 1;
       return (
-        <Fragment key={index}>
+        <Fragment key={(option as ReactElement).key || index}>
           {index > 0 && (
             <Icon
               name="carret-right"
