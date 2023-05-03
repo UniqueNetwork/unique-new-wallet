@@ -14,7 +14,6 @@ import {
 } from '@app/pages/CollectionPage/components/CollectionNftFilters/context';
 import {
   ConfirmBtn,
-  Accordion,
   Button,
   IconProps,
   RadioGroup,
@@ -26,14 +25,15 @@ import { TabsFilter } from '@app/pages/components/TabsFilter';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import { FormBody, FormRow, SettingsRow } from '@app/pages/components/FormComponents';
 import { ControlGroup } from '@app/pages/components/ControlGroup';
+import { ReachedTokensLimitModal } from '@app/pages/CreateNFT/ReachedTokensLimitModal';
+
+import { useCollectionContext } from '../../useCollectionContext';
 
 interface CollectionNftFiltersComponentProps {
   className?: string;
 }
 
 type SelectOption = { id: Direction; title: string; iconRight: IconProps };
-
-const KEY_CODE_ENTER = 13;
 
 const radioOptions: RadioOptionValueType[] = [
   {
@@ -88,6 +88,9 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
   const deviceSize = useDeviceSize();
   const { direction, type, search, onChangeSearch, onChangeDirection, onChangeType } =
     useNftFilterContext();
+  const { collection, lastToken } = useCollectionContext() || {};
+  const [isReachedTokensLimitModalVisible, setIsReachedTokensLimitModalVisible] =
+    useState(false);
 
   const { currentChain } = useApi();
   const [searchText, setSearchText] = useState(search);
@@ -130,6 +133,17 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
     />,
   ];
 
+  const onCreateTokenClick = () => {
+    if (collection && collection.token_limit <= (lastToken?.tokenId || 0)) {
+      setIsReachedTokensLimitModalVisible(true);
+      return;
+    }
+    logUserEvent(UserEvents.CREATE_NFT);
+    navigate(
+      `/${currentChain?.network}/${ROUTE.CREATE_NFT}?collectionId=${collectionId}`,
+    );
+  };
+
   return (
     <>
       <TabsFilter
@@ -142,12 +156,7 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
             }}
             title="Create a token"
             role="primary"
-            onClick={() => {
-              logUserEvent(UserEvents.CREATE_NFT);
-              navigate(
-                `/${currentChain?.network}/${ROUTE.CREATE_NFT}?collectionId=${collectionId}`,
-              );
-            }}
+            onClick={onCreateTokenClick}
           />
         }
         className={classNames('collection-nft-filters', className)}
@@ -215,6 +224,13 @@ export const CollectionNftFilters: VFC<CollectionNftFiltersComponentProps> = ({
           </FormBodyStyled>
         </BottomBar>
       )}
+
+      <ReachedTokensLimitModal
+        isVisible={isReachedTokensLimitModalVisible}
+        onClose={() => {
+          setIsReachedTokensLimitModalVisible(false);
+        }}
+      />
     </>
   );
 };

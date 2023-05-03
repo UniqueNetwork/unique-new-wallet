@@ -9,7 +9,7 @@ import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { Tabs } from '@app/components';
-import { useCollectionGetById } from '@app/api';
+import { useCollectionGetById, useCollectionGetLastTokenId } from '@app/api';
 import { usePageSettingContext } from '@app/context';
 
 import { CollectionNftFilters } from './components';
@@ -40,6 +40,8 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
     isLoading,
     refetch: refetchSettings,
   } = useCollectionGetById(parseInt(collectionId || ''));
+  const { data: lastToken, isLoading: isLastTokenIdLoading } =
+    useCollectionGetLastTokenId(parseInt(collectionId || ''));
 
   useEffect(() => {
     if (location.pathname === baseUrl) {
@@ -76,33 +78,34 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
 
   return (
     <CollectionsNftFilterWrapper>
-      <TabsHeader>
-        <Tabs
-          activeIndex={currentTabIndex}
-          labels={['Tokens', 'Settings']}
-          type="slim"
-          onClick={handleClick}
-        />
-        <Tabs activeIndex={currentTabIndex}>
-          <CollectionNftFilters />
-          <></>
-        </Tabs>
-      </TabsHeader>
-      <TabsBody>
-        <collectionContext.Provider
-          value={{
-            collection,
-            collectionSettings,
-            collectionLoading: isLoading || loading,
-            refetchSettings,
-          }}
-        >
+      <collectionContext.Provider
+        value={{
+          collection,
+          collectionSettings,
+          lastToken,
+          collectionLoading: isLoading || loading || isLastTokenIdLoading,
+          refetchSettings,
+        }}
+      >
+        <TabsHeader>
+          <Tabs
+            activeIndex={currentTabIndex}
+            labels={['Tokens', 'Settings']}
+            type="slim"
+            onClick={handleClick}
+          />
+          <Tabs activeIndex={currentTabIndex}>
+            <CollectionNftFilters />
+            <></>
+          </Tabs>
+        </TabsHeader>
+        <TabsBody>
           <Tabs activeIndex={currentTabIndex}>
             <Outlet />
             <Outlet />
           </Tabs>
-        </collectionContext.Provider>
-      </TabsBody>
+        </TabsBody>
+      </collectionContext.Provider>
     </CollectionsNftFilterWrapper>
   );
 };

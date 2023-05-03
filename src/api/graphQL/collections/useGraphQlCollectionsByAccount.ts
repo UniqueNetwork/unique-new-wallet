@@ -19,6 +19,7 @@ const COLLECTIONS_BY_ACCOUNT_QUERY = gql`
         collection_cover
         owner_normalized
         tokens_count
+        token_limit
         mode
       }
     }

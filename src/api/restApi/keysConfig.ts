@@ -24,6 +24,7 @@ export const queryKeys = createQueryKeyStore({
   },
   collection: {
     byId: (collectionId?: number) => [collectionId],
+    lastToken: (collectionId?: number) => ['lastToken', collectionId],
   },
   chain: {
     properties: (baseUrl?: string) => ['property', baseUrl],
