@@ -52,13 +52,14 @@ export const TabsHeader = styled.div`
   flex-wrap: wrap;
   align-items: center;
   padding-bottom: calc(var(--prop-gap) * 2);
-  height: 104px;
 
   @media screen and (min-width: 1024px) {
     border-bottom: 1px solid var(--color-grey-300);
     justify-content: space-between;
     padding: 0 calc(var(--prop-gap) * 2);
     gap: calc(var(--prop-gap) * 2);
+    flex-wrap: nowrap;
+    height: 104px;
   }
 
   .unique-tabs-labels {

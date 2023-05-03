@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Breadcrumbs, BreadcrumbsProps, Heading, Icon } from '..';
+import { BackLink, Breadcrumbs, BreadcrumbsProps, Heading, Icon } from '..';
 import './Layout.scss';
 
 export interface LayoutProps {
@@ -9,6 +9,7 @@ export interface LayoutProps {
   breadcrumbs?: BreadcrumbsProps;
   header?: ReactNode;
   footer?: ReactNode;
+  backLink?: string | null;
 }
 
 export const Layout = ({
@@ -17,11 +18,13 @@ export const Layout = ({
   breadcrumbs,
   header,
   footer,
+  backLink,
 }: LayoutProps) => (
   <div className="unique-layout">
     <header>{header || null}</header>
     <main>
       {heading && <Heading>{heading}</Heading>}
+      {backLink && <BackLink link={backLink} />}
       {breadcrumbs && <Breadcrumbs {...breadcrumbs} />}
 
       <div className="unique-layout__content">{children}</div>
