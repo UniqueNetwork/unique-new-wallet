@@ -177,6 +177,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           render={({ field: { value, onChange } }) => (
             <InputAmount>
               <InputText
+                disabled={!senderBalance || !to?.address}
                 role="decimal"
                 value={value}
                 placeholder="Enter the amount"
@@ -191,7 +192,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
                 onChange={(currentAmount) => onChange(parseAmount(currentAmount, value))}
               />
               <InputAmountButton
-                disabled={!senderBalance}
+                disabled={!senderBalance || !to?.address}
                 onClick={setMaxAmount(onChange)}
               >
                 Max
