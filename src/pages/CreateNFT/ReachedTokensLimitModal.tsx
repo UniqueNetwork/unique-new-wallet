@@ -8,7 +8,7 @@ export const ReachedTokensLimitModal = ({
 }: ReachedTokensLimitModalProps) => {
   return (
     <Modal
-      title="Tokens limit reached"
+      title="Token limit reached"
       isVisible={isVisible}
       footerButtons={<Button role="primary" title="Close" onClick={onClose} />}
       onClose={onClose}
