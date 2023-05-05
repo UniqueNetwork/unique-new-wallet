@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState, VFC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
 import { GroupBase, Options, OptionsOrGroups } from 'react-select';
 import { Controller, useWatch } from 'react-hook-form';
 import { Address } from '@unique-nft/utils';
