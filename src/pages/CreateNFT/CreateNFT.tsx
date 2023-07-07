@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { CreateTokenBody, TokenId } from '@unique-nft/sdk';
+import { Address } from '@unique-nft/utils';
 
 import {
   useMintingFormService,
@@ -108,7 +109,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const formValues = useWatch({ control });
 
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
-    accountAddress: selectedAccount?.address,
+    accountAddress:
+      selectedAccount && Address.is.ethereumAddressInAnyForm(selectedAccount?.address)
+        ? Address.mirror.ethereumToSubstrate(selectedAccount.address)
+        : selectedAccount?.address,
     options: defaultOptions,
   });
   const { data: collection } = useCollectionGetById(formValues.collectionId ?? 0);
@@ -218,7 +222,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [debouncedFormValues]);
 
   useEffect(() => {
-    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
+    if (!accountsLength) {
       navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
       return;
     }

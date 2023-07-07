@@ -124,7 +124,7 @@ export const Header = () => {
               path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
               logEvent={UserEvents.HEADER_MY_COLLECTION}
             />
-            {!!activeNetwork && (
+            {!!activeNetwork && config.allChains[activeNetwork.id].marketAddress && (
               <ExternalMenuLink
                 name="Sell tokens"
                 path={config.allChains[activeNetwork.id].marketAddress}
@@ -194,7 +194,7 @@ export const Header = () => {
               logEvent={UserEvents.HEADER_MY_COLLECTION}
               mobileMenuToggle={mobileMenuToggle}
             />
-            {!!activeNetwork && (
+            {!!activeNetwork && config.allChains[activeNetwork.id].marketAddress && (
               <ExternalMenuLink
                 name="Sell tokens"
                 path={config.allChains[activeNetwork.id].marketAddress}

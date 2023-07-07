@@ -84,7 +84,10 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
 
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
-  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  const { isBalanceInsufficient } = useBalanceInsufficient(
+    selectedAccount?.address,
+    fee || '0',
+  );
 
   const collectionForm = useForm<CollectionForm>({
     mode: 'onChange',
@@ -126,11 +129,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       return;
     }
 
-    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
-      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
-    } else {
-      selectedAccount && collectionForm.setValue('address', selectedAccount?.address);
-    }
+    selectedAccount && collectionForm.setValue('address', selectedAccount?.address);
   }, [selectedAccount, isLoading, accountsLength]);
 
   useEffect(() => {
@@ -240,7 +239,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       return Object.values(fieldErrors)
         .reduce<FieldError[]>((arr, item) => {
           if (item && !arr.find(({ type }) => type === item.type)) {
-            arr.push(item);
+            arr.push(item as FieldError);
           }
           return arr;
         }, [])
