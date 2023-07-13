@@ -81,6 +81,33 @@ $loader-size: 24px;
             height: calc(#{$loader-size} * 2.5);
             border-width: 7px;
         }
+
+        &.idle {
+            border: none;
+            animation: none;
+        }
+
+        &.done {
+            border: none;
+            animation: none;
+            border: 2px solid var(--color-primary-400);
+            border-top-color: var(--color-primary-400);
+            border-left-color: var(--color-primary-400);
+            position: relative;
+            &::after {
+                content: '';
+                border-bottom: 3px solid var(--color-primary-400);
+                border-right: 3px solid var(--color-primary-400);
+                width: 5px;
+                height: 10px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                border-radius: 2px;
+                transform: rotate(45deg);    
+                margin: -8px -4px;
+            }
+        }
     }
 }
 

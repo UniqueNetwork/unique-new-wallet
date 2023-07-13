@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { UniqueNFTFactory } from '@unique-nft/solidity-interfaces';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { BN } from 'bn.js';
 import { UseMutateAsyncFunction } from 'react-query';
 import { ExtrinsicResultResponse, CreateTokenBody, TokenId } from '@unique-nft/sdk';
@@ -24,12 +24,13 @@ export function useMetamaskTokenCreate() {
   const { api } = useApi();
 
   const getEstimateGas = useCallback(
-    async ({ address, owner, data, properties, collectionId }: CreateTokenBody) => {
+    async ({ address, collectionId }: CreateTokenBody) => {
       const nftFactory = await UniqueNFTFactory(collectionId, provider?.getSigner());
 
       const toCross = Address.extract.ethCrossAccountId(address);
 
       const estimateGas = await nftFactory.estimateGas.mintCross(toCross, []);
+
       return new BN(estimateGas.toString());
     },
     [],
@@ -52,7 +53,7 @@ export function useMetamaskTokenCreate() {
   }) => {
     setIsLoadingSubmitResult(true);
     try {
-      const { address, owner, data, properties, collectionId } = payload;
+      const { address, data, collectionId } = payload;
 
       const collection = await api.collections.get({ collectionId });
       if (!data) {
@@ -73,16 +74,14 @@ export function useMetamaskTokenCreate() {
           value: Utf16.stringToNumberArray(value),
         }));
 
-      console.log(data);
-
       const tx = await nftFactory.mintCross(toCross, encodedSchema);
+      const createTokenResult = await tx.wait();
+      const tokenId = Number(createTokenResult.events?.[0].args?.tokenId.toString() || 1);
 
-      // const tx = await nftFactory.mintWithTokenURI(
-      //   toCross.eth,
-      //   `ipfs://${(data.image as { ipfsCid: string }).ipfsCid}`,
-      // );
-
-      // await tx.wait();
+      return {
+        isCompleted: true,
+        parsed: { collectionId, tokenId },
+      } as unknown as ExtrinsicResultResponse<TokenId>;
     } catch (error: any) {
       setSubmitWaitResultError(error.message);
       throw error;
