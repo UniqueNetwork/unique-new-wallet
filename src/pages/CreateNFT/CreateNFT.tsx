@@ -233,13 +233,16 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [selectedAccount, accountsLength]);
 
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
-    if (isValid) {
+    if (isValid && selectedAccount) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
       const payload = mapTokenForm(tokenForm as FilledTokenForm);
 
       submitWaitResult({
-        payload,
+        payload: {
+          ...payload,
+          address: selectedAccount.address,
+        },
       }).then((res) => {
         setPayloadEntity({
           type: 'create-token',
