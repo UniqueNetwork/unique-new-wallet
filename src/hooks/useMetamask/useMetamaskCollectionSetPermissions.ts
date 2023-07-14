@@ -4,7 +4,6 @@ import { ethers } from 'ethers';
 import { BN } from 'bn.js';
 import { UseMutateAsyncFunction } from 'react-query';
 import { ExtrinsicResultResponse, SetCollectionPermissionsBody } from '@unique-nft/sdk';
-import { Address } from '@unique-nft/utils';
 
 import { useMetamaskFee } from './useMetamaskFee';
 
