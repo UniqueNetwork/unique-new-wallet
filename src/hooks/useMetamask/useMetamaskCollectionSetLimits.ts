@@ -10,6 +10,11 @@ import { useMetamaskFee } from './useMetamaskFee';
 const provider =
   (window as any).ethereum && new ethers.providers.Web3Provider((window as any).ethereum);
 
+enum CollectionLimitsFields {
+  tokenLimit = 3,
+  ownerCanDestroy = 5,
+}
+
 export function useMetamaskCollectionSetLimits() {
   const [submitWaitResultError, setSubmitWaitResultError] = useState<string>();
   const [isLoadingSubmitResult, setIsLoadingSubmitResult] = useState(false);
@@ -19,21 +24,12 @@ export function useMetamaskCollectionSetLimits() {
       const nftFactory = await UniqueNFTFactory(collectionId, provider?.getSigner());
 
       const estimateGas = await nftFactory.estimateGas.setCollectionLimit(
-        limits.tokenLimit
-          ? {
-              field: 3, // tokenLimit
-              value: {
-                status: true,
-                value: ethers.BigNumber.from(limits.tokenLimit?.toString()),
-              },
-            }
-          : {
-              field: 7, // ownerCanDestroy
-              value: {
-                status: true,
-                value: ethers.BigNumber.from(limits.ownerCanDestroy ? 1 : 0),
-              },
-            },
+        getCollectionLimitStruct(
+          limits.tokenLimit !== undefined
+            ? CollectionLimitsFields.tokenLimit
+            : CollectionLimitsFields.ownerCanDestroy,
+          limits.tokenLimit || limits.ownerCanDestroy,
+        ),
         {
           from: address,
         },
@@ -66,21 +62,12 @@ export function useMetamaskCollectionSetLimits() {
       const nftFactory = await UniqueNFTFactory(collectionId, provider?.getSigner());
 
       const tx = await nftFactory.setCollectionLimit(
-        limits.tokenLimit
-          ? {
-              field: 3, // tokenLimit
-              value: {
-                status: true,
-                value: ethers.BigNumber.from(limits.tokenLimit?.toString()),
-              },
-            }
-          : {
-              field: 7, // ownerCanDestroy
-              value: {
-                status: true,
-                value: ethers.BigNumber.from(limits.ownerCanDestroy ? 1 : 0),
-              },
-            },
+        getCollectionLimitStruct(
+          limits.tokenLimit !== undefined
+            ? CollectionLimitsFields.tokenLimit
+            : CollectionLimitsFields.ownerCanDestroy,
+          limits.tokenLimit || limits.ownerCanDestroy,
+        ),
         {
           gasLimit: gas?.toString(),
           gasPrice: gasPrice?.toString(),
@@ -105,3 +92,14 @@ export function useMetamaskCollectionSetLimits() {
     ...feeResult,
   };
 }
+
+const getCollectionLimitStruct = (
+  id: CollectionLimitsFields,
+  value: number | boolean | undefined,
+) => ({
+  field: id,
+  value: {
+    status: true,
+    value: ethers.BigNumber.from(typeof value === 'boolean' ? (value ? 1 : 0) : value),
+  },
+});

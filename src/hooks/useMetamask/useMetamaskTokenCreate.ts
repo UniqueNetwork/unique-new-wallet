@@ -76,7 +76,15 @@ export function useMetamaskTokenCreate() {
 
       const tx = await nftFactory.mintCross(toCross, encodedSchema);
       const createTokenResult = await tx.wait();
-      const tokenId = Number(createTokenResult.events?.[0].args?.tokenId.toString() || 1);
+      const event = createTokenResult.events?.find(({ transactionHash, event }) => {
+        return transactionHash === tx.hash && event === 'TokenChanged';
+      });
+
+      if (!event) {
+        throw new Error('Creating NFT failed');
+      }
+
+      const tokenId = Number(event?.args?.tokenId?.toString() || 1);
 
       return {
         isCompleted: true,
