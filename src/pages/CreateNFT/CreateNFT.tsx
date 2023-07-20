@@ -38,7 +38,6 @@ import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { Collection, TokenTypeEnum } from '@app/api/graphQL/types';
-import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { CreateNftForm } from './CreateNftForm';
 import { mapTokenForm } from './helpers';
