@@ -14,6 +14,7 @@ import {
 } from '@app/hooks';
 import {
   useCollectionGetById,
+  useCollectionGetLastTokenId,
   useExtrinsicCacheEntities,
   useTokenCreate,
 } from '@app/api';
@@ -42,6 +43,7 @@ import { CreateNftForm } from './CreateNftForm';
 import { mapTokenForm } from './helpers';
 import { AttributeView, FilledTokenForm, Option, TokenForm } from './types';
 import { USER_HAS_NO_COLLECTION } from '../constants';
+import { ReachedTokensLimitModal } from './ReachedTokensLimitModal';
 
 interface ICreateNFTProps {
   className?: string;
@@ -72,6 +74,8 @@ const ButtonsGroup = styled.div`
 export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const deviceSize = useDeviceSize();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [isReachedTokensLimitModalVisible, setIsReachedTokensLimitModalVisible] =
+    useState(false);
 
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
@@ -99,7 +103,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
 
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
-  const { control, reset, handleSubmit, setValue } = useFormContext();
+  const { control, reset, handleSubmit, setValue, resetField } = useFormContext();
 
   const formValues = useWatch({ control });
 
@@ -108,6 +112,8 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
     options: defaultOptions,
   });
   const { data: collection } = useCollectionGetById(formValues.collectionId ?? 0);
+
+  const { data: lastToken } = useCollectionGetLastTokenId(formValues.collectionId ?? 0);
 
   const isOldCollection = collection?.schema?.schemaName === '_old_';
 
@@ -161,6 +167,8 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
           title: collection.name,
           description: collection.description,
           img: getTokenIpfsUriByImagePath(collection.collection_cover),
+          tokensCount: collection.tokens_count,
+          tokensLimit: collection.token_limit,
         })) ?? []),
       ...(presetCollection?.collection_id && !presetCollectionExists
         ? [
@@ -169,6 +177,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
               title: presetCollection.name,
               description: presetCollection.description,
               img: getTokenIpfsUriByImagePath(presetCollection.collection_cover),
+              tokensCount: 0,
             },
           ]
         : []),
@@ -190,6 +199,15 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       warning(config.oldCollectionMessage);
     }
   }, [collection]);
+
+  useEffect(() => {
+    if (!collection?.limits?.tokenLimit || !lastToken?.tokenId) {
+      return;
+    }
+    if (collection.limits.tokenLimit <= lastToken.tokenId) {
+      setIsReachedTokensLimitModalVisible(true);
+    }
+  }, [collection, lastToken]);
 
   useEffect(() => {
     const { address, collectionId } = debouncedFormValues;
@@ -326,6 +344,13 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
       <StatusTransactionModal
         isVisible={isLoadingSubmitResult}
         description="Creating token"
+      />
+      <ReachedTokensLimitModal
+        isVisible={isReachedTokensLimitModalVisible}
+        onClose={() => {
+          resetField('collectionId');
+          setIsReachedTokensLimitModalVisible(false);
+        }}
       />
     </>
   );

@@ -18,6 +18,8 @@ import { AccountsManager } from '../AccountsManager';
 import { Footer } from '../Footer';
 import MenuLink from './MenuLink';
 
+const STAKING_HUB_URL = 'https://unique.network/staking/';
+
 export const Header = () => {
   const { setIsOpenConnectWalletModal } = useContext(ConnectWalletModalContext);
   const navigate = useNavigate();
@@ -144,12 +146,11 @@ export const Header = () => {
             open={isAccountManagerOpen}
             stake={{
               visibility: true,
-              disabled: true,
+              disabled: false,
               onStake: () => {
-                console.log('Stake!');
+                window.open(STAKING_HUB_URL, '_blank')?.focus();
               },
-              description:
-                'Soon you can stake some of your holdings and earn a percentage-rate reward over time.',
+              description: 'Earn 20% APY staking your UNQ and QTZ tokens',
             }}
             selectedAccount={selectedAccount}
             symbol={selectedAccount?.unitBalance ?? ''}

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState, VFC } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState, VFC } from 'react';
 import { GroupBase, Options, OptionsOrGroups } from 'react-select';
 import { Controller, useWatch } from 'react-hook-form';
 import { Address } from '@unique-nft/utils';
@@ -52,6 +52,9 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           currentAmount = currentAmount.replace(/\.+$/, '');
         }
       }
+      if (currentAmount.split('.')[1]?.length > 4) {
+        currentAmount = Number(currentAmount).toFixed(4);
+      }
 
       return currentAmount.trim();
     },
@@ -103,7 +106,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
         const maxValue =
           feeAmount < balanceAmount ? balanceAmount - feeAmount : balanceAmount;
 
-        onChange(maxValue.toString());
+        onChange((((maxValue * 10000) | 0) / 10000).toFixed(4));
       } catch (e) {
         onChange(senderBalance?.availableBalance.amount || '0');
       } finally {
@@ -174,6 +177,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
           render={({ field: { value, onChange } }) => (
             <InputAmount>
               <InputText
+                disabled={!senderBalance || !to?.address}
                 role="decimal"
                 value={value}
                 placeholder="Enter the amount"
@@ -188,7 +192,7 @@ export const SendFundsForm: VFC<SendFundsFormProps> = ({ apiEndpoint }) => {
                 onChange={(currentAmount) => onChange(parseAmount(currentAmount, value))}
               />
               <InputAmountButton
-                disabled={!senderBalance}
+                disabled={!senderBalance || !to?.address}
                 onClick={setMaxAmount(onChange)}
               >
                 Max

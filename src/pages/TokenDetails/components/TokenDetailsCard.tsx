@@ -1,14 +1,15 @@
 import { ReactNode } from 'react';
 import styled from 'styled-components';
 
-import { SelectOptionProps } from '@app/components/types';
-import { Image } from '@app/components';
+import { ExternalLink, Image, Typography } from '@app/components';
 import { TBaseToken } from '@app/pages/TokenDetails/type';
 import { TokenDetailsHeader } from '@app/pages/TokenDetails/components/TokenDetailsHeader';
 import { Divider } from '@app/pages/TokenDetails/components/Divider';
 import { TokenInformation } from '@app/pages/TokenDetails/components/TokenInformation';
 import { TTokenModalType } from '@app/pages/TokenDetails/Modals';
 import { FractionalInformation } from '@app/pages/TokenDetails/components/FractionalInformation';
+import { useApi } from '@app/hooks';
+import { getTokenIpfsUriByImagePath } from '@app/utils';
 
 type Props<T extends TBaseToken> = {
   token?: T;
@@ -16,11 +17,12 @@ type Props<T extends TBaseToken> = {
   onCurrentModal: (type: TTokenModalType) => void;
   buttons: ReactNode;
   className?: string;
-  menuButtons: SelectOptionProps[];
   owner: ReactNode;
   isFractional?: boolean;
   pieces?: number;
   balance?: number;
+  canBurn: boolean;
+  burnModal: TTokenModalType;
 };
 
 export const TokenDetailsCard = <T extends TBaseToken>({
@@ -29,59 +31,82 @@ export const TokenDetailsCard = <T extends TBaseToken>({
   achievement = null,
   buttons,
   className,
-  menuButtons,
   owner,
   isFractional,
   pieces,
   balance,
-}: Props<T>) => (
-  <NftDetailsInfo className={className}>
-    <div className="avatar">
-      {achievement}
-      <Image alt={token?.name || ''} image={token?.image?.fullUrl || undefined} />
-      {token?.video && (
-        <VideoStyled
-          playsInline
-          src={token.video.fullUrl || undefined}
-          poster={token.image.fullUrl || undefined}
-          controls={true}
-          autoPlay={false}
-          loop={true}
-          muted={false}
+  canBurn,
+  burnModal,
+}: Props<T>) => {
+  const { currentChain } = useApi();
+  return (
+    <NftDetailsInfo className={className}>
+      <div className="avatar">
+        {achievement}
+        <Image alt={token?.name || ''} image={token?.image?.fullUrl || undefined} />
+        {token?.video && (
+          <VideoStyled
+            playsInline
+            src={token.video.fullUrl || undefined}
+            poster={token.image.fullUrl || undefined}
+            controls={true}
+            autoPlay={false}
+            loop={true}
+            muted={false}
+          />
+        )}
+        {token?.audio && (
+          <AudioStyled
+            src={token.audio.fullUrl || undefined}
+            controls={true}
+            autoPlay={false}
+            loop={false}
+            muted={false}
+          />
+        )}
+      </div>
+      <div className="info-container">
+        <TokenDetailsHeader
+          title={token?.name}
+          tokenId={token?.tokenId}
+          collectionId={token?.collectionId}
+          collectionName={token?.collectionName}
+          collectionCoverUrl={getTokenIpfsUriByImagePath(
+            token?.collection?.schema?.coverPicture.fullUrl,
+          )}
+          buttons={buttons}
+          owner={owner}
+          canBurn={canBurn}
+          burnModal={burnModal}
+          onShowModal={onCurrentModal}
         />
-      )}
-      {token?.audio && (
-        <AudioStyled
-          src={token.audio.fullUrl || undefined}
-          controls={true}
-          autoPlay={false}
-          loop={false}
-          muted={false}
-        />
-      )}
-    </div>
-    <div className="info-container">
-      <TokenDetailsHeader
-        title={token?.name}
-        tokenId={token?.tokenId}
-        collectionId={token?.collectionId}
-        collectionName={token?.collectionName}
-        buttons={buttons}
-        owner={owner}
-        menuButtons={menuButtons}
-        onShowModal={onCurrentModal}
-      />
-      {isFractional && (
-        <>
-          <Divider />
-          <FractionalInformation balance={balance} pieces={pieces} />
-        </>
-      )}
-      <Divider />
-      <TokenInformation token={token} />
-    </div>
-  </NftDetailsInfo>
-);
+        <Divider />
+        <ScanLinksWrapper>
+          <ExternalLink
+            title="Collection on UniqueScan"
+            href={`${currentChain.uniquescanAddress}/collections/${token?.collectionId}`}
+          >
+            <Typography color="primary-500">Collection on UniqueScan</Typography>
+          </ExternalLink>
+          <ExternalLink
+            title="Token on UniqueScan"
+            href={`${currentChain.uniquescanAddress}/tokens/${token?.collectionId}/${token?.tokenId}`}
+          >
+            <Typography color="primary-500">Token on UniqueScan</Typography>
+          </ExternalLink>
+        </ScanLinksWrapper>
+        {isFractional && (
+          <>
+            <Divider />
+            <FractionalInformation balance={balance} pieces={pieces} />
+          </>
+        )}
+        <Divider />
+        <TokenInformation token={token} />
+      </div>
+    </NftDetailsInfo>
+  );
+};
 
 const NftDetailsInfo = styled.div`
   --page-gap: calc(var(--prop-gap) * 1.5);
@@ -162,4 +187,11 @@ const AudioStyled = styled.audio`
   @media (max-width: 767px) {
     height: 100%;
   }
+`;
+
+const ScanLinksWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--prop-gap) / 2);
 `;

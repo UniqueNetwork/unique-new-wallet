@@ -5,8 +5,10 @@ import { BreadcrumbsProps } from '@app/components';
 interface PageSettingContextState {
   breadcrumbs?: BreadcrumbsProps;
   heading?: string | null;
+  backLink?: string | null;
   setPageHeading: (heading?: string | null) => void;
   setPageBreadcrumbs: (breadcrumbs: BreadcrumbsProps) => void;
+  setBackLink: (backLink: string | null) => void;
 }
 
 export const PageSettingsContext = createContext<PageSettingContextState | null>(null);

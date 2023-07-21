@@ -75,7 +75,7 @@ const CreateNftFormComponent: VFC<CreateNftFormProps> = ({
   const { currentChain } = useApi();
   const { error } = useNotifications();
 
-  const { resetField } = useFormContext();
+  const { resetField, control } = useFormContext();
 
   const { uploadFile, isLoading: fileIsLoading } = useFileUpload();
 

@@ -46,12 +46,13 @@ const TransferStagesModal: VFC = () => {
 };
 
 export const SendFundsComponent: FC<SendFundsProps> = (props) => {
-  const { onClose, senderAccount, onSendSuccess, chain } = props;
+  const { onClose, onSendSuccess, chain } = props;
 
   const {
     control,
     handleSubmit,
     formState: { isValid: isValidForm },
+    resetField,
   } = useFormContext<FundsForm>();
   const sendFundsValues = useWatch<FundsForm>({ control });
   const [sendFundsDebounceValues] = useDebounce(sendFundsValues as FundsForm, 500);
@@ -99,6 +100,13 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
   }, [chain, setCurrentChain]);
 
   useEffect(() => {
+    if (!sendFundsValues.from?.address || !sendFundsValues.to?.address) {
+      // @ts-ignore
+      resetField('amount');
+    }
+  }, [sendFundsValues.from?.address, sendFundsValues.to?.address]);
+
+  useEffect(() => {
     if (
       sendFundsDebounceValues?.from?.address &&
       sendFundsDebounceValues?.to?.address &&
@@ -133,7 +141,7 @@ export const SendFundsComponent: FC<SendFundsProps> = (props) => {
     const parsedAmount = Number(sendFundsValues?.amount);
 
     if (parsedFee && parsedAmount) {
-      return (parsedFee + parsedAmount).toFixed(3);
+      return (parsedFee + parsedAmount).toFixed(4);
     }
 
     return 0;

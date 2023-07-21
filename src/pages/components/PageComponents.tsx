@@ -58,6 +58,8 @@ export const TabsHeader = styled.div`
     justify-content: space-between;
     padding: 0 calc(var(--prop-gap) * 2);
     gap: calc(var(--prop-gap) * 2);
+    flex-wrap: nowrap;
+    height: 104px;
   }
 
   .unique-tabs-labels {
@@ -68,6 +70,7 @@ export const TabsHeader = styled.div`
     @media screen and (min-width: 1024px) {
       flex: 0 0 auto;
       margin-bottom: 0;
+      height: 103px;
     }
 
     &.slim {

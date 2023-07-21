@@ -6,3 +6,4 @@ export * from './useCollectionSetPermissions';
 export * from './useCollectionSetSponsor';
 export * from './useCollectionConfirmSponsorship';
 export * from './useCollectionRemoveSponsorship';
+export * from './useCollectionGetLastTokenId';

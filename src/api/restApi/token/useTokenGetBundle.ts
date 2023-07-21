@@ -30,6 +30,7 @@ export const useTokenGetBundle = ({
             collectionId: node.collectionId,
             tokenId: node.tokenId,
           },
+          nestingParentOwner: node.owner,
         })),
       };
     };

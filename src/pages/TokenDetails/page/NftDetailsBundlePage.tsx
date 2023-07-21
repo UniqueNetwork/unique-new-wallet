@@ -23,7 +23,6 @@ import { countNestedChildren } from '@app/components/BundleTree/helpers-bundle';
 import { Achievement, Button, TransferBtn, Heading, Typography } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
-import { menuButtonsNft } from '@app/pages/TokenDetails/page/constants';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
 
@@ -135,21 +134,24 @@ export const NftDetailsBundlePage = () => {
     console.log(data);
   };
 
-  const handleViewTokenDetails = ({
-    nestingParentToken,
-    tokenId,
-    collectionId,
-    owner,
-  }: INestingToken) => {
-    if (nestingParentToken) {
+  const handleViewTokenDetails = (gotoToken: INestingToken) => {
+    if (gotoToken.nestingParentToken) {
       const parentAddress = Address.nesting.idsToAddress(
-        nestingParentToken.collectionId,
-        nestingParentToken.tokenId,
+        gotoToken.nestingParentToken.collectionId,
+        gotoToken.nestingParentToken.tokenId,
       );
-      navigate(getTokenPath(parentAddress, collectionId, tokenId));
+      navigate(getTokenPath(parentAddress, gotoToken.collectionId, gotoToken.tokenId), {
+        state: {
+          backLink: getTokenPath(
+            gotoToken.nestingParentOwner,
+            gotoToken.nestingParentToken.collectionId,
+            gotoToken.nestingParentToken.tokenId,
+          ),
+        },
+      });
       return;
     }
-    navigate(getTokenPath(owner, collectionId, tokenId));
+    navigate(getTokenPath(gotoToken.owner, gotoToken.collectionId, gotoToken.tokenId));
   };
 
   const isBundleToken = () => {
@@ -265,21 +267,6 @@ export const NftDetailsBundlePage = () => {
     setCurrentModal(isTokenFractional ? 'transfer-refungible' : 'bundle-transfer');
   };
 
-  const menuButtons = useMemo(() => {
-    const items = [...menuButtonsNft];
-
-    if (isOwner && (selectedToken?.nestingChildTokens?.length || 0) === 0) {
-      items.push({
-        icon: 'burn',
-        id: isFractional ? 'burn-refungible' : 'burn',
-        title: 'Burn token',
-        type: 'danger',
-      });
-    }
-
-    return items;
-  }, [isOwner, selectedToken?.nestingChildTokens?.length, isFractional]);
-
   const BundleTreeRendered = (
     <BundleTree<INestingToken>
       dataSource={bundle}
@@ -370,11 +357,12 @@ export const NftDetailsBundlePage = () => {
           className="nft-details-card"
           token={token}
           owner={owner()}
-          menuButtons={menuButtons}
           achievement={renderAchievements()}
           isFractional={isFractional}
           balance={balance?.amount}
           pieces={pieces?.amount}
+          canBurn={isOwner && (selectedToken?.nestingChildTokens?.length || 0) === 0}
+          burnModal={isFractional ? 'burn-refungible' : 'burn'}
           buttons={
             isOwner && (
               <>
@@ -445,7 +433,11 @@ export const NftDetailsBundlePage = () => {
         )}
 
         <NFTModals<
-          INestingToken | (TokenByIdResponse & { collectionName: string; name: string })
+          | INestingToken
+          | (TokenByIdResponse & {
+              collectionName: string;
+              name: string;
+            })
         >
           modalType={currentModal}
           token={selectedTokenBundleTable || token}

@@ -1,28 +1,24 @@
 import { memo, ReactNode, VFC } from 'react';
 import styled from 'styled-components';
 
-import { SelectOptionProps } from '@app/components/types';
-import { useApi } from '@app/hooks';
-import { BurnBtn, Dropdown, ExternalLink, Button, Heading } from '@app/components';
+import { Button, Heading } from '@app/components';
 import { TTokenModalType } from '@app/pages/TokenDetails/Modals/types';
 import { ButtonGroup } from '@app/pages/components/FormComponents';
+import { Card } from '@app/pages/components/Card';
 
 interface TokenDetailsHeaderProps {
   title?: string;
   tokenId?: string;
   collectionId?: number;
   collectionName?: string;
+  collectionCoverUrl?: string;
   ownerAddress?: string;
   className?: string;
   buttons: ReactNode;
-  menuButtons: SelectOptionProps[];
   onShowModal(modal: TTokenModalType): void;
   owner: ReactNode;
-}
-
-interface MenuOptionItem extends SelectOptionProps {
-  disabled?: boolean;
-  id: TTokenModalType;
+  canBurn: boolean;
+  burnModal: TTokenModalType;
 }
 
 const HeaderContainerInfo = styled.div`
@@ -31,68 +27,56 @@ const HeaderContainerInfo = styled.div`
   justify-content: space-between;
   gap: var(--prop-gap);
 
-  .dropdown-options {
-    .dropdown-option {
-      position: relative;
-      margin: 0 !important;
-      padding: 0;
+  .danger {
+    color: var(--color-coral-500);
 
-      &:not(:first-child) {
-        margin-top: calc(var(--prop-gap) / 2) !important;
-
-        &:before {
-          border-top: 1px dashed var(--color-grey-300);
-          position: absolute;
-          top: calc(var(--prop-gap) / (-4));
-          left: 0;
-          width: 100%;
-          height: 0;
-          content: '';
-          pointer-events: none;
-        }
-      }
-
-      &-primary {
-        color: var(--color-primary-500);
-
-        &:hover {
-          background-color: var(--color-primary-100);
-          color: var(--color-primary-500);
-        }
-      }
-
-      &-danger {
-        color: var(--color-coral-500);
-
-        &:hover {
-          background-color: var(--color-coral-100);
-          color: var(--color-coral-500);
-        }
-      }
-
-      &:active {
-        color: inherit;
-      }
+    &:hover {
+      background-color: var(--color-coral-100);
+      color: var(--color-coral-500);
     }
+  }
 
-    .unique-button {
-      box-sizing: border-box;
-      border-radius: 0;
-      justify-content: flex-start;
-      width: 100%;
-      padding: calc(var(--prop-gap) / 2);
-      background: 0 none;
-      color: inherit;
+  @media screen and (max-width: 768px) {
+    h1 {
+      max-width: calc(100% - 30px);
+      word-wrap: break-word;
     }
   }
 `;
 
 const HeaderContent = styled.div`
   min-width: 0;
+  width: 100%;
 
   .header-link {
+    display: flex;
+    gap: calc(var(--prop-gap) / 2);
     margin-bottom: calc(var(--prop-gap) / 2);
     font-size: 1rem;
+
+    h5 {
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    span {
+      color: var(--color-additional-dark);
+      font-size: 12px;
+      font-weight: 400;
+    }
+    img + div {
+      padding-left: calc(var(--prop-gap) / 2);
+    }
+
+    & > div {
+      flex: 1;
+    }
+    & > button {
+      padding: 0 !important;
+      height: auto !important;
+      &:hover {
+        background: none !important;
+      }
+    }
   }
 
   .collection-heading {
@@ -117,91 +101,73 @@ const ButtonGroupStyled = styled(ButtonGroup)`
   margin-top: calc(var(--prop-gap) * 1.5);
 `;
 
-const MenuOption = (
-  option: SelectOptionProps & { color?: string; disabled?: boolean },
-) => {
-  const ButtonElement = option.disabled ? BurnBtn : Button;
+const TitleWrapper = styled.div`
+  display: flex;
+  height: 48px;
+  margin-bottom: var(--prop-gap);
+  gap: calc(var(--prop-gap) / 2);
+  button {
+    padding: 0 !important;
+  }
 
-  return (
-    <ButtonElement
-      disabled={option.disabled}
-      iconRight={{
-        color: 'currentColor',
-        name: (option.icon as string) ?? '',
-        size: 16,
-      }}
-      role="ghost"
-      title={option.title as string}
-      wide={true}
-    />
-  );
-};
+  @media screen and (max-width: 768px) {
+    height: auto;
+  }
+`;
 
 const TokenDetailsHeaderComponent: VFC<TokenDetailsHeaderProps> = ({
   title = '',
-  tokenId,
   collectionName = '',
   collectionId,
+  collectionCoverUrl,
   className,
-  onShowModal,
   buttons,
-  menuButtons,
+  canBurn,
+  burnModal,
+  onShowModal,
   owner,
 }) => {
-  const { currentChain } = useApi();
-
-  const openInNewTab = (url: string) => {
-    const newWindow = window.open(url, '_blank', 'noopener, noreferrer');
-    if (newWindow) {
-      newWindow.opener = null;
-    }
-  };
-
   return (
     <div className={className}>
       <HeaderContainerInfo>
         <HeaderContent>
           <div className="header-link">
-            <ExternalLink
-              href={`${currentChain.uniquescanAddress}/collections/${collectionId}`}
-            >
-              {`${collectionName} [id ${collectionId}]`}
-            </ExternalLink>
+            <Card
+              title={collectionName}
+              description={`ID ${collectionId}`}
+              picture={collectionCoverUrl || undefined}
+              size={40}
+              color="var(--color-primary-500)"
+            />
+            {canBurn && (
+              <Button
+                className="danger"
+                iconRight={{
+                  color: 'currentColor',
+                  name: 'burn',
+                  size: 16,
+                }}
+                role="ghost"
+                title="Burn token"
+                onClick={() => onShowModal(burnModal)}
+              />
+            )}
           </div>
-          <Heading className="collection-heading">{title}</Heading>
+          <TitleWrapper>
+            <Heading className="collection-heading">{title}</Heading>
+
+            <Button
+              role="ghost"
+              iconLeft={{
+                name: 'shared',
+                size: 24,
+              }}
+              title={undefined}
+              onClick={() => onShowModal('share')}
+            />
+          </TitleWrapper>
           <TextOwner>{owner}</TextOwner>
         </HeaderContent>
-        <Dropdown
-          placement="right"
-          options={menuButtons}
-          optionRender={(opt) => (
-            <MenuOption
-              {...(opt as MenuOptionItem)}
-              disabled={opt.id === 'burn' && !currentChain.burnEnabled}
-            />
-          )}
-          onChange={(opt) => {
-            if (opt.id === 'burn' && !currentChain.burnEnabled) {
-              return;
-            } else if (opt.id === 'scan') {
-              openInNewTab(
-                `${currentChain.uniquescanAddress}/tokens/${collectionId}/${tokenId}`,
-              );
-            }
-
-            onShowModal((opt as MenuOptionItem).id);
-          }}
-        >
-          <Button
-            className="unique-button-icon"
-            iconLeft={{
-              color: 'currentColor',
-              name: 'more-horiz',
-              size: 24,
-            }}
-            title=""
-          />
-        </Dropdown>
       </HeaderContainerInfo>
 
       {buttons && (

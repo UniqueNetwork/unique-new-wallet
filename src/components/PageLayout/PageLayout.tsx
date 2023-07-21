@@ -7,7 +7,7 @@ import { usePageSettingContext } from '@app/context';
 import { Header, Layout, Footer } from '../';
 
 export const PageLayout: FC = () => {
-  const { breadcrumbs, heading } = usePageSettingContext();
+  const { breadcrumbs, heading, backLink } = usePageSettingContext();
 
   return (
     <Wrapper className="page-layout">
@@ -17,6 +17,7 @@ export const PageLayout: FC = () => {
           footer={<Footer />}
           breadcrumbs={breadcrumbs}
           heading={heading || undefined}
+          backLink={backLink}
         >
           <Outlet />
         </Layout>
