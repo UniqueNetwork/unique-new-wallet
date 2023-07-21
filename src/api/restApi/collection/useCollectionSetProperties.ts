@@ -1,14 +1,14 @@
 import { useAccounts, useApi } from '@app/hooks';
 import { useExtrinsicMutation } from '@app/api';
-import { useMetamaskCollectionSetSponsor } from '@app/hooks/useMetamask/useMetamaskCollectionSetSponsor';
 import { MetamaskAccountName } from '@app/account/MetamaskWallet';
+import { useMetamaskCollectionSetProperties } from '@app/hooks/useMetamask/useMetamaskCollectionSetProperties';
 
-export const useCollectionSetSponsor = () => {
+export const useCollectionSetProperties = () => {
   const { api } = useApi();
   const { selectedAccount } = useAccounts();
 
-  const defaultTokensTransfer = useExtrinsicMutation(api.collections.setSponsorship);
-  const metamaskTokensTransfer = useMetamaskCollectionSetSponsor();
+  const defaultTokensTransfer = useExtrinsicMutation(api.collections.setProperties);
+  const metamaskTokensTransfer = useMetamaskCollectionSetProperties();
 
   if (selectedAccount?.name === MetamaskAccountName) {
     return metamaskTokensTransfer;

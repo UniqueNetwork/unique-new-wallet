@@ -22,6 +22,7 @@ import {
 } from '@app/pages/components/FormComponents';
 import { FeeInformationTransaction } from '@app/components/FeeInformationTransaction';
 import { useCollectionSetPermissions } from '@app/api/restApi/collection/useCollectionSetPermissions';
+import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { SettingsSavingProps } from './types';
 
@@ -145,6 +146,7 @@ export const NestingPermissions = ({ onComplete }: SettingsSavingProps) => {
           </SettingsRow>
           <SettingsRow>
             <Toggle
+              disabled={selectedAccount?.name === MetamaskAccountName}
               on={collectionAdminCanNest}
               label="Collection admin can nest"
               onChange={setCollectionAdminCanNest}

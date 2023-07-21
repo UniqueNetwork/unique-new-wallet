@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { CreateTokenBody, TokenId } from '@unique-nft/sdk';
+import { Address } from '@unique-nft/utils';
 
 import {
   useMintingFormService,
@@ -37,7 +38,6 @@ import { ButtonGroup, FormWrapper } from '@app/pages/components/FormComponents';
 import { MainWrapper, WrapperContent } from '@app/pages/components/PageComponents';
 import { Sidebar } from '@app/pages/CreateNFT/Sidebar';
 import { Collection, TokenTypeEnum } from '@app/api/graphQL/types';
-import { MetamaskAccountName } from '@app/account/MetamaskWallet';
 
 import { CreateNftForm } from './CreateNftForm';
 import { mapTokenForm } from './helpers';
@@ -108,7 +108,10 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   const formValues = useWatch({ control });
 
   const { collections, isCollectionsLoading } = useGraphQlCollectionsByAccount({
-    accountAddress: selectedAccount?.address,
+    accountAddress:
+      selectedAccount && Address.is.ethereumAddressInAnyForm(selectedAccount?.address)
+        ? Address.mirror.ethereumToSubstrate(selectedAccount.address)
+        : selectedAccount?.address,
     options: defaultOptions,
   });
   const { data: collection } = useCollectionGetById(formValues.collectionId ?? 0);
@@ -218,7 +221,7 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [debouncedFormValues]);
 
   useEffect(() => {
-    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
+    if (!accountsLength) {
       navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
       return;
     }
@@ -229,13 +232,16 @@ export const CreateNFTComponent: VFC<ICreateNFTProps> = ({ className }) => {
   }, [selectedAccount, accountsLength]);
 
   const onSubmit = (tokenForm: TokenForm, closable?: boolean) => {
-    if (isValid) {
+    if (isValid && selectedAccount) {
       logUserEvent(closable ? UserEvents.CONFIRM_CLOSE : UserEvents.CONFIRM_MORE);
 
       const payload = mapTokenForm(tokenForm as FilledTokenForm);
 
       submitWaitResult({
-        payload,
+        payload: {
+          ...payload,
+          address: selectedAccount.address,
+        },
       }).then((res) => {
         setPayloadEntity({
           type: 'create-token',

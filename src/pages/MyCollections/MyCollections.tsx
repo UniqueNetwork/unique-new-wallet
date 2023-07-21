@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState, VFC } from 'react';
 import { Outlet, useNavigate, useOutlet } from 'react-router-dom';
 import classNames from 'classnames';
+import { Address } from '@unique-nft/utils';
 
 import { Button, PagePaper, TokenLinkBase, Typography, List } from '@app/components';
 import { MyCollectionsWrapper } from '@app/pages/MyCollections/MyCollectionsWrapper';
@@ -64,7 +65,10 @@ export const MyCollectionsComponent: VFC<MyCollectionsComponentProps> = ({
     fetchMore,
     refetchCollectionsByAccount,
   } = useGraphQlCollectionsByAccount({
-    accountAddress: selectedAccount?.address,
+    accountAddress:
+      selectedAccount && Address.is.ethereumAddressInAnyForm(selectedAccount?.address)
+        ? Address.mirror.ethereumToSubstrate(selectedAccount.address)
+        : selectedAccount?.address,
     options: {
       order,
       pagination: {

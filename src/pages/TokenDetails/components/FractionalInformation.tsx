@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { Heading, Typography, ProgressBar } from '@app/components';
-import { formatBlockNumber, formatLongNumber } from '@app/utils';
+import { formatLongNumber } from '@app/utils';
 
 import { TBaseToken } from '../type';
 

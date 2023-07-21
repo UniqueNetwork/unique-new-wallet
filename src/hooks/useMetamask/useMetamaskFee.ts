@@ -19,7 +19,7 @@ export const useMetamaskFee = <P>(estimateGasMethod: (params: P) => Promise<BN>)
   const [feeLoading, setFeeLoading] = useState(false);
 
   const getFee: UseMutateAsyncFunction<
-    { fee: FeeResponse | undefined } | undefined,
+    { fee: FeeResponse } | undefined,
     Error,
     P,
     unknown
@@ -69,8 +69,8 @@ export const useMetamaskFee = <P>(estimateGasMethod: (params: P) => Promise<BN>)
   );
 
   return {
-    fee,
-    feeFormatted: fee,
+    fee: fee || '0',
+    feeFormatted: fee || '0',
     getFee,
     gas,
     gasPrice,

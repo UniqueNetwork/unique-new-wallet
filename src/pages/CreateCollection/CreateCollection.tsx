@@ -4,6 +4,12 @@ import { FieldError, FormProvider, useForm, useWatch } from 'react-hook-form';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { useDebounce } from 'use-debounce';
+import { collection } from '@unique-nft/utils/address';
+import {
+  CollectionAttributesSchema,
+  SchemaTools,
+  UniqueCollectionSchemaToCreate,
+} from '@unique-nft/schemas';
 
 import {
   DeviceSize,
@@ -12,7 +18,12 @@ import {
   useBalanceInsufficient,
   useDeviceSize,
 } from '@app/hooks';
-import { useCollectionCreate, useExtrinsicCacheEntities } from '@app/api';
+import {
+  useCollectionCreate,
+  useCollectionSetProperties,
+  useCollectionSetTokenPropertyPermissions,
+  useExtrinsicCacheEntities,
+} from '@app/api';
 import { MY_TOKENS_TABS_ROUTE, ROUTE } from '@app/routes';
 import {
   Alert,
@@ -36,6 +47,7 @@ import { CollectionForm, Warning } from './types';
 import { ButtonGroup, FormWrapper } from '../components/FormComponents';
 import { tabsUrls, warnings } from './constants';
 import { useCollectionFormMapper } from './useCollectionFormMapper';
+import { StatusCreateTransactionsModal } from './components/StatusCreateTransactionsModal/StatusCreateTransactionsModal';
 
 interface CreateCollectionProps {
   className?: string;
@@ -60,6 +72,8 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [warning, setWarning] = useState<Warning | null>();
   const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [currentStage, setCurrentStage] = useState(0);
+  const [isCreating, setIsCreating] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -82,9 +96,15 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     submitWaitResultError,
   } = useCollectionCreate();
 
+  const setTokenPropertyPermissions = useCollectionSetTokenPropertyPermissions();
+  const setProperties = useCollectionSetProperties();
+
   const { setPayloadEntity } = useExtrinsicCacheEntities();
 
-  const { isBalanceInsufficient } = useBalanceInsufficient(selectedAccount?.address, fee);
+  const { isBalanceInsufficient } = useBalanceInsufficient(
+    selectedAccount?.address,
+    fee || '0',
+  );
 
   const collectionForm = useForm<CollectionForm>({
     mode: 'onChange',
@@ -126,11 +146,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       return;
     }
 
-    if (!accountsLength || selectedAccount?.name === MetamaskAccountName) {
-      navigate(`/${currentChain.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
-    } else {
-      selectedAccount && collectionForm.setValue('address', selectedAccount?.address);
-    }
+    selectedAccount && collectionForm.setValue('address', selectedAccount?.address);
   }, [selectedAccount, isLoading, accountsLength]);
 
   useEffect(() => {
@@ -141,11 +157,24 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   }, [feeError]);
 
   useEffect(() => {
-    if (!submitWaitResultError) {
+    if (
+      !submitWaitResultError &&
+      !setTokenPropertyPermissions.submitWaitResultError &&
+      !setProperties.submitWaitResultError
+    ) {
       return;
     }
-    error(submitWaitResultError);
-  }, [submitWaitResultError]);
+    setIsCreating(false);
+    error(
+      submitWaitResultError ||
+        setTokenPropertyPermissions.submitWaitResultError ||
+        setProperties.submitWaitResultError,
+    );
+  }, [
+    submitWaitResultError,
+    setTokenPropertyPermissions.submitWaitResultError,
+    setProperties.submitWaitResultError,
+  ]);
 
   useEffect(() => {
     if (collectionDebounceValue && isValid) {
@@ -180,7 +209,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     onSubmit(form);
   };
 
-  const onSubmit = (form: CollectionForm) => {
+  const onSubmit = async (form: CollectionForm) => {
     if (!selectedAccount) {
       error('Account is not found');
 
@@ -188,30 +217,76 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
     }
 
     const payload = formMapper(form);
+    setCurrentStage(0);
+    setIsCreating(true);
+    const createdCollection = await submitWaitResult({ payload });
+    const collectionId = createdCollection?.parsed?.collectionId;
 
-    submitWaitResult({ payload }).then((res) => {
-      info('Collection created successfully');
-
-      setPayloadEntity({
-        type: 'create-collection',
-        parsed: res?.parsed,
-        entityData: payload,
-      });
-
-      if (returnToCreateToken) {
-        navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`, {
-          state: {
-            collection_id: res?.parsed?.collectionId,
-            name: payload.name,
-            description: payload.description,
-            // @ts-ignore
-            collection_cover: payload.schema?.coverPicture.ipfsCid,
-          },
-        });
+    if (selectedAccount.name === MetamaskAccountName) {
+      if (!collectionId) {
+        setIsCreating(false);
+        error('Something went wrong');
         return;
       }
-      navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
+      setCurrentStage(1);
+      const { schema } = payload;
+      const { coverPicture, attributesSchema } = schema || {};
+      const schemaToCreate = {
+        ...schema,
+        coverPicture: { ipfsCid: (coverPicture as { ipfsCid: string })?.ipfsCid || '' },
+        attributesSchema: attributesSchema as CollectionAttributesSchema,
+      } as UniqueCollectionSchemaToCreate;
+
+      const properties =
+        SchemaTools.tools.unique.collection.encodeCollectionSchemaToProperties(
+          schemaToCreate,
+        );
+
+      const propertyPermissions =
+        SchemaTools.tools.unique.collection.generateTokenPropertyPermissionsFromCollectionSchema(
+          schemaToCreate,
+        );
+      await setTokenPropertyPermissions.submitWaitResult({
+        senderAddress: selectedAccount.address,
+        payload: {
+          address: selectedAccount.address,
+          collectionId,
+          propertyPermissions,
+        },
+      });
+      setCurrentStage(2);
+      await setProperties.submitWaitResult({
+        senderAddress: selectedAccount.address,
+        payload: {
+          address: selectedAccount.address,
+          collectionId,
+          properties,
+        },
+      });
+    }
+
+    setIsCreating(false);
+    info('Collection created successfully');
+
+    setPayloadEntity({
+      type: 'create-collection',
+      parsed: createdCollection?.parsed,
+      entityData: payload,
     });
+
+    if (returnToCreateToken) {
+      navigate(`/${currentChain?.network}/${ROUTE.CREATE_NFT}`, {
+        state: {
+          collection_id: collectionId,
+          name: payload.name,
+          description: payload.description,
+          // @ts-ignore
+          collection_cover: payload.schema?.coverPicture.ipfsCid,
+        },
+      });
+      return;
+    }
+    navigate(`/${currentChain?.network}/${ROUTE.MY_COLLECTIONS}`);
   };
 
   const isFirstStep = currentStep - 1 === 0;
@@ -240,7 +315,7 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
       return Object.values(fieldErrors)
         .reduce<FieldError[]>((arr, item) => {
           if (item && !arr.find(({ type }) => type === item.type)) {
-            arr.push(item);
+            arr.push(item as FieldError);
           }
           return arr;
         }, [])
@@ -264,6 +339,13 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
   const isValidFirstStep = useMemo(() => {
     return !errors.name || !errors.symbol || !errors.coverPictureIpfsCid;
   }, [errors, isBalanceInsufficient]);
+
+  const creatingStages = useMemo(() => {
+    if (selectedAccount?.name === MetamaskAccountName) {
+      return ['Creating collection', 'Setting permissions', 'Setting properties'];
+    }
+    return ['Creating collection'];
+  }, [selectedAccount?.name]);
 
   return (
     <MainWrapper className={classNames('create-collection-page', className)}>
@@ -337,10 +419,11 @@ const CreateCollectionComponent = ({ className }: CreateCollectionProps) => {
           >
             <Typography>{warning?.description}</Typography>
           </Confirm>
-          <StatusTransactionModal
-            isVisible={isLoadingSubmitResult}
-            description="Creating collection"
+          <StatusCreateTransactionsModal
+            isVisible={isCreating}
+            descriptions={creatingStages}
             warning="Advanced settings will be available on the collection page after creating the collection"
+            step={currentStage}
           />
         </FormWrapper>
       </WrapperContentStyled>
