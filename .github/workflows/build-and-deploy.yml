@@ -1,0 +1,24 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and push Docker Image
+    uses: UniqueNetwork/dundas/.github/workflows/build-docker-image.yml@master
+    secrets: inherit
+    with:
+      tag: unique-new-wallet
+
+# todo: implement, just a placeholder for now
+  deploy:
+    needs: [build]
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo
+        run: echo "Deploying"
