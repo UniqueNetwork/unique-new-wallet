@@ -45,6 +45,18 @@ export interface Attribute {
     _: string;
   };
 }
+export interface AttributeSchema {
+  name: { _: string };
+  optional: boolean;
+  isArray: boolean;
+  type: 'string';
+  enumValues: Record<
+    number,
+    {
+      _: string;
+    }
+  >;
+}
 
 export enum TokenTypeEnum {
   NFT = 'NFT',
@@ -90,6 +102,7 @@ export interface Collection {
   name: string;
   sponsorship: string;
   mode: TokenTypeEnum;
+  attributes_schema?: Record<number, AttributeSchema>;
 }
 
 export interface RftFraction {

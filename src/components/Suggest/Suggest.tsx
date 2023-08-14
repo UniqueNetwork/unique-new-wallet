@@ -60,6 +60,10 @@ export interface SuggestProps<SuggestOption> {
   getActiveSuggestOption(suggest: SuggestOption, activeValue: SuggestOption): boolean;
   // load more suggestion option
   onLoadMore?: () => void;
+  //
+  isManaged?: boolean;
+  //
+  isClearable?: boolean;
 }
 
 export type SuggestComponentsProps<SuggestOption> = {
@@ -88,6 +92,8 @@ export const Suggest = <T,>({
   getActiveSuggestOption,
   onLoadMore,
   className,
+  isManaged,
+  isClearable = true,
 }: SuggestProps<T>) => {
   const { statusText, ...inputProps } = _inputProps || {};
   const { intersectionObserverRef, isVisibleIntersectionObserver } =
@@ -170,7 +176,7 @@ export const Suggest = <T,>({
     setShowSuggestions(false);
     onChange?.(suggestion);
     setInputValue(getSuggestionValue(suggestion));
-    setActiveValue(suggestion);
+    !isManaged && setActiveValue(suggestion);
   };
 
   const handleToggleOpenSuggest = () => {
@@ -202,7 +208,7 @@ export const Suggest = <T,>({
   const handleClearValue = (e: SyntheticEvent) => {
     e.stopPropagation();
     setInputValue('');
-    setActiveValue(null);
+    !isManaged && setActiveValue(null);
     onChange?.(null);
     inputRef.current?.focus();
   };
@@ -255,7 +261,7 @@ export const Suggest = <T,>({
               dropped: showSuggestions,
             })}
           >
-            {activeValue && !inputProps?.disabled && (
+            {isClearable && activeValue && !inputProps?.disabled && (
               <div className="icon-clear" onClick={handleClearValue}>
                 <Icon size={19} color="var(--color-blue-grey-400)" name="circle-close" />
               </div>

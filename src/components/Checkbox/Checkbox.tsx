@@ -13,6 +13,7 @@ export interface CheckboxProps extends Omit<ComponentProps, 'onChange'> {
   onChange: (value: boolean) => void;
   iconRight?: IconProps;
   iconLeft?: IconProps;
+  className?: string;
 }
 
 export const Checkbox = forwardRef(
@@ -27,15 +28,21 @@ export const Checkbox = forwardRef(
       onChange,
       iconRight,
       iconLeft,
+      className,
     }: CheckboxProps,
     ref: LegacyRef<HTMLInputElement>,
   ) => {
     const icon = iconLeft || iconRight;
     return (
       <div
-        className={classNames('unique-checkbox-wrapper', `checkbox-size-${size}`, {
-          disabled,
-        })}
+        className={classNames(
+          'unique-checkbox-wrapper',
+          `checkbox-size-${size}`,
+          {
+            disabled,
+          },
+          className,
+        )}
         {...(!disabled && {
           onClick: () => onChange(!checked),
         })}

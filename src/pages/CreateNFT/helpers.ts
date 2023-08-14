@@ -1,6 +1,9 @@
-import { CreateTokenNewDto } from '@app/types/Api';
+import { CreateTokenPayload } from '@unique-nft/sdk';
 
-import { Attribute, AttributeOption, FilledTokenForm } from './types';
+import { CreateTokenNewDto } from '@app/types/Api';
+import { AttributeSchema } from '@app/api/graphQL/types';
+
+import { Attribute, AttributeOption, FilledTokenForm, NewToken } from './types';
 
 const attributeMapper = (attribute?: Attribute) => {
   if (
@@ -21,7 +24,7 @@ const attributeMapper = (attribute?: Attribute) => {
   }
 
   if (typeof attribute === 'object') {
-    return attribute.id;
+    return (attribute as AttributeOption).id;
   }
 
   return attribute;
@@ -58,4 +61,61 @@ export const mapTokenForm = (formData: FilledTokenForm): CreateTokenNewDto => {
   }
 
   return mappedTokenDto;
+};
+
+export const mapTokensToPayload = (
+  tokens: NewToken[],
+  collectionId: number,
+  owner: string,
+): CreateTokenPayload[] => {
+  return tokens.map((token) => mapNewToken(token, collectionId, owner));
+};
+
+export const mapNewToken = (
+  token: NewToken,
+  collectionId: number,
+  owner: string,
+): CreateTokenPayload => {
+  const mappedTokenDto: CreateTokenPayload = {
+    data: {
+      image: {
+        ipfsCid: token.ipfsCid?.cid,
+      },
+      encodedAttributes: {},
+    },
+  };
+
+  if (mappedTokenDto.data && token.attributes?.length) {
+    mappedTokenDto.data.encodedAttributes = token.attributes.reduce(
+      (acc, attr, index) => {
+        const mapped = attributeMapper(attr);
+        if (mapped === null) {
+          return acc;
+        }
+
+        return {
+          ...acc,
+          [index]: mapped,
+        };
+      },
+      {},
+    );
+  }
+
+  return mappedTokenDto;
+};
+
+export const checkRequiredAttributes = (
+  tokens: NewToken[],
+  attributeSchema?: Record<number, AttributeSchema>,
+) => {
+  if (!attributeSchema) {
+    return true;
+  }
+
+  return !tokens.some(({ attributes }) => {
+    return Object.values(attributeSchema).some(
+      ({ optional }, index) => !optional && !attributes[index],
+    );
+  });
 };

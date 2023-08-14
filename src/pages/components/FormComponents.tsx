@@ -126,10 +126,10 @@ export const SuggestOption = styled.div`
   &.suggestion-item {
     display: flex;
     align-items: center;
+    gap: calc(var(--prop-gap) / 2);
 
     & > img {
       flex: 0 0 auto;
-      margin-right: calc(var(--prop-gap) / 2);
       object-fit: cover;
     }
 
