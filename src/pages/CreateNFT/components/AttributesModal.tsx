@@ -4,8 +4,9 @@ import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
 
 import { AttributeSchema } from '@app/api/graphQL/types';
-import { Button, Modal } from '@app/components';
+import { Button } from '@app/components';
 
+import { Modal } from '../../../components/Modal';
 import { Attribute, AttributeOption, NewToken } from '../types';
 import { AttributesForm } from './AttributesForm';
 import { TokenBasicCard } from './TokenBasicCard';
@@ -80,10 +81,9 @@ export const AttributesModal = ({
   }
 
   return (
-    <Modal
+    <ModalStyled
       title={`Massive changing of ${tokens.length} tokens`}
       isVisible={true}
-      size="lg"
       onClose={onClose}
     >
       <ModalContent>
@@ -106,9 +106,15 @@ export const AttributesModal = ({
         <Button role="outlined" title="Cancel" onClick={onClose} />
         <Button role="primary" title="Submit" onClick={onSubmit} />
       </ModalFooter>
-    </Modal>
+    </ModalStyled>
   );
 };
+
+const ModalStyled = styled(Modal)`
+  .unique-modal-content-wrapper {
+    width: 90%;
+  }
+`;
 
 export const ModalContent = styled.div`
   display: flex;

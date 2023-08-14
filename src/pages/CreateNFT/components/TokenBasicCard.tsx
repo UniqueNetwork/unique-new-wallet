@@ -1,7 +1,6 @@
 import { id } from 'date-fns/locale';
 import styled from 'styled-components';
 
-import { TokenTypeEnum } from '@app/api/graphQL/types';
 import { Button } from '@app/components';
 
 import trash from '../../../static/icons/trash.svg';

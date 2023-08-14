@@ -266,6 +266,11 @@ export const MainWrapper = styled.div`
     display: flex;
     align-items: flex-start;
   }
+
+  .unique-modal--md .unique-modal-content-wrapper {
+    max-width: fit-content;
+    min-width: 420px;
+  }
 `;
 
 const CollectionBlock = styled.div`

@@ -34,7 +34,7 @@ export const UploadFAB = ({ onUpload }: UploadFABProps) => {
         ref={inputFile}
         type="file"
         multiple={true}
-        title="drop the file here"
+        accept="image/*"
         onChange={onChange}
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}

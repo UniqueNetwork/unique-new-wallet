@@ -126,7 +126,8 @@ const ImageUploadArea = ({ onUpload }: ImageUploadAreaProps) => {
         ref={inputFile}
         type="file"
         multiple={true}
-        title="drop the file here"
+        title="drop files here"
+        accept="image/*"
         onChange={onChange}
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}
@@ -175,7 +176,7 @@ const Stub = () => {
     <StubWrapper>
       <Icon name="empty-image" size={80} />
       <Typography color="blue-grey-500" size="m" weight="light">
-        Click to select or drop the file here
+        Click to select or drop image files here
       </Typography>
     </StubWrapper>
   );
