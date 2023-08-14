@@ -61,7 +61,7 @@ export const AttributesForm = ({
 
 const AttributesWrapper = styled.div`
   display: block;
-  padding-left: 16px;
+  padding-left: var(--prop-gap);
   height: 100%;
   background-color: white;
   flex: 1;
@@ -70,7 +70,8 @@ const AttributesWrapper = styled.div`
 const AttributesFormWrapper = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 16px;
+  gap: var(--prop-gap);
+  max-width: 800px;
   & > .unique-text {
     margin: 0;
     white-space: break-spaces;

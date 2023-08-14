@@ -16,37 +16,20 @@ export type TokenListProps = {
   attributesSchema: Record<number, AttributeSchema>;
   mode: TokenTypeEnum | undefined;
   onChange(tokens: NewToken[]): void;
+  onAddTokens(files: File[]): void;
 };
 
 export const TokenList = ({
+  mode,
   tokens,
-  onChange,
   tokenPrefix,
   tokensLimit,
   tokensStartId,
   attributesSchema,
-  mode,
+  onChange,
+  onAddTokens,
 }: TokenListProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const onAddTokens = (files: File[]) => {
-    const lastId =
-      tokens.sort(({ tokenId: idA }, { tokenId: idB }) => (idA > idB ? 1 : -1)).at(-1)
-        ?.tokenId || (tokensStartId || 0) + 1;
-    onChange([
-      ...tokens,
-      ...files.map((file, index) => ({
-        id: index + lastId,
-        tokenId: index + lastId,
-        image: {
-          url: URL.createObjectURL(file),
-          file,
-        },
-        attributes: [],
-        isReady: false,
-        isSelected: false,
-      })),
-    ]);
-  };
 
   const onTokenChange = (token: NewToken) => {
     const index = tokens.findIndex(({ id }) => id === token.id);

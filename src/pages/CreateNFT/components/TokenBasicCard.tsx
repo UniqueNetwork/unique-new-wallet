@@ -83,12 +83,12 @@ const TokenLinkTitle = styled(Typography).attrs({ appearance: 'block', size: 'l'
 `;
 const SelectCheckbox = styled(Checkbox)`
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: var(--prop-gap);
+  left: var(--prop-gap);
   &.unique-checkbox-wrapper.checkbox-size-s span.checkmark {
     height: 32px;
     width: 32px;
-    border-radius: 16px;
+    border-radius: var(--prop-gap);
     background-color: var(--color-primary-500);
     opacity: 0.4;
     &.checked {

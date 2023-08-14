@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAccounts, useApi } from '@app/hooks';
 import {
   ConfirmBtn,
+  ProgressBar,
   StatusTransactionModal,
   Typography,
   useNotifications,
@@ -47,6 +48,10 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     useCreateMultipleTokens();
   const { uploadFile } = useFileUpload();
 
+  const leftTokens = collection?.token_limit
+    ? collection.token_limit - (collection?.tokens_count || 0) - tokens.length
+    : 'unlimited';
+
   const handleSubmit = async () => {
     if (!collection || !selectedAccount) {
       return;
@@ -85,9 +90,14 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
   };
 
   const onAddTokens = (files: File[]) => {
+    if (leftTokens !== 'unlimited' && files.length > leftTokens) {
+      files = files.slice(0, leftTokens);
+    }
     const lastId =
-      tokens.sort(({ tokenId: idA }, { tokenId: idB }) => (idA > idB ? 1 : -1)).at(-1)
-        ?.tokenId || (lastTokenId || 0) + 1;
+      (tokens.sort(({ tokenId: idA }, { tokenId: idB }) => (idA > idB ? 1 : -1)).at(-1)
+        ?.tokenId ||
+        lastTokenId ||
+        0) + 1;
     setTokens([
       ...tokens,
       ...files.map((file, index) => ({
@@ -108,7 +118,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     if (_collection === collection) {
       return;
     }
-    if (!collection) {
+    if (!collection || tokens.length === 0) {
       setCollection(_collection);
       return;
     }
@@ -173,10 +183,6 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     );
   }, [tokens, collection]);
 
-  const leftTokens = collection?.token_limit
-    ? collection.token_limit - (collection?.tokens_count || 0) - tokens.length
-    : 'unlimited';
-
   return (
     <MainWrapper className="create-nft-page">
       <WrapperContentStyled>
@@ -187,8 +193,13 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
               Left tokens:{' '}
             </Typography>
             <Typography size="m" weight="bold">
-              {leftTokens}
+              {leftTokens < 1000 ? leftTokens : 'over 1000'}
             </Typography>
+            {leftTokens !== 'unlimited' && collection && (
+              <ProgressBar
+                filledPercent={100 - (leftTokens / collection.token_limit) * 100}
+              />
+            )}
           </LeftTokensBlock>
         </CollectionBlock>
 
@@ -200,6 +211,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
           tokensStartId={lastTokenId}
           tokens={tokens}
           onChange={setTokens}
+          onAddTokens={onAddTokens}
         />
         <ButtonGroup>
           <ConfirmBtn role="outlined" title="Select all" onClick={selectedAll} />
@@ -228,7 +240,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
             title="Confirm and create all"
             onClick={handleSubmit}
           />
-          {tokens.length > 0 && <UploadFAB onUpload={onAddTokens} />}
+          {tokens.length > 0 && leftTokens > 0 && <UploadFAB onUpload={onAddTokens} />}
         </ButtonGroup>
       </WrapperContentStyled>
 
@@ -258,12 +270,16 @@ export const MainWrapper = styled.div`
 
 const CollectionBlock = styled.div`
   display: flex;
-  gap: 16px;
+  gap: var(--prop-gap);
   align-items: center;
+  max-width: 1000px;
 `;
 
 const LeftTokensBlock = styled.div`
-  min-width: 200px;
+  text-wrap: nowrap;
+  div[class^='ProgressBar__Bar'] {
+    width: auto;
+  }
 `;
 
 const WrapperContentStyled = styled(WrapperContent)`
@@ -279,7 +295,7 @@ const ButtonGroup = styled.div`
   flex-wrap: wrap;
   gap: calc(var(--prop-gap) / 2) var(--prop-gap);
   box-sizing: border-box;
-  padding: 32px;
+  padding: calc(var(--prop-gap) * 2);
   margin: -32px;
   bottom: 0px;
   z-index: 1001;

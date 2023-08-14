@@ -205,11 +205,11 @@ const CollectionSuggestion: FC<{
         isActive,
       })}
     >
-      <Tag label={suggestion.mode} type="info" />
       <Avatar size={24} type="circle" src={suggestion.img || undefined} />
       <span className="suggestion-item__title">
         {suggestion.title} [id {suggestion.id}]
       </span>
+      {suggestion.mode === 'RFT' && <Tag label="FRACTIONAL" type="info" />}
     </SuggestOption>
   );
 };

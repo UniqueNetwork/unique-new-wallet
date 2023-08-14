@@ -32,5 +32,5 @@ export const RemovingModal = ({
 };
 
 export const ModalContent = styled.div`
-  margin-bottom: 16px;
+  margin-bottom: var(--prop-gap);
 `;

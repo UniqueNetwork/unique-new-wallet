@@ -151,5 +151,5 @@ export const ModalFooter = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: var(--prop-gap);
-  margin-top: 16px;
+  margin-top: var(--prop-gap);
 `;
