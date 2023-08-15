@@ -249,6 +249,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
         tokens={selected}
         tokenPrefix={collection?.token_prefix || ''}
         attributesSchema={collection?.attributes_schema}
+        mode={collection?.mode}
         onClose={() => setDialog(undefined)}
         onChange={changeSelected}
         onConfirm={onConfirmDialog}
@@ -267,9 +268,9 @@ export const MainWrapper = styled.div`
     align-items: flex-start;
   }
 
-  .unique-modal--md .unique-modal-content-wrapper {
+  .unique-modal-content-wrapper {
     max-width: fit-content;
-    min-width: 420px;
+    width: auto;
   }
 `;
 
@@ -278,6 +279,10 @@ const CollectionBlock = styled.div`
   gap: var(--prop-gap);
   align-items: center;
   max-width: 1000px;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const LeftTokensBlock = styled.div`
@@ -298,7 +303,7 @@ const WrapperContentStyled = styled(WrapperContent)`
 const ButtonGroup = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: calc(var(--prop-gap) / 2) var(--prop-gap);
+  gap: var(--prop-gap);
   box-sizing: border-box;
   padding: calc(var(--prop-gap) * 2);
   margin: -32px;
@@ -307,6 +312,25 @@ const ButtonGroup = styled.div`
   background: white;
   position: sticky;
   border-radius: 4px;
+  @media screen and (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    & > div {
+      display: none;
+    }
+    & > button:last-of-type {
+      grid-column: 1 / span 2;
+    }
+  }
+  @media screen and (max-width: 568px) {
+    padding: var(--prop-gap) 0;
+    gap: calc(var(--prop-gap) / 2);
+
+    margin: 0;
+    & > button.unique-button.size-middle {
+      padding: 8px 16px;
+    }
+  }
 `;
 
 export const CreateNFTv2 = withPageTitle({

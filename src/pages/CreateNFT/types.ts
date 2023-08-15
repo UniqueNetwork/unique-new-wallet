@@ -48,6 +48,7 @@ export type NewToken = {
   isReady: boolean;
   isSelected: boolean;
   ipfsCid?: IpfsUploadResponse;
+  totalFractions?: string;
 };
 
 export enum CreateTokenDialog {

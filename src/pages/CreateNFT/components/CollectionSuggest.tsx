@@ -40,8 +40,6 @@ export const CollectionSuggest: FC<CollectionSuggestProps> = ({
   const presetCollection = locationState as Collection;
 
   useEffect(() => {
-    console.log(presetCollection);
-
     if (!presetCollection) {
       return;
     }
@@ -70,7 +68,7 @@ export const CollectionSuggest: FC<CollectionSuggestProps> = ({
     return [
       ...(collections
         // filter NFT collections only until RFT minting is implemented
-        .filter((collection) => collection.mode === TokenTypeEnum.NFT)
+        //.filter((collection) => collection.mode === TokenTypeEnum.NFT)
         .map<CollectionItem>((collection) => ({
           id: collection.collection_id,
           title: collection.name,
@@ -96,8 +94,6 @@ export const CollectionSuggest: FC<CollectionSuggestProps> = ({
   }, [collections, presetCollection]);
 
   const collectionOption = useMemo(() => {
-    console.log(collection);
-
     if (!collection) {
       return undefined;
     }

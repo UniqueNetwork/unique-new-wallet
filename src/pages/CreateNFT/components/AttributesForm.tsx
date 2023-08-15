@@ -29,7 +29,7 @@ export const AttributesForm = ({
   const schema = Object.values(attributesSchema);
 
   return (
-    <AttributesWrapper>
+    <>
       <Heading size="4">Attributes</Heading>
       {schema.length === 0 && (
         <Typography size="s" color="grey-500">
@@ -37,7 +37,7 @@ export const AttributesForm = ({
         </Typography>
       )}
       {schema.length > 0 && (
-        <AttributesFormWrapper>
+        <>
           {schema.map(({ name, optional, isArray, enumValues, type }, index) => {
             return (
               <AttributeRow
@@ -53,37 +53,20 @@ export const AttributesForm = ({
               />
             );
           })}
-        </AttributesFormWrapper>
+        </>
       )}
-    </AttributesWrapper>
+    </>
   );
 };
 
 const AttributesWrapper = styled.div`
   display: block;
-  padding-left: var(--prop-gap);
   height: 100%;
   background-color: white;
   flex: 1;
-`;
 
-const AttributesFormWrapper = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--prop-gap);
-  max-width: 800px;
-  & > .unique-text {
-    margin: 0;
-    white-space: break-spaces;
-    word-break: normal;
-  }
-  .unique-input-text {
-    width: 100%;
-    margin: auto 0;
-  }
-  div.unique-select {
-    width: 100%;
-    margin: auto 0;
+  @media screen and (max-width: 568px) {
+    padding-bottom: var(--prop-gap);
   }
 `;
 
@@ -123,7 +106,6 @@ const AttributeRow = ({
   );
 
   const onSelect = (value: SelectOptionProps | SelectOptionProps[]) => {
-    console.log(value);
     if (Array.isArray(value)) {
       onChange(value as AttributeOption[]);
       return;

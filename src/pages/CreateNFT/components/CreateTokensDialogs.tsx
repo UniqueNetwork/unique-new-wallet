@@ -1,4 +1,4 @@
-import { AttributeSchema } from '@app/api/graphQL/types';
+import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
 
 import { CreateTokenDialog, NewToken } from '../types';
 import { AttributesModal } from './AttributesModal';
@@ -10,6 +10,7 @@ interface CreateTokensDialogsProps {
   tokens: NewToken[];
   tokenPrefix: string;
   attributesSchema: Record<number, AttributeSchema> | undefined;
+  mode?: TokenTypeEnum;
   onChange(tokens: NewToken[]): void;
   onConfirm(): void;
   onClose(): void;
@@ -20,6 +21,7 @@ export const CreateTokensDialogs = ({
   tokens,
   tokenPrefix,
   attributesSchema,
+  mode,
   onChange,
   onConfirm,
   onClose,
@@ -33,6 +35,7 @@ export const CreateTokensDialogs = ({
           tokens={tokens}
           tokenPrefix={tokenPrefix}
           attributesSchema={attributesSchema}
+          mode={mode}
           onChange={onChange}
           onClose={onClose}
         />

@@ -159,6 +159,9 @@ export const Suggest = <T,>({
       setInputValue(getSuggestionValue(activeValue));
       return;
     }
+    if (isManaged) {
+      return;
+    }
     if (!showSuggestions && activeValue) {
       setInputValue(getSuggestionValue(activeValue));
     }
