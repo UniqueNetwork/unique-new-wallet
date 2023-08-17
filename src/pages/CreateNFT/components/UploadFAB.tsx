@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useRef, useState, ChangeEvent, DragEvent } from 'react';
 
-import { Button } from '@app/components';
+import { Button, Tooltip } from '@app/components';
 
 interface UploadFABProps {
   onUpload(files: File[]): void;
@@ -27,9 +27,10 @@ export const UploadFAB = ({ onUpload }: UploadFABProps) => {
   const onDragLeave = (event: DragEvent<HTMLInputElement>) => {
     setIsDragEnter(false);
   };
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   return (
-    <FABContainer>
+    <FABContainer ref={buttonRef}>
       <input
         ref={inputFile}
         type="file"
@@ -41,6 +42,12 @@ export const UploadFAB = ({ onUpload }: UploadFABProps) => {
         onDragEnd={onDragLeave}
         onDragExit={onDragLeave}
       />
+      <Tooltip
+        targetRef={buttonRef}
+        align={{ horizontal: 'left', vertical: 'middle', appearance: 'horizontal' }}
+      >
+        Add more files
+      </Tooltip>
       <Button
         iconLeft={{ name: 'plus', color: 'white', size: 24 }}
         role="primary"
@@ -74,5 +81,9 @@ const FABContainer = styled.div`
     svg {
       margin: 0;
     }
+  }
+  @media screen and (max-width: 768px) {
+    margin-top: -64px;
+    right: 32px;
   }
 `;

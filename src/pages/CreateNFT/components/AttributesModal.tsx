@@ -30,6 +30,7 @@ export const AttributesModal = ({
   onClose,
   mode,
 }: AttribytesModalProps) => {
+  const [summaryAttributes, setSummaryAttributes] = useState<Attribute[]>([]);
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [totalFractions, setTotalFractions] = useState<Attribute>();
 
@@ -87,7 +88,7 @@ export const AttributesModal = ({
       },
     );
     setAttributes(summaryAttributes);
-
+    setSummaryAttributes(summaryAttributes);
     if (mode === TokenTypeEnum.RFT) {
       let totalFractionsValue: Attribute;
       const isDifferent = tokens.some(({ totalFractions }, tokenIndex) => {
@@ -140,6 +141,7 @@ export const AttributesModal = ({
             </>
           )}
           <AttributesForm
+            initialAttributes={summaryAttributes}
             attributes={attributes}
             attributesSchema={attributesSchema}
             onChange={onChangeAttributes}

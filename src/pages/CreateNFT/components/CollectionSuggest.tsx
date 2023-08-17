@@ -109,7 +109,6 @@ export const CollectionSuggest: FC<CollectionSuggestProps> = ({
 
   return (
     <CollectionSuggestWrapper>
-      <LabelText>Collection*</LabelText>
       <Suggest<CollectionItem>
         isManaged
         isClearable={false}

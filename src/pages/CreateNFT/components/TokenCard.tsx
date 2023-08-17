@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { TemplateProps } from 'react-draggable-list';
 import { MouseEventHandler, TouchEventHandler, useState } from 'react';
+import classNames from 'classnames';
 
 import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
 import { Button, InputText } from '@app/components';
@@ -31,6 +32,7 @@ export const TokenCard = ({
   const { id, tokenId, image, attributes, isReady, isSelected, totalFractions } = item;
   const { onChange, onRemove, tokenPrefix, attributesSchema, mode } = commonProps;
   const [willBeRemoved, setWillBeRemoved] = useState(false);
+  const [hovered, setHovered] = useState(false);
   const { onMouseDown, onTouchStart } = dragHandleProps as {
     onMouseDown: MouseEventHandler<HTMLDivElement> | undefined;
     onTouchStart: TouchEventHandler<HTMLDivElement> | undefined;
@@ -52,9 +54,17 @@ export const TokenCard = ({
   };
 
   return (
-    <TokenWrapper className={willBeRemoved ? 'removing' : ''}>
+    <TokenWrapper className={classNames({ removing: willBeRemoved, hovered })}>
       <TokenBasicWrapper>
         <TokenLinkImageWrapper
+          onMouseEnter={(e) => {
+            e.preventDefault();
+            setHovered(true);
+          }}
+          onMouseLeave={(e) => {
+            e.preventDefault();
+            setHovered(false);
+          }}
           onTouchStart={(e) => {
             e.preventDefault();
             onTouchStart?.(e);
@@ -93,6 +103,7 @@ export const TokenCard = ({
           </>
         )}
         <AttributesForm
+          initialAttributes={attributes}
           attributes={attributes}
           attributesSchema={attributesSchema}
           onChange={onAttributesChange}
@@ -110,16 +121,20 @@ const TokenWrapper = styled.div`
   word-break: break-all;
   min-height: 300px;
   cursor: pointer;
-  padding-top: 8px;
+  padding: 8px 32px 0 32px;
   display: flex;
   background: white;
   border-style: none none dashed none;
-  border-color: var(--color-grey-300);
+  border-color: var(--color-grey-100);
   gap: var(--prop-gap);
+  transition: opacity 0.2s, transform 0.2s;
+  &.hovered {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
   &.removing {
     transform: scale(0.1);
     opacity: 0;
-    transition: 0.2s;
     max-height: 0;
   }
 

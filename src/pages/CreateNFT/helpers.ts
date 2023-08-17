@@ -1,4 +1,4 @@
-import { CreateTokenPayload } from '@unique-nft/sdk';
+import { CreateTokenBody, CreateTokenPayload } from '@unique-nft/sdk';
 
 import { CreateTokenNewDto } from '@app/types/Api';
 import { AttributeSchema } from '@app/api/graphQL/types';
@@ -71,6 +71,14 @@ export const mapTokensToPayload = (
   return tokens.map((token) => mapNewToken(token, collectionId, owner));
 };
 
+export const mapTokensToPayload$1 = (
+  tokens: NewToken[],
+  collectionId: number,
+  owner: string,
+): CreateTokenBody[] => {
+  return tokens.map((token) => mapNewToken$1(token, collectionId, owner));
+};
+
 export const mapNewToken = (
   token: NewToken,
   collectionId: number,
@@ -83,6 +91,41 @@ export const mapNewToken = (
       },
       encodedAttributes: {},
     },
+  };
+
+  if (mappedTokenDto.data && token.attributes?.length) {
+    mappedTokenDto.data.encodedAttributes = token.attributes.reduce(
+      (acc, attr, index) => {
+        const mapped = attributeMapper(attr);
+        if (mapped === null) {
+          return acc;
+        }
+
+        return {
+          ...acc,
+          [index]: mapped,
+        };
+      },
+      {},
+    );
+  }
+
+  return mappedTokenDto;
+};
+export const mapNewToken$1 = (
+  token: NewToken,
+  collectionId: number,
+  owner: string,
+): CreateTokenBody => {
+  const mappedTokenDto: CreateTokenBody = {
+    data: {
+      image: {
+        ipfsCid: token.ipfsCid?.cid,
+      },
+      encodedAttributes: {},
+    },
+    address: owner,
+    collectionId,
   };
 
   if (mappedTokenDto.data && token.attributes?.length) {

@@ -1,6 +1,7 @@
 import { ChangeEvent, DragEvent, FC, useRef, useState } from 'react';
 import styled from 'styled-components';
 import DraggableList from 'react-draggable-list';
+import classNames from 'classnames';
 
 import { Icon, Typography } from '@app/components';
 import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
@@ -9,6 +10,7 @@ import { NewToken } from '../types';
 import { TokenCard, TokenCardCommonProps, TokenCardProps } from './TokenCard';
 
 export type TokenListProps = {
+  disabled: boolean;
   tokens: NewToken[];
   tokenPrefix: string;
   tokensLimit?: number;
@@ -25,11 +27,13 @@ export const TokenList = ({
   tokenPrefix,
   tokensLimit,
   tokensStartId,
+  disabled,
   attributesSchema,
   onChange,
   onAddTokens,
 }: TokenListProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [dragEnter, setDragEnter] = useState(false);
 
   const onTokenChange = (token: NewToken) => {
     const index = tokens.findIndex(({ id }) => id === token.id);
@@ -47,14 +51,25 @@ export const TokenList = ({
   };
 
   return (
-    <TokenListWrapper>
+    <TokenListWrapper
+      onDragEnter={() => setDragEnter(true)}
+      onDrop={() => setDragEnter(false)}
+      onDragLeave={() => setDragEnter(false)}
+      onDragEnd={() => setDragEnter(false)}
+      onDragExit={() => setDragEnter(false)}
+    >
       {tokens.length === 0 && <Stub />}
-      {tokens.length === 0 && <ImageUploadArea onUpload={onAddTokens} />}
+      <ImageUploadArea
+        disabled={disabled}
+        hidden={!dragEnter && tokens.length > 0}
+        onUpload={onAddTokens}
+      />
       {tokens.length !== 0 && (
         <DraggableContainer ref={containerRef}>
           {/* @ts-ignore */}
           <DraggableList<NewToken, TokenCardCommonProps, FC<TokenCardProps>>
             constrainDrag
+            unsetZIndex
             className="draggable-container"
             itemKey="id"
             template={TokenCard}
@@ -84,22 +99,28 @@ const TokenListWrapper = styled.div`
   display: flex;
   margin-top: calc(var(--prop-gap) * 2);
   margin-bottom: calc(var(--prop-gap) * 2);
-  min-height: calc(100vh - 444px);
+  min-height: calc(80vh - 444px);
   position: relative;
 `;
 
 const DraggableContainer = styled.div`
   width: 100%;
+  margin: 0 -32px;
   & > div {
     width: 100%;
+    /* & > div {
+      margin-bottom: 0 !important;
+    } */
   }
 `;
 
 type ImageUploadAreaProps = {
+  disabled: boolean;
+  hidden: boolean;
   onUpload?(images: File[]): void;
 };
 
-const ImageUploadArea = ({ onUpload }: ImageUploadAreaProps) => {
+const ImageUploadArea = ({ disabled, hidden, onUpload }: ImageUploadAreaProps) => {
   const inputFile = useRef<HTMLInputElement>(null);
   const [isDragEnter, setIsDragEnter] = useState(false);
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +134,11 @@ const ImageUploadArea = ({ onUpload }: ImageUploadAreaProps) => {
   };
 
   const onDragEnter = (event: DragEvent<HTMLInputElement>) => {
+    console.log('onDragEnter');
+
+    if (disabled) {
+      return;
+    }
     setIsDragEnter(true);
   };
 
@@ -121,12 +147,13 @@ const ImageUploadArea = ({ onUpload }: ImageUploadAreaProps) => {
   };
 
   return (
-    <UploadWrapper className={isDragEnter ? 'drag-enter' : ''}>
+    <UploadWrapper className={classNames({ hidden, 'drag-enter': isDragEnter })}>
       <input
+        disabled={disabled}
         ref={inputFile}
         type="file"
         multiple={true}
-        title="drop files here"
+        title="Click to select or drop files here"
         accept="image/*"
         onChange={onChange}
         onDragEnter={onDragEnter}
@@ -145,6 +172,11 @@ const UploadWrapper = styled.div`
   left: 0;
   right: 0;
   border: 1px dashed var(--color-primary-500);
+  z-index: 1000;
+  &.hidden {
+    opacity: 0;
+    z-index: 0;
+  }
   input {
     opacity: 0;
     width: 100%;
@@ -176,7 +208,7 @@ const Stub = () => {
     <StubWrapper>
       <Icon name="empty-image" size={80} />
       <Typography color="blue-grey-500" size="m" weight="light">
-        Click to select or drop image files here
+        Click to select or drop files here
       </Typography>
     </StubWrapper>
   );

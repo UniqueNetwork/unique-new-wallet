@@ -2,19 +2,21 @@ import styled from 'styled-components';
 import { useMemo } from 'react';
 
 import { AttributeSchema } from '@app/api/graphQL/types';
-import { Heading, Icon, InputText, Select } from '@app/components';
+import { Heading, Icon, InputText, Select, TooltipWrapper } from '@app/components';
 import { SelectOptionProps } from '@app/components/types';
 
 import { Attribute, AttributeOption } from '../types';
 import { Typography } from '../../../components/Typography/Typography';
 
 type AttributesFormProps = {
+  initialAttributes: Attribute[];
   attributes: Attribute[];
   attributesSchema: Record<number, AttributeSchema>;
   onChange(attributes: Attribute[]): void;
 };
 
 export const AttributesForm = ({
+  initialAttributes,
   attributes,
   attributesSchema,
   onChange,
@@ -42,12 +44,12 @@ export const AttributesForm = ({
             return (
               <AttributeRow
                 key={`${name}_${index}`}
-                name={name._}
                 label={name._}
                 required={!optional}
                 isArray={isArray}
                 enumValues={enumValues}
                 type={type}
+                initialValue={initialAttributes[index]}
                 value={attributes[index]}
                 onChange={onChangeAttribute(index)}
               />
@@ -71,7 +73,6 @@ const AttributesWrapper = styled.div`
 `;
 
 interface AttributeRowProps {
-  name: string;
   label?: string;
   required?: boolean;
   isArray?: boolean;
@@ -82,6 +83,7 @@ interface AttributeRowProps {
       _: string;
     }
   >;
+  initialValue: Attribute;
   value: Attribute;
   onChange(value: Attribute): void;
 }
@@ -90,7 +92,7 @@ const AttributeRow = ({
   label,
   required,
   isArray,
-  name,
+  initialValue,
   type,
   enumValues,
   value,
@@ -118,8 +120,14 @@ const AttributeRow = ({
       <LabelText>
         {label}
         {required && '*'}
-        {(value as { hasDifferentValues: boolean })?.hasDifferentValues && (
-          <Icon size={24} name="warning" color="var(--color-primary-500)" />
+        {(initialValue as { hasDifferentValues: boolean })?.hasDifferentValues && (
+          <TooltipWrapper
+            message={
+              "Some of the tokens you've selected already possess varying attribute values. You can either select a different set of tokens or modify the attribute value for the current selection."
+            }
+          >
+            <Icon size={24} name="warning" color="var(--color-primary-500)" />
+          </TooltipWrapper>
         )}
       </LabelText>
 
@@ -143,7 +151,11 @@ const AttributeRow = ({
       {options.length === 0 && (
         <InputText
           clearable
-          value={value as string}
+          value={
+            (value as { hasDifferentValues: boolean })?.hasDifferentValues
+              ? ''
+              : (value as string)
+          }
           onChange={onChange}
           onClear={() => onChange('')}
         />

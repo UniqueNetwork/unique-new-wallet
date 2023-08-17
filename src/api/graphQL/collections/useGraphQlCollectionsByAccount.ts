@@ -22,6 +22,7 @@ const COLLECTIONS_BY_ACCOUNT_QUERY = gql`
         token_limit
         token_prefix
         mode
+        date_of_creation
         attributes_schema
       }
     }
