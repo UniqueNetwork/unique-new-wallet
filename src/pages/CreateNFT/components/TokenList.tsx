@@ -50,19 +50,29 @@ export const TokenList = ({
     ]);
   };
 
+  const onDragStart = () => {
+    console.log('onDragStart');
+    setDragEnter(true);
+  };
+  const onDragEnd = () => {
+    console.log('onDragEnd');
+    setDragEnter(false);
+  };
+
   return (
     <TokenListWrapper
-      onDragEnter={() => setDragEnter(true)}
-      onDrop={() => setDragEnter(false)}
-      onDragLeave={() => setDragEnter(false)}
-      onDragEnd={() => setDragEnter(false)}
-      onDragExit={() => setDragEnter(false)}
+      onDragEnter={onDragStart}
+      //onDrop={() => setDragEnter(false)}
+      //onDragLeave={onDragEnd}
+      onDragEnd={onDragEnd}
+      onDragExit={onDragEnd}
     >
       {tokens.length === 0 && <Stub />}
       <ImageUploadArea
         disabled={disabled}
         hidden={!dragEnter && tokens.length > 0}
         onUpload={onAddTokens}
+        onDragExit={onDragEnd}
       />
       {tokens.length !== 0 && (
         <DraggableContainer ref={containerRef}>
@@ -118,9 +128,15 @@ type ImageUploadAreaProps = {
   disabled: boolean;
   hidden: boolean;
   onUpload?(images: File[]): void;
+  onDragExit(): void;
 };
 
-const ImageUploadArea = ({ disabled, hidden, onUpload }: ImageUploadAreaProps) => {
+const ImageUploadArea = ({
+  disabled,
+  hidden,
+  onUpload,
+  onDragExit,
+}: ImageUploadAreaProps) => {
   const inputFile = useRef<HTMLInputElement>(null);
   const [isDragEnter, setIsDragEnter] = useState(false);
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -129,13 +145,12 @@ const ImageUploadArea = ({ disabled, hidden, onUpload }: ImageUploadAreaProps) =
       return;
     }
     onUpload?.(Array.from(inputFile.current.files || []));
+    onDragExit();
 
     inputFile.current.value = '';
   };
 
   const onDragEnter = (event: DragEvent<HTMLInputElement>) => {
-    console.log('onDragEnter');
-
     if (disabled) {
       return;
     }
@@ -144,6 +159,7 @@ const ImageUploadArea = ({ disabled, hidden, onUpload }: ImageUploadAreaProps) =
 
   const onDragLeave = (event: DragEvent<HTMLInputElement>) => {
     setIsDragEnter(false);
+    onDragExit();
   };
 
   return (
