@@ -41,7 +41,11 @@ export const StatusTransactionModal = ({
       </StageWrapper>
       <StageWrapper>
         <Loader
-          label={`Minting ${mintingProgress + 1}-${mintingProgress + batchSize} tokens`}
+          label={
+            stage === 'uploading'
+              ? 'Minting...'
+              : `Minting ${mintingProgress + 1}-${mintingProgress + batchSize} tokens`
+          }
           state={stage === 'uploading' ? 'idle' : 'process'}
         />
         {stage === 'minting' && (
