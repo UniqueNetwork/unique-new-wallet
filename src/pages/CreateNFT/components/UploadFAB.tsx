@@ -9,9 +9,7 @@ interface UploadFABProps {
 
 export const UploadFAB = ({ onUpload }: UploadFABProps) => {
   const inputFile = useRef<HTMLInputElement>(null);
-  const [isDragEnter, setIsDragEnter] = useState(false);
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setIsDragEnter(false);
     if (!inputFile.current) {
       return;
     }
@@ -20,13 +18,6 @@ export const UploadFAB = ({ onUpload }: UploadFABProps) => {
     inputFile.current.value = '';
   };
 
-  const onDragEnter = (event: DragEvent<HTMLInputElement>) => {
-    setIsDragEnter(true);
-  };
-
-  const onDragLeave = (event: DragEvent<HTMLInputElement>) => {
-    setIsDragEnter(false);
-  };
   const buttonRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -37,10 +28,6 @@ export const UploadFAB = ({ onUpload }: UploadFABProps) => {
         multiple={true}
         accept="image/*"
         onChange={onChange}
-        onDragEnter={onDragEnter}
-        onDragLeave={onDragLeave}
-        onDragEnd={onDragLeave}
-        onDragExit={onDragLeave}
       />
       <Tooltip
         targetRef={buttonRef}
@@ -78,6 +65,8 @@ const FABContainer = styled.div`
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    position: relative;
     svg {
       margin: 0;
     }

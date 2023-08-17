@@ -26,12 +26,14 @@ import {
   checkRequiredAttributes,
   mapTokensToPayload,
   mapTokensToPayload$1,
+  scrollToTokenCard,
 } from './helpers';
 import { UploadFAB } from './components/UploadFAB';
 import { CollectionStats } from './components/CollectionStats';
 import { StatusTransactionModal } from './components/StatusTransactionModal';
+import { Checkbox } from '../../components/Checkbox';
 
-const MAX_MINT_TOKENS = 300;
+export const MAX_MINT_TOKENS = 300;
 
 export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) => {
   const [collection, setCollection] = useState<Collection>();
@@ -50,7 +52,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
   const { currentChain, api } = useApi();
 
   const navigate = useNavigate();
-  const { info, error } = useNotifications();
+  const { info, error, warning } = useNotifications();
   const { setPayloadEntity } = useExtrinsicCacheEntities();
   const {
     selectedAccount,
@@ -79,6 +81,26 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     if (!collection || !selectedAccount) {
       return;
     }
+
+    if (collection.attributes_schema) {
+      const invalidToken = checkRequiredAttributes(tokens, collection.attributes_schema);
+      if (invalidToken) {
+        scrollToTokenCard(invalidToken.id);
+        setTokens(
+          tokens.map((token) => {
+            if (token.id === invalidToken.id) {
+              return {
+                ...token,
+                isValid: false,
+              };
+            }
+            return { ...token, isValid: true };
+          }),
+        );
+        return;
+      }
+    }
+
     setIsLoadingSubmitResult(true);
     setStage('uploading');
     const uploadedTokens: NewToken[] = [];
@@ -134,8 +156,9 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
       MAX_MINT_TOKENS - tokens.length,
       leftTokens !== 'unlimited' ? leftTokens : MAX_MINT_TOKENS,
     );
-    if (leftTokens !== 'unlimited' && files.length > maxTokens) {
-      files = files.slice(0, maxTokens);
+    if (files.length > maxTokens) {
+      setDialog(CreateTokenDialog.exceededTokens);
+      return;
     }
     const lastId =
       (tokens.sort(({ tokenId: idA }, { tokenId: idB }) => (idA > idB ? 1 : -1)).at(-1)
@@ -152,7 +175,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
           file,
         },
         attributes: [],
-        isReady: false,
+        isValid: true,
         isSelected: false,
       })),
     ]);
@@ -221,16 +244,23 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     );
   }, [lastTokenId]);
 
-  const isValid = useMemo(() => {
-    return (
-      !!collection &&
-      tokens.length > 0 &&
-      checkRequiredAttributes(tokens, collection.attributes_schema)
-    );
-  }, [tokens, collection]);
+  const mainWrapperRef = useRef<HTMLDivElement>(null);
+  const actionBoxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const intercept = document.createElement('div');
+
+    intercept.setAttribute('data-observer-intercept', '');
+    mainWrapperRef.current?.after(intercept);
+
+    const observer = new IntersectionObserver(([entry]) => {
+      actionBoxRef.current?.classList.toggle('active', !entry.isIntersecting);
+    });
+
+    observer.observe(intercept);
+  }, []);
 
   return (
-    <MainWrapper className="create-nft-page">
+    <MainWrapper className="create-nft-page" ref={mainWrapperRef}>
       <WrapperCollectionContentStyled expanded={!!collection}>
         <Heading size="3">Choose a collection</Heading>
         <CollectionBlock ref={collectionBlockRef}>
@@ -251,8 +281,8 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
       <WrapperTokenListContentStyled disabled={!collection}>
         <Heading size="3">Create tokens</Heading>
         <Typography size="m" color="grey-500">
-          You can mass-mint tokens using JPEG, PNG, and GIF files, with a maximum size of
-          10MB each
+          You can mass-mint {MAX_MINT_TOKENS} tokens using JPEG, PNG, and GIF files, with
+          a maximum size of 10MB each
         </Typography>
         {tokens.length > 0 && (
           <TokensCounterWrapper>
@@ -272,39 +302,40 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
           onChange={setTokens}
           onAddTokens={onAddTokens}
         />
-        {!!collection && (
-          <ButtonGroup>
-            <ConfirmBtn
-              role="outlined"
-              disabled={tokens.length === 0}
-              title="Select all"
-              onClick={selectedAll}
+        {tokens.length > 0 && (
+          <ButtonGroup ref={actionBoxRef}>
+            <SelectCheckbox
+              label={
+                <Typography color="grey-500">
+                  {selected.length ? `${selected.length} selected` : 'Select all'}
+                </Typography>
+              }
+              checked={selected.length > 0}
+              onChange={(value) => {
+                if (value) {
+                  selectedAll();
+                  return;
+                }
+                deselectedAll();
+              }}
             />
             <ConfirmBtn
+              className={selected.length > 1 ? 'visible' : 'hidden'}
               role="outlined"
               disabled={selected.length === 0}
-              title="Deselect all"
-              onClick={deselectedAll}
-            />
-            <ConfirmBtn
-              role="outlined"
-              disabled={selected.length === 0}
-              title="Change selected"
+              title="Modify selected"
               onClick={() => setDialog(CreateTokenDialog.editAttributes)}
             />
             <ConfirmBtn
+              className={selected.length > 1 ? 'visible' : 'hidden'}
               role="danger"
               disabled={selected.length === 0}
               title="Remove selected"
               onClick={() => setDialog(CreateTokenDialog.removeToken)}
             />
-            <SelectedCountWrapper>
-              {selected.length > 0 && (
-                <Typography color="grey-500">{selected.length} selected</Typography>
-              )}
-            </SelectedCountWrapper>
+            <SelectedCountWrapper />
             <ConfirmBtn
-              disabled={!isValid}
+              disabled={!collection || tokens.length === 0}
               role="primary"
               title="Confirm and create all"
               onClick={handleSubmit}
@@ -318,6 +349,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
         dialog={dialog}
         tokens={selected}
         tokenPrefix={collection?.token_prefix || ''}
+        leftTokens={leftTokens}
         attributesSchema={collection?.attributes_schema}
         mode={collection?.mode}
         onClose={() => setDialog(undefined)}
@@ -408,6 +440,20 @@ const ButtonGroup = styled.div`
   background: white;
   position: sticky;
   border-radius: 4px;
+  &.active {
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  }
+  button {
+    transition: 0.2s;
+    &.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+    &.hidden {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
   @media screen and (max-width: 768px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -418,7 +464,6 @@ const ButtonGroup = styled.div`
   @media screen and (max-width: 568px) {
     padding: var(--prop-gap) 0;
     gap: calc(var(--prop-gap) / 2);
-
     margin: 0;
     & > button.unique-button.size-middle {
       padding: 8px 16px;
@@ -430,6 +475,22 @@ const SelectedCountWrapper = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
+`;
+
+const SelectCheckbox = styled(Checkbox)`
+  align-items: center;
+  &.unique-checkbox-wrapper.checkbox-size-s span.checkmark {
+    height: 32px;
+    width: 32px;
+    border-radius: var(--prop-gap);
+    background-color: var(--color-primary-300);
+    &.checked {
+      background-color: var(--color-primary-500);
+    }
+  }
+  label.checkbox-label {
+    margin-left: 42px;
+  }
 `;
 
 export const CreateNFTv2 = withPageTitle({

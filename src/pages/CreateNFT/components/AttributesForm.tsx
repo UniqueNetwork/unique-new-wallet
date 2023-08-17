@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { isValid } from 'date-fns';
 
 import { AttributeSchema } from '@app/api/graphQL/types';
 import { Heading, Icon, InputText, Select, TooltipWrapper } from '@app/components';
@@ -9,6 +10,7 @@ import { Attribute, AttributeOption } from '../types';
 import { Typography } from '../../../components/Typography/Typography';
 
 type AttributesFormProps = {
+  isValid?: boolean;
   initialAttributes: Attribute[];
   attributes: Attribute[];
   attributesSchema: Record<number, AttributeSchema>;
@@ -19,6 +21,7 @@ export const AttributesForm = ({
   initialAttributes,
   attributes,
   attributesSchema,
+  isValid,
   onChange,
 }: AttributesFormProps) => {
   const onChangeAttribute = (index: number) => (value: Attribute) => {
@@ -51,6 +54,7 @@ export const AttributesForm = ({
                 type={type}
                 initialValue={initialAttributes[index]}
                 value={attributes[index]}
+                isValid={isValid}
                 onChange={onChangeAttribute(index)}
               />
             );
@@ -85,6 +89,7 @@ interface AttributeRowProps {
   >;
   initialValue: Attribute;
   value: Attribute;
+  isValid?: boolean;
   onChange(value: Attribute): void;
 }
 
@@ -96,6 +101,7 @@ const AttributeRow = ({
   type,
   enumValues,
   value,
+  isValid,
   onChange,
 }: AttributeRowProps) => {
   const options = useMemo(
@@ -156,6 +162,7 @@ const AttributeRow = ({
               ? ''
               : (value as string)
           }
+          error={!isValid && required}
           onChange={onChange}
           onClear={() => onChange('')}
         />

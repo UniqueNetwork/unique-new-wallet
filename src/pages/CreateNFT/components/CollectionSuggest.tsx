@@ -90,7 +90,7 @@ export const CollectionSuggest: FC<CollectionSuggestProps> = ({
             },
           ]
         : []),
-    ];
+    ].sort(({ id: idA }, { id: idB }) => (idA > idB ? -1 : 1));
   }, [collections, presetCollection]);
 
   const collectionOption = useMemo(() => {

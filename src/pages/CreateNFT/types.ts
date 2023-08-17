@@ -45,14 +45,15 @@ export type NewToken = {
     url: string;
   };
   attributes: Attribute[];
-  isReady: boolean;
   isSelected: boolean;
   ipfsCid?: IpfsUploadResponse;
   totalFractions?: string;
+  isValid?: boolean;
 };
 
 export enum CreateTokenDialog {
   editAttributes = 'editAttributes',
   removeToken = 'removeToken',
   changeCollection = 'changeCollection',
+  exceededTokens = 'exceededTokens',
 }

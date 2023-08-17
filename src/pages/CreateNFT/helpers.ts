@@ -153,12 +153,19 @@ export const checkRequiredAttributes = (
   attributeSchema?: Record<number, AttributeSchema>,
 ) => {
   if (!attributeSchema) {
-    return true;
+    return;
   }
 
-  return !tokens.some(({ attributes }) => {
+  return tokens.find(({ attributes }) => {
     return Object.values(attributeSchema).some(
       ({ optional }, index) => !optional && !attributes[index],
     );
   });
+};
+
+export const scrollToTokenCard = (id: number) => {
+  const element = document.getElementById(`token-${id}`);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 };

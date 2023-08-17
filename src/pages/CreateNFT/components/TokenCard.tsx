@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { TemplateProps } from 'react-draggable-list';
-import { MouseEventHandler, TouchEventHandler, useState } from 'react';
+import { MouseEventHandler, TouchEventHandler, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 
 import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
@@ -10,7 +10,6 @@ import { Checkbox } from '../../../components/Checkbox';
 import { Image } from '../../../components/Image';
 import { Typography } from '../../../components/Typography';
 import { Attribute, NewToken } from '../types';
-import trash from '../../../static/icons/trash.svg';
 import { AttributesForm, LabelText } from './AttributesForm';
 
 export type TokenCardCommonProps = {
@@ -29,7 +28,7 @@ export const TokenCard = ({
   dragHandleProps,
   commonProps,
 }: TokenCardProps) => {
-  const { id, tokenId, image, attributes, isReady, isSelected, totalFractions } = item;
+  const { id, tokenId, image, attributes, isValid, isSelected, totalFractions } = item;
   const { onChange, onRemove, tokenPrefix, attributesSchema, mode } = commonProps;
   const [willBeRemoved, setWillBeRemoved] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -39,11 +38,11 @@ export const TokenCard = ({
   };
 
   const onSelect = () => {
-    onChange({ id, tokenId, image, attributes, isReady, isSelected: !isSelected });
+    onChange({ id, tokenId, image, attributes, isValid, isSelected: !isSelected });
   };
 
   const onAttributesChange = (attributes: Attribute[]) => {
-    onChange({ id, tokenId, image, attributes, isReady, isSelected });
+    onChange({ id, tokenId, image, attributes, isValid, isSelected });
   };
 
   const onStartRemove = () => {
@@ -54,7 +53,10 @@ export const TokenCard = ({
   };
 
   return (
-    <TokenWrapper className={classNames({ removing: willBeRemoved, hovered })}>
+    <TokenWrapper
+      id={`token-${id}`}
+      className={classNames({ removing: willBeRemoved, hovered })}
+    >
       <TokenBasicWrapper>
         <TokenLinkImageWrapper
           onMouseEnter={(e) => {
@@ -81,7 +83,7 @@ export const TokenCard = ({
           <Button
             title=""
             role="ghost"
-            iconLeft={{ file: trash, size: 24 }}
+            iconLeft={{ name: 'trash', size: 24 }}
             onClick={onStartRemove}
           />
         </TokenCardActions>
@@ -106,6 +108,7 @@ export const TokenCard = ({
           initialAttributes={attributes}
           attributes={attributes}
           attributesSchema={attributesSchema}
+          isValid={isValid}
           onChange={onAttributesChange}
         />
       </FormGrid>
@@ -175,6 +178,12 @@ const TokenCardActions = styled.div`
   background-color: white;
   .unique-button {
     padding: 0;
+    &:hover {
+      svg {
+        fill: var(--color-primary-500);
+        transition: 0.2s;
+      }
+    }
   }
   @media screen and (max-width: 768px) {
     width: 180px;

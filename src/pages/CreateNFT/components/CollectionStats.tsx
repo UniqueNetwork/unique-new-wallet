@@ -4,9 +4,9 @@ import { addSeconds, format } from 'date-fns';
 import { useMemo } from 'react';
 
 import { Collection } from '@app/api/graphQL/types';
-import { Heading, Loader, Typography } from '@app/components';
+import { Heading, Link, Loader, Typography } from '@app/components';
 import { maxTokenLimit } from '@app/pages/constants';
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { shortAddress } from '@app/utils';
 
 interface CollectionStatsProps {
@@ -29,6 +29,7 @@ export const CollectionStats = ({
   sponsorship,
 }: CollectionStatsProps) => {
   const deviceSize = useDeviceSize();
+  const { currentChain } = useApi();
   const noLimits = maxTokenLimit === tokensLimit;
   const nestingValue = useMemo(() => {
     if (!!nestingPermissions?.collectionAdmin && !!nestingPermissions?.tokenOwner) {
@@ -58,7 +59,7 @@ export const CollectionStats = ({
           {noLimits ? 'Unlimited' : tokensLimit}
         </Typography>
         <Typography size="m" color="grey-600">
-          Token limit
+          token limit
         </Typography>
       </div>
       <div>
@@ -66,7 +67,7 @@ export const CollectionStats = ({
           {lastTokenId}
         </Typography>
         <Typography size="m" color="grey-600">
-          Tokens exist
+          tokens exist
         </Typography>
       </div>
       <div>
@@ -74,7 +75,7 @@ export const CollectionStats = ({
           {noLimits ? 'Unlimited' : tokensLeft}
         </Typography>
         <Typography size="m" color="grey-600">
-          Tokens left to create
+          tokens left to create
         </Typography>
       </div>
       <div>
@@ -82,7 +83,7 @@ export const CollectionStats = ({
           {getDateFormat(collection.date_of_creation * 1000)}
         </Typography>
         <Typography size="m" color="grey-600">
-          Creation date
+          creation date
         </Typography>
       </div>
       <div>
@@ -90,18 +91,18 @@ export const CollectionStats = ({
           {nestingValue}
         </Typography>
         <Typography size="m" color="grey-600">
-          Nesting permission
+          nesting permission
         </Typography>
       </div>
       {sponsorship?.isConfirmed && (
         <div>
-          <Typography size="l" weight="bold">
-            {deviceSize < DeviceSize.md
-              ? shortAddress(sponsorship.address)
-              : sponsorship.address}
-          </Typography>
+          <Link href={`${currentChain.uniquescanAddress}/account/${sponsorship.address}`}>
+            <Typography size="l" weight="bold" color="primary-500">
+              {shortAddress(sponsorship.address)}
+            </Typography>
+          </Link>
           <Typography size="m" color="grey-600">
-            Collection sponsor
+            collection sponsor
           </Typography>
         </div>
       )}
