@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import styled from 'styled-components';
 
 import { Modal, ModalProps } from '@app/components/Modal';
-import { ProgressBar } from '@app/components';
+import { Button, ProgressBar, Typography } from '@app/components';
 
 import { Alert } from '../../../components/Alert';
 import { Loader } from '../../../components/Loader';
@@ -12,10 +12,12 @@ type Props = Pick<ModalProps, 'isVisible'> & {
   mintingProgress?: number;
   totalTokens: number;
   batchSize: number;
-  stage: 'uploading' | 'minting';
+  stage: 'uploading' | 'minting' | 'done';
   isVisible: boolean;
   title?: string;
   warning?: ReactNode;
+  onComplete(): void;
+  onContinue(): void;
 };
 
 export const StatusTransactionModal = ({
@@ -26,42 +28,72 @@ export const StatusTransactionModal = ({
   totalTokens,
   batchSize,
   isVisible,
-  warning,
+  onComplete,
+  onContinue,
 }: Props) => {
   return (
     <Modal isVisible={isVisible} isClosable={false} title={title}>
-      <StageWrapper>
+      <StagesWrapper>
+        <Loader state={stage === 'uploading' ? 'process' : 'done'} />
+        <StageDescription>
+          <Typography size="m" weight="regular">{`Uploading ${
+            uploadingProgress + 1
+          } of ${totalTokens} files`}</Typography>
+          <Typography size="s" color="grey-500">
+            Step 1
+          </Typography>
+        </StageDescription>
         <Loader
-          label={`Uploading ${uploadingProgress + 1}/${totalTokens} file`}
-          state={stage === 'uploading' ? 'process' : 'done'}
-        />
-        {stage === 'uploading' && (
-          <ProgressBar filledPercent={(uploadingProgress / totalTokens) * 100} />
-        )}
-      </StageWrapper>
-      <StageWrapper>
-        <Loader
-          label={
-            stage === 'uploading'
-              ? 'Minting...'
-              : `Minting ${mintingProgress + 1}-${mintingProgress + batchSize} tokens`
+          state={
+            stage === 'uploading' ? 'idle' : stage === 'minting' ? 'process' : 'done'
           }
-          state={stage === 'uploading' ? 'idle' : 'process'}
         />
-        {stage === 'minting' && (
-          <ProgressBar filledPercent={(mintingProgress / totalTokens) * 100} />
-        )}
-      </StageWrapper>
-      {!!warning && <AlertStyled type="warning">{warning}</AlertStyled>}
+        <StageDescription>
+          <Typography size="m" weight="regular">{`Minting ${
+            mintingProgress + 1
+          }-${Math.min(
+            mintingProgress + batchSize,
+            totalTokens,
+          )} of ${totalTokens} tokens`}</Typography>
+          <Typography size="s" color="grey-500">
+            Step 2
+          </Typography>
+        </StageDescription>
+      </StagesWrapper>
+      {stage !== 'done' && (
+        <AlertStyled type="warning">
+          Please do not close or refresh this page until the token minting is completed.
+        </AlertStyled>
+      )}
+      {stage === 'done' && (
+        <ButtonsWrapper>
+          <Button title="Create more" role="primary" onClick={onContinue} />
+          <Button title="Go to my tokens" onClick={onComplete} />
+        </ButtonsWrapper>
+      )}
     </Modal>
   );
 };
 
-const StageWrapper = styled.div`
+const StagesWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: flex-start;
+  grid-column-gap: var(--gap);
+  grid-row-gap: var(--gap);
+  align-items: center;
+`;
+
+const StageDescription = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 24px;
+`;
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: calc(var(--gap) * 2);
+  gap: calc(var(--gap) * 2);
 `;
 
 const AlertStyled = styled(Alert)`

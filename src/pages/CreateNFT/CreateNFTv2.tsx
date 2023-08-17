@@ -44,7 +44,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
   const [dialog, setDialog] = useState<CreateTokenDialog>();
   const [isLoadingSubmitResult, setIsLoadingSubmitResult] = useState<boolean>(false);
 
-  const [stage, setStage] = useState<'uploading' | 'minting'>('uploading');
+  const [stage, setStage] = useState<'uploading' | 'minting' | 'done'>('done');
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [mintingProgress, setMintingProgress] = useState<number>(0);
   const [batchSize, setBatchSize] = useState<number>(30);
@@ -58,11 +58,16 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     selectedAccount,
     accounts: { size: accountsLength },
   } = useAccounts();
-  const { data: lastTokenIdDto, isFetching: isFetchingLastTokenId } =
-    useCollectionGetLastTokenId(collection?.collection_id);
-  const { data: collectionInfo, isFetching: isFetchingInfo } = useCollectionGetById(
-    collection?.collection_id,
-  );
+  const {
+    data: lastTokenIdDto,
+    isFetching: isFetchingLastTokenId,
+    refetch: refetchLastTokenId,
+  } = useCollectionGetLastTokenId(collection?.collection_id);
+  const {
+    data: collectionInfo,
+    isFetching: isFetchingInfo,
+    refetch: refetchCollectionInfo,
+  } = useCollectionGetById(collection?.collection_id);
   const { tokenId: lastTokenId } = lastTokenIdDto || {};
 
   const { submitWaitResult, getFee, feeFormatted, feeLoading } =
@@ -128,6 +133,8 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     let currentPos = 0;
     let batchSize = 30;
     const submitBatch = async (_tokens: CreateTokenPayload[]) => {
+      console.log(_tokens);
+
       return await submitWaitResult({
         payload: {
           tokens: _tokens,
@@ -137,18 +144,20 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
       });
     };
 
-    while (currentPos < createTokensPayload.length - 1) {
+    while (currentPos < createTokensPayload.length) {
       try {
+        setMintingProgress(currentPos);
         await submitBatch(createTokensPayload.slice(currentPos, currentPos + batchSize));
         currentPos += batchSize;
-        setMintingProgress(currentPos);
       } catch (e) {
         batchSize = 10;
         setBatchSize(batchSize);
       }
     }
-    info('Tokens created successfully');
-    navigate(`/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`);
+    await refetchLastTokenId();
+    await refetchCollectionInfo();
+    setStage('done');
+    info(`${createTokensPayload.length} tokens created successfully`);
   };
 
   const onAddTokens = (files: File[]) => {
@@ -363,6 +372,18 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
         mintingProgress={mintingProgress}
         totalTokens={tokens.length}
         batchSize={batchSize}
+        onComplete={() => {
+          navigate(
+            `/${currentChain?.network}/${ROUTE.MY_TOKENS}/${MY_TOKENS_TABS_ROUTE.NFT}`,
+          );
+        }}
+        onContinue={() => {
+          setTokens([]);
+          setUploadProgress(0);
+          setMintingProgress(0);
+          setIsLoadingSubmitResult(false);
+          setStage('uploading');
+        }}
       />
     </MainWrapper>
   );
