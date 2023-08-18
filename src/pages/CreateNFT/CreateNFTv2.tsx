@@ -133,8 +133,6 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     let currentPos = 0;
     let batchSize = 30;
     const submitBatch = async (_tokens: CreateTokenPayload[]) => {
-      console.log(_tokens);
-
       return await submitWaitResult({
         payload: {
           tokens: _tokens,

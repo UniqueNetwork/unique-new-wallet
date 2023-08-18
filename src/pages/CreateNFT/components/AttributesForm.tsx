@@ -151,6 +151,7 @@ const AttributeRow = ({
                 value: (value as AttributeOption)?.id?.toString(),
               })}
           options={options}
+          error={!isValid && required}
           onChange={onSelect}
         />
       )}

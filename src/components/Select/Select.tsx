@@ -134,7 +134,6 @@ export const Select = ({
       return;
     }
     const rect = containerRef.current.getBoundingClientRect();
-    console.dir(rect, containerRef.current);
     dropdownRef.current.style.width = `${rect.width}px`;
     dropdownRef.current.style.top = `${rect.y + rect.height + window.scrollY + 4}px`;
     dropdownRef.current.style.left = `${rect.x + window.scrollX}px`;
