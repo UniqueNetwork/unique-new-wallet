@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TokenByIdResponse } from '@unique-nft/sdk';
 import { Address } from '@unique-nft/utils';
+import styled from 'styled-components';
 
 import { TokenDetailsLayout } from '@app/pages/TokenDetails/components/TokenDetailsLayout';
 import { TokenDetailsCard } from '@app/pages/TokenDetails/components/TokenDetailsCard';
@@ -12,6 +13,10 @@ import { Achievement, ErrorPage, TransferBtn, Button } from '@app/components';
 import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { DeviceSize, useAccounts, useApi, useDeviceSize } from '@app/hooks';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
+import {
+  AngelHackBaseCollectionId,
+  AngelHackWearablesCollectionId,
+} from '@app/pages/MyTokens/constants';
 
 export const NftDetailsPage = () => {
   const { collectionId = '', tokenId = '', address = '' } = useParams();
@@ -96,6 +101,32 @@ export const NftDetailsPage = () => {
     return <ErrorPage />;
   }
 
+  const renderAchievements = () => (
+    <AchievementsWrapper>
+      {tokenById?.collectionId === AngelHackBaseCollectionId[currentChain.network] && (
+        <>
+          <Achievement achievement="Base NFT" tooltipDescription={null} />
+          <Achievement achievement="Soulbound" tooltipDescription={null} />
+        </>
+      )}
+      {tokenById?.collectionId ===
+        AngelHackWearablesCollectionId[currentChain.network] && (
+        <Achievement achievement="Wearables" tooltipDescription={null} />
+      )}
+      {isFractional && (
+        <Achievement
+          achievement="Fractional"
+          tooltipDescription={
+            <>
+              A&nbsp;fractional token provides a&nbsp;way for many users to&nbsp;own
+              a&nbsp;part of&nbsp;an&nbsp;NFT
+            </>
+          }
+        />
+      )}
+    </AchievementsWrapper>
+  );
+
   return (
     <TokenDetailsLayout isLoading={isLoadingToken} tokenExist={!!token}>
       <TokenDetailsCard
@@ -103,19 +134,7 @@ export const NftDetailsPage = () => {
         isFractional={isFractional}
         balance={balance?.amount}
         pieces={pieces?.amount}
-        achievement={
-          isFractional && (
-            <Achievement
-              achievement="Fractional"
-              tooltipDescription={
-                <>
-                  A&nbsp;fractional token provides a&nbsp;way for many users to&nbsp;own
-                  a&nbsp;part of&nbsp;an&nbsp;NFT
-                </>
-              }
-            />
-          )
-        }
+        achievement={renderAchievements()}
         canBurn={isOwner}
         burnModal={isFractional ? 'burn-refungible' : 'burn'}
         owner={
@@ -169,3 +188,15 @@ export const NftDetailsPage = () => {
     </TokenDetailsLayout>
   );
 };
+
+const AchievementsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--prop-gap) / 2);
+  align-items: flex-end;
+  position: absolute;
+  width: 100%;
+  span {
+    position: relative;
+  }
+`;

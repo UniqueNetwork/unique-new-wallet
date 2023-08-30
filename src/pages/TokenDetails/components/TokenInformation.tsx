@@ -71,22 +71,6 @@ const TokenInformationComponent = <T extends TBaseToken>({
           </Tags>
         </div>
       ))}
-      {token?.file && (
-        <>
-          <Heading className="attributes-header" size="4">
-            Attached file
-          </Heading>
-          <a
-            className="unique-button primary size-small"
-            target="_blank"
-            rel="noreferrer"
-            href={token.file.fullUrl}
-          >
-            Download file&nbsp;
-            <Icon size={16} name="logout" color="lightgrey" />
-          </a>
-        </>
-      )}
     </div>
   );
 };
