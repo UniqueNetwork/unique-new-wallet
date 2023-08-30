@@ -9,7 +9,7 @@ import { Button, InputText } from '@app/components';
 import { Checkbox } from '../../../components/Checkbox';
 import { Image } from '../../../components/Image';
 import { Typography } from '../../../components/Typography';
-import { Attribute, NewToken } from '../types';
+import { Attribute, NewToken, ViewMode } from '../types';
 import { AttributesForm, LabelText } from './AttributesForm';
 
 export type TokenCardCommonProps = {
@@ -18,6 +18,7 @@ export type TokenCardCommonProps = {
   tokenPrefix: string;
   attributesSchema: Record<number, AttributeSchema>;
   mode: TokenTypeEnum | undefined;
+  viewMode: ViewMode;
 };
 
 export type TokenCardProps = TemplateProps<NewToken, TokenCardCommonProps>;
@@ -29,7 +30,8 @@ export const TokenCard = ({
   commonProps,
 }: TokenCardProps) => {
   const { id, tokenId, image, attributes, isValid, isSelected, totalFractions } = item;
-  const { onChange, onRemove, tokenPrefix, attributesSchema, mode } = commonProps;
+  const { onChange, onRemove, tokenPrefix, attributesSchema, mode, viewMode } =
+    commonProps;
   const [willBeRemoved, setWillBeRemoved] = useState(false);
   const [hovered, setHovered] = useState(false);
   const { onMouseDown, onTouchStart } = dragHandleProps as {
@@ -55,7 +57,11 @@ export const TokenCard = ({
   return (
     <TokenWrapper
       id={`token-${id}`}
-      className={classNames({ removing: willBeRemoved, hovered })}
+      className={classNames({
+        removing: willBeRemoved,
+        hovered,
+        grid: viewMode === ViewMode.grid,
+      })}
     >
       <TokenBasicWrapper>
         <TokenLinkImageWrapper
@@ -88,36 +94,37 @@ export const TokenCard = ({
           />
         </TokenCardActions>
       </TokenBasicWrapper>
-      <FormGrid>
-        {mode === TokenTypeEnum.RFT && (
-          <>
-            <LabelText>Total fractions</LabelText>
-            <InputText
-              label=""
-              value={totalFractions}
-              maxLength={10}
-              onChange={(value) =>
-                !Number.isNaN(Number(value)) &&
-                onChange({ ...item, totalFractions: value })
-              }
-              onClear={() => onChange({ ...item, totalFractions: '' })}
-            />
-          </>
-        )}
-        <AttributesForm
-          initialAttributes={attributes}
-          attributes={attributes}
-          attributesSchema={attributesSchema}
-          isValid={isValid}
-          onChange={onAttributesChange}
-        />
-      </FormGrid>
+      {viewMode === ViewMode.list && (
+        <FormGrid>
+          {mode === TokenTypeEnum.RFT && (
+            <>
+              <LabelText>Total fractions</LabelText>
+              <InputText
+                label=""
+                value={totalFractions}
+                maxLength={10}
+                onChange={(value) =>
+                  !Number.isNaN(Number(value)) &&
+                  onChange({ ...item, totalFractions: value })
+                }
+                onClear={() => onChange({ ...item, totalFractions: '' })}
+              />
+            </>
+          )}
+          <AttributesForm
+            initialAttributes={attributes}
+            attributes={attributes}
+            attributesSchema={attributesSchema}
+            isValid={isValid}
+            onChange={onAttributesChange}
+          />
+        </FormGrid>
+      )}
     </TokenWrapper>
   );
 };
 
 const TokenWrapper = styled.div`
-  width: 100%;
   font-family: var(--prop-font-family);
   font-size: var(--prop-font-size);
   font-weight: var(--prop-font-weight);
@@ -139,6 +146,19 @@ const TokenWrapper = styled.div`
     transform: scale(0.1);
     opacity: 0;
     max-height: 0;
+  }
+
+  &.grid {
+    min-height: unset;
+    padding: 16px 16px 0 16px;
+    border-style: none;
+    & > div {
+      width: 100%;
+      & > div {
+        width: 100%;
+        height: unset;
+      }
+    }
   }
 
   @media screen and (max-width: 568px) {

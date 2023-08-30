@@ -3,7 +3,13 @@ import { CreateTokenBody, CreateTokenPayload } from '@unique-nft/sdk';
 import { CreateTokenNewDto } from '@app/types/Api';
 import { AttributeSchema } from '@app/api/graphQL/types';
 
-import { Attribute, AttributeOption, FilledTokenForm, NewToken } from './types';
+import {
+  Attribute,
+  AttributeOption,
+  AttributesForFilter,
+  FilledTokenForm,
+  NewToken,
+} from './types';
 
 const attributeMapper = (attribute?: Attribute) => {
   if (
@@ -168,4 +174,100 @@ export const scrollToTokenCard = (id: number) => {
   if (element) {
     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
+};
+
+export const getAttributesFromTokens = (
+  attributesSchema: Record<number, AttributeSchema>,
+  tokens: NewToken[],
+) => {
+  // attributes formatted for Filter component
+  const attributesForFilter: AttributesForFilter = {};
+
+  const addSelectableValue = (
+    attributeName: string,
+    index: number,
+    value: number,
+    enumValues: Record<number, { _: string }>,
+  ) => {
+    const existsValue = attributesForFilter[attributeName].find(({ id }) => id === value);
+    if (existsValue) {
+      existsValue.count += 1;
+    } else {
+      attributesForFilter[attributeName].push({
+        index,
+        key: attributeName,
+        id: value,
+        value: enumValues[value]._,
+        count: 1,
+      });
+    }
+  };
+
+  tokens.forEach(({ attributes }) => {
+    if (!attributes) {
+      return;
+    }
+    // Calculate filters to show
+    attributes.forEach((attribute, index) => {
+      const { name, isArray, enumValues } = attributesSchema[index];
+      const attributeName = name?._?.toLocaleLowerCase();
+
+      if (!attributeName) {
+        return;
+      }
+
+      if (!attributesForFilter[attributeName]) {
+        attributesForFilter[attributeName] = [];
+      }
+
+      const value = attributeMapper(attribute);
+
+      if (!value) {
+        return;
+      }
+
+      if (enumValues) {
+        if (isArray) {
+          (value as number[]).forEach((_value) => {
+            addSelectableValue(attributeName, index, _value, enumValues);
+          });
+          return;
+        }
+        addSelectableValue(attributeName, index, value as number, enumValues);
+
+        return;
+      }
+
+      const stringValue = (value as { _: string })?._;
+
+      const existsValue = attributesForFilter[attributeName].find(
+        ({ value }) => value === stringValue,
+      );
+      if (existsValue) {
+        existsValue.count += 1;
+      } else {
+        attributesForFilter[attributeName].push({
+          index,
+          key: attributeName,
+          value: stringValue,
+          count: 1,
+        });
+      }
+    });
+  });
+
+  return attributesForFilter;
+};
+
+export const capitalize = (text: string) => `${text[0].toUpperCase()}${text.slice(1)}`;
+
+export const ellipsisText = (text: string, allowSymbols = 30) => {
+  if (text.length > allowSymbols) {
+    const nextSpacePosition = text.indexOf(' ', allowSymbols);
+    if (!nextSpacePosition) {
+      return text;
+    }
+    return text.slice(0, nextSpacePosition) + '…';
+  }
+  return text;
 };

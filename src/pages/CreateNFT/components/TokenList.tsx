@@ -1,16 +1,25 @@
-import { ChangeEvent, DragEvent, FC, useRef, useState } from 'react';
+import { ChangeEvent, DragEvent, FC, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import DraggableList from 'react-draggable-list';
 import classNames from 'classnames';
 
-import { Icon, Typography } from '@app/components';
+import { Icon, List, Typography } from '@app/components';
 import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
 
-import { NewToken } from '../types';
+import {
+  AttributeForFilter,
+  AttributeOption,
+  AttributesForFilter,
+  NewToken,
+  ViewMode,
+} from '../types';
 import { TokenCard, TokenCardCommonProps, TokenCardProps } from './TokenCard';
+import { Filter } from './Filter';
+import { getAttributesFromTokens } from '../helpers';
 
 export type TokenListProps = {
   disabled: boolean;
+  viewMode: ViewMode;
   tokens: NewToken[];
   tokenPrefix: string;
   tokensLimit?: number;
@@ -29,11 +38,14 @@ export const TokenList = ({
   tokensStartId,
   disabled,
   attributesSchema,
+  viewMode,
   onChange,
   onAddTokens,
 }: TokenListProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dragEnter, setDragEnter] = useState(false);
+  const [attributes, setAttributes] = useState<AttributesForFilter>({});
+  const [selectedAttributes, setSelectedAttributes] = useState<AttributeForFilter[]>([]);
 
   const onTokenChange = (token: NewToken) => {
     const index = tokens.findIndex(({ id }) => id === token.id);
@@ -43,11 +55,12 @@ export const TokenList = ({
 
   const onTokenRemove = (id: number) => {
     const lastId = (tokensStartId || 0) + 1;
-    onChange([
+    const _tokens = [
       ...tokens
         .filter((token) => id !== token.id)
         .map((token, index) => ({ ...token, tokenId: lastId + index })),
-    ]);
+    ];
+    onChange(_tokens);
   };
 
   const onDragStart = () => {
@@ -57,47 +70,126 @@ export const TokenList = ({
     setDragEnter(false);
   };
 
+  useEffect(() => {
+    const attributes = getAttributesFromTokens(attributesSchema, tokens);
+    setAttributes(attributes);
+    setSelectedAttributes(
+      selectedAttributes.filter(
+        ({ key, value }) =>
+          !!attributes[key] && attributes[key].some((attr) => attr.value === value),
+      ),
+    );
+  }, [tokens, attributesSchema]);
+
+  const filteredTokens = useMemo(() => {
+    if (selectedAttributes.length === 0) {
+      return tokens;
+    }
+    return tokens.filter(({ attributes }) => {
+      return attributes.some((attribute, index) => {
+        if (!attribute) {
+          return false;
+        }
+        return selectedAttributes.some((selectedAttribute) => {
+          if (selectedAttribute.index !== index) {
+            return false;
+          }
+          if (Array.isArray(attribute)) {
+            return (attributes as AttributeOption[]).some(
+              ({ id }) => selectedAttribute.id === id,
+            );
+          }
+          if (typeof attribute === 'string') {
+            return selectedAttribute.value === attribute;
+          }
+          return selectedAttribute.id === (attribute as AttributeOption).id;
+        });
+      });
+    });
+  }, [tokens, selectedAttributes]);
+
   return (
     <TokenListWrapper
       onDragEnter={onDragStart}
-      //onDrop={() => setDragEnter(false)}
-      //onDragLeave={onDragEnd}
       onDragEnd={onDragEnd}
       onDragExit={onDragEnd}
     >
       {tokens.length === 0 && <Stub />}
       <ImageUploadArea
         disabled={disabled}
+        hasTokens={tokens.length > 0}
         hidden={!dragEnter && tokens.length > 0}
         onUpload={onAddTokens}
         onDragExit={onDragEnd}
       />
       {tokens.length !== 0 && (
-        <DraggableContainer ref={containerRef}>
-          {/* @ts-ignore */}
-          <DraggableList<NewToken, TokenCardCommonProps, FC<TokenCardProps>>
-            constrainDrag
-            unsetZIndex
-            className="draggable-container"
-            itemKey="id"
-            template={TokenCard}
-            list={tokens}
-            container={() => containerRef.current}
-            commonProps={{
-              mode,
-              tokenPrefix,
-              attributesSchema,
-              onChange: onTokenChange,
-              onRemove: onTokenRemove,
-            }}
-            onMoveEnd={(newList) => {
-              const lastId = (tokensStartId || 0) + 1;
-              return onChange([
-                ...newList.map((token, index) => ({ ...token, tokenId: lastId + index })),
-              ]);
-            }}
+        <>
+          <Filter
+            attributes={attributes}
+            selectedAttributes={selectedAttributes}
+            onChange={setSelectedAttributes}
           />
-        </DraggableContainer>
+          <DraggableContainer ref={containerRef}>
+            {viewMode === ViewMode.grid && (
+              <List<NewToken>
+                dataSource={filteredTokens}
+                itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+                panelSettings={{ pagination: { viewMode: 'none', size: 0 } }}
+                renderItem={(token, index) => (
+                  <TokenCard
+                    key={token.id}
+                    itemSelected={0}
+                    anySelected={0}
+                    item={token}
+                    commonProps={{
+                      mode,
+                      viewMode,
+                      tokenPrefix,
+                      attributesSchema,
+                      onChange: onTokenChange,
+                      onRemove: onTokenRemove,
+                    }}
+                    dragHandleProps={{}}
+                  />
+                )}
+                onPageChange={function (index: number): void {
+                  throw new Error('Function not implemented.');
+                }}
+              />
+            )}
+            {viewMode === ViewMode.list && (
+              <>
+                {/* @ts-ignore */}
+                <DraggableList<NewToken, TokenCardCommonProps, FC<TokenCardProps>>
+                  constrainDrag
+                  unsetZIndex
+                  className="draggable-container"
+                  itemKey="id"
+                  template={TokenCard}
+                  list={filteredTokens}
+                  container={() => containerRef.current}
+                  commonProps={{
+                    viewMode,
+                    mode,
+                    tokenPrefix,
+                    attributesSchema,
+                    onChange: onTokenChange,
+                    onRemove: onTokenRemove,
+                  }}
+                  onMoveEnd={(newList) => {
+                    const lastId = (tokensStartId || 0) + 1;
+                    return onChange([
+                      ...newList.map((token, index) => ({
+                        ...token,
+                        tokenId: lastId + index,
+                      })),
+                    ]);
+                  }}
+                />
+              </>
+            )}
+          </DraggableContainer>
+        </>
       )}
     </TokenListWrapper>
   );
@@ -116,14 +208,26 @@ const DraggableContainer = styled.div`
   margin: 0 -32px;
   & > div {
     width: 100%;
-    /* & > div {
-      margin-bottom: 0 !important;
-    } */
+  }
+  .unique-list {
+    gap: 0;
   }
 `;
 
+// const TokensGrid = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+//   row-gap: 16px;
+
+//   & > div {
+//     padding: 16px 16px 0 16px;
+//     width: 250px;
+//   }
+// `;
+
 type ImageUploadAreaProps = {
   disabled: boolean;
+  hasTokens: boolean;
   hidden: boolean;
   onUpload?(images: File[]): void;
   onDragExit(): void;
@@ -131,6 +235,7 @@ type ImageUploadAreaProps = {
 
 const ImageUploadArea = ({
   disabled,
+  hasTokens,
   hidden,
   onUpload,
   onDragExit,
@@ -161,7 +266,13 @@ const ImageUploadArea = ({
   };
 
   return (
-    <UploadWrapper className={classNames({ hidden, 'drag-enter': isDragEnter })}>
+    <UploadWrapper
+      className={classNames({
+        hidden,
+        'drag-enter': isDragEnter,
+        'full-area': !hasTokens,
+      })}
+    >
       <input
         disabled={disabled}
         ref={inputFile}
@@ -183,10 +294,13 @@ const UploadWrapper = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
+  left: 300px;
   right: 0;
   border: 1px dashed var(--color-primary-500);
   z-index: 1000;
+  &.full-area {
+    left: 0;
+  }
   &.hidden {
     opacity: 0;
     z-index: 0;

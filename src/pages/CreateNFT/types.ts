@@ -57,3 +57,20 @@ export enum CreateTokenDialog {
   changeCollection = 'changeCollection',
   exceededTokens = 'exceededTokens',
 }
+
+export type AttributeForFilter = {
+  index: number;
+  key: string;
+  id?: number;
+  value: string;
+  count: number;
+};
+
+export type AttributesForFilter = {
+  [key: string]: Array<AttributeForFilter>;
+};
+
+export enum ViewMode {
+  grid = 'grid',
+  list = 'list',
+}

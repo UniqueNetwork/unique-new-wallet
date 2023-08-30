@@ -4,7 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { CreateTokenPayload } from '@unique-nft/sdk';
 
 import { useAccounts, useApi } from '@app/hooks';
-import { ConfirmBtn, Heading, Typography, useNotifications } from '@app/components';
+import {
+  Button,
+  ConfirmBtn,
+  Heading,
+  Typography,
+  useNotifications,
+} from '@app/components';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
 import { ROUTE, MY_TOKENS_TABS_ROUTE } from '@app/routes';
 import { Collection } from '@app/api/graphQL/types';
@@ -20,7 +26,7 @@ import { sleep } from '@app/utils';
 import { WrapperContent } from '../components/PageComponents';
 import { CollectionSuggest } from './components/CollectionSuggest';
 import { TokenList } from './components/TokenList';
-import { CreateTokenDialog, NewToken } from './types';
+import { CreateTokenDialog, NewToken, ViewMode } from './types';
 import { CreateTokensDialogs } from './components/CreateTokensDialogs';
 import {
   checkRequiredAttributes,
@@ -48,6 +54,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [mintingProgress, setMintingProgress] = useState<number>(0);
   const [batchSize, setBatchSize] = useState<number>(30);
+  const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.grid);
 
   const { currentChain, api } = useApi();
 
@@ -266,6 +273,10 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
     observer.observe(intercept);
   }, []);
 
+  const onChangeView = (viewMode: ViewMode) => () => {
+    setViewMode(viewMode);
+  };
+
   return (
     <MainWrapper className="create-nft-page" ref={mainWrapperRef}>
       <WrapperCollectionContentStyled expanded={!!collection}>
@@ -296,9 +307,36 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
             <Typography color="grey-500" weight="bold" size="m">
               {tokens.length} / {MAX_MINT_TOKENS}
             </Typography>
+            <Button
+              title=""
+              role="ghost"
+              iconLeft={{
+                color:
+                  viewMode === ViewMode.grid
+                    ? 'var(--color-primary-500)'
+                    : 'currentColor',
+                name: 'grid',
+                size: 32,
+              }}
+              onClick={onChangeView(ViewMode.grid)}
+            />
+            <Button
+              title=""
+              role="ghost"
+              iconLeft={{
+                color:
+                  viewMode === ViewMode.list
+                    ? 'var(--color-primary-500)'
+                    : 'currentColor',
+                name: 'list',
+                size: 32,
+              }}
+              onClick={onChangeView(ViewMode.list)}
+            />
           </TokensCounterWrapper>
         )}
         <TokenList
+          viewMode={viewMode}
           tokenPrefix={collection?.token_prefix || ''}
           attributesSchema={collection?.attributes_schema || []}
           mode={collection?.mode}
@@ -440,6 +478,16 @@ const TokensCounterWrapper = styled.div`
   position: absolute;
   right: 32px;
   top: 32px;
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+
+  button.unique-button.ghost {
+    padding: 0;
+    svg {
+      margin: 0;
+    }
+  }
 
   @media screen and (max-width: 1024px) {
     top: 8px;
