@@ -16,6 +16,7 @@ import {
 import { TokenCard, TokenCardCommonProps, TokenCardProps } from './TokenCard';
 import { Filter } from './Filter';
 import { getAttributesFromTokens } from '../helpers';
+import { AttributesModal } from './AttributesModal';
 
 export type TokenListProps = {
   disabled: boolean;
@@ -46,6 +47,7 @@ export const TokenList = ({
   const [dragEnter, setDragEnter] = useState(false);
   const [attributes, setAttributes] = useState<AttributesForFilter>({});
   const [selectedAttributes, setSelectedAttributes] = useState<AttributeForFilter[]>([]);
+  const [editingToken, setEditingToken] = useState<NewToken>();
 
   const onTokenChange = (token: NewToken) => {
     const index = tokens.findIndex(({ id }) => id === token.id);
@@ -148,6 +150,7 @@ export const TokenList = ({
                       attributesSchema,
                       onChange: onTokenChange,
                       onRemove: onTokenRemove,
+                      onOpenModifyModal: setEditingToken,
                     }}
                     dragHandleProps={{}}
                   />
@@ -191,6 +194,31 @@ export const TokenList = ({
           </DraggableContainer>
         </>
       )}
+      {!!editingToken && (
+        <AttributesModal
+          tokens={[editingToken]}
+          tokenPrefix={tokenPrefix}
+          attributesSchema={attributesSchema}
+          onClose={() => setEditingToken(undefined)}
+          onChange={(_tokens: NewToken[]) => {
+            const token = _tokens[0];
+            if (!token) {
+              return;
+            }
+            onChange(
+              tokens.map((_token) => {
+                if (_token.tokenId !== token.tokenId) {
+                  return _token;
+                }
+                return {
+                  ..._token,
+                  attributes: token.attributes,
+                };
+              }),
+            );
+          }}
+        />
+      )}
     </TokenListWrapper>
   );
 };
@@ -213,17 +241,6 @@ const DraggableContainer = styled.div`
     gap: 0;
   }
 `;
-
-// const TokensGrid = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-//   row-gap: 16px;
-
-//   & > div {
-//     padding: 16px 16px 0 16px;
-//     width: 250px;
-//   }
-// `;
 
 type ImageUploadAreaProps = {
   disabled: boolean;

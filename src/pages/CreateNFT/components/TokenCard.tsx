@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { TemplateProps } from 'react-draggable-list';
-import { MouseEventHandler, TouchEventHandler, useEffect, useRef, useState } from 'react';
+import { MouseEventHandler, TouchEventHandler, useState } from 'react';
 import classNames from 'classnames';
 
 import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
@@ -15,6 +15,7 @@ import { AttributesForm, LabelText } from './AttributesForm';
 export type TokenCardCommonProps = {
   onChange(token: NewToken): void;
   onRemove(id: number): void;
+  onOpenModifyModal?(token: NewToken): void;
   tokenPrefix: string;
   attributesSchema: Record<number, AttributeSchema>;
   mode: TokenTypeEnum | undefined;
@@ -30,8 +31,15 @@ export const TokenCard = ({
   commonProps,
 }: TokenCardProps) => {
   const { id, tokenId, image, attributes, isValid, isSelected, totalFractions } = item;
-  const { onChange, onRemove, tokenPrefix, attributesSchema, mode, viewMode } =
-    commonProps;
+  const {
+    onChange,
+    onRemove,
+    tokenPrefix,
+    attributesSchema,
+    mode,
+    viewMode,
+    onOpenModifyModal,
+  } = commonProps;
   const [willBeRemoved, setWillBeRemoved] = useState(false);
   const [hovered, setHovered] = useState(false);
   const { onMouseDown, onTouchStart } = dragHandleProps as {
@@ -86,12 +94,23 @@ export const TokenCard = ({
         </TokenLinkImageWrapper>
         <TokenCardActions>
           <TokenLinkTitle>{`${tokenPrefix} #${tokenId}`}</TokenLinkTitle>
-          <Button
-            title=""
-            role="ghost"
-            iconLeft={{ name: 'trash', size: 24 }}
-            onClick={onStartRemove}
-          />
+          <ButtonsWrapper>
+            {viewMode === ViewMode.grid && (
+              <Button
+                title=""
+                role="ghost"
+                iconLeft={{ name: 'pencil', size: 24 }}
+                onClick={() => onOpenModifyModal?.(item)}
+              />
+            )}
+            <Button
+              title=""
+              className="remove"
+              role="ghost"
+              iconLeft={{ name: 'trash', size: 24 }}
+              onClick={onStartRemove}
+            />
+          </ButtonsWrapper>
         </TokenCardActions>
       </TokenBasicWrapper>
       {viewMode === ViewMode.list && (
@@ -204,6 +223,12 @@ const TokenCardActions = styled.div`
         transition: 0.2s;
       }
     }
+    &.remove:hover {
+      svg {
+        fill: var(--color-coral-500);
+        transition: 0.2s;
+      }
+    }
   }
   @media screen and (max-width: 768px) {
     width: 180px;
@@ -211,6 +236,11 @@ const TokenCardActions = styled.div`
   @media screen and (max-width: 568px) {
     width: 100%;
   }
+`;
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  gap: calc(var(--gap) / 2);
 `;
 
 const TokenLinkTitle = styled(Typography).attrs({ appearance: 'block', size: 'l' })`
