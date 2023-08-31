@@ -163,17 +163,14 @@ export const NftDetailsPage = () => {
                   setCurrentModal(isFractional ? 'transfer-refungible' : 'transfer');
                 }}
               />
-
-              {tokenById?.collection?.permissions?.nesting?.tokenOwner && (
-                <Button
-                  title="Nest this token"
-                  wide={size <= DeviceSize.sm}
-                  onClick={() => {
-                    logUserEvent(UserEvents.CREATE_BUNDLE);
-                    setCurrentModal(isFractional ? 'nest-refungible' : 'create-bundle');
-                  }}
-                />
-              )}
+              <Button
+                title="Nest this token"
+                wide={size <= DeviceSize.sm}
+                onClick={() => {
+                  logUserEvent(UserEvents.CREATE_BUNDLE);
+                  setCurrentModal(isFractional ? 'nest-refungible' : 'create-bundle');
+                }}
+              />
             </>
           )
         }
