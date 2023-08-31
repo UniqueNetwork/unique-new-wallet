@@ -382,7 +382,7 @@ export const NftDetailsBundlePage = () => {
           burnModal={isFractional ? 'burn-refungible' : 'burn'}
           buttons={
             isOwner &&
-            token?.collection.limits?.transfersEnabled && (
+            token?.collection.limits?.transfersEnabled !== false && (
               <>
                 <TransferBtn
                   wide={deviceSize === DeviceSize.xs}
