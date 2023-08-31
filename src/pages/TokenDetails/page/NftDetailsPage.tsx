@@ -152,7 +152,8 @@ export const NftDetailsPage = () => {
           )
         }
         buttons={
-          isOwner && (
+          isOwner &&
+          token?.collection.limits?.transfersEnabled !== false && (
             <>
               <TransferBtn
                 role="primary"
