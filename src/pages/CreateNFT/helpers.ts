@@ -30,6 +30,7 @@ const attributeMapper = (attribute?: Attribute) => {
   }
 
   if (typeof attribute === 'object') {
+    // @ts-ignore
     return (attribute as AttributeOption).id;
   }
 

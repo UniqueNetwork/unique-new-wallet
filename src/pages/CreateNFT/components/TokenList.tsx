@@ -1,22 +1,27 @@
-import { ChangeEvent, DragEvent, FC, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  DragEvent,
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import DraggableList from 'react-draggable-list';
 import classNames from 'classnames';
 
 import { Icon, List, Typography } from '@app/components';
 import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
+import { DeviceSize, useDeviceSize } from '@app/hooks';
 
-import {
-  AttributeForFilter,
-  AttributeOption,
-  AttributesForFilter,
-  NewToken,
-  ViewMode,
-} from '../types';
+import { AttributeOption, NewToken, ViewMode } from '../types';
 import { TokenCard, TokenCardCommonProps, TokenCardProps } from './TokenCard';
 import { Filter } from './Filter';
 import { getAttributesFromTokens } from '../helpers';
 import { AttributesModal } from './AttributesModal';
+import { AttributeFilterContext } from '../contexts/AttributesFilterContext';
 
 export type TokenListProps = {
   disabled: boolean;
@@ -43,11 +48,13 @@ export const TokenList = ({
   onChange,
   onAddTokens,
 }: TokenListProps) => {
+  const deviceSize = useDeviceSize();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dragEnter, setDragEnter] = useState(false);
-  const [attributes, setAttributes] = useState<AttributesForFilter>({});
-  const [selectedAttributes, setSelectedAttributes] = useState<AttributeForFilter[]>([]);
   const [editingToken, setEditingToken] = useState<NewToken>();
+
+  const { attributes, setAttributes, selectedAttributes, setSelectedAttributes } =
+    useContext(AttributeFilterContext);
 
   const onTokenChange = (token: NewToken) => {
     const index = tokens.findIndex(({ id }) => id === token.id);
@@ -126,11 +133,13 @@ export const TokenList = ({
       />
       {tokens.length !== 0 && (
         <>
-          <Filter
-            attributes={attributes}
-            selectedAttributes={selectedAttributes}
-            onChange={setSelectedAttributes}
-          />
+          {deviceSize > DeviceSize.sm && (
+            <Filter
+              attributes={attributes}
+              selectedAttributes={selectedAttributes}
+              onChange={setSelectedAttributes}
+            />
+          )}
           <DraggableContainer ref={containerRef}>
             {viewMode === ViewMode.grid && (
               <List<NewToken>
@@ -239,6 +248,9 @@ const DraggableContainer = styled.div`
   }
   .unique-list {
     gap: 0;
+  }
+  @media screen and (max-width: 768px) {
+    margin: 0;
   }
 `;
 
