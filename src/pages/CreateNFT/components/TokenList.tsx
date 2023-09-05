@@ -12,9 +12,15 @@ import styled from 'styled-components';
 import DraggableList from 'react-draggable-list';
 import classNames from 'classnames';
 
-import { Icon, List, Typography } from '@app/components';
+import { Icon, Typography } from '@app/components';
 import { AttributeSchema, TokenTypeEnum } from '@app/api/graphQL/types';
 import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { swap } from '@app/components/DraggableGrid/helpers';
+import {
+  DraggableGridContextProvider,
+  DraggableGridItem,
+  DraggableGrid,
+} from '@app/components/DraggableGrid';
 
 import { AttributeOption, NewToken, ViewMode } from '../types';
 import { TokenCard, TokenCardCommonProps, TokenCardProps } from './TokenCard';
@@ -73,10 +79,28 @@ export const TokenList = ({
   };
 
   const onDragStart = () => {
-    setDragEnter(true);
+    //setDragEnter(true);
   };
   const onDragEnd = () => {
     setDragEnter(false);
+  };
+
+  const onDragItemStart = () => {
+    setDragEnter(false);
+  };
+
+  const onGridItemSwapped = (
+    sourceId: string,
+    sourceIndex: number,
+    targetIndex: number,
+  ) => {
+    const lastId = (tokensStartId || 0) + 1;
+    onChange(
+      swap(tokens, sourceIndex, targetIndex).map((token, index) => ({
+        ...token,
+        tokenId: lastId + index,
+      })),
+    );
   };
 
   useEffect(() => {
@@ -142,32 +166,37 @@ export const TokenList = ({
           )}
           <DraggableContainer ref={containerRef}>
             {viewMode === ViewMode.grid && (
-              <List<NewToken>
-                dataSource={filteredTokens}
-                itemCols={{ sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
-                panelSettings={{ pagination: { viewMode: 'none', size: 0 } }}
-                renderItem={(token, index) => (
-                  <TokenCard
-                    key={token.id}
-                    itemSelected={0}
-                    anySelected={0}
-                    item={token}
-                    commonProps={{
-                      mode,
-                      viewMode,
-                      tokenPrefix,
-                      attributesSchema,
-                      onChange: onTokenChange,
-                      onRemove: onTokenRemove,
-                      onOpenModifyModal: setEditingToken,
-                    }}
-                    dragHandleProps={{}}
-                  />
-                )}
-                onPageChange={function (index: number): void {
-                  throw new Error('Function not implemented.');
-                }}
-              />
+              <DraggableGridContextProvider onChange={onGridItemSwapped}>
+                <DraggableGrid
+                  itemsPerRow={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 5 }}
+                  id="tokens-grid"
+                >
+                  {filteredTokens.map((token, index) => (
+                    <DraggableGridItem
+                      key={token.id}
+                      id={token.id.toString()}
+                      onDragStart={onDragItemStart}
+                    >
+                      <TokenCard
+                        key={token.id}
+                        itemSelected={0}
+                        anySelected={0}
+                        item={token}
+                        commonProps={{
+                          mode,
+                          viewMode,
+                          tokenPrefix,
+                          attributesSchema,
+                          onChange: onTokenChange,
+                          onRemove: onTokenRemove,
+                          onOpenModifyModal: setEditingToken,
+                        }}
+                        dragHandleProps={{}}
+                      />
+                    </DraggableGridItem>
+                  ))}
+                </DraggableGrid>
+              </DraggableGridContextProvider>
             )}
             {viewMode === ViewMode.list && (
               <>
