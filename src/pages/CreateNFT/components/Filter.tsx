@@ -76,6 +76,7 @@ const FilterWrapper = styled.div`
   width: 300px;
   min-width: 300px;
   padding-right: var(--gap);
+  gap: var(--gap);
   margin-right: calc(var(--gap) * 2);
   border-right: 1px solid var(--color-grey-300);
 `;

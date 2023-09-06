@@ -143,6 +143,12 @@ export const TokenList = ({
     });
   }, [tokens, selectedAttributes]);
 
+  const hasAttributesFilter =
+    !!Object.keys(attributes).length &&
+    Object.values(attributes).some((attribute) => {
+      return !!attribute?.length;
+    });
+
   return (
     <TokenListWrapper
       onDragEnter={onDragStart}
@@ -159,14 +165,14 @@ export const TokenList = ({
       />
       {tokens.length !== 0 && (
         <>
-          {deviceSize > DeviceSize.sm && !!Object.keys(attributes).length && (
+          {deviceSize > DeviceSize.sm && hasAttributesFilter && (
             <Filter
               attributes={attributes}
               selectedAttributes={selectedAttributes}
               onChange={setSelectedAttributes}
             />
           )}
-          <DraggableContainer ref={containerRef}>
+          <DraggableContainer ref={containerRef} hasOffset={hasAttributesFilter}>
             {viewMode === ViewMode.grid && (
               <DraggableGridContextProvider onChange={onGridItemSwapped}>
                 <DraggableGrid
@@ -271,9 +277,9 @@ const TokenListWrapper = styled.div`
   position: relative;
 `;
 
-const DraggableContainer = styled.div`
+const DraggableContainer = styled.div<{ hasOffset: boolean }>`
   width: 100%;
-  margin: 0 -32px;
+  margin: ${({ hasOffset }) => (hasOffset ? '0 -32px' : '0')};
   & > div {
     width: 100%;
   }

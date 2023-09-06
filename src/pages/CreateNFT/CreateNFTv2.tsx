@@ -354,7 +354,33 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
           />
           {tokens.length > 0 && !isFilterVisible && (
             <ButtonGroup ref={actionBoxRef}>
-              <SelectCheckbox
+              <Button
+                title={
+                  <StyledCheckbox
+                    label={
+                      <Typography color="grey-500">
+                        {selected.length ? `${selected.length} selected` : 'Select all'}
+                      </Typography>
+                    }
+                    checked={selected.length > 0}
+                    onChange={(value) => {
+                      if (value) {
+                        selectedAll();
+                        return;
+                      }
+                      deselectedAll();
+                    }}
+                  />
+                }
+                onClick={() => {
+                  if (selected.length > 0) {
+                    deselectedAll();
+                    return;
+                  }
+                  selectedAll();
+                }}
+              />
+              {/* <SelectCheckbox
                 label={
                   <Typography color="grey-500">
                     {selected.length ? `${selected.length} selected` : 'Select all'}
@@ -368,7 +394,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
                   }
                   deselectedAll();
                 }}
-              />
+              /> */}
               {deviceSize <= DeviceSize.sm && (
                 <ConfirmBtn
                   role="outlined"
@@ -569,6 +595,14 @@ const SelectCheckbox = styled(Checkbox)`
       background-color: var(--color-primary-500);
     }
   }
+  label.checkbox-label {
+    margin-left: 42px;
+  }
+`;
+
+const StyledCheckbox = styled(Checkbox)`
+  align-items: center;
+  margin-left: -14px;
   label.checkbox-label {
     margin-left: 42px;
   }
