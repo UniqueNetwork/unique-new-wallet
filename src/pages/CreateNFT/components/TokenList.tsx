@@ -79,13 +79,15 @@ export const TokenList = ({
   };
 
   const onDragStart = () => {
-    //setDragEnter(true);
+    setDragEnter(true);
   };
   const onDragEnd = () => {
     setDragEnter(false);
   };
 
   const onDragItemStart = () => {
+    console.log('onDragItemStart');
+
     setDragEnter(false);
   };
 
@@ -157,7 +159,7 @@ export const TokenList = ({
       />
       {tokens.length !== 0 && (
         <>
-          {deviceSize > DeviceSize.sm && (
+          {deviceSize > DeviceSize.sm && !!Object.keys(attributes).length && (
             <Filter
               attributes={attributes}
               selectedAttributes={selectedAttributes}
