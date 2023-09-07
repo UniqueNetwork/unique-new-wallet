@@ -6,7 +6,7 @@ import {
   CollectionNft,
   CollectionPage,
   CreateCollectionPage,
-  CreateNFT,
+  CreateNFTv2,
   Faq,
   MyCollections,
   MyTokens,
@@ -101,7 +101,7 @@ export const routes: RouteConfig = {
       ],
     },
     {
-      element: <CreateNFT />,
+      element: <CreateNFTv2 />,
       name: 'Create a token',
       path: ROUTE.CREATE_NFT,
     },

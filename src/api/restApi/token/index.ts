@@ -12,3 +12,4 @@ export * from './useTokenRefungibleBurn';
 export * from './useTokenRefungibleTransfer';
 export * from './useTokenGetBalance';
 export * from './useTokenGetTotalPieces';
+export * from './useCreateMultipleTokens';

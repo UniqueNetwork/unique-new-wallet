@@ -11,7 +11,7 @@ import Item from './Item';
 
 List.Item = Item;
 
-type Position = 'both' | 'bottom' | 'top';
+type Position = 'both' | 'bottom' | 'top' | 'none';
 
 type IPaginationSettings = Pick<
   IPaginationProps,

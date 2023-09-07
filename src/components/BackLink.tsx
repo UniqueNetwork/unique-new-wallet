@@ -29,4 +29,5 @@ const StyledLink = styled(Link)`
   align-items: center;
   gap: calc(var(--prop-gap) / 4);
   margin-bottom: calc(var(--prop-gap) * 2);
+  width: fit-content;
 `;
