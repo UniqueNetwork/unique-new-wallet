@@ -30,7 +30,7 @@ export const ShareModal = <T extends TBaseToken>({
         title: 'Twitter',
         url: getSocialLink('twitter', {
           url: window.location.href,
-          text: token.name,
+          text: 'I’ve just created my @AngelHack #NFT as part of #PolkadotSocial:Seoul! 🔥\n\nCheck out this awesome customizable NFT!',
         }),
         icon: {
           name: 'social-twitter',

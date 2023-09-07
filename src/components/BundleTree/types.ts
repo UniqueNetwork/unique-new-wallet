@@ -77,4 +77,5 @@ export interface ITree<T> {
 
 export interface IBundleTree<T> extends ITree<T> {
   nestedSectionView?: FC<INestedSectionView<T>>;
+  hideTreeView?: boolean;
 }

@@ -7,3 +7,5 @@ export * from './useCollectionSetSponsor';
 export * from './useCollectionConfirmSponsorship';
 export * from './useCollectionRemoveSponsorship';
 export * from './useCollectionGetLastTokenId';
+export * from './useCollectionSetTokenPropertyPermissions';
+export * from './useCollectionSetProperties';

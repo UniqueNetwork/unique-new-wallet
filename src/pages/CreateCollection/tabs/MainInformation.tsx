@@ -47,7 +47,7 @@ const MainInformationComponent: VFC<MainInformationProps> = ({ className }) => {
 
       return false;
     }
-    if (!/.*\.(jpeg|jpg|gif|png)$/.test((data.file as File).name)) {
+    if (!/.*\.(jpeg|jpg|gif|png)$/.test((data.file as File).name.toLowerCase())) {
       error(FILE_FORMAT_ERROR);
 
       return false;

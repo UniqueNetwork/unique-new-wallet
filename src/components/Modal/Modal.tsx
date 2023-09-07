@@ -17,6 +17,7 @@ export interface ModalProps {
   inline?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   title?: ReactNode;
+  className?: string;
   onClose?(): void;
 }
 
@@ -44,6 +45,7 @@ export const Modal = ({
   inline,
   title,
   size = 'md',
+  className,
   onClose,
 }: ModalProps) => {
   const deviceSize = useDeviceSize();
@@ -85,7 +87,7 @@ export const Modal = ({
           )}
         </div>
       )}
-      <div className="unique-modal-body">{children}</div>
+      <div className={classNames('unique-modal-body', className)}>{children}</div>
       {footerButtons && (
         <div className="unique-modal-footer">
           <ButtonGroup stack align="flex-end">

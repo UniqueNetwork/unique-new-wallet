@@ -43,18 +43,6 @@ export const IntroCard = ({
               role="primary"
               onClick={onCloseModal}
             />{' '}
-            <Button
-              wide={isXsMobile}
-              title="Visit FAQ"
-              onClick={() => {
-                onCloseModal?.();
-                navigation(`/${currentChain.network}/${ROUTE.FAQ}`, {
-                  state: {
-                    isNestedInfo: true,
-                  },
-                });
-              }}
-            />
           </div>
         ) : (
           <Button

@@ -16,7 +16,7 @@ export class MetamaskWallet
     BaseWalletType<IEthereumExtensionResultSafe['result']>
   >();
 
-  isMintingEnabled = false;
+  isMintingEnabled = true;
 
   // eslint-disable-next-line no-useless-constructor
   constructor(private readonly chainProperties: ChainPropertiesResponse) {}

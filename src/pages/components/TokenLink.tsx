@@ -1,10 +1,17 @@
 import styled from 'styled-components';
 import { Address } from '@unique-nft/utils';
 
-import { Achievement, TokenLinkBase, Typography } from '@app/components';
+import { TokenLinkBase, Typography } from '@app/components';
 import { Token, TokenTypeEnum } from '@app/api/graphQL/types';
 import { formatLongNumber, shortAddress } from '@app/utils';
 import { useIsOwner } from '@app/hooks/useIsOwner';
+import { useApi } from '@app/hooks';
+
+import { Achievement } from '../../components/Achievement';
+import {
+  AngelHackBaseCollectionId,
+  AngelHackWearablesCollectionId,
+} from '../MyTokens/constants';
 
 export const TokenLink = ({
   token,
@@ -19,7 +26,24 @@ export const TokenLink = ({
   showOwner?: boolean;
   checkNesting?: boolean;
 }) => {
+  const { currentChain } = useApi();
+
   const renderBadge = (type: TokenTypeEnum, nested: boolean) => {
+    if (token.collection_id === AngelHackBaseCollectionId[currentChain.network]) {
+      return (
+        <>
+          <Achievement achievement="Base NFT" tooltipDescription={null} />
+          <AchievementSecondary achievement="Soulbound" tooltipDescription={null} />
+        </>
+      );
+    }
+    if (token.collection_id === AngelHackWearablesCollectionId[currentChain.network]) {
+      return (
+        <>
+          <Achievement achievement="Wearables" tooltipDescription={null} />
+        </>
+      );
+    }
     if (!token.parent_id && nested) {
       return (
         <Achievement
@@ -126,4 +150,8 @@ const AdditionalWrapper = styled.div`
     white-space: nowrap;
     color: var(--color-additional-dark);
   }
+`;
+
+const AchievementSecondary = styled(Achievement)`
+  top: calc(var(--gap) + 32px);
 `;

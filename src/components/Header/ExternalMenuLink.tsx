@@ -1,9 +1,11 @@
 import { VFC } from 'react';
-import { Link, useMatch, useResolvedPath } from 'react-router-dom';
+import { useMatch, useResolvedPath } from 'react-router-dom';
 import classNames from 'classnames';
 import styled from 'styled-components';
 
 import { logUserEvent } from '@app/utils/logUserEvent';
+
+import { Link } from '../Link';
 
 interface MenuLinkProps {
   logEvent: string;
@@ -58,7 +60,8 @@ export const MenuLink: VFC<MenuLinkProps> = ({
     <LinkStyled
       className={classNames({ _isMobile: mobileMenuToggle, _isActive: !!match })}
       key={name}
-      to={path}
+      href={path}
+      target="_blank"
       onClick={() => menuClickHandle(logEvent)}
     >
       {name}

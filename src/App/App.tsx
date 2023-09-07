@@ -27,36 +27,17 @@ export default function App() {
               return (
                 <>
                   <IntroCard
-                    // title={<>Fractional tokens and Bundles finally here!</>}
-                    title="Bundles are finally here!"
-                    description={<>Meet the long-awaited update of&nbsp;Unique Wallet</>}
+                    isLast
+                    title="Dear AngelHackers, your NFT is SoulBound!"
+                    description={
+                      <>
+                        Wear & change your hoodies, share on&nbsp;socials. These belong
+                        to&nbsp;you forever! To&nbsp;start nesting click on&nbsp;any
+                        of&nbsp;your wearable NFTs!
+                      </>
+                    }
                     imgPath={confetti}
                     setActiveSlide={setActiveSlide}
-                  />
-                  <IntroCard
-                    title="Fractional tokens"
-                    description={
-                      <>
-                        A&nbsp;re-fungible format that allows for an&nbsp;NFT
-                        to&nbsp;be&nbsp;divided into many parts that can
-                        be&nbsp;distributed among any number of&nbsp;wallets
-                      </>
-                    }
-                    imgPath={puzzle}
-                    setActiveSlide={setActiveSlide}
-                  />
-                  <IntroCard
-                    title="Nesting"
-                    description={
-                      <>
-                        A&nbsp;way to&nbsp;group tokens in&nbsp;a&nbsp;nested, tree-like
-                        structure within NFT. Nesting of&nbsp;NFTs, Fractionals and coins
-                        in&nbsp;unlimited quantities is&nbsp;supported.
-                      </>
-                    }
-                    imgPath={bundle}
-                    setActiveSlide={setActiveSlide}
-                    isLast={true}
                     onCloseModal={() => setOpenModal(false)}
                   />
                 </>

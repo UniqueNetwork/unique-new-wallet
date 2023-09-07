@@ -17,6 +17,7 @@ import logo from '../../static/icons/logo.svg';
 import { AccountsManager } from '../AccountsManager';
 import { Footer } from '../Footer';
 import MenuLink from './MenuLink';
+import ExternalMenuLink from './ExternalMenuLink';
 
 const STAKING_HUB_URL = 'https://unique.network/staking/';
 
@@ -123,6 +124,13 @@ export const Header = () => {
               path={`${activeNetwork?.id}/${ROUTE.MY_COLLECTIONS}`}
               logEvent={UserEvents.HEADER_MY_COLLECTION}
             />
+            {!!activeNetwork && config.allChains[activeNetwork.id].marketAddress && (
+              <ExternalMenuLink
+                name="Sell tokens"
+                path={config.allChains[activeNetwork.id].marketAddress}
+                logEvent={UserEvents.HEADER_FAQ}
+              />
+            )}
             <MenuLink
               name="FAQ"
               path={`${activeNetwork?.id}/${ROUTE.FAQ}`}
@@ -186,6 +194,14 @@ export const Header = () => {
               logEvent={UserEvents.HEADER_MY_COLLECTION}
               mobileMenuToggle={mobileMenuToggle}
             />
+            {!!activeNetwork && config.allChains[activeNetwork.id].marketAddress && (
+              <ExternalMenuLink
+                name="Sell tokens"
+                path={config.allChains[activeNetwork.id].marketAddress}
+                logEvent={UserEvents.HEADER_FAQ}
+                mobileMenuToggle={mobileMenuToggle}
+              />
+            )}
             <MenuLink
               name="FAQ"
               path={`${activeNetwork?.id}/${ROUTE.FAQ}`}

@@ -63,13 +63,15 @@ export const IntroSlider = ({ activeSlide = 0, children }: IntroSliderProps) => 
     return Array.isArray(children) ? children : [children];
   };
 
+  const content = renderContent();
   return (
     <Modal align="top" isVisible={open} onClose={() => setOpen(false)}>
-      <div>{renderContent()[active]}</div>
+      <div>{content[active]}</div>
       <Dots>
-        {renderContent().map((_, idx) => (
-          <Dot isActive={active === idx} key={idx} onClick={() => setActive(idx)} />
-        ))}
+        {content.length > 1 &&
+          content.map((_, idx) => (
+            <Dot isActive={active === idx} key={idx} onClick={() => setActive(idx)} />
+          ))}
       </Dots>
     </Modal>
   );
