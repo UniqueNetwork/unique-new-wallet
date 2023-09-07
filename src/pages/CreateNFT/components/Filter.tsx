@@ -16,7 +16,11 @@ export const Filter = ({ attributes, selectedAttributes, onChange }: FilterProps
     if (checked) {
       onChange([...selectedAttributes, attribute]);
     } else {
-      onChange(selectedAttributes.filter((a) => a.id !== attribute.id));
+      onChange(
+        selectedAttributes.filter(
+          (a) => a.index === attribute.index && a.value !== attribute.value,
+        ),
+      );
     }
   };
 

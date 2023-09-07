@@ -86,8 +86,6 @@ export const TokenList = ({
   };
 
   const onDragItemStart = () => {
-    console.log('onDragItemStart');
-
     setDragEnter(false);
   };
 
