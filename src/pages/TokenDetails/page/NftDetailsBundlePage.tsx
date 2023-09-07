@@ -25,6 +25,10 @@ import { logUserEvent, UserEvents } from '@app/utils/logUserEvent';
 import { BottomBar, BottomBarHeader } from '@app/pages/components/BottomBar';
 import AccountCard from '@app/pages/Accounts/components/AccountCard';
 import { useGetTokenPath } from '@app/hooks/useGetTokenPath';
+import {
+  AngelHackBaseCollectionId,
+  AngelHackWearablesCollectionId,
+} from '@app/pages/MyTokens/constants';
 
 const areNodesEqual = (a: INestingToken, b: INestingToken) =>
   a.collectionId === b.collectionId && a.tokenId === b.tokenId;
@@ -219,6 +223,9 @@ export const NftDetailsBundlePage = () => {
 
     if (bundleToken && !isLoadingBundleToken) {
       let allowedToEditBundle = JSON.parse(JSON.stringify(bundleToken));
+
+      setSelectedToken(allowedToEditBundle);
+
       allowedToEditBundle = sortTokensInBundleAndSelectOpened(allowedToEditBundle);
       allowedToEditBundle = openNodeIfChildsPageOpened(allowedToEditBundle);
       setBundle([allowedToEditBundle]);
@@ -277,6 +284,9 @@ export const NftDetailsBundlePage = () => {
       compareNodes={areNodesEqual}
       childrenProperty="nestingChildTokens"
       getKey={getKey}
+      hideTreeView={
+        tokenById?.collectionId === AngelHackBaseCollectionId[currentChain.network]
+      }
       onNodeClicked={handleNodeClicked}
       onViewNodeDetails={handleViewTokenDetails}
       onUnnestClick={handleUnnestToken}
@@ -324,6 +334,13 @@ export const NftDetailsBundlePage = () => {
 
   const renderAchievements = () => (
     <AchievementsWrapper>
+      {tokenById?.collectionId === AngelHackBaseCollectionId[currentChain.network] && (
+        <Achievement achievement="Soulbound" tooltipDescription={null} />
+      )}
+      {tokenById?.collectionId ===
+        AngelHackWearablesCollectionId[currentChain.network] && (
+        <Achievement achievement="Wearables" tooltipDescription={null} />
+      )}
       <Achievement
         achievement={isBundleToken() ? 'Bundle' : 'Nested'}
         tooltipDescription={
@@ -364,7 +381,8 @@ export const NftDetailsBundlePage = () => {
           canBurn={isOwner && (selectedToken?.nestingChildTokens?.length || 0) === 0}
           burnModal={isFractional ? 'burn-refungible' : 'burn'}
           buttons={
-            isOwner && (
+            isOwner &&
+            token?.collection.limits?.transfersEnabled !== false && (
               <>
                 <TransferBtn
                   wide={deviceSize === DeviceSize.xs}
@@ -389,7 +407,7 @@ export const NftDetailsBundlePage = () => {
         {deviceSize >= DeviceSize.sm && (
           <BundleWrapper>
             <HeaderStyled>
-              <Heading size="2">Bundle tree structure</Heading>
+              <Heading size="2">Bundle structure</Heading>
               <Typography color="grey-500" size="m" className="tokens-count">
                 {tokensCount + 1} items total
               </Typography>
@@ -414,12 +432,12 @@ export const NftDetailsBundlePage = () => {
                       }
                     : undefined
                 }
-                title={isShowBundleTreeMobile ? 'Back' : 'Show bundle tree structure'}
+                title={isShowBundleTreeMobile ? 'Back' : 'Show bundle structure'}
                 onClick={() => setShowBundleTreeMobile((prev) => !prev)}
               />,
             ]}
             header={
-              <BottomBarHeader showBackLink={false} title="Bundle tree structure">
+              <BottomBarHeader showBackLink={false} title="Bundle structure">
                 <Typography color="grey-500" size="m" className="tokens-count">
                   {tokensCount + 1} items total
                 </Typography>

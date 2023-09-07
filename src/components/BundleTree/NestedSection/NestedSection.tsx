@@ -4,8 +4,9 @@ import classNames from 'classnames';
 
 import NoTrades from 'static/icons/no-trades.svg';
 
-import { DeviceSize, useDeviceSize } from '@app/hooks';
+import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
 import { NoItems, Loader, Typography } from '@app/components';
+import { AngelHackBaseCollectionId } from '@app/pages/MyTokens/constants';
 
 import { INestedSectionView, INestingToken } from '../types';
 import { useCollection } from '../useCollection';
@@ -17,10 +18,12 @@ export const NestedSection: FC<INestedSectionView<INestingToken>> = ({
   onUnnestClick,
   onTransferClick,
 }) => {
+  const { currentChain } = useApi();
   const deviceSize = useDeviceSize();
   const { isCollectionLoading, collection } = useCollection(selectedToken?.collectionId);
 
-  return deviceSize >= DeviceSize.lg ? (
+  return deviceSize >= DeviceSize.lg ||
+    selectedToken?.collectionId === AngelHackBaseCollectionId[currentChain.network] ? (
     <NestedDetails
       className={classNames({ _empty: !selectedToken?.nestingChildTokens?.length })}
     >

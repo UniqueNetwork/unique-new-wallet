@@ -18,3 +18,13 @@ export const defaultTypeFilter: OptionChips<TypeFilterNft>[] = [
 export const defaultSort: Record<string, Direction> = { token_id: 'asc' };
 
 export const defaultPage = 0;
+
+export const AngelHackBaseCollectionId: Record<string, number> = {
+  OPAL: 2048,
+  UNIQUE: 304,
+};
+
+export const AngelHackWearablesCollectionId: Record<string, number> = {
+  OPAL: 2049,
+  UNIQUE: 305,
+};

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Tree } from './Tree';
@@ -17,6 +17,7 @@ function BundleTree<T extends INode>({
   onViewNodeDetails,
   onUnnestClick,
   onTransferClick,
+  hideTreeView,
 }: IBundleTree<T>) {
   const [selectedToken, setSelectedToken] = useState<T | null>(selectedTokenUser || null);
   const onNodeClicked = useCallback((data: T) => {
@@ -24,20 +25,29 @@ function BundleTree<T extends INode>({
     onNodeClickedProps(data);
   }, []);
 
+  useEffect(() => {
+    if (!selectedTokenUser) {
+      return;
+    }
+    setSelectedToken(selectedTokenUser);
+  }, [selectedTokenUser]);
+
   return (
     <Wrapper>
-      <Tree<T>
-        dataSource={dataSource}
-        nodeView={NodeView}
-        className={className}
-        compareNodes={compareNodes}
-        childrenProperty={childrenProperty}
-        getKey={getKey}
-        onViewNodeDetails={onViewNodeDetails}
-        onUnnestClick={onUnnestClick}
-        onTransferClick={onTransferClick}
-        onNodeClicked={onNodeClicked}
-      />
+      {!hideTreeView && (
+        <Tree<T>
+          dataSource={dataSource}
+          nodeView={NodeView}
+          className={className}
+          compareNodes={compareNodes}
+          childrenProperty={childrenProperty}
+          getKey={getKey}
+          onViewNodeDetails={onViewNodeDetails}
+          onUnnestClick={onUnnestClick}
+          onTransferClick={onTransferClick}
+          onNodeClicked={onNodeClicked}
+        />
+      )}
       {NestedSectionView && (
         <NestedSectionView
           selectedToken={selectedToken}
