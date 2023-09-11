@@ -31,7 +31,6 @@ import { CreateTokensDialogs } from './components/CreateTokensDialogs';
 import {
   checkRequiredAttributes,
   mapTokensToPayload,
-  mapTokensToPayload$1,
   scrollToTokenCard,
 } from './helpers';
 import { UploadFAB } from './components/UploadFAB';
@@ -380,21 +379,6 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
                   selectedAll();
                 }}
               />
-              {/* <SelectCheckbox
-                label={
-                  <Typography color="grey-500">
-                    {selected.length ? `${selected.length} selected` : 'Select all'}
-                  </Typography>
-                }
-                checked={selected.length > 0}
-                onChange={(value) => {
-                  if (value) {
-                    selectedAll();
-                    return;
-                  }
-                  deselectedAll();
-                }}
-              /> */}
               {deviceSize <= DeviceSize.sm && (
                 <ConfirmBtn
                   role="outlined"
@@ -442,6 +426,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
           onConfirm={onConfirmDialog}
         />
         <StatusTransactionModal
+          title={stage === 'done' ? 'Tokens successfully created' : 'Please wait'}
           isVisible={isLoadingSubmitResult}
           stage={stage}
           uploadingProgress={uploadProgress}

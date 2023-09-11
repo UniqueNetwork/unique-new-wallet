@@ -82,6 +82,11 @@ const StagesWrapper = styled.div`
   grid-column-gap: var(--gap);
   grid-row-gap: var(--gap);
   align-items: center;
+  min-width: 500px;
+  margin-top: calc(var(--gap) * 0.5);
+  @media screen and (max-width: 768px) {
+    min-width: none;
+  }
 `;
 
 const StageDescription = styled.div`
@@ -92,7 +97,7 @@ const StageDescription = styled.div`
 const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: calc(var(--gap) * 2);
+  margin-top: calc(var(--gap) * 3);
   gap: calc(var(--gap) * 2);
 `;
 
