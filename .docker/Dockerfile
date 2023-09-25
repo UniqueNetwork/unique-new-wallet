@@ -7,6 +7,14 @@ RUN npm install
 RUN npm run build
 
 
+FROM nginx:alpine as static
+
+WORKDIR /usr/share/nginx/html
+
+COPY --from=builder /app/build /usr/share/nginx/html
+
+CMD ["nginx"]
+
 FROM nginx:alpine
 
 WORKDIR /usr/share/nginx/html
