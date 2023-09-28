@@ -72,7 +72,7 @@ const CollectionDescriptionComponent: VFC<{ collectionId: string }> = ({
               <strong>
                 {date_of_creation
                   ? `${format(
-                      addSeconds(new Date(0), date_of_creation),
+                      addSeconds(new Date(0), date_of_creation * 1000), // fix because scan has wrong timestamp values
                       'MMMM, d, yyyy, HH:mm:ss',
                     )} UTC ${offsetHours > 0 ? '+' : ''}${offsetHours}`
                   : 'Calculation in progress...'}
