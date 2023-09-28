@@ -22,7 +22,7 @@ const attributeMapper = (attribute?: Attribute) => {
   }
 
   if (Array.isArray(attribute)) {
-    return attribute.map((attr: AttributeOption) => attr.id);
+    return attribute.map((attr: AttributeOption) => Number(attr.id));
   }
 
   if (typeof attribute === 'string') {
@@ -31,7 +31,7 @@ const attributeMapper = (attribute?: Attribute) => {
 
   if (typeof attribute === 'object') {
     // @ts-ignore
-    return (attribute as AttributeOption).id;
+    return Number((attribute as AttributeOption).id);
   }
 
   return attribute;
