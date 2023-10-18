@@ -8,7 +8,7 @@ import { MY_COLLECTIONS_ROUTE, ROUTE } from '@app/routes';
 import { TabsBody, TabsHeader } from '@app/pages/components/PageComponents';
 import { CollectionsNftFilterWrapper } from '@app/pages/CollectionPage/components/CollectionNftFilters/CollectionsNftFilterWrapper';
 import { withPageTitle } from '@app/HOCs/withPageTitle';
-import { Tabs } from '@app/components';
+import { Loader, Tabs } from '@app/components';
 import { useCollectionGetById, useCollectionGetLastTokenId } from '@app/api';
 import { usePageSettingContext } from '@app/context';
 
@@ -87,24 +87,29 @@ const CollectionPageComponent: VFC<{ basePath: string }> = ({ basePath }) => {
           refetchSettings,
         }}
       >
-        <TabsHeader>
-          <Tabs
-            activeIndex={currentTabIndex}
-            labels={['Tokens', 'Settings']}
-            type="slim"
-            onClick={handleClick}
-          />
-          <Tabs activeIndex={currentTabIndex}>
-            <CollectionNftFilters />
-            <></>
-          </Tabs>
-        </TabsHeader>
-        <TabsBody>
-          <Tabs activeIndex={currentTabIndex}>
-            <Outlet />
-            <Outlet />
-          </Tabs>
-        </TabsBody>
+        {(isLoading || loading || isLastTokenIdLoading) && <Loader isFullPage />}
+        {!(isLoading || loading || isLastTokenIdLoading) && !!collection && (
+          <>
+            <TabsHeader>
+              <Tabs
+                activeIndex={currentTabIndex}
+                labels={['Tokens', 'Settings']}
+                type="slim"
+                onClick={handleClick}
+              />
+              <Tabs activeIndex={currentTabIndex}>
+                <CollectionNftFilters />
+                <></>
+              </Tabs>
+            </TabsHeader>
+            <TabsBody>
+              <Tabs activeIndex={currentTabIndex}>
+                <Outlet />
+                <Outlet />
+              </Tabs>
+            </TabsBody>
+          </>
+        )}
       </collectionContext.Provider>
     </CollectionsNftFilterWrapper>
   );
