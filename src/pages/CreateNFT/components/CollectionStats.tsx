@@ -4,9 +4,9 @@ import { addSeconds, format } from 'date-fns';
 import { useMemo } from 'react';
 
 import { Collection } from '@app/api/graphQL/types';
-import { Heading, Link, Loader, Typography } from '@app/components';
+import { Link, Loader, Typography } from '@app/components';
 import { maxTokenLimit } from '@app/pages/constants';
-import { DeviceSize, useApi, useDeviceSize } from '@app/hooks';
+import { useApi } from '@app/hooks';
 import { shortAddress } from '@app/utils';
 
 interface CollectionStatsProps {
@@ -28,7 +28,6 @@ export const CollectionStats = ({
   nestingPermissions,
   sponsorship,
 }: CollectionStatsProps) => {
-  const deviceSize = useDeviceSize();
   const { currentChain } = useApi();
   const noLimits = maxTokenLimit === tokensLimit;
   const nestingValue = useMemo(() => {
@@ -51,12 +50,12 @@ export const CollectionStats = ({
       </LoaderWrapper>
     );
   }
-
+  console.log('tokensLimit', tokensLimit);
   return (
     <CollectionStatisticsBlockWrapper>
       <div>
         <Typography size="l" weight="bold">
-          {noLimits ? 'Unlimited' : tokensLimit}
+          {noLimits || tokensLimit === undefined ? 'Unlimited' : tokensLimit}
         </Typography>
         <Typography size="m" color="grey-600">
           token limit
@@ -80,7 +79,9 @@ export const CollectionStats = ({
       </div>
       <div>
         <Typography size="l" weight="bold">
-          {getDateFormat(collection.date_of_creation * 1000)}
+          {collection.date_of_creation
+            ? getDateFormat(collection.date_of_creation * 1000)
+            : 'unknown'}
         </Typography>
         <Typography size="m" color="grey-600">
           creation date

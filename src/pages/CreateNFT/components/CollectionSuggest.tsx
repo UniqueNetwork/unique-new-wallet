@@ -2,15 +2,16 @@ import { Address } from '@unique-nft/utils/address';
 import { FC, Fragment, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
-import { useAccounts } from '@app/hooks';
+import { useAccounts, useApi } from '@app/hooks';
 import { Avatar, SuggestListProps, Tag, Typography } from '@app/components';
 import { useGraphQlCollectionsByAccount } from '@app/api/graphQL/collections';
-import { Collection, TokenTypeEnum } from '@app/api/graphQL/types';
+import { Collection } from '@app/api/graphQL/types';
 import { getTokenIpfsUriByImagePath } from '@app/utils';
+import { ROUTE } from '@app/routes';
 
-import { LabelText, SuggestOption } from '../../components/FormComponents';
+import { SuggestOption } from '../../components/FormComponents';
 import { Button } from '../../../components/Button/Button';
 import { Suggest } from '../../../components/Suggest/Suggest';
 
@@ -163,13 +164,23 @@ const CollectionsSuggestionList: FC<SuggestListProps<CollectionItem>> = ({
   suggestions,
   children,
 }) => {
+  const { currentChain } = useApi();
+  const navigate = useNavigate();
+  const onCreateCollectionClick = () => {
+    navigate(`/${currentChain.network}/${ROUTE.CREATE_COLLECTION}/`, {
+      state: {
+        returnToCreateToken: true,
+      },
+    });
+  };
+
   return (
     <>
       <CreateCollectionOption
         role="ghost"
         title={<Typography color="primary-500">Create collection</Typography>}
         iconLeft={{ name: 'plus', size: 16, color: 'var(--color-primary-500)' }}
-        onClick={() => {}}
+        onClick={onCreateCollectionClick}
       />
       {suggestions.map((suggest, idx) => (
         <Fragment key={idx}>{children(suggest, idx === suggestions.length - 1)}</Fragment>

@@ -87,7 +87,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
 
   const leftTokens = collection?.token_limit
     ? collection.token_limit - (collection?.tokens_count || 0) - tokens.length
-    : 'unlimited';
+    : 'Unlimited';
 
   const selected = useMemo(() => {
     return tokens.filter(({ isSelected }) => isSelected);
@@ -172,7 +172,7 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
   const onAddTokens = (files: File[]) => {
     const maxTokens = Math.min(
       MAX_MINT_TOKENS - tokens.length,
-      leftTokens !== 'unlimited' ? leftTokens : MAX_MINT_TOKENS,
+      leftTokens !== 'Unlimited' ? leftTokens : MAX_MINT_TOKENS,
     );
     if (files.length > maxTokens) {
       setDialog(CreateTokenDialog.exceededTokens);

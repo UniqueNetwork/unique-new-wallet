@@ -19,7 +19,7 @@ export const ExceededModal = ({
   onClose,
 }: ExceededModalProps) => {
   const toMax = MAX_MINT_TOKENS - tokensCount;
-  const toLimit = leftTokens !== 'unlimited' ? leftTokens : MAX_MINT_TOKENS;
+  const toLimit = leftTokens !== 'Unlimited' ? leftTokens : MAX_MINT_TOKENS;
   const message =
     toMax < toLimit
       ? `It is only possible to add ${toMax} more files because it is only allowed to create ${MAX_MINT_TOKENS} tokens at a time.`
