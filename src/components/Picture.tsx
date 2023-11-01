@@ -11,7 +11,7 @@ export const Picture: FC<PictureProps> = (props) => {
   return (
     <div className="picture">
       {src ? (
-        <img alt={alt} src={src} />
+        <img alt={alt} src={src} loading="lazy" />
       ) : (
         <svg fill="white" height="100%" viewBox="0 0 1000 1000" width="100%">
           <rect fill="var(--color-grey-300)" height={1000} width={1000} x={0} y={0} />

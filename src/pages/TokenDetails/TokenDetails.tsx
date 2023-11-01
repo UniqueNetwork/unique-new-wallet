@@ -29,6 +29,10 @@ const TokenDetailsComponent: VFC = () => {
     return <Loader />;
   }
 
+  if (!isLoading && !data) {
+    return <ErrorPage />;
+  }
+
   if (data?.isBundle || Address.is.nestingAddress(address)) {
     return <NftDetailsBundlePage />;
   }
