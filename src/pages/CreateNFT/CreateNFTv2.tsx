@@ -442,7 +442,8 @@ export const CreateNFTv2Component: FC<{ className?: string }> = ({ className }) 
           onConfirm={onConfirmDialog}
         />
         <StatusTransactionModal
-          isVisible={isLoadingSubmitResult}
+          title={stage === 'done' ? 'Tokens successfully created' : 'Please wait'}
+          isVisible={true && isLoadingSubmitResult}
           stage={stage}
           uploadingProgress={uploadProgress}
           mintingProgress={mintingProgress}
