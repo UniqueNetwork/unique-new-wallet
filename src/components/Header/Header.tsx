@@ -127,7 +127,7 @@ export const Header = () => {
             {!!activeNetwork && config.allChains[activeNetwork.id].marketAddress && (
               <ExternalMenuLink
                 name="Sell tokens"
-                path={config.allChains[activeNetwork.id].marketAddress}
+                path={`${config.allChains[activeNetwork.id].marketAddress}/sellTokens`}
                 logEvent={UserEvents.HEADER_FAQ}
               />
             )}
